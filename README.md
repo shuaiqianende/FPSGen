@@ -1,7 +1,7 @@
 # FPSGen: Flexible Point Cloud Scene Generation with BEV-Supported Transport Flows
 
 <p align="center">
-  <img src="assets/FPSGen.png" width="100%">
+  <img src="assets/FPSGen_pipeline.png" width="100%">
 </p>
 
 ## News
