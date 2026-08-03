@@ -19,34 +19,11 @@ paths are excluded by `.gitignore`. A release checklist is provided in
 
 FPSGen decomposes large-scale point-cloud scene generation into:
 
-1. **Flexible Condition BEV Flow Prior.** A conditional velocity field
-   generates the structural prior
+1. **Flexible Condition BEV Flow Prior.** A conditional velocity field generates the structural prior $B=[D,H,M]$, comprising normalized density, maximum height, and occupancy.
 
-   $$
-   B=[D,H,M],
-   $$
+2. **Teacher Transport Mapping.** A teacher learns a source-indexed clean endpoint $\mathcal{P}_1^\dagger$ from an independent BEV-sampled source $\mathcal{P}_0$.
 
-   comprising normalized density, maximum height, and occupancy.
-2. **Teacher Transport Mapping.** A teacher learns a source-indexed clean
-   endpoint
-
-   $$
-   \mathcal{P}_1^\dagger
-   $$
-
-   from an independent BEV-sampled source
-
-   $$
-   \mathcal{P}_0.
-   $$
-3. **Approximate-OT Point Flow.** The student learns the straight transport
-   velocity from
-
-   $$
-   \mathcal{P}_0 \quad \text{to} \quad \mathcal{P}_1^\dagger,
-   $$
-
-   conditioned on the generated BEV prior and the active condition tuple.
+3. **Approximate-OT Point Flow.** The student learns the straight transport velocity from $\mathcal{P}_0 \text{ to } \mathcal{P}_1^\dagger$, conditioned on the generated BEV prior and the active condition tuple.
 
 At inference, BEV Flow and PointFlow are integrated sequentially with
 classifier-free guidance and forward Euler updates. See
