@@ -17,6 +17,11 @@ python -m fpsgen.utils.eval_path_multirange \
   --no-save-pcd --save-ply
 ```
 
+`--cond-mode` is a three-bit tuple in `[LiDAR, vehicle, road]` order: `1`
+enables a condition and `0` disables it. The reference command uses `100` for
+LiDAR-only conditioning; use a fixed tuple from `000` to `111` when comparing
+experiments.
+
 This is the completion evaluator: it compares each generated frame with its
 pose-cropped dense map reference and reports per-frame aggregated Chamfer,
 completion IoU, precision/recall/F1, and 3D/BEV JSD. DCD is not part of this
