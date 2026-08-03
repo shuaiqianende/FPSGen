@@ -1,0 +1,25 @@
+experiment:
+    id: gen_stg1_teacher_bev
+
+# Stage 2: train the frozen-teacher source model for PointFlow supervision.
+data:
+    data_dir: ''  # Set TRAIN_DATABASE to the dataset root.
+    resolution: 0.05
+    dataloader: 'KITTI'
+    split: 'train'
+    train: [ '00', '01', '02', '03', '04', '05', '06', '07', '09', '10' ]
+    num_points: 180000
+    max_range: 50.
+    dataset_norm: False
+    std_axis_norm: False
+
+train:
+    n_gpus: 1
+    num_workers: 4
+    max_epoch: 5
+    lr: 0.001
+    batch_size: 2
+
+model:
+    # Shared feature width of the sparse point encoder and U-Net.
+    out_dim: 96

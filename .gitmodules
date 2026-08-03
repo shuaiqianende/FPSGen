@@ -1,0 +1,3 @@
+[submodule "fpsgen/models/ChamferDistancePytorch"]
+	path = fpsgen/models/ChamferDistancePytorch
+	url = https://github.com/ThibaultGROUEIX/ChamferDistancePytorch.git
