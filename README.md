@@ -1,4 +1,4 @@
-# FPSGen
+# FPSGen: **F**lexible **P**oint Cloud **S**cene **Gen**eration with BEV-Supported Transport Flows
 
 <p align="center">
   <img src="assets/FPSGen_pipeline.png" width="100%" alt="FPSGen pipeline">
