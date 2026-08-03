@@ -76,22 +76,7 @@ Follow [`docs/INSTALL.md`](docs/INSTALL.md) to install PyTorch, MinkowskiEngine,
 
 ### Chamfer Distance
 
-FPSGen uses the third-party CUDA implementation from [ChamferDistancePytorch](https://github.com/ThibaultGROUEIX/ChamferDistancePytorch) for teacher training and point-cloud evaluation.
-
-Clone FPSGen together with its Git submodules:
-
-```bash
-git clone --recursive <FPSGen-repository-url>
-cd FPSGen
-```
-
-For an existing checkout:
-
-```bash
-git submodule update --init --recursive
-```
-
-Build the Chamfer distance extension:
+Build the required Chamfer distance extension:
 
 ```bash
 pip install -e fpsgen/models/ChamferDistancePytorch/chamfer3D
@@ -127,16 +112,19 @@ Set the dataset root:
 export TRAIN_DATABASE=/path/to/KITTI_Odometry
 ```
 
-Prepare the sequence map and fixed-cardinality training arrays:
+Run the data-preparation scripts:
 
 ```bash
-python scripts/aggregate_semantickitti_map.py
-python scripts/prepare_semantickitti.py
+python scripts/aggregate_semantickitti_map.py \
+  --data-root /path/to/KITTI_Odometry \
+  --sequences 00
+
+python scripts/prepare_semantickitti.py \
+  --data-root /path/to/KITTI_Odometry \
+  --sequences 00 --split train
 ```
 
-The first script generates `map_clean.npy`; the second writes the `input_/*.npy` and `gt_/*.npy` arrays used by training and evaluation.
-
-See [`docs/DATASET.md`](docs/DATASET.md) for the expected directory structure and preprocessing arguments.
+See [`docs/DATASET.md`](docs/DATASET.md) for the full preprocessing workflow.
 
 ## 🚂 Training
 
@@ -204,9 +192,9 @@ CUDA_VISIBLE_DEVICES=0 python scripts/smoke_inference.py \
 
 ## 📊 Evaluation
 
-### Pose-Cropped Completion
+### Completion Evaluation
 
-Evaluate SemanticKITTI sequence 08 using raw `velodyne` scans and a pose-cropped `map_clean.npy` reference:
+Run the completion evaluation script:
 
 ```bash
 export FPSGEN_OUTPUT_DIR=outputs/seq08_completion
@@ -229,23 +217,21 @@ python -m fpsgen.utils.eval_path_multirange \
 
 ### Generation Evaluation
 
-Generation evaluation uses the prepared fixed-cardinality arrays:
+Run the generation evaluation script:
 
-```text
-input_/*.npy
-gt_/*.npy
+```bash
+export FPSGEN_BEV_CHECKPOINT=/path/to/bev.ckpt
+
+PYTHONPATH="$PWD/fpsgen/models/ChamferDistancePytorch:$PYTHONPATH" \
+python -m fpsgen.utils.eval_generation \
+  --diff /path/to/student.ckpt \
+  --path /path/to/KITTI_Odometry \
+  --dataset SemanticKITTI \
+  --sequences 08
 ```
 
-The evaluation entry points are:
-
-```text
-fpsgen.utils.eval_generation
-fpsgen.utils.eval_path_multirange
-```
-
-The current evaluation pipeline supports SemanticKITTI and KITTI-360.
-
-See [`docs/EVALUATION.md`](docs/EVALUATION.md) for metrics, input formats, and complete command-line arguments.
+See [`docs/EVALUATION.md`](docs/EVALUATION.md) for supported datasets, metrics,
+and command-line arguments.
 
 ## 🎛 Eight-Condition Generation
 
