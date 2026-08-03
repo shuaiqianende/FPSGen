@@ -1,4 +1,7 @@
-# FPSGen: **F**lexible **P**oint Cloud **S**cene **Gen**eration with BEV-Supported Transport Flows
+<h1 align="center">
+  FPSGen: Flexible Point Cloud Scene Generation with BEV-Supported Transport Flows
+</h1>
+
 
 <p align="center">
   <img src="assets/FPSGen_pipeline.png" width="100%" alt="FPSGen pipeline">
@@ -28,24 +31,12 @@
   <a href="docs/REPRODUCIBILITY.md"><strong>🔁 Reproducibility</strong></a>
 </p>
 
-<p align="center">
-  Official implementation of<br>
-  <strong>FPSGen: Flexible Point Cloud Scene Generation with BEV-Supported Transport Flows</strong>
-</p>
+ 
+## ✨ Overview
 
-FPSGen is a flexible point-cloud scene generation framework that supports different combinations of LiDAR, vehicle, and road conditions through BEV-supported transport flows.
+FPSGen is a flexible framework for outdoor point-cloud scene generation that constructs point sources independently of partial LiDAR scans. Given the active LiDAR, vehicle, and road cues, it first predicts a BEV prior containing density, height, and occupancy information, from which a BEV-supported point source is sampled. A teacher–student approximate optimal transport scheme then learns a straighter point-flow trajectory, providing a unified framework for both unconditional and flexible cue-conditioned scene generation.
 
-The repository includes the complete three-stage training pipeline, unified inference, evaluation utilities, dataset loaders, configuration templates, and pretrained checkpoint links.
-
-Datasets, checkpoints, experiment logs, generated point clouds, and machine-specific paths are not committed to this repository.
-
-## ✨ Highlights
-
-- **Flexible condition generation:** supports all eight LiDAR, vehicle, and road condition tuples.
-- **BEV-supported structural prior:** models density, maximum height, and occupancy before point-level generation.
-- **Three-stage learning pipeline:** consists of BEV Flow, Teacher Transport, and Student Point Flow.
-- **Approximate-OT transport:** learns a direct point-flow trajectory between source and clean endpoint distributions.
-- **Reproducible implementation:** provides full-training configurations, smoke tests, evaluation scripts, and pretrained checkpoints.
+This repository provides the official implementation, including the complete three-stage training pipeline, unified inference, evaluation tools, dataset loaders, configuration templates, and pretrained checkpoints.
 
 ## 🧠 Method Overview
 
