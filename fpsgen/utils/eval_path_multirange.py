@@ -130,13 +130,10 @@ def summarise_metrics(metrics, jsd_3d, jsd_bev):
 @click.option("--interval-frames", default=1, show_default=True)
 @click.option("--interval-m", default=20.0, show_default=True)
 @click.option("--max-frames", default=0, show_default=True)
-@click.option("--save-pcd/--no-save-pcd", default=False)
-@click.option("--save-ply/--no-save-ply", default=False,
-              help="also save each prediction as a binary PLY point cloud")
-@click.option("--save-gt-ply/--no-save-gt-ply", default=False,
-              help="save the pose-cropped trajectory reference as a binary PLY")
+@click.option("--save-ply", is_flag=True,
+              help="save each prediction and matching reference as binary PLY files")
 def main(path, dataset, sequences, point_ckpt, bev_ckpt, refine, img_steps, point_steps, cond_weight, cond_mode, max_range,
-         select_mode, interval_frames, interval_m, max_frames, save_pcd, save_ply, save_gt_ply):
+         select_mode, interval_frames, interval_m, max_frames, save_ply):
     import open3d as o3d
     from fpsgen.utils.eval_generation import (
         complete_fpsgen,
@@ -154,7 +151,7 @@ def main(path, dataset, sequences, point_ckpt, bev_ckpt, refine, img_steps, poin
     metrics = build_metrics(max_range)
     jsd_3d, jsd_bev = [], []
     output_dir = os.environ.get("FPSGEN_OUTPUT_DIR", "outputs")
-    if save_pcd or save_ply or save_gt_ply:
+    if save_ply:
         os.makedirs(output_dir, exist_ok=True)
 
     for record in tqdm(records, desc="FPSGen trajectory evaluation"):
@@ -189,10 +186,6 @@ def main(path, dataset, sequences, point_ckpt, bev_ckpt, refine, img_steps, poin
         metrics["chamfer"].update(ground_truth_cloud, prediction_cloud)
         metrics["precision_recall"].update(ground_truth_cloud, prediction_cloud)
         metrics["emd"].update(ground_truth_cloud, prediction_cloud)
-        if save_pcd:
-            cloud = o3d.geometry.PointCloud()
-            cloud.points = o3d.utility.Vector3dVector(prediction)
-            o3d.io.write_point_cloud(os.path.join(output_dir, f"{dataset}_{record.frame_id:06d}_trajectory.pcd"), cloud)
         if save_ply:
             cloud = o3d.geometry.PointCloud()
             cloud.points = o3d.utility.Vector3dVector(prediction)
@@ -201,7 +194,6 @@ def main(path, dataset, sequences, point_ckpt, bev_ckpt, refine, img_steps, poin
                 cloud,
                 write_ascii=False,
             )
-        if save_gt_ply:
             cloud = o3d.geometry.PointCloud()
             cloud.points = o3d.utility.Vector3dVector(ground_truth)
             suffix = "map_crop_gt" if dataset == "SemanticKITTI" else "gt"
