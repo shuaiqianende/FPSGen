@@ -9,9 +9,9 @@ import scipy.integrate
 from typing import Tuple
 from torch import Tensor
 from tqdm import tqdm
-from chamfer3D.dist_chamfer_3D import chamfer_3DDist
+from fpsgen.ops.chamfer import Chamfer3DDist
 
-chamfer_dist = chamfer_3DDist()
+chamfer_dist = Chamfer3DDist()
 
 
 def calc_cd(output, gt, calc_f1=False, return_raw=False, normalize=False, separate=False):
