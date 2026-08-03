@@ -215,6 +215,12 @@ python -m fpsgen.utils.eval_path_multirange \
   --save-ply
 ```
 
+`--cond-mode` is a three-bit condition tuple in `[LiDAR, vehicle, road]`
+order: `1` enables the corresponding condition and `0` disables it. The
+recommended `100` setting evaluates LiDAR-only conditioning. Use any tuple
+from `000` to `111` for a different condition setting, and keep it fixed when
+comparing results.
+
 ### Generation Evaluation
 
 Run the generation evaluation script:
@@ -227,7 +233,8 @@ python -m fpsgen.utils.eval_generation \
   --diff /path/to/student.ckpt \
   --path /path/to/KITTI_Odometry \
   --dataset SemanticKITTI \
-  --sequences 08
+  --sequences 08 \
+  --cond-mode 100
 ```
 
 See [`docs/EVALUATION.md`](docs/EVALUATION.md) for supported datasets, metrics,

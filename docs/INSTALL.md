@@ -1,29 +1,27 @@
 # Installation
 
-This project has CUDA extensions. Use one consistent Python, PyTorch, CUDA
-toolkit, and C++ compiler from creation through training; rebuilding is needed
-after changing any of them.
+FPSGen was validated with Python 3.9, PyTorch 1.13.0, CUDA 11.7, PyTorch
+Lightning 1.8.1, and MinkowskiEngine 0.5.4. Build every CUDA extension with
+the same Python, PyTorch, CUDA toolkit, and C++ compiler.
 
-The validated compatibility target is Python 3.9, PyTorch 1.13.0,
-`pytorch-cuda=11.7`, PyTorch Lightning 1.8.1, and MinkowskiEngine 0.5.4.
-An NVIDIA driver new enough for CUDA 11.7 and a GPU with compute capability
-supported by that PyTorch build are required.
+## Environment
 
 ```bash
 conda env create -f environment.yml
 conda activate fpsgen
 ```
 
-Install MinkowskiEngine after PyTorch is available. It is compiled locally and
-must see the same CUDA toolkit used by PyTorch:
+Install MinkowskiEngine after PyTorch is available:
 
 ```bash
-export CUDA_HOME=/usr/local/cuda-11.7   # adapt only if your toolkit differs
+export CUDA_HOME=/usr/local/cuda-11.7
 export MAX_JOBS=8
 pip install --no-deps MinkowskiEngine==0.5.4
 ```
 
-Then install FPSGen and its two local CUDA extensions:
+## CUDA extensions
+
+Install FPSGen and the bundled CUDA extensions from the repository root:
 
 ```bash
 pip install -r requirements.txt
@@ -32,25 +30,24 @@ pip install -e fpsgen/models/ChamferDistancePytorch/chamfer3D
 pip install -e fpsgen/utils/metrics_gen/pytorch_structural_losses
 ```
 
-The bundled Chamfer implementation originates from
-`ThibaultGROUEIX/ChamferDistancePytorch`; its MIT license is retained at
+Chamfer distance is required by Teacher training and point-cloud evaluation.
+The structural-loss extension is required by `fpsgen.utils.eval_generation`.
+The Chamfer implementation is distributed under its upstream MIT license at
 `third_party/licenses/ChamferDistancePytorch-MIT.txt`.
 
-Finally, select a physical GPU and run both checks. CUDA remaps the selected
-physical device to logical `cuda:0` inside Python.
+## Verification
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python scripts/check_environment.py
 CUDA_VISIBLE_DEVICES=0 python scripts/verify_cuda_ops.py
 ```
 
-The repository also provides the equivalent wrapper:
+The equivalent smoke wrapper is:
 
 ```bash
 GPU_ID=0 scripts/run_smoke_test.sh
 ```
 
-If either extension fails to compile, record `python --version`,
-`nvcc --version`, `python -c 'import torch; print(torch.__version__,
-torch.version.cuda)'`, and the full compiler error. Mixing a CUDA 12 PyTorch
-wheel with a CUDA 11.7 extension build is unsupported.
+If an extension fails to compile, verify `python --version`, `nvcc --version`,
+and `python -c 'import torch; print(torch.__version__, torch.version.cuda)'`.
+Do not mix a CUDA 12 PyTorch wheel with CUDA 11.7 extension builds.
