@@ -10,7 +10,6 @@ from datetime import datetime
 
 import click
 import numpy as np
-import open3d as o3d
 import torch
 from natsort import natsorted
 from tqdm import tqdm
@@ -153,6 +152,8 @@ def read_points(path: str) -> np.ndarray:
     if suffix == ".npy":
         return np.asarray(np.load(path), dtype=np.float32)[:, :3]
     if suffix in {".pcd", ".ply"}:
+        import open3d as o3d
+
         return np.asarray(o3d.io.read_point_cloud(path).points, dtype=np.float32)
     raise ValueError(f"Unsupported point-cloud file: {path}")
 
@@ -204,6 +205,8 @@ def complete_fpsgen(
     use_prepared_input: bool = True,
 ):
     """Run one FPSGen completion and return input, ground truth, and prediction."""
+    import open3d as o3d
+
     input_loader = load_fpsgen_input if use_prepared_input else load_raw_fpsgen_input
     input_points = input_loader(record, dataset, max_range)
     ground_truth_points = read_points(record.gt_path)
@@ -274,6 +277,8 @@ def _json_value(value):
 @click.option("--save-pcd/--no-save-pcd", default=False)
 def main(path, dataset, sequences, diff, refine, img_steps, point_steps, cond_weight, cond_mode, max_range,
          select_mode, interval_frames, interval_m, max_frames, num_points, batch_size, save_pcd):
+    import open3d as o3d
+
     records = select_records(load_dataset_records(dataset, path, sequences), select_mode, interval_frames, interval_m)
     if max_frames:
         records = records[:max_frames]

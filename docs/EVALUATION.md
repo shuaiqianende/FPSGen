@@ -14,13 +14,13 @@ python -m fpsgen.utils.eval_path_multirange \
   --dataset SemanticKITTI --sequences 08 \
   --img-steps 10 --point-steps 1 --cond-weight 2 --cond-mode 100 \
   --select-mode frame --interval-frames 100 \
-  --no-dcd --no-save-pcd --save-ply
+  --no-save-pcd --save-ply
 ```
 
 This is the completion evaluator: it compares each generated frame with its
 pose-cropped dense map reference and reports per-frame aggregated Chamfer,
-completion IoU, precision/recall/F1, and 3D/BEV JSD. DCD is available as an
-explicit ablation. For SemanticKITTI test evaluation, use `--sequences 08`;
+completion IoU, precision/recall/F1, and 3D/BEV JSD. DCD is not part of this
+completion entry point. For SemanticKITTI test evaluation, use `--sequences 08`;
 for a quick sparse trajectory use `--select-mode frame --interval-frames 100`.
 For SemanticKITTI, the reference is reconstructed from `map_clean.npy` using
 the frame pose, a 50 m radial limit, the vertical limits, and the original
@@ -30,9 +30,9 @@ the raw `velodyne/*.bin` scan before FPSGen's internal point reduction;
 generation evaluation uses the prepared `input/*.npy` condition.
 The reference inference uses CFG guidance scale `2`; pass another
 `--cond-weight` only for an explicit ablation.
-The completion entry point leaves EMD disabled (`dist_bins=[]`) and DCD disabled
-by default for the dense map-crop protocol; pass `--dcd` only for an explicit
-DCD run. Enable an EMD distance range separately if needed.
+The completion entry point leaves EMD disabled (`dist_bins=[]`) for the dense
+map-crop protocol. Enable an EMD distance range separately only if you extend
+the evaluator for that experiment.
 Use `--save-ply` to write the generated point cloud for every selected frame
 under `FPSGEN_OUTPUT_DIR`; add `--save-gt-ply` when the dense pose-cropped
 trajectory reference is also needed for visualization. The public validation

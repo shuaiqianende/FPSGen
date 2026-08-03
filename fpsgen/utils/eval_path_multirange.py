@@ -8,17 +8,10 @@ from datetime import datetime
 
 import click
 import numpy as np
-import open3d as o3d
 from tqdm import tqdm
 
-from fpsgen.utils.eval_generation import (
-    SUPPORTED_DATASETS,
-    _json_value,
-    complete_fpsgen,
-    load_dataset_records,
-    load_fpsgen_completion_class,
-    select_records,
-)
+
+SUPPORTED_DATASETS = ("SemanticKITTI", "KITTI360")
 
 
 _SEMANTICKITTI_MAP_CACHE = {}
@@ -35,6 +28,8 @@ def load_map_cropped_ground_truth(record, input_points: np.ndarray, max_range: f
     observation.  This produces the dense pose-cropped reference used by the
     multi-range completion metrics.
     """
+    import open3d as o3d
+
     sequence_dir = os.path.dirname(os.path.dirname(record.scan_path))
     map_path = os.path.join(sequence_dir, "map_clean.npy")
     if not os.path.exists(map_path):
@@ -73,14 +68,13 @@ def load_map_cropped_ground_truth(record, input_points: np.ndarray, max_range: f
     return local[np.asarray(included, dtype=bool)]
 
 
-def build_metrics(max_range: float, include_dcd: bool = False):
+def build_metrics(max_range: float):
     """Create trajectory metrics over the requested radial evaluation range."""
     # Keep metric imports lazy so ``--help`` and argument validation work before
     # the optional Chamfer CUDA extension has been installed.
     from fpsgen.utils.metrics import (
         ChamferDistance_MultiRange,
         CompletionIoU_MultiRange_Morphology,
-        DCD_MultiRange,
         EMD_MultiRange,
         PrecisionRecall_MultiRange,
     )
@@ -94,16 +88,14 @@ def build_metrics(max_range: float, include_dcd: bool = False):
         "precision_recall": PrecisionRecall_MultiRange(thresholds=[0.1, 0.2, 0.5], dist_bins=distance_bins),
         "emd": EMD_MultiRange(voxel_size=0.5, dist_bins=[]),
     }
-    if include_dcd:
-        metrics["dcd"] = DCD_MultiRange(dist_bins=distance_bins)
     return metrics
 
 
 def summarise_metrics(metrics, jsd_3d, jsd_bev):
     """Aggregate per-frame trajectory metrics into one serializable report."""
+    from fpsgen.utils.eval_generation import _json_value
+
     chamfer, chamfer_mean = metrics["chamfer"].compute()
-    dcd_metric = metrics.get("dcd")
-    dcd, dcd_mean = dcd_metric.compute() if dcd_metric is not None else (None, None)
     emd, emd_mean = metrics["emd"].compute()
     precision_recall = metrics["precision_recall"]
     return _json_value({
@@ -112,8 +104,6 @@ def summarise_metrics(metrics, jsd_3d, jsd_bev):
         "completion_iou": metrics["iou"].compute(),
         "chamfer": chamfer,
         "chamfer_mean": chamfer_mean,
-        "dcd": dcd,
-        "dcd_mean": dcd_mean,
         "precision_recall": precision_recall.compute_at_all_thresholds(),
         "precision_recall_auc": precision_recall.compute_auc(),
         "emd": emd,
@@ -131,8 +121,6 @@ def summarise_metrics(metrics, jsd_3d, jsd_bev):
 @click.option("--point-steps", default=16, show_default=True)
 @click.option("--cond-weight", default=2.0, show_default=True,
               help="classifier-free guidance scale; 2 matches the reference inference")
-@click.option("--dcd/--no-dcd", default=False, show_default=True,
-              help="compute density-aware Chamfer; disabled by default for map-crop completion")
 @click.option("--cond-mode", default="100", show_default=True)
 @click.option("--max-range", default=50.0, show_default=True)
 @click.option("--select-mode", type=click.Choice(["frame", "distance"]), default="frame")
@@ -144,15 +132,23 @@ def summarise_metrics(metrics, jsd_3d, jsd_bev):
               help="also save each prediction as a binary PLY point cloud")
 @click.option("--save-gt-ply/--no-save-gt-ply", default=False,
               help="save the pose-cropped trajectory reference as a binary PLY")
-def main(path, dataset, sequences, diff, refine, img_steps, point_steps, cond_weight, dcd, cond_mode, max_range,
+def main(path, dataset, sequences, diff, refine, img_steps, point_steps, cond_weight, cond_mode, max_range,
          select_mode, interval_frames, interval_m, max_frames, save_pcd, save_ply, save_gt_ply):
+    import open3d as o3d
+    from fpsgen.utils.eval_generation import (
+        complete_fpsgen,
+        load_dataset_records,
+        load_fpsgen_completion_class,
+        select_records,
+    )
+
     from fpsgen.utils.histogram_metrics import compute_hist_metrics_multirange
 
     records = select_records(load_dataset_records(dataset, path, sequences), select_mode, interval_frames, interval_m)
     if max_frames:
         records = records[:max_frames]
     model = load_fpsgen_completion_class()(diff, refine, point_steps, cond_weight)
-    metrics = build_metrics(max_range, include_dcd=dcd)
+    metrics = build_metrics(max_range)
     jsd_3d, jsd_bev = [], []
     output_dir = os.environ.get("FPSGEN_OUTPUT_DIR", "outputs")
     if save_pcd or save_ply or save_gt_ply:
@@ -188,8 +184,6 @@ def main(path, dataset, sequences, diff, refine, img_steps, point_steps, cond_we
         jsd_bev.append(compute_hist_metrics_multirange(ground_truth, prediction, bev=True, dist_bins=[(0, max_range)]))
         metrics["iou"].update(ground_truth_cloud, prediction_cloud)
         metrics["chamfer"].update(ground_truth_cloud, prediction_cloud)
-        if dcd:
-            metrics["dcd"].update(ground_truth_cloud, prediction_cloud)
         metrics["precision_recall"].update(ground_truth_cloud, prediction_cloud)
         metrics["emd"].update(ground_truth_cloud, prediction_cloud)
         if save_pcd:
@@ -222,7 +216,6 @@ def main(path, dataset, sequences, diff, refine, img_steps, point_steps, cond_we
         "frame_count": len(records),
         "gt_source": "map_clean_pose_crop" if dataset == "SemanticKITTI" else "prepared_record_gt",
         "input_source": "raw_velodyne" if dataset == "SemanticKITTI" else "record_input",
-        "dcd_enabled": bool(dcd),
         "metrics": summarise_metrics(metrics, jsd_3d, jsd_bev),
         "timestamp": datetime.now().isoformat(timespec="seconds"),
     }

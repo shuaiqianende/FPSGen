@@ -1,5 +1,9 @@
 # FPSGen
 
+<p align="center">
+  <img src="assets/FPSGen_pipeline.png" width="100%" alt="FPSGen pipeline">
+</p>
+
 Official implementation of **FPSGen: Flexible Point Cloud Scene Generation
 with BEV-Supported Transport Flows** ([paper](https://arxiv.org/abs/2607.26645)).
 FPSGen supports flexible LiDAR/vehicle/road condition combinations and includes
@@ -125,7 +129,7 @@ python -m fpsgen.utils.eval_path_multirange \
   --diff /path/to/student.ckpt \
   --path /path/to/KITTI_Odometry --dataset SemanticKITTI --sequences 08 \
   --img-steps 10 --point-steps 1 --cond-weight 2 --cond-mode 100 \
-  --select-mode frame --interval-frames 100 --no-dcd \
+  --select-mode frame --interval-frames 100 \
   --no-save-pcd --save-ply
 ```
 
@@ -177,3 +181,13 @@ third_party/licenses/   notices for bundled third-party source
 Checkpoints and generated outputs under `checkpoints/`, `experiments/`, and
 `outputs/` are local artifacts and are intentionally not part of a source
 release.
+
+## Acknowledgements and citation
+
+We thank the authors of **LiDiff**, **LiDPM**, **ScoreLiDAR**,
+**Distillation-DPO**, and **LiFlow** for their open research contributions that
+informed this project.
+
+If you find this project useful in your research or work, please consider citing our paper:
+
+https://arxiv.org/abs/2607.26645
