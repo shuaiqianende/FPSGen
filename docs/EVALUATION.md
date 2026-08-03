@@ -16,7 +16,7 @@ python -m fpsgen.utils.eval_path_multirange \
   --dataset SemanticKITTI --sequences 08 \
   --img-steps 10 --point-steps 1 --cond-weight 2 --cond-mode 100 \
   --select-mode frame --interval-frames 100 \
-  --no-save-pcd --save-ply
+  --save-ply
 ```
 
 `--cond-mode` is a three-bit tuple in `[LiDAR, vehicle, road]` order. `1`
@@ -25,7 +25,7 @@ Use the same tuple for every run that will be compared.
 
 The completion script reports Chamfer distance, completion IoU,
 precision/recall/F1, and 3D/BEV JSD. `--save-ply` writes predictions under
-`FPSGEN_OUTPUT_DIR`; add `--save-gt-ply` to write the matching reference.
+`FPSGEN_OUTPUT_DIR` together with their matching references.
 
 ## Generation evaluation
 

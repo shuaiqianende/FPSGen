@@ -207,7 +207,6 @@ python -m fpsgen.utils.eval_path_multirange \
   --cond-mode 100 \
   --select-mode frame \
   --interval-frames 100 \
-  --no-save-pcd \
   --save-ply
 ```
 
@@ -303,7 +302,6 @@ outputs/
 | [`docs/METHOD.md`](docs/METHOD.md) | Method notation and code correspondence |
 | [`docs/EVALUATION.md`](docs/EVALUATION.md) | Evaluation protocols and metrics |
 | [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) | From-scratch reproduction workflow |
-| [`docs/PUBLISHING.md`](docs/PUBLISHING.md) | Source-release checklist |
 
 ## 🙏 Acknowledgements
 

@@ -287,9 +287,10 @@ def _json_value(value):
 @click.option("--max-frames", default=0, show_default=True)
 @click.option("--num-points", default=8192, show_default=True)
 @click.option("--batch-size", default=32, show_default=True)
-@click.option("--save-pcd/--no-save-pcd", default=False)
+@click.option("--save-ply", is_flag=True,
+              help="save each generated point cloud as a binary PLY file")
 def main(path, dataset, sequences, point_ckpt, bev_ckpt, refine, img_steps, point_steps, cond_weight, cond_mode, max_range,
-         select_mode, interval_frames, interval_m, max_frames, num_points, batch_size, save_pcd):
+         select_mode, interval_frames, interval_m, max_frames, num_points, batch_size, save_ply):
     import open3d as o3d
 
     records = select_records(load_dataset_records(dataset, path, sequences), select_mode, interval_frames, interval_m)
@@ -298,16 +299,20 @@ def main(path, dataset, sequences, point_ckpt, bev_ckpt, refine, img_steps, poin
     model = load_fpsgen_completion_class()(point_ckpt, bev_ckpt, refine, point_steps, cond_weight)
     predictions, references = [], []
     output_dir = os.environ.get("FPSGEN_OUTPUT_DIR", "outputs")
-    if save_pcd:
+    if save_ply:
         os.makedirs(output_dir, exist_ok=True)
     for index, record in enumerate(tqdm(records, desc="FPSGen evaluation")):
         _, ground_truth, coarse, _ = complete_fpsgen(model, record, dataset, max_range, [img_steps, point_steps], cond_mode)
         predictions.append(coarse)
         references.append(ground_truth)
-        if save_pcd:
+        if save_ply:
             cloud = o3d.geometry.PointCloud()
             cloud.points = o3d.utility.Vector3dVector(coarse)
-            o3d.io.write_point_cloud(os.path.join(output_dir, f"{dataset}_{record.frame_id:06d}_fpsgen.pcd"), cloud)
+            o3d.io.write_point_cloud(
+                os.path.join(output_dir, f"{dataset}_{record.frame_id:06d}_fpsgen.ply"),
+                cloud,
+                write_ascii=False,
+            )
     result = {
         "dataset": dataset, "sequences": sequences, "frame_count": len(records),
         "metrics": evaluate_distribution(predictions, references, num_points, batch_size, max_range),
