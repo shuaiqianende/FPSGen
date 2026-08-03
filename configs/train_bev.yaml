@@ -1,0 +1,22 @@
+experiment:
+    id: gen_img
+
+# Stage 1: train the conditional BEV Flow Matching model.
+data:
+    data_dir: ''  # Set TRAIN_DATABASE to the dataset root.
+    resolution: 0.05
+    dataloader: 'KITTI'
+    split: 'train'
+    train: [ '00', '01', '02', '03', '04', '05', '06', '07', '09', '10' ]
+    num_points: 180000
+    max_range: 50.
+    dataset_norm: False
+    std_axis_norm: False
+
+train:
+    # Resource and optimizer settings for full-sequence training.
+    n_gpus: 2
+    num_workers: 2
+    max_epoch: 500
+    lr: 0.0001
+    batch_size: 8
