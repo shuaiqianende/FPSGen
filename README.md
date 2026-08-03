@@ -20,14 +20,33 @@ paths are excluded by `.gitignore`. A release checklist is provided in
 FPSGen decomposes large-scale point-cloud scene generation into:
 
 1. **Flexible Condition BEV Flow Prior.** A conditional velocity field
-   generates the structural prior \(B=[D,H,M]\), comprising normalized density,
-   maximum height, and occupancy.
+   generates the structural prior
+
+   $$
+   B=[D,H,M],
+   $$
+
+   comprising normalized density, maximum height, and occupancy.
 2. **Teacher Transport Mapping.** A teacher learns a source-indexed clean
-   endpoint \(\mathcal P_1^\dagger\) from an independent BEV-sampled source
-   \(\mathcal P_0\).
+   endpoint
+
+   $$
+   \mathcal{P}_1^\dagger
+   $$
+
+   from an independent BEV-sampled source
+
+   $$
+   \mathcal{P}_0.
+   $$
 3. **Approximate-OT Point Flow.** The student learns the straight transport
-   velocity from \(\mathcal P_0\) to \(\mathcal P_1^\dagger\), conditioned on
-   the generated BEV prior and the active condition tuple.
+   velocity from
+
+   $$
+   \mathcal{P}_0 \quad \text{to} \quad \mathcal{P}_1^\dagger,
+   $$
+
+   conditioned on the generated BEV prior and the active condition tuple.
 
 At inference, BEV Flow and PointFlow are integrated sequentially with
 classifier-free guidance and forward Euler updates. See
@@ -52,10 +71,6 @@ pip install -e fpsgen/models/ChamferDistancePytorch/chamfer3D
 
 - Chamfer distance is required by teacher training and point-cloud evaluation.
   Its local installation exposes `chamfer3D.dist_chamfer_3D.chamfer_3DDist`.
-- PointNet2 is retained as an optional extension interface. The current
-  three-stage FPSGen pipeline does not import it, but an environment that uses
-  PointNet2-based auxiliary operations must provide the `pointnet2_ops` Python
-  package and its compiled CUDA backend.
 - Compile each operator against the same Python, PyTorch, CUDA toolkit, and C++
   compiler used to run FPSGen. Rebuild after changing any of those components.
 
@@ -85,7 +100,13 @@ intentionally contain no machine-specific paths:
 export TRAIN_DATABASE=/path/to/KITTI_Odometry
 ```
 
-See [dataset format](docs/DATASET.md) for the expected per-sequence files.
+To rebuild the map and fixed-cardinality `input_`/`gt_` arrays from raw
+SemanticKITTI data, follow the two-stage procedure in
+[`docs/DATASET.md`](docs/DATASET.md):
+`scripts/aggregate_semantickitti_map.py` first creates `map_clean.npy`, then
+`scripts/prepare_semantickitti.py` crops it by pose and writes the arrays used
+by training and evaluation. See [dataset format](docs/DATASET.md) for the
+expected per-sequence files.
 For a one-step, from-scratch training validation, see
 [the reproducibility guide](docs/REPRODUCIBILITY.md).
 
@@ -168,6 +189,23 @@ CUDA_VISIBLE_DEVICES=0 python scripts/generate_eight_conditions.py \
 
 Use `--output-format pcd` only when a legacy PCD consumer requires it.
 
+## Pretrained checkpoints
+
+The three released checkpoints are hosted separately because of their size.
+Download them from the links below and place them under `checkpoints/` with the
+exact filenames shown here:
+
+| Stage | Filename | Download |
+| --- | --- | --- |
+| BEV Flow (500 epochs) | `bevflow_gen_img_epoch=499.ckpt` | [Google Drive](https://drive.google.com/file/d/1HzV4bU40-WPxYNO1tnRh9FkJws32-r2w/view?usp=drive_link) |
+| Student Point Flow (10 epochs) | `student_gen_stg2_epoch=09.ckpt` | [Google Drive](https://drive.google.com/file/d/1SiB71t2bHnEMUkg6QSuCUrkgeHaPdPY5/view?usp=drive_link) |
+| Teacher transport (5 epochs) | `teacher_gen_stg1_bev_epoch=04.ckpt` | [Google Drive](https://drive.google.com/file/d/1w6MBUeFB1xRRt1-Mano9Wrwt2EQ_--oN/view?usp=drive_link) |
+
+The BEV checkpoint is selected with `FPSGEN_BEV_CHECKPOINT`; pass the Student
+checkpoint to `--diff` in inference/evaluation. The Teacher checkpoint is
+needed when reproducing stage-3 Student training. Checkpoint files are ignored
+by Git and are never committed to this repository.
+
 ## Repository layout
 
 ```text
@@ -190,4 +228,14 @@ informed this project.
 
 If you find this project useful in your research or work, please consider citing our paper:
 
-https://arxiv.org/abs/2607.26645
+```bibtex
+@misc{he2026fpsgenflexiblepointcloud,
+      title={FPSGen: Flexible Point Cloud Scene Generation with BEV-Supported Transport Flows},
+      author={Wenzhe He and Meng Wang and JiaWei Qian and Jinfeng Xu and Ying Liu and Ruihui Li},
+      year={2026},
+      eprint={2607.26645},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2607.26645},
+}
+```

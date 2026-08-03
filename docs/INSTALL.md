@@ -34,9 +34,7 @@ pip install -e fpsgen/utils/metrics_gen/pytorch_structural_losses
 
 The bundled Chamfer implementation originates from
 `ThibaultGROUEIX/ChamferDistancePytorch`; its MIT license is retained at
-`third_party/licenses/ChamferDistancePytorch-MIT.txt`. PointNet2 is not used by
-the three-stage pipeline. If an extension experiment imports `pointnet2_ops`,
-install a PointNet2 implementation separately against this same environment.
+`third_party/licenses/ChamferDistancePytorch-MIT.txt`.
 
 Finally, select a physical GPU and run both checks. CUDA remaps the selected
 physical device to logical `cuda:0` inside Python.

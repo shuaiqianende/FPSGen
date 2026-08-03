@@ -88,7 +88,10 @@ def load_dataset_records(dataset: str, root: str, sequences: str) -> list[FrameR
             # for FPSGen (180k XYZ points per frame).  ``gt_pcd`` is retained
             # as a compatibility fallback for older datasets that do not have
             # the NumPy preparation directory.
-            prepared_gt_dir = os.path.join(sequence_dir, "gt")
+            prepared_gt_dirs = (
+                os.path.join(sequence_dir, "gt"),
+                os.path.join(sequence_dir, "gt_"),
+            )
             legacy_gt_dir = os.path.join(sequence_dir, "gt_pcd")
             scans = [name for name in natsorted(os.listdir(scan_dir)) if name.endswith(".bin")]
             for name in scans:
@@ -99,8 +102,15 @@ def load_dataset_records(dataset: str, root: str, sequences: str) -> list[FrameR
                     # table; skip those frames instead of silently pairing a
                     # scan with the wrong pose by directory order.
                     continue
-                prepared_gt = os.path.join(prepared_gt_dir, f"{stem}.npy")
-                gt_path = prepared_gt if os.path.exists(prepared_gt) else os.path.join(legacy_gt_dir, f"{stem}.pcd")
+                prepared_candidates = [
+                    os.path.join(directory, f"{stem}.npy")
+                    for directory in prepared_gt_dirs
+                ]
+                prepared_gt = next(
+                    (candidate for candidate in prepared_candidates if os.path.exists(candidate)),
+                    None,
+                )
+                gt_path = prepared_gt if prepared_gt else os.path.join(legacy_gt_dir, f"{stem}.pcd")
                 records.append(FrameRecord(
                     os.path.join(scan_dir, name), gt_path, poses[frame_id], frame_id
                 ))

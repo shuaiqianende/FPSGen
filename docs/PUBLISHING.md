@@ -44,11 +44,11 @@ The last command should return no host-specific paths in public files.
 1. Add a top-level `LICENSE` after selecting the license and copyright holder.
    The bundled Chamfer implementation has its own MIT notice; that notice does
    not choose a license for FPSGen itself.
-2. Add the final paper authors and repository URL to the citation metadata or
-   README once those details are confirmed.
-3. Decide whether pretrained checkpoints will be released separately. If so,
-   publish their hashes, provenance, license, and a download URL rather than
-   committing binary files to this repository.
+2. Keep the final paper authors, repository URL, and BibTeX entry synchronized
+   with the README citation section.
+3. Pretrained checkpoints are released separately through the download links in
+   README; do not commit binary files to this repository. Record hashes and
+   provenance when publishing a new checkpoint revision.
 4. Re-run the smoke checks in a clean environment and record the exact package,
    CUDA, compiler, and checkpoint versions.
 

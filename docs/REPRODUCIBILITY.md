@@ -30,4 +30,6 @@ use the corresponding `configs/train_*.yaml` after setting
 To run inference after stage 3, set `FPSGEN_BEV_CHECKPOINT` to a compatible
 stage-1 BEV checkpoint and pass the new student checkpoint to
 `fpsgen.inference`; the refinement checkpoint is optional. This repository
-intentionally does not distribute data or pretrained weights.
+intentionally does not bundle dataset files or binary checkpoints. The README
+provides download links for the released BEV, Teacher, and Student checkpoints;
+training from scratch remains fully supported.
