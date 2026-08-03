@@ -199,9 +199,7 @@ release.
 
 ## Acknowledgements and citation
 
-We thank the authors of **LiDiff**, **LiDPM**, **ScoreLiDAR**,
-**Distillation-DPO**, and **LiFlow** for their open research contributions that
-informed this project.
+We gratefully acknowledge the authors of [**LiDiff**](https://github.com/PRBonn/LiDiff), [**LiDPM**](https://github.com/astra-vision/LiDPM), [**ScoreLiDAR**](https://github.com/happyw1nd/ScoreLiDAR), [**Distillation-DPO**](https://github.com/happyw1nd/DistillationDPO), and [**LiFlow**](https://github.com/matteandre/LiFlow) for their valuable open-source research contributions, which inspired and informed the development of this project.
 
 If you find this project useful in your research or work, please consider citing our paper:
 
