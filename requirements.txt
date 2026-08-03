@@ -1,0 +1,19 @@
+# Install PyTorch, torchvision, CUDA Toolkit, and MinkowskiEngine first; see
+# docs/INSTALL.md for the tested environment and build order.
+click==8.1.7
+diffusers==0.18.0
+geomloss==0.2.6
+hdbscan==0.8.33
+matplotlib==3.7.5
+natsort==8.4.0
+numpy==1.23.5
+open3d==0.19.0
+Pillow==9.5.0
+pykeops==2.3
+pyquaternion==0.9.9
+PyYAML==6.0.1
+pytorch-lightning==1.8.1
+scikit-learn==1.3.2
+scipy==1.10.1
+torchist==0.2.3
+tqdm==4.66.1
