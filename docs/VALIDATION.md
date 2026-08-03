@@ -50,8 +50,9 @@ Lightning 1.8.1.
 - The final copied-checkpoint evaluation used physical GPU 1, the LiDiff
   BEVFlow epoch-499 checkpoint, Student epoch 09, condition `100`, every
   100th frame (41 frames), and BEV/PointFlow steps `10/1`. It used raw
-  `velodyne` input and the pose-cropped `map_clean.npy` reference, with DCD and
-  EMD disabled. The resulting Chamfer was `0.330378 m` (std `0.112203 m`),
+  `velodyne` input and the pose-cropped `map_clean.npy` reference, with EMD
+  disabled. The completion evaluator does not include DCD. The resulting
+  Chamfer was `0.330378 m` (std `0.112203 m`),
   completion IoU was `0.430485/0.308478/0.174546` at voxel sizes
   `0.5/0.2/0.1 m`, 3D JSD was `0.499620`, and BEV JSD was `0.327917`.
   The run produced 41 PLY files and no PCD files.
