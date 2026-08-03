@@ -115,7 +115,10 @@ def summarise_metrics(metrics, jsd_3d, jsd_bev):
 @click.option("--path", required=True, type=click.Path(exists=True, file_okay=False), help="dataset root")
 @click.option("--dataset", type=click.Choice(SUPPORTED_DATASETS), default="SemanticKITTI")
 @click.option("--sequences", default="08", help="comma-separated sequence identifiers")
-@click.option("--diff", required=True, type=click.Path(exists=True), help="FPSGen student checkpoint")
+@click.option("--point-ckpt", required=True, type=click.Path(exists=True),
+              help="Stage-3 Point Flow checkpoint")
+@click.option("--bev-ckpt", required=True, type=click.Path(exists=True),
+              help="Stage-1 BEV Flow checkpoint")
 @click.option("--refine", default="", type=click.Path(), help="optional refinement checkpoint")
 @click.option("--img-steps", default=10, show_default=True)
 @click.option("--point-steps", default=16, show_default=True)
@@ -132,7 +135,7 @@ def summarise_metrics(metrics, jsd_3d, jsd_bev):
               help="also save each prediction as a binary PLY point cloud")
 @click.option("--save-gt-ply/--no-save-gt-ply", default=False,
               help="save the pose-cropped trajectory reference as a binary PLY")
-def main(path, dataset, sequences, diff, refine, img_steps, point_steps, cond_weight, cond_mode, max_range,
+def main(path, dataset, sequences, point_ckpt, bev_ckpt, refine, img_steps, point_steps, cond_weight, cond_mode, max_range,
          select_mode, interval_frames, interval_m, max_frames, save_pcd, save_ply, save_gt_ply):
     import open3d as o3d
     from fpsgen.utils.eval_generation import (
@@ -147,7 +150,7 @@ def main(path, dataset, sequences, diff, refine, img_steps, point_steps, cond_we
     records = select_records(load_dataset_records(dataset, path, sequences), select_mode, interval_frames, interval_m)
     if max_frames:
         records = records[:max_frames]
-    model = load_fpsgen_completion_class()(diff, refine, point_steps, cond_weight)
+    model = load_fpsgen_completion_class()(point_ckpt, bev_ckpt, refine, point_steps, cond_weight)
     metrics = build_metrics(max_range)
     jsd_3d, jsd_bev = [], []
     output_dir = os.environ.get("FPSGEN_OUTPUT_DIR", "outputs")

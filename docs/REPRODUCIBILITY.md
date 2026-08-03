@@ -33,5 +33,6 @@ full run, use the matching `configs/train_*.yaml` files in the same order.
 ## Test and inference
 
 Pass `--weights /path/to/checkpoint.ckpt --test` to run a one-batch test path.
-For inference, set `FPSGEN_BEV_CHECKPOINT` and pass the Student checkpoint to
-`fpsgen.inference`. Released checkpoint links are listed in the README.
+For inference, pass the Stage-3 Point Flow checkpoint with `--point-ckpt` and
+the Stage-1 BEV Flow checkpoint with `--bev-ckpt`. Released checkpoint links
+are listed in the README.
