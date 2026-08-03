@@ -12,7 +12,7 @@ REQUIRED_MODULES = (
     "pytorch_lightning",
     "open3d",
     "pykeops",
-    "chamfer3D.dist_chamfer_3D",
+    "chamfer_3D",
 )
 
 

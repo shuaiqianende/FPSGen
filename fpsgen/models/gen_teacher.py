@@ -12,11 +12,11 @@ import MinkowskiEngine as ME
 from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning import LightningDataModule
 from fpsgen.utils.collations_gen import bev_resample, feats_to_coord
-from chamfer3D.dist_chamfer_3D import chamfer_3DDist
+from fpsgen.ops.chamfer import Chamfer3DDist
 from torch import Tensor
 from typing import Tuple
 
-chamfer_dist = chamfer_3DDist()
+chamfer_dist = Chamfer3DDist()
 
 @torch.no_grad()
 def keops_knn(q_points: Tensor, s_points: Tensor, k: int) -> Tuple[Tensor, Tensor]:

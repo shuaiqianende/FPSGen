@@ -8,7 +8,6 @@ sample generation.
 ```bash
 export FPSGEN_OUTPUT_DIR=outputs/seq08_completion
 
-PYTHONPATH="$PWD/fpsgen/models/ChamferDistancePytorch:$PYTHONPATH" \
 python -m fpsgen.utils.eval_path_multirange \
   --point-ckpt /path/to/student.ckpt \
   --bev-ckpt /path/to/bev.ckpt \
@@ -30,7 +29,6 @@ precision/recall/F1, and 3D/BEV JSD. `--save-ply` writes predictions under
 ## Generation evaluation
 
 ```bash
-PYTHONPATH="$PWD/fpsgen/models/ChamferDistancePytorch:$PYTHONPATH" \
 python -m fpsgen.utils.eval_generation \
   --point-ckpt /path/to/student.ckpt \
   --bev-ckpt /path/to/bev.ckpt \

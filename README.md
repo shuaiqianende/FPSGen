@@ -76,7 +76,22 @@ Follow [`docs/INSTALL.md`](docs/INSTALL.md) to install PyTorch, MinkowskiEngine,
 
 ### Chamfer Distance
 
-Build the required Chamfer distance extension:
+FPSGen uses [ChamferDistancePytorch](https://github.com/ThibaultGROUEIX/ChamferDistancePytorch) as a Git submodule for Teacher training and point-cloud evaluation.
+
+Clone FPSGen together with its pinned third-party dependency:
+
+```bash
+git clone --recurse-submodules https://github.com/shuaiqianende/FPSGen.git
+cd FPSGen
+```
+
+For an existing clone, run:
+
+```bash
+git submodule update --init --recursive
+```
+
+Then build the required Chamfer distance extension:
 
 ```bash
 pip install -e fpsgen/models/ChamferDistancePytorch/chamfer3D
@@ -194,7 +209,6 @@ Run the completion evaluation script:
 ```bash
 export FPSGEN_OUTPUT_DIR=outputs/seq08_completion
 
-PYTHONPATH="$PWD/fpsgen/models/ChamferDistancePytorch:$PYTHONPATH" \
 python -m fpsgen.utils.eval_path_multirange \
   --point-ckpt /path/to/student.ckpt \
   --bev-ckpt /path/to/bev.ckpt \
@@ -221,7 +235,6 @@ comparing results.
 Run the generation evaluation script:
 
 ```bash
-PYTHONPATH="$PWD/fpsgen/models/ChamferDistancePytorch:$PYTHONPATH" \
 python -m fpsgen.utils.eval_generation \
   --point-ckpt /path/to/student.ckpt \
   --bev-ckpt /path/to/bev.ckpt \
@@ -279,10 +292,10 @@ Use the checkpoints as follows:
 
 ```text
 fpsgen/                 Models, datasets, training, inference, and metrics
+fpsgen/models/ChamferDistancePytorch/  Third-party Git submodule
 configs/                Full-training and smoke-test configurations
 scripts/                Preprocessing, environment checks, and utilities
 docs/                   Installation, method, dataset, and evaluation guides
-third_party/licenses/   Third-party licenses and notices
 ```
 
 Local artifacts are written to:
@@ -307,7 +320,7 @@ outputs/
 
 We gratefully acknowledge the authors of [**LiDiff**](https://github.com/PRBonn/LiDiff), [**LiDPM**](https://github.com/astra-vision/LiDPM), [**ScoreLiDAR**](https://github.com/happyw1nd/ScoreLiDAR), [**Distillation-DPO**](https://github.com/happyw1nd/DistillationDPO), and [**LiFlow**](https://github.com/matteandre/LiFlow) for their open research contributions, which inspired and informed this project.
 
-FPSGen also uses the CUDA Chamfer distance implementation from [**ChamferDistancePytorch**](https://github.com/ThibaultGROUEIX/ChamferDistancePytorch), distributed under the MIT License.
+FPSGen uses [ChamferDistancePytorch](https://github.com/ThibaultGROUEIX/ChamferDistancePytorch) as a Git submodule for Chamfer distance computation.
 
 ## 📝 Citation
 

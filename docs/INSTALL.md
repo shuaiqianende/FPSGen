@@ -21,7 +21,13 @@ pip install --no-deps MinkowskiEngine==0.5.4
 
 ## CUDA extensions
 
-Install FPSGen and the bundled CUDA extensions from the repository root:
+For an existing clone, initialize the pinned third-party dependency:
+
+```bash
+git submodule update --init --recursive
+```
+
+Install FPSGen and the CUDA extensions from the repository root:
 
 ```bash
 pip install -r requirements.txt
@@ -32,8 +38,6 @@ pip install -e fpsgen/utils/metrics_gen/pytorch_structural_losses
 
 Chamfer distance is required by Teacher training and point-cloud evaluation.
 The structural-loss extension is required by `fpsgen.utils.eval_generation`.
-The Chamfer implementation is distributed under its upstream MIT license at
-`third_party/licenses/ChamferDistancePytorch-MIT.txt`.
 
 ## Verification
 
