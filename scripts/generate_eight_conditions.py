@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import random
 from pathlib import Path
 from typing import Iterable
@@ -63,8 +62,8 @@ def parse_args() -> argparse.Namespace:
         description="Generate FPSGen point-cloud samples for all LiDAR/vehicle/road conditions."
     )
     parser.add_argument("--input", required=True, help="SemanticKITTI input_/frame.npy or compatible point file")
-    parser.add_argument("--student", required=True, help="stage-3 PointFlow checkpoint")
-    parser.add_argument("--bev", required=True, help="stage-1 BEV Flow checkpoint")
+    parser.add_argument("--point-ckpt", required=True, help="Stage-3 Point Flow checkpoint")
+    parser.add_argument("--bev-ckpt", required=True, help="Stage-1 BEV Flow checkpoint")
     parser.add_argument("--refine", default="", help="optional refinement checkpoint; default disables refinement")
     parser.add_argument("--output", required=True, help="directory receiving point clouds and manifest.json")
     parser.add_argument(
@@ -156,8 +155,8 @@ def main() -> None:
     from fpsgen.inference import DiffCompletion
 
     input_path = Path(args.input).expanduser().resolve()
-    student_path = Path(args.student).expanduser().resolve()
-    bev_path = Path(args.bev).expanduser().resolve()
+    student_path = Path(args.point_ckpt).expanduser().resolve()
+    bev_path = Path(args.bev_ckpt).expanduser().resolve()
     output_dir = Path(args.output).expanduser().resolve()
     if not input_path.is_file():
         raise FileNotFoundError(input_path)
@@ -167,10 +166,9 @@ def main() -> None:
         raise FileNotFoundError(bev_path)
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    os.environ["FPSGEN_BEV_CHECKPOINT"] = str(bev_path)
     points = load_input_points(input_path)
     model = DiffCompletion(
-        str(student_path), args.refine, args.point_steps, args.guidance_scale
+        str(student_path), str(bev_path), args.refine, args.point_steps, args.guidance_scale
     )
     model.eval()
     records = generate_samples(

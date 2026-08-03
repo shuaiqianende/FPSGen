@@ -61,14 +61,16 @@ class DiffCompletion(LightningModule):
     """Run the paper's Unified Inference pipeline.
 
     The public class name is retained for checkpoint and script compatibility.
-    ``diff_path`` is the stage-3 PointFlow checkpoint; the stage-1 BEV Flow
-    checkpoint is supplied through ``FPSGEN_BEV_CHECKPOINT``.
+    ``point_ckpt`` is the Stage-3 Point Flow checkpoint and ``bev_ckpt`` is
+    the Stage-1 BEV Flow checkpoint.
     """
-    def __init__(self, diff_path, refine_path, denoising_steps, cond_weight):
+    def __init__(self, point_ckpt, bev_ckpt, refine_path, denoising_steps, cond_weight):
         super().__init__()
-        if not os.path.isfile(diff_path):
-            raise FileNotFoundError(f"Student checkpoint does not exist: {diff_path}")
-        ckpt_diff = torch.load(diff_path, map_location='cpu')
+        if not os.path.isfile(point_ckpt):
+            raise FileNotFoundError(f"Point Flow checkpoint does not exist: {point_ckpt}")
+        if not os.path.isfile(bev_ckpt):
+            raise FileNotFoundError(f"BEV Flow checkpoint does not exist: {bev_ckpt}")
+        ckpt_diff = torch.load(point_ckpt, map_location='cpu')
         if 'hyper_parameters' not in ckpt_diff or 'state_dict' not in ckpt_diff:
             raise KeyError(
                 "Student checkpoint must contain 'hyper_parameters' and 'state_dict'"
@@ -101,14 +103,7 @@ class DiffCompletion(LightningModule):
 
         from fpsgen.models.image_flow_net import BEVFlowTransNet
         self.bev_gen_net = BEVFlowTransNet(base_ch=32, time_dim=256, cls=0).cuda()
-        ckpt_path_bev = os.environ.get("FPSGEN_BEV_CHECKPOINT", "")
-        if not ckpt_path_bev:
-            raise ValueError(
-                "FPSGEN_BEV_CHECKPOINT must point to the stage-1 BEV checkpoint"
-            )
-        if not os.path.isfile(ckpt_path_bev):
-            raise FileNotFoundError(f"BEV checkpoint does not exist: {ckpt_path_bev}")
-        ckpt_bev = torch.load(ckpt_path_bev, map_location='cpu')
+        ckpt_bev = torch.load(bev_ckpt, map_location='cpu')
         bev_state_dict = {}
         for k, v in ckpt_bev['state_dict'].items():
             # FlowIMG checkpoints store BEVFlowTransNet below ``model.``.
@@ -536,16 +531,19 @@ def load_pcd(pcd_file):
             f"Point cloud format '.{pcd_file.split('.')[-1]}' not supported. (supported formats: .bin (kitti format), .ply)")
 
 @click.command()
-@click.option('--diff', '-d', type=str, default='checkpoints/diff_net.point_cloud', help='path to the scan sequence')
+@click.option('--point-ckpt', required=True, type=click.Path(exists=True),
+              help='Stage-3 Point Flow checkpoint')
+@click.option('--bev-ckpt', required=True, type=click.Path(exists=True),
+              help='Stage-1 BEV Flow checkpoint')
 @click.option('--refine', '-r', type=str, default='checkpoints/refine_net.point_cloud',
               help='path to the scan sequence')
 @click.option('--denoising_steps', '-T', type=int, default=50, help='number of denoising steps (default: 50)')
 @click.option('--cond_weight', '-s', type=float, default=2.0, help='conditioning weight (default: 2.0)')
-def main(diff, refine, denoising_steps, cond_weight):
-    exp_dir = diff.split('/')[-1].split('.')[0].replace('=', '') + f'_T{denoising_steps}_s{cond_weight}'
+def main(point_ckpt, bev_ckpt, refine, denoising_steps, cond_weight):
+    exp_dir = point_ckpt.split('/')[-1].split('.')[0].replace('=', '') + f'_T{denoising_steps}_s{cond_weight}'
 
     diff_completion = DiffCompletion(
-        diff, refine, denoising_steps, cond_weight
+        point_ckpt, bev_ckpt, refine, denoising_steps, cond_weight
     )
 
     path = './Datasets/test/'

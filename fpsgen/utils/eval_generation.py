@@ -270,7 +270,10 @@ def _json_value(value):
 @click.option("--path", required=True, type=click.Path(exists=True, file_okay=False), help="dataset root")
 @click.option("--dataset", type=click.Choice(SUPPORTED_DATASETS), default="SemanticKITTI")
 @click.option("--sequences", default="08", help="comma-separated sequence identifiers")
-@click.option("--diff", required=True, type=click.Path(exists=True), help="FPSGen student checkpoint")
+@click.option("--point-ckpt", required=True, type=click.Path(exists=True),
+              help="Stage-3 Point Flow checkpoint")
+@click.option("--bev-ckpt", required=True, type=click.Path(exists=True),
+              help="Stage-1 BEV Flow checkpoint")
 @click.option("--refine", default="", type=click.Path(), help="optional refinement checkpoint")
 @click.option("--img-steps", default=50, show_default=True)
 @click.option("--point-steps", default=16, show_default=True)
@@ -285,14 +288,14 @@ def _json_value(value):
 @click.option("--num-points", default=8192, show_default=True)
 @click.option("--batch-size", default=32, show_default=True)
 @click.option("--save-pcd/--no-save-pcd", default=False)
-def main(path, dataset, sequences, diff, refine, img_steps, point_steps, cond_weight, cond_mode, max_range,
+def main(path, dataset, sequences, point_ckpt, bev_ckpt, refine, img_steps, point_steps, cond_weight, cond_mode, max_range,
          select_mode, interval_frames, interval_m, max_frames, num_points, batch_size, save_pcd):
     import open3d as o3d
 
     records = select_records(load_dataset_records(dataset, path, sequences), select_mode, interval_frames, interval_m)
     if max_frames:
         records = records[:max_frames]
-    model = load_fpsgen_completion_class()(diff, refine, point_steps, cond_weight)
+    model = load_fpsgen_completion_class()(point_ckpt, bev_ckpt, refine, point_steps, cond_weight)
     predictions, references = [], []
     output_dir = os.environ.get("FPSGEN_OUTPUT_DIR", "outputs")
     if save_pcd:

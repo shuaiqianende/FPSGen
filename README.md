@@ -167,17 +167,12 @@ configs/smoke_student.yaml
 
 ## 🔍 Inference
 
-Set the Stage-1 BEV Flow checkpoint:
-
-```bash
-export FPSGEN_BEV_CHECKPOINT=/path/to/bev.ckpt
-```
-
-Run inference with the Stage-3 Student checkpoint:
+Run inference with the Stage-3 Point Flow and Stage-1 BEV Flow checkpoints:
 
 ```bash
 python -m fpsgen.inference \
-  --diff /path/to/student.ckpt \
+  --point-ckpt /path/to/student.ckpt \
+  --bev-ckpt /path/to/bev.ckpt \
   --refine ""
 ```
 
@@ -186,8 +181,8 @@ For a quick end-to-end test:
 ```bash
 CUDA_VISIBLE_DEVICES=0 python scripts/smoke_inference.py \
   --input /path/to/KITTI_Odometry/00/input_/000000.npy \
-  --bev /path/to/smoke_bev.ckpt \
-  --student /path/to/smoke_student.ckpt
+  --bev-ckpt /path/to/smoke_bev.ckpt \
+  --point-ckpt /path/to/smoke_student.ckpt
 ```
 
 ## 📊 Evaluation
@@ -201,7 +196,8 @@ export FPSGEN_OUTPUT_DIR=outputs/seq08_completion
 
 PYTHONPATH="$PWD/fpsgen/models/ChamferDistancePytorch:$PYTHONPATH" \
 python -m fpsgen.utils.eval_path_multirange \
-  --diff /path/to/student.ckpt \
+  --point-ckpt /path/to/student.ckpt \
+  --bev-ckpt /path/to/bev.ckpt \
   --path /path/to/KITTI_Odometry \
   --dataset SemanticKITTI \
   --sequences 08 \
@@ -226,11 +222,10 @@ comparing results.
 Run the generation evaluation script:
 
 ```bash
-export FPSGEN_BEV_CHECKPOINT=/path/to/bev.ckpt
-
 PYTHONPATH="$PWD/fpsgen/models/ChamferDistancePytorch:$PYTHONPATH" \
 python -m fpsgen.utils.eval_generation \
-  --diff /path/to/student.ckpt \
+  --point-ckpt /path/to/student.ckpt \
+  --bev-ckpt /path/to/bev.ckpt \
   --path /path/to/KITTI_Odometry \
   --dataset SemanticKITTI \
   --sequences 08 \
@@ -247,8 +242,8 @@ Generate samples for all eight LiDAR, vehicle, and road condition tuples:
 ```bash
 CUDA_VISIBLE_DEVICES=0 python scripts/generate_eight_conditions.py \
   --input /path/to/KITTI_Odometry/00/input_/000000.npy \
-  --bev /path/to/bev.ckpt \
-  --student /path/to/student.ckpt \
+  --bev-ckpt /path/to/bev.ckpt \
+  --point-ckpt /path/to/student.ckpt \
   --output outputs/eight_conditions/000000
 ```
 
@@ -277,9 +272,9 @@ checkpoints/
 
 Use the checkpoints as follows:
 
-- BEV Flow: set through `FPSGEN_BEV_CHECKPOINT`.
+- BEV Flow: pass with `--bev-ckpt`.
 - Teacher Transport: used when reproducing Stage-3 training.
-- Student Point Flow: passed to `--diff` during inference and evaluation.
+- Student Point Flow: pass with `--point-ckpt` during inference and evaluation.
 
 ## 🧱 Repository Layout
 
