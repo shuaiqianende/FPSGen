@@ -218,7 +218,11 @@ def main() -> None:
         writer = csv.DictWriter(handle, fieldnames=scalar_columns)
         writer.writeheader()
         for record in records:
-            writer.writerow({"frame": record["frame"], "method": record["method"], **record["metrics"]})
+            scalar_metrics = {
+                key: value for key, value in record["metrics"].items()
+                if isinstance(value, (float, int))
+            }
+            writer.writerow({"frame": record["frame"], "method": record["method"], **scalar_metrics})
     print(json.dumps(summary, indent=2))
 
 
