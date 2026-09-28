@@ -174,6 +174,8 @@ def main() -> None:
     parser.add_argument("--stride", type=int, default=1)
     parser.add_argument("--frames", help="comma-separated frame IDs; applied before start/stop/stride")
     parser.add_argument("--skip-existing", action="store_true")
+    parser.add_argument("--no-sequence-meta", action="store_true",
+                        help="frame-shard mode: avoid concurrent writes to shared sequence metadata")
     parser.add_argument("--device", choices=("cuda", "none"), default="cuda")
     parser.add_argument("--log-dir", type=Path, default=Path("outputs/research_v2/gt_poisson_generation"))
     parser.add_argument("--max-range", type=float, default=50.0)
@@ -249,7 +251,8 @@ def main() -> None:
                             "expected_frames": len(_frame_paths(sequence_dir, args)),
                             "target_points": args.target_points, "seed": args.seed,
                             "records": records, **_aggregate([x for x in records if x.get("status") == "ok"], failures)}
-        (sequence_dir / "gt_possion.meta.json").write_text(json.dumps(sequence_summary, indent=2) + "\n")
+        if not args.no_sequence_meta:
+            (sequence_dir / "gt_possion.meta.json").write_text(json.dumps(sequence_summary, indent=2) + "\n")
         all_records.extend(records)
         all_failures.extend(failures)
     summary = {"data_root": str(root), "sequences": _parse_sequences(args.sequences),
