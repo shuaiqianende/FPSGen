@@ -1,0 +1,7 @@
+diff --git a/src/spmm.cu b/src/spmm.cu
+--- a/src/spmm.cu
++++ b/src/spmm.cu
+@@ -33,2 +33,3 @@
+ #include <cusparse.h>
++#include <ATen/ATen.h>
+ #include <ATen/cuda/CUDAContext.h>

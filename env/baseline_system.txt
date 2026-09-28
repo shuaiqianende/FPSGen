@@ -1,0 +1,16 @@
+Snapshot before isolated speed-environment installation (2026-09-29):
+
+GPU1: NVIDIA GeForce RTX 3090 (compute capability 8.6), driver 580.159.03.
+System NVCC: CUDA 11.7.64 at /usr/local/cuda-11.7/bin/nvcc.
+Host compiler: GCC/G++ 10.5.0.
+Conda: 25.7.0 at /home/hndx/anaconda3/bin/conda.
+
+Legacy environment: M2024-HWZ-CasFusionNet
+  Python: 3.9
+  PyTorch: 1.13.0
+  PyTorch CUDA: 11.7
+  cuDNN: 8500
+  MinkowskiEngine: 0.5.4
+
+The legacy environment and all of its CUDA extensions are read-only baseline
+artifacts for this study.

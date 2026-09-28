@@ -1,0 +1,9 @@
+scope,precision,steps,status,coordinates,evidence
+MinkowskiEngine synthetic,fp32,100,pass,FP32 before ME internal integer conversion,probe_me_fp32.log
+MinkowskiEngine synthetic,fp16,100,pass,FP32 before ME internal integer conversion,probe_me_fp16.log
+MinkowskiEngine synthetic,bf16,100,pass,FP32 before ME internal integer conversion,probe_me_bf16.log
+real Teacher DCD-only,fp32,13,pass,FP32; AMP restricted to ME backbone,teacher_amp_fp32.json
+real Teacher DCD-only,fp16,13,pass,FP32; AMP restricted to ME backbone,teacher_amp_fp16.json
+real Teacher DCD-only,bf16,13,pass,FP32; AMP restricted to ME backbone,teacher_amp_bf16.json
+real Teacher DCD-only,fp32,13,pass,FP32; AMP restricted to ME backbone,teacher_amp_torch2_fp32_no_empty_cache.json
+real Teacher DCD-only,bf16,13,pass,FP32; AMP restricted to ME backbone,teacher_amp_torch2_bf16_no_empty_cache.json

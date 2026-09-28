@@ -1,0 +1,16 @@
+name: fpsgen_pt2_speed
+channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/nvidia
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+dependencies:
+  - python=3.9
+  - pytorch=2.0.1
+  - torchvision=0.15.2
+  - pytorch-cuda=11.7
+  - ninja
+  - openblas
+  - pip
+  - pip:
+      - -r ../../requirements.txt

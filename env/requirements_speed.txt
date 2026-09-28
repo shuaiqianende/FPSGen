@@ -1,0 +1,3 @@
+# Keep package versions aligned with the legacy environment unless a documented
+# PyTorch-2 incompatibility requires a change. Torch itself comes from conda.
+-r ../requirements.txt

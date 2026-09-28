@@ -1,0 +1,14 @@
+{
+  "dense_compile": true,
+  "me_compile_forward": true,
+  "me_dynamo_summary": "Dynamo produced 3 graphs with 2 graph break and 0 ops",
+  "me_graph_count": 3,
+  "me_graph_break_count": 2,
+  "me_captured_op_count": 0,
+  "me_break_reasons": [
+    "GraphCompileReason(reason='store_attr', user_stack=[<FrameSummary file /data-12/M2024-HWZ/FPSGen/env/venv_pt20_cu117/lib/python3.9/site-packages/MinkowskiEngine/MinkowskiConvolution.py, line 61 in forward>])",
+    "GraphCompileReason(reason='comparison GetAttrVariable(UserDefinedObjectVariable(SparseTensor), coordinate_map_key) <built-in function is_not> ConstantVariable(NoneType)', user_stack=[<FrameSummary file /data-12/M2024-HWZ/FPSGen/env/venv_pt20_cu117/lib/python3.9/site-packages/MinkowskiEngine/MinkowskiNormalization.py, line 84 in forward>, <FrameSummary file /data-12/M2024-HWZ/FPSGen/env/venv_pt20_cu117/lib/python3.9/site-packages/MinkowskiEngine/MinkowskiSparseTensor.py, line 200 in __init__>])",
+    "GraphCompileReason(reason='comparison GetAttrVariable(UserDefinedObjectVariable(SparseTensor), coordinate_map_key) <built-in function is_not> ConstantVariable(NoneType)', user_stack=[<FrameSummary file /data-12/M2024-HWZ/FPSGen/env/venv_pt20_cu117/lib/python3.9/site-packages/MinkowskiEngine/MinkowskiNonlinearity.py, line 51 in forward>, <FrameSummary file /data-12/M2024-HWZ/FPSGen/env/venv_pt20_cu117/lib/python3.9/site-packages/MinkowskiEngine/MinkowskiSparseTensor.py, line 200 in __init__>])"
+  ],
+  "me_inductor_effective": false
+}

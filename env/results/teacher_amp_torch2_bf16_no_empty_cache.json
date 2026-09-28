@@ -1,0 +1,20 @@
+{
+  "run_name": "torch2_bf16_no_empty_cache",
+  "empty_cache_mode": "disabled",
+  "precision": "bf16",
+  "torch": "2.0.1+cu117",
+  "cuda": "11.7",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "batch_size": 2,
+  "points": 180000,
+  "warmup_steps": 3,
+  "timed_steps": 10,
+  "loss_last": 0.6922903060913086,
+  "loss_mean": 0.6999094486236572,
+  "mean_ms": 1759.6205252222717,
+  "median_ms": 1782.8115113079548,
+  "p95_ms": 1844.5773646235466,
+  "peak_allocated_mb": 11876.1015625,
+  "peak_reserved_mb": 12984.0,
+  "finite": true
+}

@@ -1,0 +1,3 @@
+scope,inductor_callable,captured_ops,effective,notes
+dense MLP,True,n/a,True,Inductor execution passed.
+ME sparse Conv/BN/ReLU,True,0,False,Dynamo produced 3 graphs with 2 graph break and 0 ops

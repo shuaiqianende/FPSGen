@@ -1,0 +1,12 @@
+{
+  "torch": "2.0.1+cu117",
+  "torch_cuda": "11.7",
+  "cuda_available": true,
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "bf16": true,
+  "autocast_torch.float16": true,
+  "autocast_torch.bfloat16": true,
+  "compile_dense": true,
+  "minkowski": "0.5.4",
+  "chamfer_forward_backward": true
+}
