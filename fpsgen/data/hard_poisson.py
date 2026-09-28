@@ -7,10 +7,12 @@ keeps per-point attributes such as SemanticKITTI labels aligned by design.
 
 from __future__ import annotations
 
-from collections import defaultdict
+import ctypes
 from dataclasses import dataclass
-from itertools import product
-from typing import Iterable
+import hashlib
+from pathlib import Path
+import subprocess
+import tempfile
 
 import numpy as np
 
@@ -23,6 +25,35 @@ class PoissonSelection:
     radius: float
     scanned_points: int
     truncated_at_max_accept: bool
+
+
+_NATIVE_LIBRARY = None
+
+
+def _native_selector():
+    """Build/load the versioned local C++ spatial-hash inner loop once."""
+    global _NATIVE_LIBRARY
+    if _NATIVE_LIBRARY is not None:
+        return _NATIVE_LIBRARY
+    source = Path(__file__).with_name("hard_poisson_native.cpp")
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()[:16]
+    library_path = Path(tempfile.gettempdir()) / f"fpsgen_hard_poisson_{digest}.so"
+    if not library_path.exists():
+        temporary = library_path.with_suffix(".tmp.so")
+        subprocess.run([
+            "g++", "-O3", "-std=c++17", "-shared", "-fPIC", str(source), "-o", str(temporary),
+        ], check=True, capture_output=True, text=True)
+        temporary.replace(library_path)
+    library = ctypes.CDLL(str(library_path))
+    function = library.hard_poisson_select_native
+    function.argtypes = [
+        ctypes.POINTER(ctypes.c_float), ctypes.c_int64, ctypes.c_double, ctypes.c_uint64,
+        ctypes.c_int64, ctypes.POINTER(ctypes.c_int64), ctypes.POINTER(ctypes.c_int64),
+        ctypes.POINTER(ctypes.c_int64),
+    ]
+    function.restype = ctypes.c_int
+    _NATIVE_LIBRARY = function
+    return function
 
 
 def _validate_xyz(xyz: np.ndarray, target_points: int) -> np.ndarray:
@@ -62,42 +93,23 @@ def hard_poisson_select(
     if max_accept is not None and max_accept < target_points:
         raise ValueError("max_accept must be >= target_points")
 
-    rng = np.random.default_rng(seed)
-    order = rng.permutation(len(xyz))
     limit = len(xyz) if max_accept is None else min(int(max_accept), len(xyz))
     if radius == 0.0:
+        rng = np.random.default_rng(seed)
+        order = rng.permutation(len(xyz))
         selected = order[:limit].astype(np.int64, copy=False)
         return PoissonSelection(selected, radius, len(selected), len(selected) == limit < len(xyz))
-
-    radius_sq = radius * radius
-    cells = np.floor(xyz / radius).astype(np.int64)
-    # A tuple key avoids assumptions about coordinate range and hash packing.
-    accepted_by_cell: dict[tuple[int, int, int], list[int]] = defaultdict(list)
-    accepted: list[int] = []
-    offsets: Iterable[tuple[int, int, int]] = product((-1, 0, 1), repeat=3)
-    offsets = tuple(offsets)
-    scanned = 0
-    for index in order:
-        scanned += 1
-        cell = cells[index]
-        key = (int(cell[0]), int(cell[1]), int(cell[2]))
-        point = xyz[index]
-        allowed = True
-        for dx, dy, dz in offsets:
-            neighbours = accepted_by_cell.get((key[0] + dx, key[1] + dy, key[2] + dz))
-            if not neighbours:
-                continue
-            delta = xyz[np.asarray(neighbours, dtype=np.int64)] - point
-            if np.any(np.einsum("ij,ij->i", delta, delta) < radius_sq):
-                allowed = False
-                break
-        if not allowed:
-            continue
-        accepted.append(int(index))
-        accepted_by_cell[key].append(int(index))
-        if len(accepted) >= limit:
-            return PoissonSelection(np.asarray(accepted, dtype=np.int64), radius, scanned, limit < len(xyz))
-    return PoissonSelection(np.asarray(accepted, dtype=np.int64), radius, scanned, False)
+    output = np.empty(limit, dtype=np.int64)
+    selected = ctypes.c_int64()
+    scanned = ctypes.c_int64()
+    result = _native_selector()(xyz.ctypes.data_as(ctypes.POINTER(ctypes.c_float)), len(xyz), radius,
+                                int(seed), limit,
+                                output.ctypes.data_as(ctypes.POINTER(ctypes.c_int64)),
+                                ctypes.byref(selected), ctypes.byref(scanned))
+    if result != 0:
+        raise RuntimeError(f"native hard-Poisson selector failed with code {result}")
+    output = output[:selected.value]
+    return PoissonSelection(output, radius, int(scanned.value), len(output) == limit < len(xyz))
 
 
 def select_largest_feasible_radius(
