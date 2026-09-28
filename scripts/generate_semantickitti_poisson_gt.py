@@ -120,6 +120,7 @@ def _full_candidate(scan_path: Path, pose: np.ndarray, map_xyz: np.ndarray,
     if args.max_z is not None:
         height &= local_xyz[:, 2] < args.max_z
     local_xyz, labels = local_xyz[height], labels[height]
+    scan_xyz = scan_xyz[np.linalg.norm(scan_xyz, axis=1) < args.max_range]
     visible = viewpoint_mask(scan_xyz, local_xyz, args.viewpoint_voxel_size)
     candidate = np.column_stack((local_xyz[visible], labels[visible])).astype(np.float32, copy=False)
     finite = np.isfinite(candidate).all(axis=1)
@@ -186,7 +187,7 @@ def main() -> None:
     parser.add_argument("--data-root", type=Path, default=Path("/data-12/M2024-HWZ/KITTI_Odometry"))
     parser.add_argument("--sequences", default=DEFAULT_SEQUENCES)
     parser.add_argument("--target-points", type=int, default=180000)
-    parser.add_argument("--voxel-size", type=float, default=.20)
+    parser.add_argument("--voxel-size", type=float, default=.15)
     parser.add_argument("--output-dir", default="gt_possion")
     parser.add_argument("--output-format", choices=("ply", "npy"), default="ply")
     parser.add_argument("--seed", type=int, default=20260928)
@@ -202,7 +203,7 @@ def main() -> None:
     parser.add_argument("--log-dir", type=Path, default=Path("outputs/research_v2/gt_poisson_generation"))
     parser.add_argument("--max-range", type=float, default=50.0)
     parser.add_argument("--min-z", type=float, default=-4.0)
-    parser.add_argument("--max-z", type=float)
+    parser.add_argument("--max-z", type=float, default=4.4)
     parser.add_argument("--viewpoint-voxel-size", type=float, default=10.0)
     parser.add_argument("--initial-radius-high", type=float, default=.05)
     parser.add_argument("--target-tolerance", type=int, default=2000)
@@ -250,8 +251,9 @@ def main() -> None:
                     nearby_mask = (gpu_map - translation).square().sum(1) < args.max_range ** 2
                     nearby, labels = gpu_map[nearby_mask], gpu_labels[nearby_mask]
                     local = nearby @ pose_inv[:3, :3].T + pose_inv[:3, 3]
-                    keep = local[:, 2] > args.min_z
+                    keep = (local[:, 2] > args.min_z) & (local[:, 2] < args.max_z)
                     local, labels = local[keep].cpu().numpy(), labels[keep].cpu().numpy()
+                    scan_xyz = scan_xyz[np.linalg.norm(scan_xyz, axis=1) < args.max_range]
                     visible = viewpoint_mask(scan_xyz, local, args.viewpoint_voxel_size)
                     full_raw = np.column_stack((local[visible], labels[visible])).astype(np.float32)
                 candidate = full_raw[voxel_downsample_indices(full_raw[:, :3], args.voxel_size)]

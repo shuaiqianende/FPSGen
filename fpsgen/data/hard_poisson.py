@@ -146,7 +146,7 @@ def select_largest_feasible_radius(
     bracket_expansions = 0
     while len(high.indices) >= target_points:
         low_radius, best = high_radius, high
-        high_radius *= 2.0
+        high_radius *= 1.5
         bracket_expansions += 1
         if bracket_expansions > 32:
             raise RuntimeError("could not find an infeasible hard-Poisson radius")
