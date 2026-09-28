@@ -190,6 +190,10 @@ def main():
               "teacher_unique_voxels": None, "student_unique_voxels": None,
               "teacher_collision_ratio": None, "student_collision_ratio": None}
     report.update(run_synthetic(args.resolution, device))
+    # The synthetic result is the direct source-ID proof. It is meaningful
+    # even before a checkpoint/frame is supplied, so expose it in the stable
+    # Gate-1 field rather than leaving a successful A0 run ambiguous.
+    report["source_identity_preserved"] = report["synthetic_source_identity_preserved"]
     if not args.synthetic_only:
         missing = [name for name in ("teacher_ckpt", "student_ckpt", "frame") if getattr(args, name) is None]
         if missing:
