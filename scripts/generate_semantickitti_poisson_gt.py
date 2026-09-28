@@ -35,6 +35,20 @@ def _atomic_save(path: Path, array: np.ndarray) -> None:
             temporary.unlink()
 
 
+def _atomic_save_ply(path: Path, array: np.ndarray) -> None:
+    """Binary little-endian PLY: x/y/z/semantic_label are all float32."""
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    vertex = np.empty(len(array), dtype=[("x", "<f4"), ("y", "<f4"), ("z", "<f4"), ("label", "<f4")])
+    for column, name in enumerate(vertex.dtype.names): vertex[name] = array[:, column]
+    header = ("ply\nformat binary_little_endian 1.0\n"
+              f"element vertex {len(array)}\nproperty float x\nproperty float y\nproperty float z\nproperty float label\nend_header\n").encode()
+    try:
+        with temporary.open("wb") as handle: handle.write(header); vertex.tofile(handle)
+        os.replace(temporary, path)
+    finally:
+        if temporary.exists(): temporary.unlink()
+
+
 def _exact_duplicate_count(xyz: np.ndarray) -> int:
     return int(len(xyz) - len(np.unique(xyz, axis=0)))
 
@@ -138,7 +152,13 @@ def _frame_paths(sequence_dir: Path, args: argparse.Namespace) -> list[Path]:
 
 def _existing_is_valid(path: Path, target_points: int) -> bool:
     try:
-        array = np.load(path, allow_pickle=False)
+        if path.suffix == ".npy": array = np.load(path, allow_pickle=False)
+        else:
+            with path.open("rb") as h:
+                header=b""
+                while not header.endswith(b"end_header\n"): header += h.readline()
+                raw=np.fromfile(h,dtype=[("x","<f4"),("y","<f4"),("z","<f4"),("label","<f4")],count=target_points)
+            array=np.column_stack([raw[n] for n in raw.dtype.names]).astype(np.float32)
         _validate_array(array, target_points)
         return True
     except (OSError, ValueError):
@@ -168,6 +188,7 @@ def main() -> None:
     parser.add_argument("--target-points", type=int, default=180000)
     parser.add_argument("--voxel-size", type=float, default=.20)
     parser.add_argument("--output-dir", default="gt_possion")
+    parser.add_argument("--output-format", choices=("ply", "npy"), default="ply")
     parser.add_argument("--seed", type=int, default=20260928)
     parser.add_argument("--start", type=int, default=0)
     parser.add_argument("--stop", type=int)
@@ -177,6 +198,7 @@ def main() -> None:
     parser.add_argument("--no-sequence-meta", action="store_true",
                         help="frame-shard mode: avoid concurrent writes to shared sequence metadata")
     parser.add_argument("--device", choices=("cuda", "none"), default="cuda")
+    parser.add_argument("--candidate-device", choices=("cuda", "cpu"), default="cuda")
     parser.add_argument("--log-dir", type=Path, default=Path("outputs/research_v2/gt_poisson_generation"))
     parser.add_argument("--max-range", type=float, default=50.0)
     parser.add_argument("--min-z", type=float, default=-4.0)
@@ -198,12 +220,18 @@ def main() -> None:
             raise FileNotFoundError(map_path)
         poses = load_poses(sequence_dir)
         map_xyz, map_labels = load_map(map_path)
+        gpu_map = gpu_labels = None
+        if args.candidate_device == "cuda":
+            import torch
+            if not torch.cuda.is_available(): raise RuntimeError("candidate-device cuda requires CUDA")
+            gpu_map = torch.from_numpy(map_xyz).cuda()
+            gpu_labels = torch.from_numpy(map_labels).cuda()
         output_dir = sequence_dir / args.output_dir
         output_dir.mkdir(parents=True, exist_ok=True)
         records, failures = [], []
         for offset, scan_path in enumerate(_frame_paths(sequence_dir, args), 1):
             frame = scan_path.stem
-            output_path = output_dir / f"{frame}.npy"
+            output_path = output_dir / f"{frame}.{args.output_format}"
             if args.skip_existing and _existing_is_valid(output_path, args.target_points):
                 records.append({"sequence": sequence, "frame": frame, "status": "skipped_valid"})
                 continue
@@ -212,7 +240,20 @@ def main() -> None:
                 frame_id = int(frame)
                 if frame_id >= len(poses):
                     raise ValueError("missing matching pose")
-                full_raw = _full_candidate(scan_path, poses[frame_id], map_xyz, map_labels, args)
+                if gpu_map is None:
+                    full_raw = _full_candidate(scan_path, poses[frame_id], map_xyz, map_labels, args)
+                else:
+                    import torch
+                    scan_xyz, _, _ = read_scan(scan_path)
+                    pose_inv = torch.from_numpy(np.linalg.inv(poses[frame_id]).astype(np.float32)).cuda()
+                    translation = torch.from_numpy(poses[frame_id][:3, 3].astype(np.float32)).cuda()
+                    nearby_mask = (gpu_map - translation).square().sum(1) < args.max_range ** 2
+                    nearby, labels = gpu_map[nearby_mask], gpu_labels[nearby_mask]
+                    local = nearby @ pose_inv[:3, :3].T + pose_inv[:3, 3]
+                    keep = local[:, 2] > args.min_z
+                    local, labels = local[keep].cpu().numpy(), labels[keep].cpu().numpy()
+                    visible = viewpoint_mask(scan_xyz, local, args.viewpoint_voxel_size)
+                    full_raw = np.column_stack((local[visible], labels[visible])).astype(np.float32)
                 candidate = full_raw[voxel_downsample_indices(full_raw[:, :3], args.voxel_size)]
                 if len(candidate) < args.target_points:
                     raise ValueError(f"insufficient_after_voxel: {len(candidate)}")
@@ -229,7 +270,7 @@ def main() -> None:
                 if not np.array_equal(output, candidate[selected]):
                     raise AssertionError("index-preserving label alignment failed")
                 quality = _knn_quality(output[:, :3], diagnostics["final_radius"], args.device)
-                _atomic_save(output_path, output)
+                (_atomic_save_ply if args.output_format == "ply" else _atomic_save)(output_path, output)
                 record = {"sequence": sequence, "frame": frame, "status": "ok",
                           "raw_candidate_points": int(len(full_raw)), "voxel_size": args.voxel_size,
                           "voxel_candidate_points": int(len(candidate)), "target_points": args.target_points,
