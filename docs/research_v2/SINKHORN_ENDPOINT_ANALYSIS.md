@@ -1,8 +1,24 @@
 # Sparse Sinkhorn endpoint Gate 2
 
-Status: implementation complete; no real Teacher endpoint has been evaluated
-in the current sandbox because its runtime lacks CUDA, MinkowskiEngine, and
-PyKeOps. Therefore this gate is **PENDING**, not `PROCEED` or `STOP`.
+Status: Gate B10 completed on GPU3; Gate B is on hold pending a valid sparse
+balanced-OT convergence fix.
+
+## Gate B10 result (2026-09-28)
+
+GPU3 ran 10 equally spaced sequence-08 frames. The local sparse-OT geometry
+signal is strong: at alpha 1.0, mean Chamfer changed from 0.13811 (raw
+Teacher) to 0.09717, mean F-score from 0.86571 to 0.96761, and both directed
+NN distances improved on every frame. NN-target coverage increased on 9/10
+frames. However, this is **not a valid balanced-OT result yet**: after 500
+iterations, mean row-marginal error remained about 4.62e-7 versus the target
+row mass 5.56e-6, with 88.3% of rows exceeding 1% relative error. Column
+errors were near zero, indicating disconnected/poorly communicating local
+support rather than adequate balanced convergence.
+
+Decision: **HOLD — do not run B100 or train an OT-refined Student.** First
+repair and validate sparse-graph connectivity/convergence without introducing
+a dense cost matrix, then rerun B10. Results are retained under
+`outputs/research_v2/sinkhorn_diagnostic/b10/` and `b10_i500/`.
 
 `fpsgen.ops.endpoint_refinement` builds no dense `N x M` cost tensor. It uses
 KNN edges from Teacher endpoint to GT and reciprocal GT-to-endpoint KNN edges.

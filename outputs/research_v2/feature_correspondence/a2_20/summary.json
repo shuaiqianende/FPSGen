@@ -1,0 +1,52 @@
+{
+  "both_singleton_ratio": {
+    "max": 0.997938871383667,
+    "mean": 0.9964552879333496,
+    "median": 0.9968667030334473,
+    "min": 0.9936444759368896,
+    "p05": 0.9947052776813508,
+    "p50": 0.9968667030334473,
+    "p95": 0.9978966861963272
+  },
+  "environment": {
+    "commit": "23f91bb898ad01c920a42fb837264101586e13f9",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "platform": "Linux-5.15.0-39-generic-x86_64-with-glibc2.35",
+    "torch": "1.13.0"
+  },
+  "manifest": "configs/research_v2/gate_seq08_20.txt",
+  "num_frames": 20,
+  "seed": 20260928,
+  "source_row_order_preserved": true,
+  "student_collision_ratio": {
+    "max": 0.00199444444444441,
+    "mean": 0.0010311111111111105,
+    "median": 0.0009083333333333443,
+    "min": 0.0005055555555555369,
+    "p05": 0.0005266666666666808,
+    "p50": 0.0009083333333333443,
+    "p95": 0.0016197222222222643
+  },
+  "student_finite_ratio": 1.0,
+  "student_output_row_valid_ratio": 1.0,
+  "synthetic": {
+    "synthetic_collision_ratio": 0.25,
+    "synthetic_max_abs_error": 0.0,
+    "synthetic_shape": [
+      8
+    ],
+    "synthetic_source_identity_preserved": true
+  },
+  "teacher_collision_ratio": {
+    "max": 0.00178888888888884,
+    "mean": 0.0010672222222222083,
+    "median": 0.000986111111111132,
+    "min": 0.0006777777777777771,
+    "p05": 0.0007358333333332912,
+    "p50": 0.000986111111111132,
+    "p95": 0.0015883333333333418
+  },
+  "teacher_finite_ratio": 1.0,
+  "teacher_output_row_valid_ratio": 1.0
+}

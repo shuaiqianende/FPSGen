@@ -1,6 +1,20 @@
 # Feature-guidance Gate 1
 
-Status: implementation complete; real-frame gate not yet run in this sandbox.
+Status: Gate A completed on GPU2.
+
+## Gate result (2026-09-28)
+
+**PROCEED.** GPU2 ran A1 plus 20 equally spaced sequence-08 frames with the
+released Teacher and Student checkpoints. Every frame returned 180,000 rows
+from both final sliced feature tensors, and every feature value was finite.
+The 20-frame mean Teacher/Student collision ratios were 0.1067% / 0.1031%;
+the both-singleton ratio was 99.6455% on average (minimum 99.3644%). The
+source-row order synthetic regression remained exact (maximum error zero).
+
+The corresponding machine-readable files are under
+`outputs/research_v2/feature_correspondence/a2_20/`. These data support a
+future all-rows versus both-singleton 500-step Feature Guidance comparison,
+but do not themselves justify full Student training.
 
 The potentially aligned representation is the output of the final decoder,
 not `y4.F` itself. Both sparse U-Nets now accept `return_features=False` by
