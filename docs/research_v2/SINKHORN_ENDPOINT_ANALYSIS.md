@@ -15,10 +15,32 @@ row mass 5.56e-6, with 88.3% of rows exceeding 1% relative error. Column
 errors were near zero, indicating disconnected/poorly communicating local
 support rather than adequate balanced convergence.
 
-Decision: **HOLD — do not run B100 or train an OT-refined Student.** First
-repair and validate sparse-graph connectivity/convergence without introducing
-a dense cost matrix, then rerun B10. Results are retained under
-`outputs/research_v2/sinkhorn_diagnostic/b10/` and `b10_i500/`.
+The original strict-balanced-OT gate is retained only as a diagnostic record.
+The current research protocol selects refinement parameters by endpoint
+quality, spacing diagnostics, and runtime; it does not claim exact balanced
+OT. Results are retained under `outputs/research_v2/sinkhorn_diagnostic/b10/`
+and `b10_i500/`.
+
+## Selected B10 refinement parameters (2026-09-28)
+
+Under the updated research objective of endpoint quality versus cost (rather
+than exact balanced-marginal convergence), the first B10 parameter ablation
+selects:
+
+```text
+K = 16
+Sinkhorn iterations = 100
+epsilon = 0.01
+alpha = 1.0
+```
+
+On the fixed cached B10 set this configuration reached mean Chamfer `0.06862`.
+It was materially better than epsilon 0.02/0.05/0.10/0.20 at the same 100
+iterations, while 200/500 iterations at epsilon 0.05 had weaker quality/cost
+trade-offs for this initial screen. Alpha 1.0 also outperformed 0.5 and 0.75
+under the selected epsilon. Marginal errors remain diagnostic-only; this
+method is named **Teacher-Guided Sparse Sinkhorn Refinement**, not exact
+balanced OT.
 
 `fpsgen.ops.endpoint_refinement` builds no dense `N x M` cost tensor. It uses
 KNN edges from Teacher endpoint to GT and reciprocal GT-to-endpoint KNN edges.
