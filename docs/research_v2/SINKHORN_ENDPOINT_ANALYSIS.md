@@ -34,6 +34,11 @@ The CSV is `outputs/research_v2/sinkhorn_diagnostic/results.csv` and includes
 Chamfer, directed NN distances, F-score, spacing, transport length, runtime,
 GPU peak memory, marginal errors, entropy, edges, seed, and commit.
 
+For the controlled 10-frame Gate B run, use `scripts/run_sinkhorn_gate.py`
+with `configs/research_v2/gate_seq08_10.txt`. It loads the Teacher once,
+writes `b10/results.csv` and `b10/summary.json`, and adds NN-target coverage
+to expose many-to-one collapse. It never starts B100 automatically.
+
 ## Gate decision
 
 Set **PROCEED** only if sparse Sinkhorn improves geometric metrics stably over

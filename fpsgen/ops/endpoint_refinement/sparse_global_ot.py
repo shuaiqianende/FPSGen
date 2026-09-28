@@ -76,9 +76,25 @@ def refine_endpoint(endpoint: torch.Tensor, target: torch.Tensor, *, k: int = 16
     expected_row = 1.0 / endpoint.shape[0]
     expected_col = 1.0 / target.shape[0]
     entropy = -(plan * torch.log(plan.clamp_min(torch.finfo(plan.dtype).tiny))).sum()
+    row_error = (row_mass - expected_row).abs()
+    col_error = (col_mass - expected_col).abs()
+    row_probability = plan / row_mass[source].clamp_min(torch.finfo(plan.dtype).tiny)
+    row_entropy = torch.zeros(endpoint.shape[0], device=endpoint.device, dtype=endpoint.dtype)
+    row_entropy.scatter_add_(0, source, -row_probability * torch.log(
+        row_probability.clamp_min(torch.finfo(plan.dtype).tiny)
+    ))
     return refined, {
-        "row_error": float((row_mass - expected_row).abs().max().item()),
-        "col_error": float((col_mass - expected_col).abs().max().item()),
+        # Backward-compatible maximum errors, plus the full Gate-B diagnostics.
+        "row_error": float(row_error.max().item()),
+        "col_error": float(col_error.max().item()),
+        "row_error_mean": float(row_error.mean().item()),
+        "row_error_max": float(row_error.max().item()),
+        "col_error_mean": float(col_error.mean().item()),
+        "col_error_max": float(col_error.max().item()),
+        "bad_row_ratio": float((row_error > expected_row * .01).float().mean().item()),
+        "bad_col_ratio": float((col_error > expected_col * .01).float().mean().item()),
+        "mean_row_entropy": float(row_entropy.mean().item()),
+        "max_row_probability": float(row_probability.max().item()),
         "entropy": float(entropy.item()),
         "num_edges": int(plan.numel()),
     }

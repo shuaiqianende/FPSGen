@@ -48,10 +48,24 @@ def _field(points: torch.Tensor, resolution: float, device):
 
 def _collision_stats(points: torch.Tensor, resolution: float):
     quantized = torch.round(points / resolution).to(torch.int64)
-    unique = torch.unique(quantized, dim=0).shape[0]
+    _, inverse, counts = torch.unique(
+        quantized, dim=0, return_inverse=True, return_counts=True
+    )
+    group_size_per_point = counts[inverse]
+    unique = counts.numel()
     total = points.shape[0]
-    return {"num_points": int(total), "unique_voxels": int(unique),
-            "collision_ratio": float(1.0 - unique / total)}
+    return {
+        "num_points": int(total), "unique_voxels": int(unique),
+        "collision_ratio": float(1.0 - unique / total),
+        "singleton_point_ratio": float((group_size_per_point == 1).float().mean().item()),
+        "collision_group_size_mean": float(group_size_per_point.float().mean().item()),
+        "collision_group_size_p50": float(torch.quantile(group_size_per_point.float(), .5).item()),
+        "collision_group_size_p95": float(torch.quantile(group_size_per_point.float(), .95).item()),
+        "collision_group_size_max": int(group_size_per_point.max().item()),
+        # Retained only within this process: serialising 180k bools per frame
+        # is unnecessary, while the mask is required for both-singleton stats.
+        "_singleton_mask": group_size_per_point == 1,
+    }
 
 
 def run_synthetic(resolution: float, device):
@@ -156,13 +170,19 @@ def run_real(args, device):
             img, layout, x_state, x_state.sparse(), part_student, t,
             return_features=True,
         )
+    teacher_stats = _collision_stats(source, args.resolution)
+    student_stats = _collision_stats(point_state, args.resolution)
+    both_singleton = teacher_stats.pop("_singleton_mask") & student_stats.pop("_singleton_mask")
     return {
         "frame": str(args.frame),
         "teacher_shape": list(teacher_features["final_point_feature"].shape),
         "student_shape": list(student_features["final_point_feature"].shape),
         "num_source_points": args.num_points,
-        "teacher": _collision_stats(source, args.resolution),
-        "student": _collision_stats(point_state, args.resolution),
+        "teacher": teacher_stats,
+        "student": student_stats,
+        "both_singleton_ratio": float(both_singleton.float().mean().item()),
+        "teacher_feature_finite": bool(torch.isfinite(teacher_features["final_point_feature"]).all().item()),
+        "student_feature_finite": bool(torch.isfinite(student_features["final_point_feature"]).all().item()),
         "elapsed_ms": None,  # wall-clock belongs to the separate runtime benchmark.
     }
 
@@ -188,7 +208,9 @@ def main():
               "teacher_shape": None, "student_shape": None,
               "num_source_points": None, "source_identity_preserved": None,
               "teacher_unique_voxels": None, "student_unique_voxels": None,
-              "teacher_collision_ratio": None, "student_collision_ratio": None}
+              "teacher_collision_ratio": None, "student_collision_ratio": None,
+              "both_singleton_ratio": None, "teacher_feature_finite": None,
+              "student_feature_finite": None}
     report.update(run_synthetic(args.resolution, device))
     # The synthetic result is the direct source-ID proof. It is meaningful
     # even before a checkpoint/frame is supplied, so expose it in the stable
@@ -209,6 +231,9 @@ def main():
             "student_unique_voxels": real["student"]["unique_voxels"],
             "teacher_collision_ratio": real["teacher"]["collision_ratio"],
             "student_collision_ratio": real["student"]["collision_ratio"],
+            "both_singleton_ratio": real["both_singleton_ratio"],
+            "teacher_feature_finite": real["teacher_feature_finite"],
+            "student_feature_finite": real["student_feature_finite"],
         })
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")

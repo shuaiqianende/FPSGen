@@ -31,11 +31,17 @@ The command writes `outputs/research_v2/feature_correspondence/report.json`.
 
 Point-wise feature loss is permitted only if the synthetic test is true, both
 real feature tensors have `[B * N, C]` shape, and no row crosses batch IDs.
-This establishes *row correspondence*, not one-to-one sparse semantics. At a
+This establishes **source-row order preservation**, not full independent
+source-feature identity. At a
 voxel collision, all colliding field points necessarily receive the same
 sliced sparse feature. Teacher `P0` and Student `Pt` also have different
 quantization/collision patterns, so a feature term is a weak regularizer, not
 an equality constraint on pure per-point representations.
+
+For the 20-frame Gate A2, use `scripts/run_feature_gate.py` with
+`configs/research_v2/gate_seq08_20.txt`. It loads each frozen model once and
+stores `per_frame.jsonl` plus `summary.json`, including collision-group and
+both-singleton statistics. Gate A is not decided until that GPU run finishes.
 
 Recommended first formal loss after this gate is a detached cosine loss only
 on this layer:
