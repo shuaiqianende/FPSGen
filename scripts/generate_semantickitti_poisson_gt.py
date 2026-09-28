@@ -112,6 +112,15 @@ def _full_candidate(scan_path: Path, pose: np.ndarray, map_xyz: np.ndarray,
     return np.ascontiguousarray(candidate[finite], dtype=np.float32)
 
 
+def voxel_downsample_indices(xyz: np.ndarray, voxel_size: float) -> np.ndarray:
+    """Return deterministic original rows: fixed voxel before Poisson."""
+    if voxel_size <= 0:
+        raise ValueError("voxel_size must be positive")
+    keys = np.floor(xyz / voxel_size).astype(np.int64)
+    _, indices = np.unique(keys, axis=0, return_index=True)
+    return np.sort(indices).astype(np.int64, copy=False)
+
+
 def _parse_sequences(value: str) -> list[str]:
     sequences = [item.strip() for item in value.split(",") if item.strip()]
     if not sequences or any(not item.isdigit() for item in sequences):
@@ -157,6 +166,7 @@ def main() -> None:
     parser.add_argument("--data-root", type=Path, default=Path("/data-12/M2024-HWZ/KITTI_Odometry"))
     parser.add_argument("--sequences", default=DEFAULT_SEQUENCES)
     parser.add_argument("--target-points", type=int, default=180000)
+    parser.add_argument("--voxel-size", type=float, default=.20)
     parser.add_argument("--output-dir", default="gt_possion")
     parser.add_argument("--seed", type=int, default=20260928)
     parser.add_argument("--start", type=int, default=0)
@@ -200,9 +210,10 @@ def main() -> None:
                 frame_id = int(frame)
                 if frame_id >= len(poses):
                     raise ValueError("missing matching pose")
-                candidate = _full_candidate(scan_path, poses[frame_id], map_xyz, map_labels, args)
+                full_raw = _full_candidate(scan_path, poses[frame_id], map_xyz, map_labels, args)
+                candidate = full_raw[voxel_downsample_indices(full_raw[:, :3], args.voxel_size)]
                 if len(candidate) < args.target_points:
-                    raise ValueError(f"candidate_lt_{args.target_points}: {len(candidate)}")
+                    raise ValueError(f"insufficient_after_voxel: {len(candidate)}")
                 frame_seed = args.seed + int(sequence) * 100000 + frame_id
                 selected, diagnostics = select_largest_feasible_radius(
                     candidate[:, :3], target_points=args.target_points, seed=frame_seed,
@@ -218,7 +229,8 @@ def main() -> None:
                 quality = _knn_quality(output[:, :3], diagnostics["final_radius"], args.device)
                 _atomic_save(output_path, output)
                 record = {"sequence": sequence, "frame": frame, "status": "ok",
-                          "raw_candidate_points": int(len(candidate)), "target_points": args.target_points,
+                          "raw_candidate_points": int(len(full_raw)), "voxel_size": args.voxel_size,
+                          "voxel_candidate_points": int(len(candidate)), "target_points": args.target_points,
                           "seed": int(frame_seed), "runtime_sec": time.perf_counter() - started,
                           **diagnostics, **quality, "exact_duplicate_count": 0}
                 records.append(record)
