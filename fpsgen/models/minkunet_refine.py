@@ -595,7 +595,8 @@ class MinkUNetDiffIN(nn.Module):
 
         return bev_feat[batch_idx, :, x_idx, y_idx]
 
-    def forward(self, img_main, img_mask, x, x_sparse, part_feats, t):
+    def forward(self, img_main, img_mask, x, x_sparse, part_feats, t,
+                return_features=False):
         """Predict :math:`v_\psi(\mathcal P_t,t,\hat B,C_m)`.
 
         ``img_main`` contains the complete ``[D,H,M]`` prior. At every U-Net
@@ -727,4 +728,6 @@ class MinkUNetDiffIN(nn.Module):
 
         pred_xyz = self.head(feat)
 
+        if return_features:
+            return pred_xyz, {"final_point_feature": feat}
         return pred_xyz

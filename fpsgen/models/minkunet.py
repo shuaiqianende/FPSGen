@@ -829,7 +829,7 @@ class MinkUNet_NoTime(nn.Module):
 
         return x_part.F[match_feats]
 
-    def forward(self, x, x_sparse, part_feats):
+    def forward(self, x, x_sparse, part_feats, return_features=False):
         """Predict a source-indexed residual for the teacher endpoint.
 
         The owning Lightning module converts this historical network residual
@@ -887,4 +887,12 @@ class MinkUNet_NoTime(nn.Module):
         y4 = ME.cat(y4, x0)
         y4 = self.up4[1](y4)
 
-        return self.last(y4.slice(x).F)
+        # ``slice`` evaluates the sparse decoder map at every original
+        # TensorField row, in TensorField (rather than sparse-voxel) order.
+        # This is the only representation suitable for source-indexed
+        # teacher/student supervision: ``y4.F`` is ordered by sparse voxels.
+        final_point_feature = y4.slice(x).F
+        output = self.last(final_point_feature)
+        if return_features:
+            return output, {"final_point_feature": final_point_feature}
+        return output
