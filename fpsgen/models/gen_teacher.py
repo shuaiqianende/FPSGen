@@ -13,6 +13,7 @@ from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning import LightningDataModule
 from fpsgen.utils.collations_gen import bev_resample, feats_to_coord
 from fpsgen.ops.chamfer import Chamfer3DDist
+from fpsgen.ops.dcd import density_aware_chamfer
 from torch import Tensor
 from typing import Tuple
 
@@ -62,6 +63,16 @@ class DiffusionPoints(LightningModule):
 
         self.cd_ls = chamfer_sqrt
         self.cnt = 0
+        loss_cfg = self.hparams.get('loss', {})
+        self.loss_type = loss_cfg.get('type', 'chamfer_repulsion')
+        self.dcd_alpha = float(loss_cfg.get('alpha', 1.0))
+        self.dcd_lambda = float(loss_cfg.get('lambda', 1.0))
+        self.dcd_non_reg = bool(loss_cfg.get('non_reg', False))
+        if self.loss_type not in {'chamfer_repulsion', 'dcd'}:
+            raise ValueError(
+                f"Unknown teacher loss.type={self.loss_type!r}; expected "
+                "'chamfer_repulsion' or 'dcd'."
+            )
 
     def forward(self, x_full, x_full_sparse, x_part, t):
         """Predict the network residual for each source-indexed point.
@@ -105,11 +116,7 @@ class DiffusionPoints(LightningModule):
         return x_t
 
     def _shared_step(self, batch: dict, metric_prefix: str):
-        r"""Optimize the set-level teacher objective.
-
-        The endpoint is supervised by Chamfer distance and the local repulsion
-        regularizer from :math:`\mathcal{L}_T`.
-        """
+        r"""Optimize the configured set-level teacher objective."""
         torch.cuda.empty_cache()
         t = torch.zeros(
             (batch['pcd_full'].shape[0],),
@@ -132,27 +139,42 @@ class DiffusionPoints(LightningModule):
         source_to_endpoint = -network_residual
         teacher_endpoint = noisy_pcd + source_to_endpoint
 
-        loss_cd, _ = self.cd_ls(teacher_endpoint, target_scene)
+        if self.loss_type == 'chamfer_repulsion':
+            # Historical baseline: retain both its exact objective and logs.
+            loss_cd, _ = self.cd_ls(teacher_endpoint, target_scene)
 
-        # L_rep penalizes endpoint pairs closer than r_rep = 0.2 m. Neighbor
-        # indices are selected without gradients; the selected distances remain
-        # differentiable with respect to the endpoint coordinates.
-        _, knn_indices = keops_knn(
-            teacher_endpoint.detach(), teacher_endpoint.detach(), k=2
-        )
-        nn_idx = knn_indices[:, :, 1]
-        B, N, _ = teacher_endpoint.shape
-        batch_idx = torch.arange(B, device=self.device).view(-1, 1).expand(B, N)
-        nn_points = teacher_endpoint[batch_idx, nn_idx, :]
-        nn_dist = torch.norm(teacher_endpoint - nn_points, p=2, dim=-1)
-        knn_threshold = 0.2
-        loss_knn = torch.mean(torch.relu(knn_threshold - nn_dist))
-
-        lambda_knn = 0.5
-        loss = loss_cd + lambda_knn * loss_knn
-        self.log(f'{metric_prefix}/loss', loss, prog_bar=True)
-        self.log(f'{metric_prefix}/loss_cd', loss_cd, prog_bar=True)
-        self.log(f'{metric_prefix}/loss_knn', loss_knn, prog_bar=True)
+            # L_rep penalizes endpoint pairs closer than r_rep = 0.2 m.
+            # Neighbor indices are selected without gradients; selected
+            # distances remain differentiable with respect to the endpoint.
+            _, knn_indices = keops_knn(
+                teacher_endpoint.detach(), teacher_endpoint.detach(), k=2
+            )
+            nn_idx = knn_indices[:, :, 1]
+            B, N, _ = teacher_endpoint.shape
+            batch_idx = torch.arange(B, device=self.device).view(-1, 1).expand(B, N)
+            nn_points = teacher_endpoint[batch_idx, nn_idx, :]
+            nn_dist = torch.norm(teacher_endpoint - nn_points, p=2, dim=-1)
+            loss_knn = torch.mean(torch.relu(0.2 - nn_dist))
+            loss = loss_cd + 0.5 * loss_knn
+            self.log(f'{metric_prefix}/loss', loss, prog_bar=True)
+            self.log(f'{metric_prefix}/loss_cd', loss_cd, prog_bar=True)
+            self.log(f'{metric_prefix}/loss_knn', loss_knn, prog_bar=True)
+        else:
+            # DCD-only experiment: no Chamfer term, no repulsion KNN, and no
+            # auxiliary objective. cd_p/cd_t below are diagnostic values from
+            # the same DCD Chamfer call, not an additional loss forward pass.
+            loss_dcd, cd_p, cd_t = density_aware_chamfer(
+                teacher_endpoint,
+                target_scene,
+                alpha=self.dcd_alpha,
+                n_lambda=self.dcd_lambda,
+                non_reg=self.dcd_non_reg,
+            )
+            loss = loss_dcd.mean()
+            self.log(f'{metric_prefix}/loss', loss, prog_bar=True)
+            self.log(f'{metric_prefix}/loss_dcd', loss, prog_bar=True)
+            self.log(f'{metric_prefix}/cd_p', cd_p.mean(), prog_bar=False)
+            self.log(f'{metric_prefix}/cd_t', cd_t.mean(), prog_bar=False)
 
         torch.cuda.empty_cache()
 
