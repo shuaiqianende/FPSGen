@@ -25,3 +25,9 @@ train:
 model:
     # Shared feature width of the sparse point encoder and U-Net.
     out_dim: 96
+    feature_guidance:
+        enabled: false
+        layer: final_decoder
+        loss: cosine
+        weight: 0.01
+        alignment: all_rows

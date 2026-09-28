@@ -1,0 +1,4 @@
+experiment: {id: research_v2_F0_baseline_500}
+data: {data_dir: '', resolution: 0.05, dataloader: KITTI, split: train, train: ['00','01','02','03','04','05','06','07','09','10'], num_points: 180000, max_range: 50., dataset_norm: false, std_axis_norm: false}
+train: {n_gpus: 1, num_workers: 0, max_epoch: 99, max_steps: 500, lr: 0.0001, batch_size: 1, teacher_checkpoint: checkpoints/teacher_gen_stg1_bev_epoch=04.ckpt}
+model: {out_dim: 96, feature_guidance: {enabled: false, layer: final_decoder, loss: cosine, weight: 0.01, alignment: all_rows}}

@@ -91,6 +91,7 @@ class DiffusionPoints(LightningModule):
         )
 
         self.cnt = 0
+        self.feature_guidance = self.hparams['model'].get('feature_guidance', {})
 
     def train(self, mode=True):
         """Set student mode while keeping the distillation teacher in eval mode.
@@ -114,7 +115,7 @@ class DiffusionPoints(LightningModule):
     def p_losses(self, y, noise):
         return F.mse_loss(y, noise)
 
-    def teacher_forward(self, x_full, x_full_sparse, x_part, t):
+    def teacher_forward(self, x_full, x_full_sparse, x_part, t, return_features=False):
         """Evaluate the frozen transport teacher without state updates.
 
         The retained teacher backbone returns the historical denoising-sign
@@ -125,15 +126,23 @@ class DiffusionPoints(LightningModule):
             self.partial_enc_t.eval()
             self.model_t.eval()
             part_feat = self.partial_enc_t(x_part)
-            out = self.model_t(x_full, x_full_sparse, part_feat)
+            out = self.model_t(x_full, x_full_sparse, part_feat,
+                               return_features=return_features)
             torch.cuda.empty_cache()
+            if return_features:
+                prediction, features = out
+                return prediction.reshape(t.shape[0], -1, 3).detach(), features['final_point_feature'].detach()
             return out.reshape(t.shape[0],-1,3).detach()
-    def student_forward(self, img_main, layout_mask, x_full, x_full_sparse, x_part, t):
+    def student_forward(self, img_main, layout_mask, x_full, x_full_sparse, x_part, t,
+                        return_features=False):
         r"""Predict :math:`v_\psi(\mathcal{P}_t,t,\bar{B},C_m)`."""
         part_feat = self.partial_enc(x_part)
-        out = self.model(img_main, layout_mask, x_full, x_full_sparse, part_feat, t)
+        out = self.model(img_main, layout_mask, x_full, x_full_sparse, part_feat, t,
+                         return_features=return_features)
         torch.cuda.empty_cache()
-
+        if return_features:
+            prediction, features = out
+            return prediction.reshape(t.shape[0], -1, 3+self.cls), features['final_point_feature']
         return out.reshape(t.shape[0], -1, 3+self.cls)
 
     def points_to_tensor(self, x_joint):
@@ -179,9 +188,15 @@ class DiffusionPoints(LightningModule):
         # sparse representation especially degenerate; the sampled interval is
         # otherwise uniform and spans the complete transport path.
         t = t_min + (1.0 - t_min) * torch.rand(B, device=self.device)
-        teacher_network_residual = self.teacher_forward(
-            x_full, x_full.sparse(), x_part_teacher, t
+        feature_enabled = self.feature_guidance.get('enabled', False)
+        teacher_result = self.teacher_forward(
+            x_full, x_full.sparse(), x_part_teacher, t,
+            return_features=feature_enabled,
         )
+        if feature_enabled:
+            teacher_network_residual, teacher_feature = teacher_result
+        else:
+            teacher_network_residual = teacher_result
         source_to_endpoint = -teacher_network_residual
         teacher_endpoint = point_source + source_to_endpoint
 
@@ -244,24 +259,53 @@ class DiffusionPoints(LightningModule):
         # context. All three normalized channels condition the point flow.
         img_main = self.processor.points_to_bev_target(batch['pcd_full'])
 
-        denoise_t_student = self.student_forward(
+        student_result = self.student_forward(
             img_main,
             layout_mask,
             x_full,
             x_full.sparse(),
             x_part_student,
-            t
+            t,
+            return_features=feature_enabled,
         )
+        if feature_enabled:
+            denoise_t_student, student_feature = student_result
+        else:
+            denoise_t_student = student_result
 
         pred_xyz_vel = denoise_t_student[:, :, :3]
 
         # Conditional flow matching regresses the source-to-endpoint velocity,
         # not absolute point coordinates.
         loss_mse_xyz = self.p_losses(target_velocity, pred_xyz_vel)
-        loss = loss_mse_xyz
+        loss_feature = torch.zeros((), device=self.device)
+        feature_cosine = torch.ones((), device=self.device)
+        if feature_enabled:
+            if self.feature_guidance.get('layer', 'final_decoder') != 'final_decoder':
+                raise ValueError('Only final_decoder feature guidance is implemented')
+            if self.feature_guidance.get('loss', 'cosine') != 'cosine':
+                raise ValueError('Only cosine feature guidance is implemented')
+            teacher_feature = F.normalize(teacher_feature.float(), dim=-1)
+            student_feature = F.normalize(student_feature.float(), dim=-1)
+            cosine = (teacher_feature * student_feature).sum(dim=-1)
+            if self.feature_guidance.get('alignment', 'all_rows') == 'both_singleton':
+                raise NotImplementedError('both_singleton is reserved for the post-all_rows ablation')
+            if self.feature_guidance.get('alignment', 'all_rows') != 'all_rows':
+                raise ValueError('alignment must be all_rows or both_singleton')
+            feature_cosine = cosine.mean()
+            loss_feature = 1.0 - feature_cosine
+            loss = loss_mse_xyz + self.feature_guidance.get('weight', .01) * loss_feature
+        else:
+            loss = loss_mse_xyz
 
         self.log(f'{metric_prefix}/loss', loss, prog_bar=True)
         self.log(f'{metric_prefix}/loss_mse_xyz', loss_mse_xyz, prog_bar=True)
+        self.log(f'{metric_prefix}/loss_fm', loss_mse_xyz, prog_bar=False)
+        self.log(f'{metric_prefix}/loss_feature', loss_feature, prog_bar=False)
+        self.log(f'{metric_prefix}/feature_cosine', feature_cosine, prog_bar=False)
+        weight = self.feature_guidance.get('weight', .01) if feature_enabled else 0.0
+        self.log(f'{metric_prefix}/weighted_feature_ratio',
+                 weight * loss_feature / loss_mse_xyz.detach().clamp_min(1e-8), prog_bar=False)
 
         if metric_prefix == 'train':
             self.cnt += 1
