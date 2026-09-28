@@ -156,7 +156,20 @@ being mistaken for a purely vertical effect.
 
 ## 7. Prepared commands — do not run while GPUs are occupied
 
-### GPU smoke (3–10 real steps, 180k points, batch 2)
+### GPU smoke (10 real steps, 180k points, batch 2)
+
+```bash
+CUDA_VISIBLE_DEVICES=<FREE_GPU> \
+TRAIN_DATABASE=/data-12/M2024-HWZ/KITTI_Odometry \
+python fpsgen/train_teacher.py \
+  --config configs/research_v2/train_teacher_dcd_a1_l1_smoke10.yaml
+```
+
+Run the command in a `tmux new -s fpsgen_dcd_teacher_5ep` session after an
+explicit free-GPU check. Confirm finite DCD/backward/optimizer values, no OOM,
+and record peak memory and step time. No 500-step or 5k-step gate is planned.
+
+### Formal five-epoch training (only after the smoke passes)
 
 ```bash
 CUDA_VISIBLE_DEVICES=<FREE_GPU> \
@@ -164,11 +177,6 @@ TRAIN_DATABASE=/data-12/M2024-HWZ/KITTI_Odometry \
 python fpsgen/train_teacher.py \
   --config configs/research_v2/train_teacher_dcd_a1_l1_5ep.yaml
 ```
-
-Run the command in a `tmux new -s fpsgen_dcd_teacher_5ep` session after an
-explicit free-GPU check. Confirm finite DCD/backward/optimizer values, no OOM,
-and record peak memory and step time. If successful, restart/continue the
-same five-epoch run; no 500-step or 5k-step gate is planned.
 
 ### Cache DCD B100 endpoints after training
 

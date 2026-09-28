@@ -1,0 +1,32 @@
+experiment:
+    id: teacher_dcd_a1_l1_smoke10
+
+# Same data/model/optimizer contract as the five-epoch DCD run. This file is
+# only a real-180k, batch-2 preflight and must never be used for comparison.
+data:
+    data_dir: ''
+    resolution: 0.05
+    dataloader: 'KITTI'
+    split: 'train'
+    train: [ '00', '01', '02', '03', '04', '05', '06', '07', '09', '10' ]
+    num_points: 180000
+    max_range: 50.
+    dataset_norm: False
+    std_axis_norm: False
+
+train:
+    n_gpus: 1
+    num_workers: 4
+    max_epoch: 1
+    limit_train_batches: 10
+    lr: 0.001
+    batch_size: 2
+
+model:
+    out_dim: 96
+
+loss:
+    type: dcd
+    alpha: 1.0
+    lambda: 1.0
+    non_reg: false
