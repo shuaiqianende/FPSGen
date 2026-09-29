@@ -119,7 +119,8 @@ class OracleBEVStudent:
         return xyz + torch.randn_like(xyz)
 
     @torch.no_grad()
-    def generate(self, scan: np.ndarray, gt: np.ndarray, point_steps: int) -> tuple[np.ndarray, np.ndarray]:
+    def generate(self, scan: np.ndarray, gt: np.ndarray, point_steps: int,
+                 trajectory_steps: set[int] | None = None) -> tuple[np.ndarray, np.ndarray, dict[int, np.ndarray]]:
         gt_tensor = torch.from_numpy(gt)[None].to(self.device)
         oracle_bev = self.processor.points_to_bev_target(gt_tensor)
         source = self.sample_source(oracle_bev, target_points=gt_tensor.shape[1])
@@ -128,7 +129,10 @@ class OracleBEVStudent:
         x_uncond = self.points_to_tensor(torch.zeros_like(lidar))
         layout = torch.zeros((1, 2, 256, 256), device=self.device)
         current = self.points_to_tensor(source)
-        for time_value in torch.linspace(0, 1, point_steps + 1, device=self.device)[:-1]:
+        trajectory_steps = trajectory_steps or set()
+        trajectory = {0: source[0].cpu().numpy()} if 0 in trajectory_steps else {}
+        for step_index, time_value in enumerate(
+                torch.linspace(0, 1, point_steps + 1, device=self.device)[:-1], start=1):
             time = time_value.reshape(1)
             # Build the sparse map exactly once per Euler state.  Rebuilding it
             # for conditional/unconditional CFG calls produces incompatible
@@ -146,7 +150,9 @@ class OracleBEVStudent:
             current = self.points_to_tensor(
                 (current.F + velocity[:, :3] / point_steps).reshape(1, -1, 3)
             )
-        return source[0].cpu().numpy(), current.F.cpu().numpy()
+            if step_index in trajectory_steps:
+                trajectory[step_index] = current.F.cpu().numpy()
+        return source[0].cpu().numpy(), current.F.cpu().numpy(), trajectory
 
 
 def main() -> None:
@@ -158,26 +164,42 @@ def main() -> None:
     parser.add_argument("--point-steps", type=int, default=4)
     parser.add_argument("--guidance-scale", type=float, default=2.0)
     parser.add_argument("--seed", type=int, default=20260929)
+    parser.add_argument(
+        "--trajectory-steps", default="",
+        help="Comma-separated Euler states to save as PLY, e.g. 0,10,20,30,40,50.",
+    )
     args = parser.parse_args()
     if args.point_steps < 1:
         parser.error("--point-steps must be positive")
+    try:
+        trajectory_steps = ({int(value) for value in args.trajectory_steps.split(",") if value}
+                            if args.trajectory_steps else set())
+    except ValueError as error:
+        parser.error(f"Invalid --trajectory-steps: {error}")
+    if any(step < 0 or step > args.point_steps for step in trajectory_steps):
+        parser.error("--trajectory-steps values must be within [0, point-steps]")
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     runner = OracleBEVStudent(args.student_ckpt, args.guidance_scale)
-    source, prediction = runner.generate(load_points(args.input), load_points(args.gt), args.point_steps)
+    source, prediction, trajectory = runner.generate(
+        load_points(args.input), load_points(args.gt), args.point_steps, trajectory_steps
+    )
     if prediction.shape != source.shape or not np.isfinite(prediction).all():
         raise RuntimeError(f"Invalid Student output: source={source.shape}, prediction={prediction.shape}")
     args.output.mkdir(parents=True, exist_ok=True)
     write_xyz(args.output / "source_oracle_bev.ply", source)
     write_xyz(args.output / "student_cond100.ply", prediction)
+    for step, points in trajectory.items():
+        write_xyz(args.output / f"step_{step:03d}_t{step / args.point_steps:.2f}.ply", points)
     (args.output / "manifest.json").write_text(json.dumps({
         "student_checkpoint": str(args.student_ckpt.resolve()),
         "input": str(args.input.resolve()), "oracle_gt": str(args.gt.resolve()),
         "condition": "100", "layout": "literal_zero", "point_steps": args.point_steps,
         "guidance_scale": args.guidance_scale, "seed": args.seed,
         "source_points": int(len(source)), "prediction_points": int(len(prediction)),
+        "trajectory_steps": sorted(trajectory),
     }, indent=2) + "\n")
     print(f"[OK] wrote {len(prediction)} points to {args.output / 'student_cond100.ply'}")
 
