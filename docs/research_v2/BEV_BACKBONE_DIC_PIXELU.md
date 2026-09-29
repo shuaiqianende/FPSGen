@@ -76,3 +76,26 @@ DiC/PixelU development and future dense benchmarks use
 future probing may compile only the dense condition adapter/core after eager
 PointPillar construction.  The experiment order remains DiC-S eager FP32,
 DiC-S real-batch, DiC-S Inductor/AMP, then PixelU-S.
+
+## GPU1 DiC-S training-speed probe (2026-09-29)
+
+This requested engineering probe used the isolated PyTorch 2.0.1/CUDA 11.7
+environment and one RTX 3090 (physical GPU1).  It used a fixed real SemanticKITTI
+`gt_possion` batch of two full 180k-point clouds, ten warmup optimizer steps,
+then fifty timed optimizer steps.  It is **compute-only**: no DataLoader wait or
+H2D cost is included.  PointPillar/KeOps KNN, target rasterization and loss stay
+FP32; AMP/Inductor apply only after the dense `[B,32,256,256]` LiDAR condition
+has been constructed.
+
+| DiC-S mode | Mean ms/step | Samples/s | Peak allocated | Speedup vs FP32 eager | Finite / timed FP16 overflow |
+| --- | ---: | ---: | ---: | ---: | --- |
+| FP32 eager | 329.79 | 6.06 | 8.98 GB | 1.000x | yes / n.a. |
+| FP16 eager | 318.05 | 6.29 | 7.60 GB | 1.037x | yes / 0 |
+| FP32 Inductor | 325.26 | 6.15 | 8.14 GB | 1.014x | yes / n.a. |
+| FP16 Inductor | **271.28** | **7.37** | **5.49 GB** | **1.216x** | yes / 0 |
+
+The dense DiC path does benefit from the combined FP16+Inductor mode.  Inductor
+alone is small at the complete-step level because the eager FP32 PointPillar and
+KeOps condition frontend remain outside the compile boundary.  These numbers
+are a speed probe only, not a training-equivalence result; DiC must still pass
+its eager correctness smoke before any formal model run.
