@@ -64,7 +64,10 @@ def decorate_oblique(axis: plt.Axes, title: str) -> None:
     axis.set_xlim(-50, 50)
     axis.set_ylim(-50, 50)
     axis.set_zlim(-4.0, 4.0)
-    axis.set_box_aspect((1, 1, .24))
+    # Physical world ratio: the displayed cuboid is 100 m × 100 m × 8 m.
+    # Do not stretch Z for visual effect; Student and GT must be geometrically
+    # interpretable in the same real-world coordinate system.
+    axis.set_box_aspect((100, 100, 8))
     axis.view_init(elev=27, azim=-58)
     axis.set_xticks([-50, 0, 50])
     axis.set_yticks([-50, 0, 50])
