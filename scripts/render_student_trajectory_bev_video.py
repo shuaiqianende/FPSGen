@@ -111,8 +111,8 @@ def main() -> None:
     parser.add_argument("--gt", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--fps", type=int, default=12)
-    parser.add_argument("--max-points", type=int, default=30000)
-    parser.add_argument("--point-size", type=float, default=4.0)
+    parser.add_argument("--max-points", type=int, default=60000)
+    parser.add_argument("--point-size", type=float, default=5.0)
     parser.add_argument("--height-min", type=float, default=-2.8,
                         help="Lower display height in metres; lower values saturate blue")
     parser.add_argument("--height-max", type=float, default=3.0,
