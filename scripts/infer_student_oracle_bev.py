@@ -168,6 +168,10 @@ def main() -> None:
         "--trajectory-steps", default="",
         help="Comma-separated Euler states to save as PLY, e.g. 0,10,20,30,40,50.",
     )
+    parser.add_argument(
+        "--trajectory-every", type=int, default=0,
+        help="Also save every N Euler states; use 1 to save a full video trajectory.",
+    )
     args = parser.parse_args()
     if args.point_steps < 1:
         parser.error("--point-steps must be positive")
@@ -178,6 +182,11 @@ def main() -> None:
         parser.error(f"Invalid --trajectory-steps: {error}")
     if any(step < 0 or step > args.point_steps for step in trajectory_steps):
         parser.error("--trajectory-steps values must be within [0, point-steps]")
+    if args.trajectory_every < 0:
+        parser.error("--trajectory-every must be non-negative")
+    if args.trajectory_every:
+        trajectory_steps.update(range(0, args.point_steps + 1, args.trajectory_every))
+        trajectory_steps.add(args.point_steps)
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
