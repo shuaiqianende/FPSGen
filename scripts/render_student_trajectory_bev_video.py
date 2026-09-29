@@ -69,6 +69,12 @@ def decorate_oblique(axis: plt.Axes, title: str) -> None:
     # interpretable in the same real-world coordinate system.
     axis.set_box_aspect((100, 100, 8))
     axis.view_init(elev=27, azim=-58)
+    # Zoom the camera optically, rather than stretching coordinate axes. This
+    # keeps X/Y/Z in real metres while using the panel more efficiently.
+    try:
+        axis.set_proj_type("persp", focal_length=1.75)
+    except TypeError:  # pragma: no cover - compatibility with older Matplotlib
+        axis.set_proj_type("persp")
     axis.set_xticks([-50, 0, 50])
     axis.set_yticks([-50, 0, 50])
     axis.set_zticks([-4, 0, 4])
