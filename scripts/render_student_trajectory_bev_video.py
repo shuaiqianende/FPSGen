@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+"""Create a presentation-quality top-down PointFlow trajectory video.
+
+Only the BEV view is rendered. Height is encoded by a continuous blue (low) to
+red (high) map; the right panel is a fixed GT-Poisson reference so the movement
+of the left Student panel remains interpretable at every Euler state.
+"""
+from __future__ import annotations
+
+import argparse
+import re
+import shutil
+import subprocess
+from pathlib import Path
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
+import numpy as np
+import open3d as o3d
+
+
+PATTERN = re.compile(r"step_(\d+)_t([0-9.]+)\.ply")
+BACKGROUND = "#0a0d14"
+PANEL = "#101722"
+GRID = "#8ea3ba"
+
+
+def read_xyz(path: Path) -> np.ndarray:
+    xyz = np.asarray(o3d.io.read_point_cloud(str(path)).points, dtype=np.float32)
+    if xyz.ndim != 2 or xyz.shape[1] != 3 or len(xyz) == 0 or not np.isfinite(xyz).all():
+        raise ValueError(f"Invalid PLY: {path}")
+    return xyz
+
+
+def decorate(axis: plt.Axes, title: str) -> None:
+    axis.set_facecolor(PANEL)
+    axis.set_title(title, color="white", fontsize=17, fontweight="semibold", pad=16)
+    axis.set_xlim(-50, 50)
+    axis.set_ylim(-50, 50)
+    axis.set_aspect("equal", adjustable="box")
+    axis.set_xticks([])
+    axis.set_yticks([])
+    for radius in (10, 20, 30, 40, 50):
+        axis.add_patch(Circle((0, 0), radius, fill=False, edgecolor=GRID,
+                              linewidth=.65, alpha=.22, zorder=0))
+    axis.axhline(0, color=GRID, alpha=.16, linewidth=.6, zorder=0)
+    axis.axvline(0, color=GRID, alpha=.16, linewidth=.6, zorder=0)
+    axis.scatter([0], [0], marker="+", s=80, color="white", linewidths=1.2, zorder=3)
+    axis.text(-48, -47, "50 m", color="#bdc9d8", fontsize=9, alpha=.8)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--trajectory-dir", type=Path, required=True)
+    parser.add_argument("--gt", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--fps", type=int, default=12)
+    parser.add_argument("--max-points", type=int, default=16000)
+    parser.add_argument("--keep-frames", action="store_true")
+    args = parser.parse_args()
+    if args.fps < 1 or args.max_points < 1:
+        parser.error("--fps and --max-points must be positive")
+    states = []
+    for path in args.trajectory_dir.glob("step_*_t*.ply"):
+        match = PATTERN.fullmatch(path.name)
+        if match:
+            states.append((int(match.group(1)), float(match.group(2)), path))
+    states.sort()
+    if len(states) < 2:
+        raise ValueError("At least two saved trajectory states are required")
+    initial = read_xyz(states[0][2])
+    rng = np.random.default_rng(20260930)
+    point_indices = (np.arange(len(initial)) if len(initial) <= args.max_points else
+                     rng.choice(len(initial), size=args.max_points, replace=False))
+    gt = read_xyz(args.gt)
+    gt_indices = (np.arange(len(gt)) if len(gt) <= args.max_points else
+                  rng.choice(len(gt), size=args.max_points, replace=False))
+    gt = gt[gt_indices]
+    frame_dir = args.output.parent / f"{args.output.stem}_frames"
+    if frame_dir.exists():
+        shutil.rmtree(frame_dir)
+    frame_dir.mkdir(parents=True)
+    for frame_index, (step, time_value, path) in enumerate(states):
+        current = read_xyz(path)
+        if len(current) != len(initial):
+            raise ValueError(f"Point count changed at {path}")
+        current = current[point_indices]
+        figure, axes = plt.subplots(1, 2, figsize=(16, 9), facecolor=BACKGROUND)
+        for axis in axes:
+            for spine in axis.spines.values():
+                spine.set_color("#314052")
+                spine.set_linewidth(.8)
+        scatter = axes[0].scatter(current[:, 0], current[:, 1], c=current[:, 2], s=1.25,
+                                  cmap="coolwarm", vmin=-4.0, vmax=5.4, alpha=.82,
+                                  linewidths=0, rasterized=True)
+        axes[1].scatter(gt[:, 0], gt[:, 1], c=gt[:, 2], s=1.25,
+                        cmap="coolwarm", vmin=-4.0, vmax=5.4, alpha=.82,
+                        linewidths=0, rasterized=True)
+        decorate(axes[0], f"STUDENT POINTFLOW   •   t = {time_value:.2f}   •   step {step:02d}")
+        decorate(axes[1], "GT POISSON   •   REFERENCE")
+        figure.text(.5, .945, "LiDAR-only condition (100)  |  Oracle-BEV  |  CFG = 1",
+                    color="#bdc9d8", ha="center", va="center", fontsize=12)
+        colorbar = figure.colorbar(scatter, ax=axes.tolist(), fraction=.025, pad=.025)
+        colorbar.ax.tick_params(colors="#dce4ef", labelsize=10)
+        colorbar.set_label("HEIGHT  •  low (blue) → high (red)", color="#dce4ef", fontsize=11, labelpad=12)
+        figure.subplots_adjust(left=.035, right=.93, top=.89, bottom=.04, wspace=.05)
+        figure.savefig(frame_dir / f"frame_{frame_index:03d}.png", dpi=120,
+                       facecolor=BACKGROUND)
+        plt.close(figure)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    # The legacy conda environment can shadow the system ffmpeg with a build
+    # that lacks libx264. Prefer the server binary when it is available.
+    ffmpeg = "/usr/local/bin/ffmpeg" if Path("/usr/local/bin/ffmpeg").is_file() else "ffmpeg"
+    subprocess.run([
+        ffmpeg, "-y", "-loglevel", "error", "-framerate", str(args.fps),
+        "-i", str(frame_dir / "frame_%03d.png"), "-vcodec", "libx264",
+        "-pix_fmt", "yuv420p", str(args.output),
+    ], check=True)
+    if not args.keep_frames:
+        shutil.rmtree(frame_dir)
+    print(f"[OK] wrote {args.output} ({len(states)} states at {args.fps} fps)")
+
+
+if __name__ == "__main__":
+    main()
