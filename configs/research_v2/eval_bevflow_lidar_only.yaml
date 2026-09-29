@@ -1,0 +1,18 @@
+data:
+  dataset: SemanticKITTI
+  sequence: '08'
+  gt_dir: auto
+  num_points: 180000
+  max_range: 50.0
+
+eval:
+  condition: '100'
+  manifest: configs/research_v2/gate_seq08_100.txt
+  smoke_manifest: configs/research_v2/gate_seq08_20.txt
+  bev_steps: 10
+  guidance_scale: 2.0
+  samples_per_frame: 3
+  base_seed: 20260929
+  batch_size: 1
+  radial_bins: [[0, 20], [20, 35], [35, 50]]
+  save_visuals: 10
