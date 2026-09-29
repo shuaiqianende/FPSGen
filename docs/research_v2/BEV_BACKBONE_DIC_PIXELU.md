@@ -1,7 +1,8 @@
 # Stage-1 BEV Backbones: DiC-S-BEV and PixelU-S-BEV
 
-Status: **code ready only**.  No GPU smoke, training, BEV evaluation, Inductor
-benchmark, or AMP benchmark is included in this preparation change.
+Status: code preparation is complete.  GPU1 compute-only speed probes have been
+run; no GPU correctness smoke, formal training, or BEV-quality evaluation has
+been run.
 
 ## Fixed Stage-1 contract
 
@@ -99,3 +100,24 @@ alone is small at the complete-step level because the eager FP32 PointPillar and
 KeOps condition frontend remain outside the compile boundary.  These numbers
 are a speed probe only, not a training-equivalence result; DiC must still pass
 its eager correctness smoke before any formal model run.
+
+## GPU1 PixelU-S training-speed probe (2026-09-29)
+
+PixelU-S used the same fixed `gt_possion` batch, RTX 3090, ten warmup optimizer
+steps and fifty timed optimizer steps as DiC-S.  This is likewise compute-only:
+the PointPillar/KeOps frontend, target rasterization and loss remain FP32 and
+eager; AMP and Inductor cover only the dense condition adapter and PixelU core.
+
+| PixelU-S mode | Mean ms/step | Samples/s | Peak allocated | Speedup vs FP32 eager | Finite / timed FP16 overflow |
+| --- | ---: | ---: | ---: | ---: | --- |
+| FP32 eager | 210.01 | 9.52 | 1.03 GB | 1.000x | yes / n.a. |
+| FP16 eager | 236.58 | 8.45 | 1.02 GB | 0.888x | yes / 0 |
+| FP32 Inductor | **124.74** | **16.03** | 1.02 GB | **1.684x** | yes / n.a. |
+| FP16 Inductor | 157.66 | 12.69 | **1.00 GB** | 1.332x | yes / 0 |
+
+For this PyTorch 2.0 / RTX 3090 probe, PixelU-S should use **FP32 + Inductor**:
+FP16 is finite and scaler-stable but slower, while Inductor alone supplies the
+material speedup.  PixelU's patch-16 tokenization makes it much cheaper than
+raw-pixel DiC-S, but this is an engineering comparison rather than a claim of
+equal generation quality.  Both backbones still require a correctness smoke and
+the same BEV evaluation protocol before a training decision.
