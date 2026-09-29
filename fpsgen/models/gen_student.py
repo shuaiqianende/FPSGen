@@ -14,6 +14,7 @@ import torch.nn.functional as F
 import fpsgen.models.minkunet as minknet
 import fpsgen.models.gen_img as genimg
 import fpsgen.models.minkunet_refine as minknetin
+from fpsgen.ops.endpoint_refinement import refine_endpoint
 import MinkowskiEngine as ME
 
 from pytorch_lightning.core.lightning import LightningModule
@@ -92,6 +93,18 @@ class DiffusionPoints(LightningModule):
 
         self.cnt = 0
         self.feature_guidance = self.hparams['model'].get('feature_guidance', {})
+        # Training-only endpoint refinement.  Keeping this opt-in preserves the
+        # historical PointFlow coupling for every existing Student config.
+        self.target_refinement = self.hparams['model'].get('target_refinement', {})
+        if self.target_refinement.get('enabled', False):
+            if self.target_refinement.get('method', 'sparse_sinkhorn') != 'sparse_sinkhorn':
+                raise ValueError('Only sparse_sinkhorn target refinement is implemented')
+            if self.target_refinement.get('k', 8) < 1:
+                raise ValueError('target_refinement.k must be positive')
+            if self.target_refinement.get('epsilon', .002) <= 0:
+                raise ValueError('target_refinement.epsilon must be positive')
+            if self.target_refinement.get('iterations', 100) < 1:
+                raise ValueError('target_refinement.iterations must be positive')
 
     def train(self, mode=True):
         """Set student mode while keeping the distillation teacher in eval mode.
@@ -114,6 +127,29 @@ class DiffusionPoints(LightningModule):
 
     def p_losses(self, y, noise):
         return F.mse_loss(y, noise)
+
+    def refine_teacher_endpoints(self, teacher_endpoint, target_scene):
+        """Apply the selected sparse Sinkhorn refinement independently per scene.
+
+        The refinement uses GT only to build the Student velocity target during
+        training.  It is never part of Student inference and is deliberately
+        evaluated under ``no_grad`` by :func:`refine_endpoint`.
+        """
+        if not self.target_refinement.get('enabled', False):
+            return teacher_endpoint
+
+        kwargs = {
+            'k': int(self.target_refinement.get('k', 8)),
+            'epsilon': float(self.target_refinement.get('epsilon', .002)),
+            'iterations': int(self.target_refinement.get('iterations', 100)),
+            'alpha': float(self.target_refinement.get('alpha', 1.0)),
+            'backend': self.target_refinement.get('backend', 'keops'),
+        }
+        refined = []
+        for endpoint_i, target_i in zip(teacher_endpoint, target_scene):
+            refined_i, _ = refine_endpoint(endpoint_i.float(), target_i.float(), **kwargs)
+            refined.append(refined_i)
+        return torch.stack(refined, dim=0)
 
     def teacher_forward(self, x_full, x_full_sparse, x_part, t, return_features=False):
         """Evaluate the frozen transport teacher without state updates.
@@ -199,6 +235,12 @@ class DiffusionPoints(LightningModule):
             teacher_network_residual = teacher_result
         source_to_endpoint = -teacher_network_residual
         teacher_endpoint = point_source + source_to_endpoint
+        # DCD Teacher + sparse Sinkhorn coupling: P0 -> Teacher endpoint ->
+        # refined target.  ``pcd_full`` is GT solely in this training-only
+        # construction and is not available during PointFlow inference.
+        teacher_endpoint = self.refine_teacher_endpoints(
+            teacher_endpoint, batch['pcd_full'][:, :, :3]
+        )
 
         # Hybrid coupling preserves the source marginal while controlling its
         # correlation with the teacher pair. The reported model uses beta=0.

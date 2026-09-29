@@ -39,8 +39,12 @@ def set_deterministic():
               type=str,
               help='path to checkpoint file (.point_cloud) to resume training.',
               default=None)
+@click.option('--teacher-checkpoint',
+              type=str,
+              help='override train.teacher_checkpoint without editing a tracked YAML config',
+              default=None)
 @click.option('--test', '-t', is_flag=True, help='test mode')
-def main(config, weights, checkpoint, test):
+def main(config, weights, checkpoint, teacher_checkpoint, test):
     """Launch stage-3 PointFlow training, checkpoint resume, or evaluation."""
     set_deterministic()
 
@@ -49,6 +53,8 @@ def main(config, weights, checkpoint, test):
     # Keep dataset locations out of tracked configuration files.
     if environ.get('TRAIN_DATABASE'):
         cfg['data']['data_dir'] = environ.get('TRAIN_DATABASE')
+    if teacher_checkpoint is not None:
+        cfg['train']['teacher_checkpoint'] = teacher_checkpoint
 
     if weights is None:
         model = models.DiffusionPoints(cfg)

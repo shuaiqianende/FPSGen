@@ -1,0 +1,40 @@
+experiment:
+    id: student_dcd_sinkhorn_gt_possion_500_ddp2_bs2
+
+# The first Student short run is deliberately narrow: it tests only the
+# selected DCD Teacher + sparse-Sinkhorn target, without feature guidance.
+data:
+    data_dir: ''
+    gt_dir: 'gt_possion'
+    resolution: 0.05
+    dataloader: 'KITTI'
+    split: 'train'
+    train: [ '00', '01', '02', '03', '04', '05', '06', '07', '09', '10' ]
+    num_points: 180000
+    max_range: 50.
+    dataset_norm: false
+    std_axis_norm: false
+
+train:
+    # Per-rank batch 2 on GPUs 2/3; effective global batch 4.
+    n_gpus: 2
+    num_workers: 4
+    max_epoch: 999
+    max_steps: 500
+    lr: 0.0001
+    batch_size: 2
+    # The queue launcher supplies the completed fine-tuned checkpoint here.
+    teacher_checkpoint: ''
+
+model:
+    out_dim: 96
+    feature_guidance:
+        enabled: false
+    target_refinement:
+        enabled: true
+        method: sparse_sinkhorn
+        k: 8
+        epsilon: 0.002
+        iterations: 100
+        alpha: 1.0
+        backend: keops
