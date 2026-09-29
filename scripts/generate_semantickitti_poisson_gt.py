@@ -143,6 +143,20 @@ def _parse_sequences(value: str) -> list[str]:
     return sequences
 
 
+def _parse_fallback_voxel_sizes(value: str, primary_size: float) -> list[float]:
+    """Parse optional progressively finer voxel sizes for insufficient frames."""
+    if not value.strip():
+        return []
+    sizes = [float(item.strip()) for item in value.split(",") if item.strip()]
+    if any(size <= 0 for size in sizes):
+        raise ValueError("fallback voxel sizes must be positive")
+    if any(size >= primary_size for size in sizes):
+        raise ValueError("fallback voxel sizes must be strictly smaller than --voxel-size")
+    if any(left <= right for left, right in zip(sizes, sizes[1:])):
+        raise ValueError("fallback voxel sizes must be specified from coarse to fine")
+    return sizes
+
+
 def _frame_paths(sequence_dir: Path, args: argparse.Namespace) -> list[Path]:
     paths = sorted((sequence_dir / "velodyne").glob("*.bin"), key=lambda path: int(path.stem))
     if args.frames:
@@ -188,6 +202,8 @@ def main() -> None:
     parser.add_argument("--sequences", default=DEFAULT_SEQUENCES)
     parser.add_argument("--target-points", type=int, default=180000)
     parser.add_argument("--voxel-size", type=float, default=.15)
+    parser.add_argument("--fallback-voxel-sizes", default="",
+                        help="comma-separated finer fallback sizes, used only when the primary voxel has < target points")
     parser.add_argument("--output-dir", default="gt_possion")
     parser.add_argument("--output-format", choices=("ply", "npy"), default="ply")
     parser.add_argument("--seed", type=int, default=20260928)
@@ -211,6 +227,7 @@ def main() -> None:
     args = parser.parse_args()
     if args.target_points <= 0 or args.stride <= 0:
         raise ValueError("target-points and stride must be positive")
+    fallback_voxel_sizes = _parse_fallback_voxel_sizes(args.fallback_voxel_sizes, args.voxel_size)
     root = args.data_root.resolve()
     args.log_dir.mkdir(parents=True, exist_ok=True)
     all_records, all_failures = [], []
@@ -256,9 +273,19 @@ def main() -> None:
                     scan_xyz = scan_xyz[np.linalg.norm(scan_xyz, axis=1) < args.max_range]
                     visible = viewpoint_mask(scan_xyz, local, args.viewpoint_voxel_size)
                     full_raw = np.column_stack((local[visible], labels[visible])).astype(np.float32)
-                candidate = full_raw[voxel_downsample_indices(full_raw[:, :3], args.voxel_size)]
-                if len(candidate) < args.target_points:
-                    raise ValueError(f"insufficient_after_voxel: {len(candidate)}")
+                voxel_candidates = []
+                candidate = None
+                voxel_size_used = None
+                for voxel_size in (args.voxel_size, *fallback_voxel_sizes):
+                    current = full_raw[voxel_downsample_indices(full_raw[:, :3], voxel_size)]
+                    voxel_candidates.append({"voxel_size": float(voxel_size), "count": int(len(current))})
+                    if len(current) >= args.target_points:
+                        candidate = current
+                        voxel_size_used = float(voxel_size)
+                        break
+                if candidate is None:
+                    counts = ", ".join(f"{entry['voxel_size']:.3f}={entry['count']}" for entry in voxel_candidates)
+                    raise ValueError(f"insufficient_after_voxel: {counts}")
                 frame_seed = args.seed + int(sequence) * 100000 + frame_id
                 selected, diagnostics = select_largest_feasible_radius(
                     candidate[:, :3], target_points=args.target_points, seed=frame_seed,
@@ -274,7 +301,8 @@ def main() -> None:
                 quality = _knn_quality(output[:, :3], diagnostics["final_radius"], args.device)
                 (_atomic_save_ply if args.output_format == "ply" else _atomic_save)(output_path, output)
                 record = {"sequence": sequence, "frame": frame, "status": "ok",
-                          "raw_candidate_points": int(len(full_raw)), "voxel_size": args.voxel_size,
+                          "raw_candidate_points": int(len(full_raw)), "voxel_size": voxel_size_used,
+                          "voxel_candidates_by_size": voxel_candidates,
                           "voxel_candidate_points": int(len(candidate)), "target_points": args.target_points,
                           "seed": int(frame_seed), "runtime_sec": time.perf_counter() - started,
                           **diagnostics, **quality, "exact_duplicate_count": 0}

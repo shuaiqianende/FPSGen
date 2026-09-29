@@ -44,6 +44,9 @@ def load_points_any(path_or_array):
         if suffix == ".npy":
             return np.load(path_or_array)
 
+        elif suffix == ".ply":
+            return read_ply_xyz_label(path_or_array)
+
         elif suffix == ".npz":
             data = np.load(path_or_array)
             return data[data.files[0]]

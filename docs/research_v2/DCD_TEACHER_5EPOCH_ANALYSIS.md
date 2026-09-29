@@ -97,7 +97,9 @@ Except for `loss.type`, the DCD run matches the baseline contract:
 | Epochs | 5 |
 | Training seed | Existing `train_teacher.py` deterministic seed 42 |
 
-Formal config: `configs/research_v2/train_teacher_dcd_a1_l1_5ep.yaml`.
+Formal config: `configs/research_v2/train_teacher_dcd_a1_l1_5ep.yaml` for
+one GPU, or `train_teacher_dcd_a1_l1_5ep_ddp2.yaml` for two-process DDP.
+The DDP config uses per-rank batch 1, so its global batch remains 2.
 
 ## 5. Evaluation protocol
 
@@ -113,10 +115,10 @@ D1  DCD-only Teacher + Sinkhorn
 Both checkpoints must cache endpoints over the fixed seq08 B100 manifest.
 The evaluator verifies `torch.equal(P0_baseline, P0_dcd)` and the GT tensor
 for every frame before any metrics are calculated; all 100 pairs must be
-identical. Sinkhorn is fixed for B1 and D1:
+identical. The selected Sinkhorn configuration for B1 and D1 is:
 
 ```text
-K=16, epsilon=0.01, iterations=100, sinkhorn_alpha=1.0
+K=8, epsilon=0.002, iterations=100, sinkhorn_alpha=1.0
 ```
 
 `dcd_alpha` and `sinkhorn_alpha` are distinct quantities and must not be
@@ -169,6 +171,15 @@ Run the command in a `tmux new -s fpsgen_dcd_teacher_5ep` session after an
 explicit free-GPU check. Confirm finite DCD/backward/optimizer values, no OOM,
 and record peak memory and step time. No 500-step or 5k-step gate is planned.
 
+For physical GPUs 2 and 3 with the same effective global batch, use:
+
+```bash
+CUDA_VISIBLE_DEVICES=2,3 \
+TRAIN_DATABASE=/data-12/M2024-HWZ/KITTI_Odometry \
+python fpsgen/train_teacher.py \
+  --config configs/research_v2/train_teacher_dcd_a1_l1_smoke10_ddp2.yaml
+```
+
 ### Formal five-epoch training (only after the smoke passes)
 
 ```bash
@@ -177,6 +188,20 @@ TRAIN_DATABASE=/data-12/M2024-HWZ/KITTI_Odometry \
 python fpsgen/train_teacher.py \
   --config configs/research_v2/train_teacher_dcd_a1_l1_5ep.yaml
 ```
+
+Two-GPU equivalent:
+
+```bash
+CUDA_VISIBLE_DEVICES=2,3 \
+TRAIN_DATABASE=/data-12/M2024-HWZ/KITTI_Odometry \
+python fpsgen/train_teacher.py \
+  --config configs/research_v2/train_teacher_dcd_a1_l1_5ep_ddp2.yaml
+```
+
+For the user-authorized throughput run with batch 2 **per GPU** (global batch
+4), use `train_teacher_dcd_a1_l1_5ep_ddp2_bs2.yaml`. This is recorded as a
+DDP throughput variant because its effective global batch differs from the
+single-GPU global-batch-2 comparison config.
 
 ### Cache DCD B100 endpoints after training
 
@@ -195,21 +220,71 @@ CUDA_VISIBLE_DEVICES=<FREE_GPU> python scripts/cache_teacher_endpoints.py \
 CUDA_VISIBLE_DEVICES=<FREE_GPU> python scripts/eval_teacher_distribution.py \
   --method cd_rep=outputs/research_v2/sinkhorn_cache/b100 \
   --method dcd=outputs/research_v2/dcd_teacher/cache_b100 \
-  --sinkhorn --sinkhorn-k 16 --sinkhorn-epsilon 0.01 \
+  --sinkhorn --sinkhorn-k 8 --sinkhorn-epsilon 0.002 \
   --sinkhorn-iterations 100 --sinkhorn-alpha 1.0 \
   --output outputs/research_v2/dcd_teacher/b100_distribution
 ```
 
 ## 8. Results
 
-**Pending GPU availability / five-epoch DCD-only training not yet executed.**
+### B10 Sinkhorn parameter decision — epoch-03 checkpoints
+
+This decision uses the fixed, non-adjacent seq08 B10 manifest:
+
+```text
+000000, 000452, 000904, 001357, 001809,
+002261, 002713, 003166, 003618, 004070
+```
+
+Both methods use the same cached `P0` and `gt_possion` target for every
+frame (bit-identical checks pass). The following direct comparison fixes
+`K=8`, `iterations=100`, and `sinkhorn_alpha=1.0`, and sets
+`epsilon=0.002`:
+
+| Teacher + Sinkhorn | Chamfer ↓ | F-score ↑ | Coverage ↑ | NN-target coverage ↑ | Exact duplicates / frame ↓ | NN<1cm ↓ | NN<2cm ↓ | NN<5cm ↓ | Height-TV ↓ |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| CD+rep | 0.053370 | 0.987064 | 0.981593 | 0.878427 | 323.5 | 1.466% | 1.874% | 3.668% | 0.033195 |
+| **DCD-only** | **0.052840** | **0.990150** | **0.986229** | **0.893680** | **132.8** | **0.549%** | **0.830%** | **2.486%** | **0.017644** |
+
+At this same geometry-favorable low epsilon, DCD improves every primary
+geometry, coverage, duplicate, close-neighbour, and height-distribution
+metric above. The only local-density statistic favouring CD+rep is 8NN CV
+(0.2963 versus DCD 0.3023); it does not offset CD+rep's substantially higher
+near-duplicate rates.
+
+The full K=8 epsilon sweep was evaluated at
+`epsilon ∈ {0.05, 0.02, 0.01, 0.005, 0.002, 0.001, 0.0005}`. Below 0.002,
+both Teacher variants show sharply rising exact duplicates and NN<1cm ratios.
+Therefore `epsilon=0.002` is selected as the lowest tested geometry-improving
+value before the severe collapse regime.
+
+Artifacts:
+
+```text
+outputs/research_v2/dcd_teacher/b10_dcd_e03_keps_sweep/k8_eps0.002/
+outputs/research_v2/dcd_teacher/b10_cdrep_keps_full_sweep/k8_eps0.002/
+outputs/research_v2/dcd_teacher/visuals_cdrep_vs_dcd_k8_eps0.005/
+```
+
+The PLY visual comparison contains GT, P0, raw Teacher endpoints, and
+Sinkhorn endpoints for the spatially separated frames `000000` and `002713`.
+
+### Remaining validation
+
+The table above is a B10 selection result from the epoch-03 DCD checkpoint.
+The final five-epoch checkpoint and fixed B100 robustness evaluation remain
+required before making a paper-level claim about the full training run.
 
 ## 9. Discussion
 
-**TODO after fixed B100 endpoint and Sinkhorn evaluation.**
+The selected next-stage target is DCD-only Teacher plus Sparse Sinkhorn with
+`K=8, epsilon=0.002, iterations=100, alpha=1.0`. This isolates the method
+choice from the later B100 robustness measurement.
 
 ## 10. Final decision
 
-**TODO.** DCD becomes the preferred Teacher candidate only if DCD+Sinkhorn
-improves clustering and high/vertical mass behavior without meaningful loss of
-geometry, F-score, or coverage versus CD+rep+Sinkhorn.
+**PROVISIONAL PROCEED — use DCD-only Teacher with K=8 / epsilon=0.002 for the
+next endpoint-target experiments.** On the controlled B10 comparison it is
+better than CD+rep at the selected low-epsilon operating point while producing
+substantially fewer local duplicates. Reconfirm this choice on the final
+five-epoch checkpoint and fixed B100 before declaring the result final.

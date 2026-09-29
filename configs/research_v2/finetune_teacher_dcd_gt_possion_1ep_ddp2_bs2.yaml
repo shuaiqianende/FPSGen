@@ -1,0 +1,35 @@
+experiment:
+    id: teacher_dcd_gt_possion_ft1ep_ddp2_bs2_lr1e4
+
+# One-epoch domain/data adaptation only.  Model weights come from the completed
+# old-gt_ DCD Teacher through train_teacher.py --weights; use a new logger and
+# a fresh optimiser instead of resuming the old epoch counter.
+data:
+    data_dir: ''
+    dataloader: 'KITTI'
+    split: 'train'
+    train: [ '00', '01', '02', '03', '04', '05', '06', '07', '09', '10' ]
+    gt_dir: 'gt_possion'
+    resolution: 0.05
+    num_points: 180000
+    max_range: 50.
+    dataset_norm: false
+    std_axis_norm: false
+
+train:
+    # Per-rank batch 2 on physical GPUs 2 and 3: effective global batch 4.
+    n_gpus: 2
+    batch_size: 2
+    num_workers: 4
+    max_epoch: 1
+    # Conservative fine-tuning LR: one tenth of the source Teacher training LR.
+    lr: 0.0001
+
+model:
+    out_dim: 96
+
+loss:
+    type: dcd
+    alpha: 1.0
+    lambda: 1.0
+    non_reg: false

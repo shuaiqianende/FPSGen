@@ -14,6 +14,43 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+
+def load_preprocessed_points(path):
+    """Load one FPSGen full-scene target without changing label alignment.
+
+    Historical targets are ``.npy`` arrays.  The fixed-voxel Hard-Poisson
+    targets are stored as binary PLY files with ``x/y/z/label`` vertex
+    properties.  Both forms are normalised to ``float32 [N, 4]`` here; no
+    coordinate re-sampling or label reassignment is performed.
+    """
+    suffix = os.path.splitext(path)[1].lower()
+    if suffix == '.npy':
+        points = np.load(path)
+    elif suffix == '.ply':
+        try:
+            from plyfile import PlyData
+        except ImportError as exc:
+            raise ImportError(
+                'Reading gt_possion PLY targets requires the lightweight '
+                '"plyfile" package in the active training environment.'
+            ) from exc
+        vertices = PlyData.read(path)['vertex'].data
+        required = ('x', 'y', 'z', 'label')
+        available = set(vertices.dtype.names or ())
+        missing = [name for name in required if name not in available]
+        if missing:
+            raise ValueError(f"PLY target {path} is missing vertex properties: {missing}")
+        points = np.stack([vertices[name] for name in required], axis=1)
+    else:
+        raise ValueError(f"Unsupported preprocessed target extension: {path}")
+
+    points = np.asarray(points, dtype=np.float32)
+    if points.ndim != 2 or points.shape[1] < 4:
+        raise ValueError(f"Expected [N, >=4] point array from {path}, got {points.shape}")
+    if not np.isfinite(points[:, :3]).all():
+        raise ValueError(f"Non-finite XYZ values in preprocessed target: {path}")
+    return points
+
 def point_set_to_sparse(p_full, p_part, filename, pos_tran, part_label, full_label):
     p_full = torch.tensor(p_full)
     pos_tran = torch.tensor(pos_tran)
@@ -21,8 +58,15 @@ def point_set_to_sparse(p_full, p_part, filename, pos_tran, part_label, full_lab
     return [p_full, p_part, filename, pos_tran, part_label, full_label]
 
 class TemporalKITTISet(Dataset):
-    """Load SemanticKITTI scans, labels, and temporal partial-point conditions."""
-    def __init__(self, data_dir, seqs, split, resolution, num_points, max_range, dataset_norm=False, std_axis_norm=False, HW=[64, 1024]):
+    """Load SemanticKITTI scans, labels, and temporal partial-point conditions.
+
+    ``gt_dir`` selects the full-scene supervision directory. It defaults to
+    the historical ``gt_`` contract; new research configs may explicitly use
+    the user-specified ``gt_possion`` version. Partial inputs always remain in
+    the immutable sibling ``input_`` directory.
+    """
+    def __init__(self, data_dir, seqs, split, resolution, num_points, max_range,
+                 dataset_norm=False, std_axis_norm=False, HW=[64, 1024], gt_dir='gt_'):
         super().__init__()
         self.data_dir = data_dir
 
@@ -30,6 +74,7 @@ class TemporalKITTISet(Dataset):
         self.resolution = resolution
         self.num_points = num_points
         self.max_range = max_range
+        self.gt_dir = gt_dir
 
         self.HW = HW
         self.split = split
@@ -88,13 +133,23 @@ class TemporalKITTISet(Dataset):
             )
             self.seq_poses[seq] = poses
 
-            point_seq_path = os.path.join(self.data_dir, seq, 'gt_')
+            point_seq_path = os.path.join(self.data_dir, seq, self.gt_dir)
             if not os.path.isdir(point_seq_path):
                 raise FileNotFoundError(
                     f"Preprocessed ground-truth directory does not exist: {point_seq_path}"
                 )
-            point_seq_gt = [f for f in os.listdir(point_seq_path) if f.endswith('.npy')]
-            point_seq_gt = natsorted(point_seq_gt)
+            npy_files = natsorted(
+                f for f in os.listdir(point_seq_path) if f.endswith('.npy')
+            )
+            ply_files = natsorted(
+                f for f in os.listdir(point_seq_path) if f.endswith('.ply')
+            )
+            if npy_files and ply_files:
+                raise ValueError(
+                    f"Ground-truth directory must contain one target format, not both: "
+                    f"{point_seq_path}"
+                )
+            point_seq_gt = npy_files or ply_files
 
             for file_name in point_seq_gt:
                 try:
@@ -112,7 +167,7 @@ class TemporalKITTISet(Dataset):
 
         if not self.points_datapath:
             raise FileNotFoundError(
-                f"No .npy ground-truth frames found for sequences {list(self.seqs)}"
+                f"No .npy or .ply ground-truth frames found for sequences {list(self.seqs)}"
             )
 
     def cart2sphere_proj(self,
@@ -212,14 +267,19 @@ class TemporalKITTISet(Dataset):
         at least one label column.
         """
         full_path = self.points_datapath[index]
-        part_path = full_path.replace('gt_', 'input_')
+        # String replacement would turn ``gt_possion`` into ``input_possion``.
+        # Resolve the immutable sibling directory structurally instead.
+        frame_stem = os.path.splitext(os.path.basename(full_path))[0]
+        part_path = os.path.join(
+            os.path.dirname(os.path.dirname(full_path)), 'input_', f'{frame_stem}.npy'
+        )
         if not os.path.isfile(part_path):
             raise FileNotFoundError(f"Partial point cloud does not exist: {part_path}")
         p_part = np.load(part_path)
         # Test-mode loss is evaluated against the full ground truth as well.
         # Generation-only inference uses ``fpsgen.inference`` and does not
         # route unlabeled inputs through this supervised Dataset.
-        p_full = np.load(full_path)
+        p_full = load_preprocessed_points(full_path)
         if p_part.ndim != 2 or p_full.ndim != 2:
             raise ValueError(
                 f"Point arrays must be two-dimensional: {part_path}, {full_path}"

@@ -31,18 +31,24 @@ class TemporalKittiDataModule(LightningDataModule):
             num_points=self.cfg['data']['num_points'],
             max_range=self.cfg['data']['max_range'],
             dataset_norm=self.cfg['data']['dataset_norm'],
-            std_axis_norm=self.cfg['data']['std_axis_norm'])
+            std_axis_norm=self.cfg['data']['std_axis_norm'],
+            gt_dir=self.cfg['data'].get('gt_dir', 'gt_'))
         num_workers = self.cfg['train']['num_workers']
         loader_kwargs = {
             'batch_size': self.cfg['train']['batch_size'],
             'shuffle': shuffle,
             'num_workers': num_workers,
             'collate_fn': collate,
-            'pin_memory': False,
+            # Historical configs retain pageable host tensors.  Research speed
+            # configs can opt into pinned memory for asynchronous H2D copies.
+            'pin_memory': self.cfg['train'].get('pin_memory', False),
         }
         # Worker-only options are invalid when loading synchronously in the main process.
         if num_workers > 0:
-            loader_kwargs.update(persistent_workers=True, prefetch_factor=2)
+            loader_kwargs.update(
+                persistent_workers=self.cfg['train'].get('persistent_workers', True),
+                prefetch_factor=self.cfg['train'].get('prefetch_factor', 2),
+            )
         return DataLoader(data_set, **loader_kwargs)
 
     def train_dataloader(self):
