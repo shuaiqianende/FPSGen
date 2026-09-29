@@ -1,0 +1,11 @@
+dic:
+  repository: YuchuanTian/DiC
+  commit: bfa541b5e3a968919f3a399fc0e223e877439b3b
+  source: dic_models.py
+  variant: DiC-S
+pixelu:
+  repository: gzp6688/PixelU
+  commit: 3b7733d931cbce72cf5f4c5e1ccb0c523d9b65c6
+  source: model_pixelu.py
+  reference_variant: PixelU-B-16
+  fpsgen_variant: PixelU-S-BEV

@@ -104,9 +104,13 @@ class DiffCompletion(LightningModule):
         self.partial_enc.load_state_dict(partial_enc_state, strict=True)
         self.model.load_state_dict(model_state, strict=True)
 
-        from fpsgen.models.image_flow_net import BEVFlowTransNet
-        self.bev_gen_net = BEVFlowTransNet(base_ch=32, time_dim=256, cls=0).cuda()
         ckpt_bev = torch.load(bev_ckpt, map_location='cpu')
+        if 'hyper_parameters' not in ckpt_bev or 'state_dict' not in ckpt_bev:
+            raise KeyError("BEV checkpoint must contain 'hyper_parameters' and 'state_dict'")
+        # Use the BEV checkpoint's own model metadata.  Old checkpoints do not
+        # have ``model.backbone`` and therefore select the legacy architecture.
+        from fpsgen.models.bev_backbones import build_bev_backbone
+        self.bev_gen_net = build_bev_backbone(ckpt_bev['hyper_parameters']).cuda()
         bev_state_dict = {}
         for k, v in ckpt_bev['state_dict'].items():
             # FlowIMG checkpoints store BEVFlowTransNet below ``model.``.
@@ -117,7 +121,7 @@ class DiffCompletion(LightningModule):
         self.bev_gen_net.eval()
         for param in self.bev_gen_net.parameters():
             param.requires_grad = False
-        print("Successfully loaded BEVFlowTransNet from checkpoint.")
+        print("Successfully loaded configured BEV backbone from checkpoint.")
 
         self.processor = genimg.BEVDataProcessor(
             max_density=50.0,

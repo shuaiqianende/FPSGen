@@ -17,7 +17,7 @@ from PIL import Image
 from pytorch_lightning.core.lightning import LightningModule
 from torch.optim.lr_scheduler import LambdaLR
 
-import fpsgen.models.image_flow_net as IFN
+from fpsgen.models.bev_backbones import build_bev_backbone
 
 def apply_colormap_to_tensor(tensor_grid, colormap_name='turbo'):
     gray_np = tensor_grid.detach().cpu().numpy()
@@ -397,12 +397,9 @@ class FlowIMG(LightningModule):
             pc_range=50.0
         )
 
-        self.model = IFN.BEVFlowTransNet(
-            base_ch=32,
-            time_dim=256,
-            cls=0,
-            layout_ch=2
-        )
+        # Historical configs omit ``model.backbone`` and the lazy factory then
+        # returns the byte-compatible BEVFlowTransNet implementation.
+        self.model = build_bev_backbone(self.hparams)
 
         self.cnt = 0
 

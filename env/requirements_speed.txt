@@ -1,3 +1,6 @@
 # Keep package versions aligned with the legacy environment unless a documented
 # PyTorch-2 incompatibility requires a change. Torch itself comes from conda.
 -r ../requirements.txt
+# DiC-S-BEV and PixelU-S-BEV are self-contained architectural
+# reimplementations and currently add no runtime dependency.  Keep this file
+# explicit so future benchmark-only dependencies remain isolated from legacy.

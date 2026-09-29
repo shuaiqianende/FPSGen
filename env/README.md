@@ -69,3 +69,15 @@ works, but the actual ME Conv/BN/ReLU probe yielded three Dynamo graphs, two
 graph breaks and zero captured ops; `torch.compile` is therefore not an
 effective sparse-Teacher speed target. See `env/results/*.csv` for the
 machine-readable record.
+
+## Dense BEV backbone development
+
+`DiC-S-BEV` and `PixelU-S-BEV` are developed and statically validated in this
+PyTorch-2 virtual environment.  Legacy BEVFlow remains compatible with the
+PyTorch-1.13 environment because the new backbone factory lazily imports
+PixelU only when explicitly selected by configuration.
+
+This preparation phase intentionally does **not** enable Inductor, FP16, or
+BF16.  The later speed study must compile only the dense condition adapter and
+DiC/PixelU core after the eager FP32 condition frontend has produced its LiDAR
+feature map; PyKeOps PointPillar construction is outside that boundary.
