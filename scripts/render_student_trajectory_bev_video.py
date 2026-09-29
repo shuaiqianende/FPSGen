@@ -23,9 +23,13 @@ import open3d as o3d
 
 
 PATTERN = re.compile(r"step_(\d+)_t([0-9.]+)\.ply")
-BACKGROUND = "#0a0d14"
-PANEL = "#101722"
-GRID = "#8ea3ba"
+# LiDiff's public qualitative figure is deliberately minimal: a bright canvas,
+# coloured points, and no intrusive 3D axes. Keep that presentation grammar
+# while retaining our metrically fixed camera/crop underneath.
+BACKGROUND = "#ffffff"
+PANEL = "#ffffff"
+GRID = "#9aa7b5"
+TEXT = "#172033"
 # Deliberately avoid a white midpoint: most driving-scene points sit near the
 # ground plane, and a diverging white-centred map makes their height unreadable.
 HEIGHT_CMAP = LinearSegmentedColormap.from_list(
@@ -42,7 +46,7 @@ def read_xyz(path: Path) -> np.ndarray:
 
 def decorate(axis: plt.Axes, title: str) -> None:
     axis.set_facecolor(PANEL)
-    axis.set_title(title, color="white", fontsize=17, fontweight="semibold", pad=16)
+    axis.set_title(title, color=TEXT, fontsize=17, fontweight="semibold", pad=16)
     axis.set_xlim(-50, 50)
     axis.set_ylim(-50, 50)
     axis.set_aspect("equal", adjustable="box")
@@ -53,8 +57,8 @@ def decorate(axis: plt.Axes, title: str) -> None:
                               linewidth=.65, alpha=.22, zorder=0))
     axis.axhline(0, color=GRID, alpha=.16, linewidth=.6, zorder=0)
     axis.axvline(0, color=GRID, alpha=.16, linewidth=.6, zorder=0)
-    axis.scatter([0], [0], marker="+", s=80, color="white", linewidths=1.2, zorder=3)
-    axis.text(-48, -47, "50 m", color="#bdc9d8", fontsize=9, alpha=.8)
+    axis.scatter([0], [0], marker="+", s=80, color=TEXT, linewidths=1.2, zorder=3)
+    axis.text(-48, -47, "50 m", color=TEXT, fontsize=9, alpha=.7)
 
 
 def oblique_crop_bounds(reference: np.ndarray) -> tuple[tuple[float, float], tuple[float, float], tuple[float, float]]:
@@ -79,7 +83,7 @@ def decorate_oblique(axis: plt.Axes, title: str,
                      zlim: tuple[float, float]) -> None:
     """Style a shallow 3D camera for readable point-cloud structure."""
     axis.set_facecolor(PANEL)
-    axis.set_title(title, color="white", fontsize=15, fontweight="semibold", pad=13)
+    axis.set_title(title, color=TEXT, fontsize=15, fontweight="semibold", pad=13)
     axis.set_xlim(*xlim)
     axis.set_ylim(*ylim)
     axis.set_zlim(*zlim)
@@ -87,24 +91,18 @@ def decorate_oblique(axis: plt.Axes, title: str,
     # Do not stretch Z for visual effect; Student and GT must be geometrically
     # interpretable in the same real-world coordinate system.
     axis.set_box_aspect((xlim[1] - xlim[0], ylim[1] - ylim[0], zlim[1] - zlim[0]))
-    axis.view_init(elev=27, azim=-58)
+    # A higher (but still oblique) camera uses the panel efficiently for a
+    # physically shallow 100 m × 100 m × ~8 m driving scene.
+    axis.view_init(elev=42, azim=-58)
     # Zoom the camera optically, rather than stretching coordinate axes. This
     # keeps X/Y/Z in real metres while using the panel more efficiently.
     try:
         axis.set_proj_type("persp", focal_length=1.75)
     except TypeError:  # pragma: no cover - compatibility with older Matplotlib
         axis.set_proj_type("persp")
-    # Numeric 3D ticks overlap after a metric crop and add little beyond the
-    # shared metre-based height colourbar; retain only the spatial grid box.
-    axis.set_xticks([])
-    axis.set_yticks([])
-    axis.set_zticks([])
-    for pane in (axis.xaxis.pane, axis.yaxis.pane, axis.zaxis.pane):
-        pane.fill = False
-        pane.set_edgecolor("#314052")
-    for axis_info in (axis.xaxis, axis.yaxis, axis.zaxis):
-        axis_info._axinfo["grid"]["color"] = (0.56, 0.64, 0.74, .16)
-        axis_info._axinfo["grid"]["linewidth"] = .45
+    # LiDiff-style clean qualitative panel: camera/crop remain metric, but the
+    # wireframe, ticks and pane decoration are intentionally not rendered.
+    axis.set_axis_off()
 
 
 def main() -> None:
@@ -158,7 +156,7 @@ def main() -> None:
                 figure.add_subplot(grid[0, 2], projection="3d")]
         for axis in axes:
             for spine in axis.spines.values():
-                spine.set_color("#314052")
+                spine.set_color("#c6d0da")
                 spine.set_linewidth(.8)
         scatter = axes[0].scatter(current[:, 0], current[:, 1], c=current[:, 2], s=args.point_size,
                                   cmap=HEIGHT_CMAP, vmin=args.height_min, vmax=args.height_max, alpha=.94,
@@ -178,8 +176,8 @@ def main() -> None:
         # when Matplotlib's automatic colorbar layout is used.
         colorbar_axis = figure.add_axes([.956, .14, .012, .70])
         colorbar = figure.colorbar(scatter, cax=colorbar_axis)
-        colorbar.ax.tick_params(colors="#dce4ef", labelsize=10)
-        colorbar.set_label("HEIGHT (m)  •  low (blue) → high (red)", color="#dce4ef", fontsize=11, labelpad=12)
+        colorbar.ax.tick_params(colors=TEXT, labelsize=10)
+        colorbar.set_label("HEIGHT (m)  •  low (blue) → high (red)", color=TEXT, fontsize=11, labelpad=12)
         figure.subplots_adjust(left=.02, right=.945, top=.89, bottom=.055)
         figure.savefig(frame_dir / f"frame_{frame_index:03d}.png", dpi=120,
                        facecolor=BACKGROUND)
