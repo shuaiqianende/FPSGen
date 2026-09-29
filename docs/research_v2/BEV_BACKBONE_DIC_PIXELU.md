@@ -101,6 +101,23 @@ KeOps condition frontend remain outside the compile boundary.  These numbers
 are a speed probe only, not a training-equivalence result; DiC must still pass
 its eager correctness smoke before any formal model run.
 
+## GPU1 Legacy BEVFlow training-speed probe (2026-09-29)
+
+The historical `BEVFlowTransNet` was re-run in the PyTorch 2.0.1/CUDA 11.7
+environment using the same `gt_possion` batch and exact 10-warmup/50-timed-step
+protocol.  Its prior short legacy-environment measurement is not used here,
+because it had a different environment and timing protocol.
+
+| Legacy mode | Mean ms/step | Samples/s | Peak allocated | Speedup vs FP32 eager | Finite / timed FP16 overflow |
+| --- | ---: | ---: | ---: | ---: | --- |
+| FP32 eager | 236.34 | 8.46 | 2.53 GB | 1.000x | yes / n.a. |
+| FP16 eager | 220.27 | 9.08 | 2.09 GB | 1.073x | yes / 0 |
+| FP32 Inductor | 274.00 | 7.30 | 2.48 GB | 0.863x | yes / n.a. |
+| FP16 Inductor | **171.44** | **11.67** | **1.75 GB** | **1.378x** | yes / 0 |
+
+Legacy benefits materially only from the combined FP16+Inductor mode; FP32
+Inductor alone regresses on this core.
+
 ## GPU1 PixelU-S training-speed probe (2026-09-29)
 
 PixelU-S used the same fixed `gt_possion` batch, RTX 3090, ten warmup optimizer
@@ -121,3 +138,32 @@ material speedup.  PixelU's patch-16 tokenization makes it much cheaper than
 raw-pixel DiC-S, but this is an engineering comparison rather than a claim of
 equal generation quality.  Both backbones still require a correctness smoke and
 the same BEV evaluation protocol before a training decision.
+
+## Unified three-backbone comparison
+
+All entries below are directly comparable: physical GPU1 (RTX 3090), PyTorch
+2.0.1/CUDA 11.7, a fixed real `gt_possion` batch (`B=2`, 180k full / 18k partial
+points), ten warmup optimizer steps, and fifty timed compute-only steps.  The
+point geometry, PointPillar/KeOps condition frontend, BEV target construction,
+and loss stay eager FP32 for every row; only the dense backbone and its
+condition adapter are AMP/Inductor candidates.
+
+| Backbone | Backend | Mean ms/step ↓ | Median / P95 ms | Samples/s ↑ | Peak allocated ↓ | Speedup within backbone | Finite |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Legacy | FP32 eager | 236.34 | 212.00 / 307.65 | 8.46 | 2.53 GB | 1.000x | yes |
+| Legacy | FP16 eager | 220.27 | 212.60 / 282.99 | 9.08 | 2.09 GB | 1.073x | yes |
+| Legacy | FP32 Inductor | 274.00 | 272.42 / 280.98 | 7.30 | 2.48 GB | 0.863x | yes |
+| Legacy | **FP16 + Inductor** | **171.44** | 165.02 / 199.20 | **11.67** | **1.75 GB** | **1.378x** | yes |
+| DiC-S | FP32 eager | 329.79 | 329.73 / 332.27 | 6.06 | 8.77 GB | 1.000x | yes |
+| DiC-S | FP16 eager | 318.05 | 315.73 / 330.10 | 6.29 | 7.42 GB | 1.037x | yes |
+| DiC-S | FP32 Inductor | 325.26 | 311.34 / 358.54 | 6.15 | 7.95 GB | 1.014x | yes |
+| DiC-S | **FP16 + Inductor** | **271.28** | 274.44 / 287.01 | **7.37** | **5.36 GB** | **1.216x** | yes |
+| PixelU-S | FP32 eager | 210.01 | 209.31 / 215.72 | 9.52 | 1.01 GB | 1.000x | yes |
+| PixelU-S | FP16 eager | 236.58 | 239.47 / 248.51 | 8.45 | 0.99 GB | 0.888x | yes |
+| PixelU-S | **FP32 + Inductor** | **124.74** | 125.66 / 149.17 | **16.03** | 0.99 GB | **1.684x** | yes |
+| PixelU-S | FP16 + Inductor | 157.66 | 155.72 / 162.70 | 12.69 | **0.98 GB** | 1.332x | yes |
+
+The per-backbone recommended speed candidates are therefore Legacy
+FP16+Inductor, DiC-S FP16+Inductor, and PixelU-S FP32+Inductor.  These are
+throughput/memory measurements only: the models have different spatial
+topologies and have not yet undergone a generation-quality comparison.
