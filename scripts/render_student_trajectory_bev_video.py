@@ -57,17 +57,36 @@ def decorate(axis: plt.Axes, title: str) -> None:
     axis.text(-48, -47, "50 m", color="#bdc9d8", fontsize=9, alpha=.8)
 
 
-def decorate_oblique(axis: plt.Axes, title: str) -> None:
+def oblique_crop_bounds(reference: np.ndarray) -> tuple[tuple[float, float], tuple[float, float], tuple[float, float]]:
+    """Use a fixed, robust GT crop for every frame of the trajectory video."""
+    lower = np.percentile(reference, .1, axis=0)
+    upper = np.percentile(reference, 99.9, axis=0)
+    padding = np.array([2.0, 2.0, .35], dtype=np.float32)
+    lower -= padding
+    upper += padding
+    # Keep the usual 50 m BEV domain, while discarding only empty 3D margins.
+    lower[:2] = np.maximum(lower[:2], -50.0)
+    upper[:2] = np.minimum(upper[:2], 50.0)
+    lower[2] = max(float(lower[2]), -4.0)
+    upper[2] = min(float(upper[2]), 4.0)
+    return ((float(lower[0]), float(upper[0])),
+            (float(lower[1]), float(upper[1])),
+            (float(lower[2]), float(upper[2])))
+
+
+def decorate_oblique(axis: plt.Axes, title: str,
+                     xlim: tuple[float, float], ylim: tuple[float, float],
+                     zlim: tuple[float, float]) -> None:
     """Style a shallow 3D camera for readable point-cloud structure."""
     axis.set_facecolor(PANEL)
     axis.set_title(title, color="white", fontsize=15, fontweight="semibold", pad=13)
-    axis.set_xlim(-50, 50)
-    axis.set_ylim(-50, 50)
-    axis.set_zlim(-4.0, 4.0)
+    axis.set_xlim(*xlim)
+    axis.set_ylim(*ylim)
+    axis.set_zlim(*zlim)
     # Physical world ratio: the displayed cuboid is 100 m × 100 m × 8 m.
     # Do not stretch Z for visual effect; Student and GT must be geometrically
     # interpretable in the same real-world coordinate system.
-    axis.set_box_aspect((100, 100, 8))
+    axis.set_box_aspect((xlim[1] - xlim[0], ylim[1] - ylim[0], zlim[1] - zlim[0]))
     axis.view_init(elev=27, azim=-58)
     # Zoom the camera optically, rather than stretching coordinate axes. This
     # keeps X/Y/Z in real metres while using the panel more efficiently.
@@ -75,13 +94,11 @@ def decorate_oblique(axis: plt.Axes, title: str) -> None:
         axis.set_proj_type("persp", focal_length=1.75)
     except TypeError:  # pragma: no cover - compatibility with older Matplotlib
         axis.set_proj_type("persp")
-    axis.set_xticks([-50, 0, 50])
-    axis.set_yticks([-50, 0, 50])
-    axis.set_zticks([-4, 0, 4])
-    axis.tick_params(colors="#bdc9d8", labelsize=8, pad=0)
-    axis.set_xlabel("X (m)", color="#bdc9d8", fontsize=8, labelpad=-9)
-    axis.set_ylabel("Y (m)", color="#bdc9d8", fontsize=8, labelpad=-9)
-    axis.set_zlabel("Z (m)", color="#bdc9d8", fontsize=8, labelpad=-5)
+    # Numeric 3D ticks overlap after a metric crop and add little beyond the
+    # shared metre-based height colourbar; retain only the spatial grid box.
+    axis.set_xticks([])
+    axis.set_yticks([])
+    axis.set_zticks([])
     for pane in (axis.xaxis.pane, axis.yaxis.pane, axis.zaxis.pane):
         pane.fill = False
         pane.set_edgecolor("#314052")
@@ -124,6 +141,7 @@ def main() -> None:
     gt_indices = (np.arange(len(gt)) if len(gt) <= args.max_points else
                   rng.choice(len(gt), size=args.max_points, replace=False))
     gt = gt[gt_indices]
+    xlim, ylim, zlim = oblique_crop_bounds(gt)
     frame_dir = args.output.parent / f"{args.output.stem}_frames"
     if frame_dir.exists():
         shutil.rmtree(frame_dir)
@@ -154,8 +172,8 @@ def main() -> None:
                         vmin=args.height_min, vmax=args.height_max, alpha=.94,
                         linewidths=0, depthshade=False, rasterized=True)
         decorate(axes[0], f"STUDENT POINTFLOW   •   t = {time_value:.2f}   •   step {step:02d}")
-        decorate_oblique(axes[1], "STUDENT POINTFLOW   •   OBLIQUE VIEW")
-        decorate_oblique(axes[2], "GT POISSON   •   OBLIQUE REFERENCE")
+        decorate_oblique(axes[1], "STUDENT POINTFLOW   •   OBLIQUE VIEW", xlim, ylim, zlim)
+        decorate_oblique(axes[2], "GT POISSON   •   OBLIQUE REFERENCE", xlim, ylim, zlim)
         # Put the legend outside every panel: 3D axes do not shrink reliably
         # when Matplotlib's automatic colorbar layout is used.
         colorbar_axis = figure.add_axes([.956, .14, .012, .70])
