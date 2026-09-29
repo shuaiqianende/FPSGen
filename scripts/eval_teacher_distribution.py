@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import time
 from collections import defaultdict
 from pathlib import Path
 
@@ -186,14 +187,29 @@ def main() -> None:
                     "metrics": _metrics(endpoint, gt, p0, args.knn_backend, args.fscore_threshold)}
             records.append(base)
             if args.sinkhorn:
+                if device.type == "cuda":
+                    torch.cuda.synchronize(device)
+                    torch.cuda.reset_peak_memory_stats(device)
+                started = time.perf_counter()
                 refined, diagnostic = refine_endpoint(
                     endpoint, gt, k=args.sinkhorn_k, alpha=args.sinkhorn_alpha,
                     epsilon=args.sinkhorn_epsilon, iterations=args.sinkhorn_iterations,
                     backend=args.knn_backend,
                 )
+                if device.type == "cuda":
+                    torch.cuda.synchronize(device)
+                    peak_allocated_mb = torch.cuda.max_memory_allocated(device) / (1024 ** 2)
+                else:
+                    peak_allocated_mb = float("nan")
+                refinement_runtime_ms = (time.perf_counter() - started) * 1000.0
+                refinement_metrics = _metrics(refined, gt, p0, args.knn_backend, args.fscore_threshold)
+                refinement_metrics.update({
+                    "sinkhorn_runtime_ms": refinement_runtime_ms,
+                    "sinkhorn_peak_allocated_mb": peak_allocated_mb,
+                })
                 records.append({
                     "frame": frame, "method": f"{name}_sinkhorn",
-                    "metrics": _metrics(refined, gt, p0, args.knn_backend, args.fscore_threshold),
+                    "metrics": refinement_metrics,
                     "sinkhorn": diagnostic,
                 })
         print(f"evaluated {frame}", flush=True)
