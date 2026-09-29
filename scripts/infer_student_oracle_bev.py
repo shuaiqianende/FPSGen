@@ -13,6 +13,7 @@ import argparse
 import json
 import math
 import random
+import shutil
 from pathlib import Path
 
 import MinkowskiEngine as ME
@@ -43,6 +44,34 @@ def write_xyz(path: Path, xyz: np.ndarray) -> None:
     cloud.points = o3d.utility.Vector3dVector(np.asarray(xyz, dtype=np.float64))
     if not o3d.io.write_point_cloud(str(path), cloud, write_ascii=False):
         raise IOError(f"Could not write {path}")
+
+
+def write_xyz_label(path: Path, points: np.ndarray) -> None:
+    """Write a compact binary PLY with float32 XYZ and semantic label."""
+    points = np.asarray(points, dtype=np.float32)
+    if points.ndim != 2 or points.shape[1] < 4 or not np.isfinite(points[:, :3]).all():
+        raise ValueError(f"Expected finite [N, >=4] point rows, got {points.shape}")
+    vertex = np.empty(len(points), dtype=[("x", "<f4"), ("y", "<f4"),
+                                          ("z", "<f4"), ("label", "<f4")])
+    vertex["x"], vertex["y"], vertex["z"], vertex["label"] = points[:, 0], points[:, 1], points[:, 2], points[:, 3]
+    header = ("ply\nformat binary_little_endian 1.0\n"
+              f"element vertex {len(vertex)}\n"
+              "property float x\nproperty float y\nproperty float z\nproperty float label\nend_header\n")
+    with path.open("wb") as handle:
+        handle.write(header.encode("ascii"))
+        vertex.tofile(handle)
+
+
+def save_reference_cloud(path: Path, source: Path) -> None:
+    """Preserve semantic labels for the GT and LiDAR references next to a run."""
+    if source.suffix == ".ply":
+        # The Poisson GT is already the required float32 XYZ+label PLY. Copy
+        # bytes instead of parsing it through Open3D, which discards labels.
+        shutil.copyfile(source, path)
+    elif source.suffix == ".npy":
+        write_xyz_label(path, np.load(source))
+    else:
+        raise ValueError(f"Unsupported reference suffix: {source.suffix}")
 
 
 class OracleBEVStudent:
@@ -198,6 +227,8 @@ def main() -> None:
     if prediction.shape != source.shape or not np.isfinite(prediction).all():
         raise RuntimeError(f"Invalid Student output: source={source.shape}, prediction={prediction.shape}")
     args.output.mkdir(parents=True, exist_ok=True)
+    save_reference_cloud(args.output / "gt_possion.ply", args.gt)
+    save_reference_cloud(args.output / "lidar_scan.ply", args.input)
     write_xyz(args.output / "source_oracle_bev.ply", source)
     write_xyz(args.output / "student_cond100.ply", prediction)
     for step, points in trajectory.items():
@@ -205,6 +236,10 @@ def main() -> None:
     (args.output / "manifest.json").write_text(json.dumps({
         "student_checkpoint": str(args.student_ckpt.resolve()),
         "input": str(args.input.resolve()), "oracle_gt": str(args.gt.resolve()),
+        "saved_references": {
+            "lidar_scan": "lidar_scan.ply", "gt_possion": "gt_possion.ply",
+            "format": "binary_little_endian PLY, float32 x/y/z/label",
+        },
         "condition": "100", "layout": "literal_zero", "point_steps": args.point_steps,
         "guidance_scale": args.guidance_scale, "seed": args.seed,
         "source_points": int(len(source)), "prediction_points": int(len(prediction)),
