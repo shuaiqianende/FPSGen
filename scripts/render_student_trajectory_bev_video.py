@@ -57,14 +57,38 @@ def decorate(axis: plt.Axes, title: str) -> None:
     axis.text(-48, -47, "50 m", color="#bdc9d8", fontsize=9, alpha=.8)
 
 
+def decorate_oblique(axis: plt.Axes, title: str) -> None:
+    """Style a shallow 3D camera for readable point-cloud structure."""
+    axis.set_facecolor(PANEL)
+    axis.set_title(title, color="white", fontsize=15, fontweight="semibold", pad=13)
+    axis.set_xlim(-50, 50)
+    axis.set_ylim(-50, 50)
+    axis.set_zlim(-4.0, 4.0)
+    axis.set_box_aspect((1, 1, .24))
+    axis.view_init(elev=27, azim=-58)
+    axis.set_xticks([-50, 0, 50])
+    axis.set_yticks([-50, 0, 50])
+    axis.set_zticks([-4, 0, 4])
+    axis.tick_params(colors="#bdc9d8", labelsize=8, pad=0)
+    axis.set_xlabel("X (m)", color="#bdc9d8", fontsize=8, labelpad=-9)
+    axis.set_ylabel("Y (m)", color="#bdc9d8", fontsize=8, labelpad=-9)
+    axis.set_zlabel("Z (m)", color="#bdc9d8", fontsize=8, labelpad=-5)
+    for pane in (axis.xaxis.pane, axis.yaxis.pane, axis.zaxis.pane):
+        pane.fill = False
+        pane.set_edgecolor("#314052")
+    for axis_info in (axis.xaxis, axis.yaxis, axis.zaxis):
+        axis_info._axinfo["grid"]["color"] = (0.56, 0.64, 0.74, .16)
+        axis_info._axinfo["grid"]["linewidth"] = .45
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--trajectory-dir", type=Path, required=True)
     parser.add_argument("--gt", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--fps", type=int, default=12)
-    parser.add_argument("--max-points", type=int, default=24000)
-    parser.add_argument("--point-size", type=float, default=2.8)
+    parser.add_argument("--max-points", type=int, default=30000)
+    parser.add_argument("--point-size", type=float, default=4.0)
     parser.add_argument("--height-min", type=float, default=-2.8,
                         help="Lower display height in metres; lower values saturate blue")
     parser.add_argument("--height-max", type=float, default=3.0,
@@ -100,7 +124,11 @@ def main() -> None:
         if len(current) != len(initial):
             raise ValueError(f"Point count changed at {path}")
         current = current[point_indices]
-        figure, axes = plt.subplots(1, 2, figsize=(16, 9), facecolor=BACKGROUND)
+        figure = plt.figure(figsize=(21, 7.2), facecolor=BACKGROUND)
+        grid = figure.add_gridspec(1, 3, wspace=.06)
+        axes = [figure.add_subplot(grid[0, 0]),
+                figure.add_subplot(grid[0, 1], projection="3d"),
+                figure.add_subplot(grid[0, 2], projection="3d")]
         for axis in axes:
             for spine in axis.spines.values():
                 spine.set_color("#314052")
@@ -108,17 +136,24 @@ def main() -> None:
         scatter = axes[0].scatter(current[:, 0], current[:, 1], c=current[:, 2], s=args.point_size,
                                   cmap=HEIGHT_CMAP, vmin=args.height_min, vmax=args.height_max, alpha=.94,
                                   linewidths=0, rasterized=True)
-        axes[1].scatter(gt[:, 0], gt[:, 1], c=gt[:, 2], s=args.point_size,
-                        cmap=HEIGHT_CMAP, vmin=args.height_min, vmax=args.height_max, alpha=.94,
-                        linewidths=0, rasterized=True)
+        axes[1].scatter(current[:, 0], current[:, 1], current[:, 2], c=current[:, 2],
+                        s=args.point_size * .9, cmap=HEIGHT_CMAP,
+                        vmin=args.height_min, vmax=args.height_max, alpha=.94,
+                        linewidths=0, depthshade=False, rasterized=True)
+        axes[2].scatter(gt[:, 0], gt[:, 1], gt[:, 2], c=gt[:, 2],
+                        s=args.point_size * .9, cmap=HEIGHT_CMAP,
+                        vmin=args.height_min, vmax=args.height_max, alpha=.94,
+                        linewidths=0, depthshade=False, rasterized=True)
         decorate(axes[0], f"STUDENT POINTFLOW   •   t = {time_value:.2f}   •   step {step:02d}")
-        decorate(axes[1], "GT POISSON   •   REFERENCE")
-        figure.text(.5, .945, "LiDAR-only condition (100)  |  Oracle-BEV  |  CFG = 1",
-                    color="#bdc9d8", ha="center", va="center", fontsize=12)
-        colorbar = figure.colorbar(scatter, ax=axes.tolist(), fraction=.025, pad=.025)
+        decorate_oblique(axes[1], "STUDENT POINTFLOW   •   OBLIQUE VIEW")
+        decorate_oblique(axes[2], "GT POISSON   •   OBLIQUE REFERENCE")
+        # Put the legend outside every panel: 3D axes do not shrink reliably
+        # when Matplotlib's automatic colorbar layout is used.
+        colorbar_axis = figure.add_axes([.956, .14, .012, .70])
+        colorbar = figure.colorbar(scatter, cax=colorbar_axis)
         colorbar.ax.tick_params(colors="#dce4ef", labelsize=10)
         colorbar.set_label("HEIGHT (m)  •  low (blue) → high (red)", color="#dce4ef", fontsize=11, labelpad=12)
-        figure.subplots_adjust(left=.035, right=.93, top=.89, bottom=.04, wspace=.05)
+        figure.subplots_adjust(left=.02, right=.945, top=.89, bottom=.055)
         figure.savefig(frame_dir / f"frame_{frame_index:03d}.png", dpi=120,
                        facecolor=BACKGROUND)
         plt.close(figure)
