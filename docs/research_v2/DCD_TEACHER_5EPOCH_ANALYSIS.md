@@ -118,7 +118,7 @@ for every frame before any metrics are calculated; all 100 pairs must be
 identical. The selected Sinkhorn configuration for B1 and D1 is:
 
 ```text
-K=8, epsilon=0.002, iterations=200, sinkhorn_alpha=1.0
+K=8, epsilon=0.002, iterations=100, sinkhorn_alpha=1.0
 ```
 
 `dcd_alpha` and `sinkhorn_alpha` are distinct quantities and must not be
@@ -221,7 +221,7 @@ CUDA_VISIBLE_DEVICES=<FREE_GPU> python scripts/eval_teacher_distribution.py \
   --method cd_rep=outputs/research_v2/sinkhorn_cache/b100 \
   --method dcd=outputs/research_v2/dcd_teacher/cache_b100 \
   --sinkhorn --sinkhorn-k 8 --sinkhorn-epsilon 0.002 \
-  --sinkhorn-iterations 200 --sinkhorn-alpha 1.0 \
+  --sinkhorn-iterations 100 --sinkhorn-alpha 1.0 \
   --output outputs/research_v2/dcd_teacher/b100_distribution
 ```
 
@@ -272,11 +272,12 @@ the isolated Sinkhorn refinement time per frame; it excludes geometry metrics.
 | **200** | **0.052735** | **0.990956** | **0.988255** | **64.8** | **0.260%** | **0.476%** | **1.938%** | **218.1 ms** |
 | 500 | 0.051936 | 0.991864 | 0.990295 | 20.6 | 0.129% | 0.315% | 1.701% | 380.8 ms |
 
-`iterations=200` is selected as the current quality/runtime Pareto point. It
-improves all reported geometry and close-neighbour measures over 100 iterations
-for a 1.33x Sinkhorn-only time cost. `iterations=500` remains the
-quality-priority upper bound: it is appropriate only when the extra 1.75x cost
-over 200 can be amortized by offline target precomputation.
+Although 200 and 500 iterations improve endpoint geometry and density metrics,
+the formal Student-target configuration is intentionally fixed at
+`iterations=100`. It has substantially lower construction cost (164.1 ms/frame
+versus 218.1 and 380.8 ms/frame), while retaining strong geometry and
+distribution improvements over the raw Teacher. The higher-iteration rows are
+preserved as endpoint-only ablations, not used to change the Student target.
 
 Artifacts:
 
@@ -298,13 +299,13 @@ required before making a paper-level claim about the full training run.
 ## 9. Discussion
 
 The selected next-stage target is DCD-only Teacher plus Sparse Sinkhorn with
-`K=8, epsilon=0.002, iterations=200, alpha=1.0`. This isolates the method
+`K=8, epsilon=0.002, iterations=100, alpha=1.0`. This isolates the method
 choice from the later B100 robustness measurement.
 
 ## 10. Final decision
 
 **PROVISIONAL PROCEED — use DCD-only Teacher with K=8 / epsilon=0.002 /
-iterations=200 for the
+iterations=100 for the
 next endpoint-target experiments.** On the controlled B10 comparison it is
 better than CD+rep at the selected low-epsilon operating point while producing
 substantially fewer local duplicates. Reconfirm this choice on the final
