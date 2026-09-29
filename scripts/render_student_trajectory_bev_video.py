@@ -16,6 +16,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.patches import Circle
 import numpy as np
 import open3d as o3d
@@ -25,6 +26,11 @@ PATTERN = re.compile(r"step_(\d+)_t([0-9.]+)\.ply")
 BACKGROUND = "#0a0d14"
 PANEL = "#101722"
 GRID = "#8ea3ba"
+# Deliberately avoid a white midpoint: most driving-scene points sit near the
+# ground plane, and a diverging white-centred map makes their height unreadable.
+HEIGHT_CMAP = LinearSegmentedColormap.from_list(
+    "fpsgen_height", ["#1238c8", "#007bff", "#00b9d8", "#ffb000", "#f04a23", "#a90026"], N=256
+)
 
 
 def read_xyz(path: Path) -> np.ndarray:
@@ -57,11 +63,18 @@ def main() -> None:
     parser.add_argument("--gt", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--fps", type=int, default=12)
-    parser.add_argument("--max-points", type=int, default=16000)
+    parser.add_argument("--max-points", type=int, default=24000)
+    parser.add_argument("--point-size", type=float, default=2.8)
+    parser.add_argument("--height-min", type=float, default=-2.8,
+                        help="Lower display height in metres; lower values saturate blue")
+    parser.add_argument("--height-max", type=float, default=3.0,
+                        help="Upper display height in metres; higher values saturate red")
     parser.add_argument("--keep-frames", action="store_true")
     args = parser.parse_args()
-    if args.fps < 1 or args.max_points < 1:
-        parser.error("--fps and --max-points must be positive")
+    if args.fps < 1 or args.max_points < 1 or args.point_size <= 0:
+        parser.error("--fps, --max-points and --point-size must be positive")
+    if args.height_min >= args.height_max:
+        parser.error("--height-min must be less than --height-max")
     states = []
     for path in args.trajectory_dir.glob("step_*_t*.ply"):
         match = PATTERN.fullmatch(path.name)
@@ -92,11 +105,11 @@ def main() -> None:
             for spine in axis.spines.values():
                 spine.set_color("#314052")
                 spine.set_linewidth(.8)
-        scatter = axes[0].scatter(current[:, 0], current[:, 1], c=current[:, 2], s=1.25,
-                                  cmap="coolwarm", vmin=-4.0, vmax=5.4, alpha=.82,
+        scatter = axes[0].scatter(current[:, 0], current[:, 1], c=current[:, 2], s=args.point_size,
+                                  cmap=HEIGHT_CMAP, vmin=args.height_min, vmax=args.height_max, alpha=.94,
                                   linewidths=0, rasterized=True)
-        axes[1].scatter(gt[:, 0], gt[:, 1], c=gt[:, 2], s=1.25,
-                        cmap="coolwarm", vmin=-4.0, vmax=5.4, alpha=.82,
+        axes[1].scatter(gt[:, 0], gt[:, 1], c=gt[:, 2], s=args.point_size,
+                        cmap=HEIGHT_CMAP, vmin=args.height_min, vmax=args.height_max, alpha=.94,
                         linewidths=0, rasterized=True)
         decorate(axes[0], f"STUDENT POINTFLOW   •   t = {time_value:.2f}   •   step {step:02d}")
         decorate(axes[1], "GT POISSON   •   REFERENCE")
@@ -104,7 +117,7 @@ def main() -> None:
                     color="#bdc9d8", ha="center", va="center", fontsize=12)
         colorbar = figure.colorbar(scatter, ax=axes.tolist(), fraction=.025, pad=.025)
         colorbar.ax.tick_params(colors="#dce4ef", labelsize=10)
-        colorbar.set_label("HEIGHT  •  low (blue) → high (red)", color="#dce4ef", fontsize=11, labelpad=12)
+        colorbar.set_label("HEIGHT (m)  •  low (blue) → high (red)", color="#dce4ef", fontsize=11, labelpad=12)
         figure.subplots_adjust(left=.035, right=.93, top=.89, bottom=.04, wspace=.05)
         figure.savefig(frame_dir / f"frame_{frame_index:03d}.png", dpi=120,
                        facecolor=BACKGROUND)
