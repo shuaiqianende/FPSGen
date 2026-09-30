@@ -43,6 +43,11 @@ def main():
         result.update({"patch": model.core.patch_size, "hidden": model.core.hidden_size,
                        "groups": model.core.num_groups, "blocks": model.core.num_cond_blocks,
                        "local_channels": list(model.core.local_channels)})
+    if name == "ncsnpp_s":
+        result.update({"nf": model.core.nf, "ch_mult": list(model.core.ch_mult),
+                       "resblocks": model.core.num_res_blocks, "attention": list(model.core.attn_resolutions),
+                       "resblock_type": model.core.resblock_type, "fir": model.core.fir,
+                       "progressive": model.core.progressive, "progressive_input": model.core.progressive_input})
     for key, value in result.items():
         print(f"{key}: {value}")
 

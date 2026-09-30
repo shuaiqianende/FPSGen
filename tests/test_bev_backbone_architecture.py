@@ -2,6 +2,7 @@
 
 import sys
 import types
+from pathlib import Path
 import yaml
 import pytest
 
@@ -34,6 +35,12 @@ def test_pixelu_s_config_topology_guard():
 def test_legacy_factory_does_not_import_pixelu(monkeypatch):
     sys.modules.pop("fpsgen.models.bev_backbones.pixelu_core", None)
     sys.modules.pop("fpsgen.models.bev_backbones.pixelu_bev", None)
+    sys.modules.pop("fpsgen.models.bev_backbones.hdit_core", None)
+    sys.modules.pop("fpsgen.models.bev_backbones.hdit_bev", None)
+    sys.modules.pop("fpsgen.models.bev_backbones.dip_core", None)
+    sys.modules.pop("fpsgen.models.bev_backbones.dip_bev", None)
+    sys.modules.pop("fpsgen.models.bev_backbones.ncsnpp_core", None)
+    sys.modules.pop("fpsgen.models.bev_backbones.ncsnpp_bev", None)
     # This is an import-boundary test, not a PyKeOps environment test.  Stub
     # the legacy module so CPU-only CI without PyKeOps can still prove that
     # factory's historical branch never imports PixelU.
@@ -48,6 +55,9 @@ def test_legacy_factory_does_not_import_pixelu(monkeypatch):
     assert model.__class__.__name__ == "BEVFlowTransNet"
     assert "fpsgen.models.bev_backbones.pixelu_core" not in sys.modules
     assert "fpsgen.models.bev_backbones.pixelu_bev" not in sys.modules
+    assert "fpsgen.models.bev_backbones.hdit_core" not in sys.modules
+    assert "fpsgen.models.bev_backbones.dip_core" not in sys.modules
+    assert "fpsgen.models.bev_backbones.ncsnpp_core" not in sys.modules
 
 
 @pytest.mark.skipif(not hasattr(__import__("torch").nn.functional, "scaled_dot_product_attention"),
@@ -96,3 +106,27 @@ def test_dip_s_architecture_guard():
     assert isinstance(core.blocks[0], FlattenDiTBlock)
     assert isinstance(core.detailer, LocalDetailer)
     assert core.detailer.patch_size == 16
+
+
+def test_ncsnpp_s_architecture_guard():
+    from fpsgen.models.bev_backbones.ncsnpp_core import AttnBlockpp, BigGANResBlock, FIRResample, NCSNppCore
+    cfg = yaml.safe_load(open("configs/research_v2/train_bev_ncsnpp_s_gt_possion.yaml"))
+    ncsn = cfg["model"]["ncsnpp"]
+    assert ncsn["ch_mult"] == [1, 1, 2, 2, 2, 2, 2]
+    assert ncsn["num_res_blocks"] == 2 and ncsn["attn_resolutions"] == [16]
+    assert ncsn["resblock_type"] == "biggan" and ncsn["fir"] is True
+    assert ncsn["progressive"] == "output_skip" and ncsn["progressive_input"] == "input_skip"
+    core = NCSNppCore(input_size=64, nf=16)
+    assert len(core.enc_blocks) == len(core.dec_blocks) == 7
+    assert all(len(stage) == 2 for stage in core.enc_blocks)
+    assert isinstance(core.enc_blocks[0][0], BigGANResBlock)
+    assert isinstance(core.downsamplers[0], FIRResample)
+    assert any(isinstance(module, AttnBlockpp) for stage in core.enc_attn for module in stage)
+
+
+def test_new_pixel_backbones_do_not_depend_on_vae_or_latents():
+    root = Path("fpsgen/models/bev_backbones")
+    for name in ("hdit_core.py", "hdit_bev.py", "dip_core.py", "dip_bev.py", "ncsnpp_core.py", "ncsnpp_bev.py"):
+        source = (root / name).read_text().lower()
+        assert "autoencoderkl" not in source
+        assert "import vae" not in source

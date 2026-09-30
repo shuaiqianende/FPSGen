@@ -22,3 +22,10 @@ dip:
   source: src/models/transformer/dip.py
   flow_source: src/diffusion/flow_matching/training.py
   fpsgen_variant: DiP-S-BEV
+ncsnpp:
+  repository: yang-song/score_sde_pytorch
+  commit: cb1f359f4aadf0ff9a5e122fe8fffc9451fd6e44
+  source: models/ncsnpp.py
+  reference_config: configs/ve/ffhq_256_ncsnpp_continuous.py
+  license: Apache-2.0
+  fpsgen_variant: NCSNpp-S-BEV

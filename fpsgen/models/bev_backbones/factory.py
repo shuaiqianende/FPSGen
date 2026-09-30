@@ -31,7 +31,10 @@ def build_bev_backbone(cfg):
     if name == "dip_s":
         from .dip_bev import BEVDiPS
         return BEVDiPS(model_cfg)
+    if name == "ncsnpp_s":
+        from .ncsnpp_bev import BEVNCSNppS
+        return BEVNCSNppS(model_cfg)
     raise ValueError(
         f"Unknown BEV backbone {name!r}; expected one of "
-        "'legacy', 'dic_s', 'pixelu_s', 'hdit_s', or 'dip_s'."
+        "'legacy', 'dic_s', 'pixelu_s', 'hdit_s', 'dip_s', or 'ncsnpp_s'."
     )

@@ -8,6 +8,7 @@ from fpsgen.models.bev_backbones.dic_core import DiCCore
 from fpsgen.models.bev_backbones.hdit_core import HDiTConditionEncoder, HDiTCore
 from fpsgen.models.bev_backbones.dip_bev import DiPConditionEncoder
 from fpsgen.models.bev_backbones.dip_core import DiPCore
+from fpsgen.models.bev_backbones.ncsnpp_core import NCSNConditionEncoder, NCSNppCore
 
 
 def test_dic_condition_is_exactly_zero_for_inactive_conditions():
@@ -75,6 +76,22 @@ def test_dip_condition_is_exactly_zero_for_inactive_conditions():
 def test_dip_tiny_spatial_forward_keeps_bchw_shape_at_all_times():
     core = DiPCore(input_size=64, patch_size=16, hidden_size=192, num_groups=3, num_cond_blocks=2)
     for time in (0.0, 0.5, 1.0):
+        output = core(torch.randn(1, 3, 64, 64), torch.tensor([time]))
+        assert output.shape == (1, 3, 64, 64)
+        assert torch.isfinite(output).all()
+
+
+def test_ncsnpp_condition_is_exactly_zero_for_inactive_conditions():
+    encoder = NCSNConditionEncoder(nf=16)
+    maps, global_condition = encoder(torch.zeros(2, 32, 64, 64), torch.zeros(2, 2, 64, 64))
+    assert [tuple(item.shape) for item in maps] == [(2, 16, 64, 64), (2, 16, 32, 32), (2, 32, 16, 16), (2, 32, 8, 8), (2, 32, 4, 4), (2, 32, 2, 2), (2, 32, 1, 1)]
+    assert all(torch.count_nonzero(item) == 0 for item in maps)
+    assert torch.count_nonzero(global_condition) == 0
+
+
+def test_ncsnpp_tiny_spatial_forward_keeps_bchw_shape_at_all_times():
+    core = NCSNppCore(input_size=64, nf=16)
+    for time in (0.0, 500.0, 1000.0):
         output = core(torch.randn(1, 3, 64, 64), torch.tensor([time]))
         assert output.shape == (1, 3, 64, 64)
         assert torch.isfinite(output).all()
