@@ -87,19 +87,29 @@ def loss_summary(samples: list[dict[str, float]]) -> dict[str, Any]:
 def load_profile(run_id: str) -> dict[str, float | None]:
     path = OUTPUT / "profiles" / f"{run_id}.csv"
     if not path.exists():
-        return {key: None for key in ("median_step_seconds", "p95_step_seconds", "median_data_gap_seconds", "p95_data_gap_seconds", "max_gpu_allocated_mb", "max_gpu_reserved_mb")}
+        return {key: None for key in (
+            "median_step_seconds", "p95_step_seconds", "median_data_gap_seconds",
+            "p95_data_gap_seconds", "max_gpu_allocated_mb", "max_gpu_reserved_mb",
+            "loader_bottleneck",
+        )}
     with path.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
     def values(key: str) -> list[float]:
         return [float(row[key]) for row in rows if row.get(key) not in (None, "")]
     step, gap = values("optimizer_step_seconds"), values("data_ready_gap_seconds")
+    median_step, p95_step = percentile(step, 0.5), percentile(step, 0.95)
+    median_gap, p95_gap = percentile(gap, 0.5), percentile(gap, 0.95)
+    bottleneck = None if median_step is None or median_gap is None or p95_gap is None else (
+        median_gap > 0.2 * median_step or p95_gap > 2.0 * median_gap
+    )
     return {
-        "median_step_seconds": percentile(step, 0.5),
-        "p95_step_seconds": percentile(step, 0.95),
-        "median_data_gap_seconds": percentile(gap, 0.5),
-        "p95_data_gap_seconds": percentile(gap, 0.95),
+        "median_step_seconds": median_step,
+        "p95_step_seconds": p95_step,
+        "median_data_gap_seconds": median_gap,
+        "p95_data_gap_seconds": p95_gap,
         "max_gpu_allocated_mb": max(values("gpu_allocated_mb"), default=None),
         "max_gpu_reserved_mb": max(values("gpu_reserved_mb"), default=None),
+        "loader_bottleneck": bottleneck,
     }
 
 
@@ -146,8 +156,8 @@ def markdown(records: list[dict[str, Any]]) -> str:
         "logged 100-step TensorBoard samples; throughput statistics use synchronized",
         "50-step profiler samples. `—` means the run or its post-run evaluator is incomplete.",
         "",
-        "| Backbone | Variant | Complete | Last step | Epoch means (sampled) | p50/p95 step (s) | p50/p95 gap (s) | Peak alloc/reserved (MiB) | Adapter/core | Smoke finite | full-mode Gzero/Gshuffle/Δv | Checkpoint |",
-        "| --- | --- | :---: | ---: | --- | --- | --- | --- | ---: | :---: | --- | --- |",
+        "| Backbone | Variant | Complete | Last step | Epoch means (sampled) | p50/p95 step (s) | p50/p95 gap (s) | Loader alert | Peak alloc/reserved (MiB) | Adapter/core | Smoke finite | full-mode Gzero/Gshuffle/Δv | Checkpoint |",
+        "| --- | --- | :---: | ---: | --- | --- | --- | :---: | --- | ---: | :---: | --- | --- |",
     ]
     for record in records:
         loss, throughput = record["loss"], record["throughput"]
@@ -157,13 +167,14 @@ def markdown(records: list[dict[str, Any]]) -> str:
         probe = record["gradient_probe"] or {}
         finite = all(probe.get(key) is True for key in ("finite_loss", "finite_condition_grads", "finite_core_grads"))
         lines.append(
-            "| {backbone} | {variant} | {complete} | {last_step} | {epoch_means} | {step} | {gap} | {memory} | {adapter} | {finite} | {condition_use} | {checkpoint} |".format(
+            "| {backbone} | {variant} | {complete} | {last_step} | {epoch_means} | {step} | {gap} | {loader} | {memory} | {adapter} | {finite} | {condition_use} | {checkpoint} |".format(
                 backbone=record["backbone"], variant=record["variant"],
                 complete="yes" if record["complete"] else "no",
                 last_step=loss["last_step"] if loss["last_step"] is not None else "—",
                 epoch_means=epoch_means,
                 step=f"{number(throughput['median_step_seconds'])}/{number(throughput['p95_step_seconds'])}",
                 gap=f"{number(throughput['median_data_gap_seconds'])}/{number(throughput['p95_data_gap_seconds'])}",
+                loader="yes" if throughput["loader_bottleneck"] else ("no" if throughput["loader_bottleneck"] is not None else "—"),
                 memory=f"{number(throughput['max_gpu_allocated_mb'], 1)}/{number(throughput['max_gpu_reserved_mb'], 1)}",
                 adapter=number(record["adapter_parameter_ratio"], 4),
                 finite="yes" if finite else "—",
