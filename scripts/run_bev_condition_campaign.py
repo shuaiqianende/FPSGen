@@ -14,6 +14,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import yaml
@@ -122,6 +123,13 @@ def ncsn_c0_complete() -> bool:
     return any(root.glob("lightning_logs/version_*/checkpoints/*epoch=04.ckpt"))
 
 
+def wait_for_ncsn_c0() -> None:
+    """Keep the worker recoverable until the protected GPU1 C0 run finishes."""
+    while not ncsn_c0_complete():
+        print("Waiting for the protected NCSNpp C0 epoch=04 checkpoint before C1–C4.", flush=True)
+        time.sleep(60)
+
+
 def run_one(backbone: str, variant: str, settings: dict, gpu: int) -> None:
     (OUTPUT / "smoke").mkdir(parents=True, exist_ok=True)
     smoke = materialize(backbone, variant, settings, smoke=True)
@@ -160,7 +168,7 @@ def main() -> None:
     backbones = args.backbone or (["hdit", "ncsnpp"] if args.gpu == 2 else ["dip", "ncsnpp"])
     for backbone in backbones:
         if backbone == "ncsnpp" and not ncsn_c0_complete():
-            raise RuntimeError("NCSNpp C0 baseline has not naturally completed epoch=04; do not rank or run C1–C4 yet")
+            wait_for_ncsn_c0()
         variants = ("spatial", "global") if backbone == "ncsnpp" and args.gpu == 2 else (
             ("separate", "native") if backbone == "ncsnpp" else tuple(manifest["variants"])
         )
