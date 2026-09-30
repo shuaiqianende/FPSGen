@@ -177,11 +177,17 @@ def materialize_phase2(backbone: str, variant: str) -> Path:
         "visualization_interval": 1000,
         "throughput_csv": str(Path("outputs/condition_campaign/profiles") / f"{run_id}.csv"),
     })
-    if variant != "hybrid_shared":
-        settings = yaml.safe_load(
+    # The C0 policy remains shared spatial+global fusion.  Phase-2 applies the
+    # v2 compact adapter contract to it as well, so a historical full-width C0
+    # adapter cannot evade the same <5% fairness audit as C1–C4.
+    settings = (
+        {"spatial": True, "global": True, "fusion": "shared", "native": False}
+        if variant == "hybrid_shared"
+        else yaml.safe_load(
             (ROOT / "configs/research_v2/condition_ablation/phase1.yaml").read_text(encoding="utf-8")
         )["campaign"]["variants"][variant]
-        cfg["model"]["condition"].update({**settings, "gate_init": 0.1, "bias": False, "api_version": 2})
+    )
+    cfg["model"]["condition"].update({**settings, "gate_init": 0.1, "bias": False, "api_version": 2})
     path = OUTPUT / "configs" / f"train_bev_{backbone}_cond_{variant}_s123_8ep.yaml"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(cfg, sort_keys=False), encoding="utf-8")

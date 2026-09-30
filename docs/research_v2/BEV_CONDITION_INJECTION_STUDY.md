@@ -106,4 +106,7 @@ GPU3. Every candidate receives condition-usage B100 and LiDAR-only B100 with
 three generation seeds, both at seed 20261001. It emits
 `phase2_summary.csv`, `seed_stability.csv` and
 `final_condition_comparison.csv`; it deliberately stops there and never
-starts a long formal run.
+starts a long formal run. The historical C0 checkpoint remains immutable for
+Phase-1; if C0 is selected for Phase-2, it uses the same shared spatial/global
+policy through the v2 compact, bias-free adapter so it passes the common <5%
+adapter/core fairness audit.
