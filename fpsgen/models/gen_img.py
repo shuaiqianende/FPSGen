@@ -400,6 +400,21 @@ class FlowIMG(LightningModule):
         # Historical configs omit ``model.backbone`` and the lazy factory then
         # returns the byte-compatible BEVFlowTransNet implementation.
         self.model = build_bev_backbone(self.hparams)
+        # Keep point-to-pillar construction eager.  The dense condition
+        # adapter/backbone path can optionally use Inductor in the isolated
+        # PyTorch-2 environment without compiling PyKeOps or point geometry.
+        self._dense_forward = self.model.forward
+        runtime_cfg = self.hparams.get('runtime', {})
+        if bool(runtime_cfg.get('compile_dense', False)):
+            compile_fn = getattr(torch, 'compile', None)
+            if compile_fn is None:
+                raise RuntimeError(
+                    'runtime.compile_dense requires PyTorch 2.x with torch.compile'
+                )
+            self._dense_forward = compile_fn(
+                self._dense_forward,
+                backend=str(runtime_cfg.get('compile_backend', 'inductor')),
+            )
 
         self.cnt = 0
 
@@ -470,7 +485,7 @@ class FlowIMG(LightningModule):
         xt = (1 - t_expand) * x0 + t_expand * x1
         ut = x1 - x0
 
-        out = self.model(xt, t, raw_pc_cond, layout_mask)
+        out = self._dense_forward(xt, t, raw_pc_cond, layout_mask)
 
         w = torch.tensor([1.0, 2.0, 1.0], device=out.device).view(1, -1, 1, 1)
         loss_mse = (F.mse_loss(out, ut, reduction='none') * w).mean()
@@ -567,3 +582,16 @@ class FlowIMG(LightningModule):
         }
 
         return [optimizer], [scheduler_dict]
+
+    def lr_scheduler_step(self, scheduler, optimizer_idx, metric):
+        """Step the unchanged LambdaLR under both legacy and PyTorch-2 APIs.
+
+        PyTorch 2 moved ``LambdaLR`` to the newer scheduler base class while
+        Lightning 1.8 validates the legacy class tuple.  Overriding this
+        standard hook is the documented compatibility path; it preserves the
+        original step-wise warmup/cosine schedule exactly.
+        """
+        if metric is None:
+            scheduler.step()
+        else:
+            scheduler.step(metric)

@@ -1,0 +1,46 @@
+experiment:
+    id: bev_dic_s_gt_possion_gpu0_bs2
+
+# Formal single-GPU Stage-1 DiC-S run.  The Flow Matching objective, BEV
+# channels, condition sampling and data split are identical to the legacy
+# BEVFlow protocol; only the dense velocity backbone differs.
+data:
+    data_dir: ''
+    gt_dir: 'gt_possion'
+    resolution: 0.05
+    dataloader: 'KITTI'
+    split: 'train'
+    train: [ '00', '01', '02', '03', '04', '05', '06', '07', '09', '10' ]
+    num_points: 180000
+    max_range: 50.
+    dataset_norm: false
+    std_axis_norm: false
+
+train:
+    # Physical GPU is selected only through CUDA_VISIBLE_DEVICES.  Batch two
+    # is the verified safe even cardinality while GPU0 has another 7GB job.
+    n_gpus: 1
+    num_workers: 4
+    max_epoch: 500
+    checkpoint_every_n_epochs: 20
+    lr: 0.0001
+    batch_size: 2
+
+model:
+    backbone: dic_s
+    flow:
+        type: linear
+        time_scale: 1000.0
+    condition:
+        lidar_channels: 32
+        layout_channels: 2
+        injection: stage_add
+        gate_init: 0.0
+    dic:
+        input_size: 256
+        in_channels: 3
+        hidden_size: 96
+        depth: [6, 6, 5, 6, 6]
+        mult_channels: [1, 2, 4, 2, 1]
+        skip_stride: 3
+        learn_sigma: false

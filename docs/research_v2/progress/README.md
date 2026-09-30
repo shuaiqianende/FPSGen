@@ -5,6 +5,9 @@ Research V2 experiments.  Each update records the exact experiment scope,
 configuration, observed results, decision, and the next action.  It is kept
 separate from machine-local artifacts under `outputs/` and `experiments/`.
 
+For the repository-wide map of active experiments, configurations, scripts,
+and local artifact locations, see [PROJECT_INDEX.md](../PROJECT_INDEX.md).
+
 ## Conventions
 
 - Commit only Markdown, source code, manifests, and small aggregate results.

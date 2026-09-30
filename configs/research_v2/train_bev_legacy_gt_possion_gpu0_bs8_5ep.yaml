@@ -1,0 +1,36 @@
+experiment:
+  id: bev_legacy_gt_possion_gpu0_bs8_5ep
+
+data:
+  data_dir: ''
+  gt_dir: gt_possion
+  resolution: 0.05
+  dataloader: KITTI
+  split: train
+  train:
+    - '00'
+    - '01'
+    - '02'
+    - '03'
+    - '04'
+    - '05'
+    - '06'
+    - '07'
+    - '09'
+    - '10'
+  num_points: 180000
+  max_range: 50.0
+  dataset_norm: false
+  std_axis_norm: false
+
+train:
+  n_gpus: 1
+  num_workers: 4
+  max_epoch: 5
+  checkpoint_every_n_epochs: 1
+  lr: 0.0001
+  batch_size: 8
+
+model:
+  backbone: legacy
+

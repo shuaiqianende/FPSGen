@@ -167,3 +167,9 @@ The per-backbone recommended speed candidates are therefore Legacy
 FP16+Inductor, DiC-S FP16+Inductor, and PixelU-S FP32+Inductor.  These are
 throughput/memory measurements only: the models have different spatial
 topologies and have not yet undergone a generation-quality comparison.
+
+## Training-dynamics result
+
+The complete three-backbone loss comparison, run controls, terminal checkpoint
+path, and decision are recorded in
+[BEV_BACKBONE_TRAINING_DYNAMICS.md](BEV_BACKBONE_TRAINING_DYNAMICS.md).
