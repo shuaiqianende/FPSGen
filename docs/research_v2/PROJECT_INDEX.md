@@ -37,6 +37,7 @@
 | LiDiff-compatible fixed-voxel + Hard-Poisson GT | 已生成/QA；当前训练数据契约 | [GT_POISSON_GENERATION.md](GT_POISSON_GENERATION.md)、[GT_POSSSION_TRAINING_CONTRACT.md](GT_POSSSION_TRAINING_CONTRACT.md) |
 | Stage-1 LiDAR-only BEV 评价 | 代码与协议已准备 | [BEVFLOW_LIDAR_ONLY_EVALUATION.md](BEVFLOW_LIDAR_ONLY_EVALUATION.md) |
 | Stage-1 DiC-S / PixelU-S backbone | 已有训练动态结果；DiC-S 候选、PixelU-S HOLD | [BEV_BACKBONE_DIC_PIXELU.md](BEV_BACKBONE_DIC_PIXELU.md)、[BEV_BACKBONE_TRAINING_DYNAMICS.md](BEV_BACKBONE_TRAINING_DYNAMICS.md)、[backbone_sources.yaml](backbone_sources.yaml) |
+| Stage-1 HDiT-S / DiP-S / NCSNpp-S backbone | 代码、静态检查与 8-step smoke 已完成；未开始训练 | [BEV_BACKBONE_HDIT_DIP_NCSNPP.md](BEV_BACKBONE_HDIT_DIP_NCSNPP.md)、[BEV_BACKBONE_HDIT_DIP_NCSNPP_SMOKE.md](BEV_BACKBONE_HDIT_DIP_NCSNPP_SMOKE.md) |
 | Teacher speed environment / AMP / Inductor | 独立工程实验 | [TEACHER_SPEED_ENV_PROBE.md](TEACHER_SPEED_ENV_PROBE.md) |
 
 ## 可复现配置与清单
@@ -66,6 +67,9 @@
 - `configs/research_v2/train_bev_legacy_gt_possion.yaml`
 - `configs/research_v2/train_bev_dic_s_gt_possion.yaml`
 - `configs/research_v2/train_bev_pixelu_s_gt_possion.yaml`
+- `configs/research_v2/train_bev_hdit_s_gt_possion.yaml`
+- `configs/research_v2/train_bev_dip_s_gt_possion.yaml`
+- `configs/research_v2/train_bev_ncsnpp_s_gt_possion.yaml`
 
 三份配置都使用 `gt_possion`；它们的唯一区别应是 BEV backbone，不应借此混入不同的数据或训练目标。
 
@@ -77,7 +81,7 @@
 - `fpsgen/models/gen_student.py`：Student PointFlow；支持 target refinement 与可选 feature guidance。
 - `fpsgen/ops/dcd.py`：训练安全的 DCD 实现。
 - `fpsgen/ops/endpoint_refinement/`：KNN、Sparse Sinkhorn 与近似 OT target refinement。
-- `fpsgen/models/bev_backbones/`：legacy / DiC-S / PixelU-S 的 lazy factory 和 dense BEV backbone。
+- `fpsgen/models/bev_backbones/`：legacy / DiC-S / PixelU-S / HDiT-S / DiP-S / NCSNpp-S 的 lazy factory 和 dense BEV backbone。
 
 ### 数据、诊断和评测
 
