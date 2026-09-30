@@ -81,3 +81,18 @@ def test_hdit_s_core_topology_guard():
     assert len(core.middle) == 4
     assert isinstance(core.merge0, TokenMerge) and isinstance(core.merge1, TokenMerge)
     assert isinstance(core.split0, TokenSplit) and isinstance(core.split1, TokenSplit)
+
+
+@pytest.mark.skipif(not hasattr(__import__("torch").nn.functional, "scaled_dot_product_attention"),
+                    reason="DiP requires the PyTorch-2 SDPA API")
+def test_dip_s_architecture_guard():
+    from fpsgen.models.bev_backbones.dip_core import DiPCore, FlattenDiTBlock, LocalDetailer
+    cfg = yaml.safe_load(open("configs/research_v2/train_bev_dip_s_gt_possion.yaml"))
+    dip = cfg["model"]["dip"]
+    assert dip["patch_size"] == 16 and dip["hidden_size"] == 384 and dip["num_groups"] == 6
+    assert dip["hidden_size"] // dip["num_groups"] == 64
+    assert dip["local_channels"] == [64, 128, 256, 512]
+    core = DiPCore(input_size=64, patch_size=16, hidden_size=192, num_groups=3, num_cond_blocks=2)
+    assert isinstance(core.blocks[0], FlattenDiTBlock)
+    assert isinstance(core.detailer, LocalDetailer)
+    assert core.detailer.patch_size == 16

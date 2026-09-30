@@ -6,6 +6,8 @@ import torch
 from fpsgen.models.bev_backbones.condition import DiCConditionEncoder, PixelUConditionEncoder
 from fpsgen.models.bev_backbones.dic_core import DiCCore
 from fpsgen.models.bev_backbones.hdit_core import HDiTConditionEncoder, HDiTCore
+from fpsgen.models.bev_backbones.dip_bev import DiPConditionEncoder
+from fpsgen.models.bev_backbones.dip_core import DiPCore
 
 
 def test_dic_condition_is_exactly_zero_for_inactive_conditions():
@@ -53,6 +55,25 @@ def test_hdit_condition_is_exactly_zero_for_inactive_conditions():
 def test_hdit_tiny_spatial_forward_keeps_bchw_shape_at_all_times():
     core = HDiTCore(input_size=64, patch_size=4, widths=(16, 32, 64), depths=(2, 2, 4),
                     d_ffs=(48, 96, 192), d_head=16, mapping_width=32, mapping_d_ff=64)
+    for time in (0.0, 0.5, 1.0):
+        output = core(torch.randn(1, 3, 64, 64), torch.tensor([time]))
+        assert output.shape == (1, 3, 64, 64)
+        assert torch.isfinite(output).all()
+
+
+@pytest.mark.skipif(not hasattr(torch.nn.functional, "scaled_dot_product_attention"),
+                    reason="DiP requires the PyTorch-2 SDPA API")
+def test_dip_condition_is_exactly_zero_for_inactive_conditions():
+    encoder = DiPConditionEncoder(patch_size=16, hidden_size=96)
+    patch, global_condition = encoder(torch.zeros(2, 32, 64, 64), torch.zeros(2, 2, 64, 64))
+    assert patch.shape == (2, 16, 96) and global_condition.shape == (2, 96)
+    assert torch.count_nonzero(patch) == 0 and torch.count_nonzero(global_condition) == 0
+
+
+@pytest.mark.skipif(not hasattr(torch.nn.functional, "scaled_dot_product_attention"),
+                    reason="DiP requires the PyTorch-2 SDPA API")
+def test_dip_tiny_spatial_forward_keeps_bchw_shape_at_all_times():
+    core = DiPCore(input_size=64, patch_size=16, hidden_size=192, num_groups=3, num_cond_blocks=2)
     for time in (0.0, 0.5, 1.0):
         output = core(torch.randn(1, 3, 64, 64), torch.tensor([time]))
         assert output.shape == (1, 3, 64, 64)

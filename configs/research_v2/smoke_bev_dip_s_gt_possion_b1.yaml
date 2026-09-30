@@ -1,0 +1,26 @@
+experiment: {id: smoke_bev_dip_s_gt_possion_b1}
+data:
+    data_dir: ''
+    gt_dir: 'gt_possion'
+    resolution: 0.05
+    dataloader: 'KITTI'
+    split: 'train'
+    train: ['00', '01', '02', '03', '04', '05', '06', '07', '09', '10']
+    num_points: 180000
+    max_range: 50.0
+    dataset_norm: false
+    std_axis_norm: false
+train: {n_gpus: 1, num_workers: 2, max_epoch: 1, batch_size: 1, limit_train_batches: 8, checkpoint_every_n_epochs: 999, lr: 0.0001}
+runtime: {compile_dense: false}
+model:
+    backbone: dip_s
+    flow: {type: linear}
+    condition: {lidar_channels: 32, layout_channels: 2, gate_init: 0.1}
+    dip:
+        input_size: 256
+        in_channels: 3
+        patch_size: 16
+        hidden_size: 384
+        num_groups: 6
+        num_cond_blocks: 8
+        local_channels: [64, 128, 256, 512]

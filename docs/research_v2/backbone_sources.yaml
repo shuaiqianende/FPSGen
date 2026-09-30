@@ -16,3 +16,9 @@ hdit:
   reference_config: configs/config_oxford_flowers_shifted_window.json
   license: MIT
   fpsgen_variant: HDiT-S-BEV
+dip:
+  repository: NJU-PCALab/DiP
+  commit: 949294f290f2380a7767649f343679e24dab4410
+  source: src/models/transformer/dip.py
+  flow_source: src/diffusion/flow_matching/training.py
+  fpsgen_variant: DiP-S-BEV

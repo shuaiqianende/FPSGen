@@ -39,6 +39,10 @@ def main():
         result.update({"patch": model.core.patch_size, "widths": list(model.core.widths),
                        "depths": list(model.core.depths), "window_size": model.core.window_size,
                        "d_head": model.core.d_head})
+    if name == "dip_s":
+        result.update({"patch": model.core.patch_size, "hidden": model.core.hidden_size,
+                       "groups": model.core.num_groups, "blocks": model.core.num_cond_blocks,
+                       "local_channels": list(model.core.local_channels)})
     for key, value in result.items():
         print(f"{key}: {value}")
 
