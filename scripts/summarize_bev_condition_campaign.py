@@ -99,7 +99,9 @@ def load_profile(run_id: str) -> dict[str, float | None]:
     step, gap = values("optimizer_step_seconds"), values("data_ready_gap_seconds")
     median_step, p95_step = percentile(step, 0.5), percentile(step, 0.95)
     median_gap, p95_gap = percentile(gap, 0.5), percentile(gap, 0.95)
-    bottleneck = None if median_step is None or median_gap is None or p95_gap is None else (
+    # Two 50-step rows are dominated by loader/process warm-up.  Delay the
+    # policy verdict until a full 500-step observation horizon is available.
+    bottleneck = None if len(step) < 10 or median_step is None or median_gap is None or p95_gap is None else (
         median_gap > 0.2 * median_step or p95_gap > 2.0 * median_gap
     )
     return {
