@@ -70,7 +70,10 @@ from fpsgen.models.gen_img import FlowIMG
 cfg=yaml.safe_load(open(sys.argv[1]))
 model=FlowIMG(cfg).model
 core=sum(p.numel() for p in model.core.parameters())
-adapter=sum(p.numel() for n,p in model.named_parameters() if n.startswith('condition_encoder') or 'condition_gates' in n or 'global_gate' in n or 'local_gates' in n)
+# The wrapper has exactly three parameter owners: frozen-by-definition core,
+# PointPillar frontend, and condition adapters/gates.  Count every parameter
+# outside the first two so a newly named gate cannot escape this safety audit.
+adapter=sum(p.numel() for n,p in model.named_parameters() if not n.startswith('core.') and not n.startswith('pc_encoder.'))
 print(json.dumps({'core':core,'adapter':adapter,'ratio':adapter/core}))
 assert adapter < .05 * core, (adapter, core)
 """
