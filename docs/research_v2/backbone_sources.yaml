@@ -9,3 +9,10 @@ pixelu:
   source: model_pixelu.py
   reference_variant: PixelU-B-16
   fpsgen_variant: PixelU-S-BEV
+hdit:
+  repository: crowsonkb/k-diffusion
+  commit: 4601bf085320592473f681a62808ed873d17fad5
+  source: k_diffusion/models/image_transformer_v2.py
+  reference_config: configs/config_oxford_flowers_shifted_window.json
+  license: MIT
+  fpsgen_variant: HDiT-S-BEV

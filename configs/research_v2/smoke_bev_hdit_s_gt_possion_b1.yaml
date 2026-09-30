@@ -1,0 +1,42 @@
+experiment:
+    id: smoke_bev_hdit_s_gt_possion_b1
+data:
+    data_dir: ''
+    gt_dir: 'gt_possion'
+    resolution: 0.05
+    dataloader: 'KITTI'
+    split: 'train'
+    train: ['00', '01', '02', '03', '04', '05', '06', '07', '09', '10']
+    num_points: 180000
+    max_range: 50.0
+    dataset_norm: false
+    std_axis_norm: false
+train:
+    n_gpus: 1
+    num_workers: 2
+    max_epoch: 1
+    batch_size: 1
+    limit_train_batches: 8
+    checkpoint_every_n_epochs: 999
+    lr: 0.0001
+runtime:
+    compile_dense: false
+model:
+    backbone: hdit_s
+    flow: {type: linear}
+    condition: {lidar_channels: 32, layout_channels: 2, gate_init: 0.1}
+    hdit:
+        input_size: 256
+        in_channels: 3
+        patch_size: [4, 4]
+        widths: [128, 256, 512]
+        depths: [2, 2, 4]
+        d_ffs: [384, 768, 1536]
+        self_attns:
+            - {type: shifted_window, d_head: 64, window_size: 8}
+            - {type: shifted_window, d_head: 64, window_size: 8}
+            - {type: global, d_head: 64}
+        mapping_width: 256
+        mapping_depth: 2
+        mapping_d_ff: 768
+        dropout: [0.0, 0.0, 0.1]

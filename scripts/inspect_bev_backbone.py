@@ -35,6 +35,10 @@ def main():
         result.update({"patch": model.core.patch_size, "depth": list(model.core.depth),
                        "hidden": model.core.hidden_size, "heads": model.core.num_heads,
                        "bottleneck": model.core.bottleneck_dim})
+    if name == "hdit_s":
+        result.update({"patch": model.core.patch_size, "widths": list(model.core.widths),
+                       "depths": list(model.core.depths), "window_size": model.core.window_size,
+                       "d_head": model.core.d_head})
     for key, value in result.items():
         print(f"{key}: {value}")
 

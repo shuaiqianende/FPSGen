@@ -25,7 +25,10 @@ def build_bev_backbone(cfg):
     if name == "pixelu_s":
         from .pixelu_bev import BEVPixelUS
         return BEVPixelUS(model_cfg)
+    if name == "hdit_s":
+        from .hdit_bev import BEVHDiTS
+        return BEVHDiTS(model_cfg)
     raise ValueError(
         f"Unknown BEV backbone {name!r}; expected one of "
-        "'legacy', 'dic_s', or 'pixelu_s'."
+        "'legacy', 'dic_s', 'pixelu_s', or 'hdit_s'."
     )

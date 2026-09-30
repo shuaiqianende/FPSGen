@@ -5,6 +5,7 @@ import torch
 
 from fpsgen.models.bev_backbones.condition import DiCConditionEncoder, PixelUConditionEncoder
 from fpsgen.models.bev_backbones.dic_core import DiCCore
+from fpsgen.models.bev_backbones.hdit_core import HDiTConditionEncoder, HDiTCore
 
 
 def test_dic_condition_is_exactly_zero_for_inactive_conditions():
@@ -40,3 +41,19 @@ def test_pixelu_tiny_spatial_forward_keeps_bchw_shape():
     output = core(torch.randn(1, 3, 64, 64), torch.tensor([500.0]))
     assert output.shape == (1, 3, 64, 64)
     assert torch.isfinite(output).all()
+
+
+def test_hdit_condition_is_exactly_zero_for_inactive_conditions():
+    encoder = HDiTConditionEncoder(widths=(16, 32, 64), patch_size=4, mapping_width=32)
+    features = encoder(torch.zeros(2, 32, 64, 64), torch.zeros(2, 2, 64, 64))
+    assert [tuple(item.shape) for item in features[:3]] == [(2, 16, 16, 16), (2, 8, 8, 32), (2, 4, 4, 64)]
+    assert all(torch.count_nonzero(item) == 0 for item in features)
+
+
+def test_hdit_tiny_spatial_forward_keeps_bchw_shape_at_all_times():
+    core = HDiTCore(input_size=64, patch_size=4, widths=(16, 32, 64), depths=(2, 2, 4),
+                    d_ffs=(48, 96, 192), d_head=16, mapping_width=32, mapping_d_ff=64)
+    for time in (0.0, 0.5, 1.0):
+        output = core(torch.randn(1, 3, 64, 64), torch.tensor([time]))
+        assert output.shape == (1, 3, 64, 64)
+        assert torch.isfinite(output).all()

@@ -6,6 +6,7 @@ import yaml
 import pytest
 
 from fpsgen.models.bev_backbones.dic_core import DiCCore
+from fpsgen.models.bev_backbones.hdit_core import HDiTCore, TokenMerge, TokenSplit
 
 
 def test_dic_s_architecture_guard():
@@ -59,3 +60,24 @@ def test_pixelu_s_architecture_guard():
     assert len(core.blocks0) == len(core.blocks1) == len(core.blocks2) == 4
     assert isinstance(core.blocks0[0].norm1, RMSNorm)
     assert isinstance(core.blocks0[0].mlp, SwiGLUFFN)
+
+
+def test_hdit_s_config_topology_guard():
+    cfg = yaml.safe_load(open("configs/research_v2/train_bev_hdit_s_gt_possion.yaml"))
+    hdit = cfg["model"]["hdit"]
+    assert hdit["patch_size"] == [4, 4]
+    assert hdit["widths"] == [128, 256, 512]
+    assert hdit["depths"] == [2, 2, 4]
+    assert hdit["d_ffs"] == [384, 768, 1536]
+    assert [layer["type"] for layer in hdit["self_attns"]] == ["shifted_window", "shifted_window", "global"]
+    assert hdit["self_attns"][0]["window_size"] == hdit["self_attns"][1]["window_size"] == 8
+
+
+def test_hdit_s_core_topology_guard():
+    core = HDiTCore(input_size=64, patch_size=4, widths=(128, 256, 512), depths=(2, 2, 4),
+                    d_ffs=(384, 768, 1536), mapping_width=256, mapping_d_ff=768)
+    assert len(core.enc0) == len(core.dec0) == 2
+    assert len(core.enc1) == len(core.dec1) == 2
+    assert len(core.middle) == 4
+    assert isinstance(core.merge0, TokenMerge) and isinstance(core.merge1, TokenMerge)
+    assert isinstance(core.split0, TokenSplit) and isinstance(core.split1, TokenSplit)
