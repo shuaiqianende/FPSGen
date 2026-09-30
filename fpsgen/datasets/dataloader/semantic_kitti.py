@@ -84,8 +84,10 @@ class TemporalKITTISet(Dataset):
         self.datapath_list()
         self.data_stats = {'mean': None, 'std': None}
 
-        if os.path.isfile(f'utils/data_stats_range_{int(self.max_range)}m.yml') and dataset_norm:
-            stats = yaml.safe_load(open(f'utils/data_stats_range_{int(self.max_range)}m.yml'))
+        stats_path = f'utils/data_stats_range_{int(self.max_range)}m.yml'
+        if os.path.isfile(stats_path) and dataset_norm:
+            with open(stats_path, encoding='utf-8') as handle:
+                stats = yaml.safe_load(handle)
             data_mean = np.array([stats['mean_axis']['x'], stats['mean_axis']['y'], stats['mean_axis']['z']])
             if std_axis_norm:
                 data_std = np.array([stats['std_axis']['x'], stats['std_axis']['y'], stats['std_axis']['z']])

@@ -1,13 +1,9 @@
 import click
 from os.path import join, dirname, abspath
-from os import environ, makedirs
-import subprocess
 from pytorch_lightning import Trainer
 from pytorch_lightning import loggers as pl_loggers
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
-import numpy as np
 import torch
-import yaml
 import MinkowskiEngine as ME
 
 import sys
@@ -15,13 +11,15 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import fpsgen.datasets.datasets as datasets
 import fpsgen.models.gen_teacher as models
+from fpsgen.utils.training_runtime import (
+    apply_training_environment,
+    load_training_config,
+    seed_training,
+)
 
 def set_deterministic():
     """Seed the stochastic training components for repeatable experiments."""
-    np.random.seed(42)
-    torch.manual_seed(42)
-    torch.cuda.manual_seed(42)
-    torch.backends.cudnn.deterministic = True
+    seed_training(42)
 
 @click.command()
 @click.option('--config',
@@ -44,10 +42,7 @@ def main(config, weights, checkpoint, test):
     """Launch stage-2 teacher training, checkpoint resume, or evaluation."""
     set_deterministic()
 
-    cfg = yaml.safe_load(open(config))
-    # The environment variable makes the full configuration portable across hosts.
-    if environ.get('TRAIN_DATABASE'):
-        cfg['data']['data_dir'] = environ.get('TRAIN_DATABASE')
+    cfg = apply_training_environment(load_training_config(config))
 
     if weights is None:
         model = models.DiffusionPoints(cfg)

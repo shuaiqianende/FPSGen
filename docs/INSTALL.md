@@ -11,6 +11,18 @@ conda env create -f environment.yml
 conda activate fpsgen
 ```
 
+For the PyTorch 2.0 dense-BEV research path, use the separate pinned
+environment instead of modifying the baseline one:
+
+```bash
+conda env create -f env/environment_pt20_cu117.yml
+conda activate fpsgen_pt2_speed
+```
+
+Both environments use CUDA 11.7, but their extensions are ABI-specific. Build
+MinkowskiEngine and the local CUDA extensions again after switching between
+them.
+
 Install MinkowskiEngine after PyTorch is available:
 
 ```bash

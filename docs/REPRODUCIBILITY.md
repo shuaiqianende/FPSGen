@@ -27,8 +27,10 @@ checkpoint written under `experiments/smoke_teacher/`, then run:
 python -m fpsgen.train_student --config configs/smoke_student.yaml
 ```
 
-Each command should write a Lightning checkpoint under `experiments/`. For a
-full run, use the matching `configs/train_*.yaml` files in the same order.
+Smoke runs verify that the three training paths construct and execute. Their
+checkpoint cadence follows each YAML's `checkpoint_every_n_epochs` setting;
+use a formal configuration when an epoch checkpoint is required. For a full
+run, use the matching `configs/train_*.yaml` files in the same order.
 
 ## Test and inference
 

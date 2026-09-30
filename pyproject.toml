@@ -11,3 +11,7 @@ requires-python = ">=3.9"
 
 [tool.setuptools.packages.find]
 include = ["fpsgen*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

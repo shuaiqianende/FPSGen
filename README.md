@@ -29,6 +29,8 @@
   <a href="docs/EVALUATION.md"><strong>📊 Evaluation</strong></a>
   &nbsp;•&nbsp;
   <a href="docs/REPRODUCIBILITY.md"><strong>🔁 Reproducibility</strong></a>
+  &nbsp;•&nbsp;
+  <a href="docs/DEVELOPMENT.md"><strong>🧩 Development</strong></a>
 </p>
 
  
