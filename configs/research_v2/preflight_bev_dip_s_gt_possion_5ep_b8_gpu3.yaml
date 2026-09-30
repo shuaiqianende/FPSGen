@@ -1,0 +1,45 @@
+experiment:
+  id: preflight_fpsgen_bev_dip_s_5ep_b8_gpu3
+data:
+  data_dir: ''
+  gt_dir: gt_possion
+  resolution: 0.05
+  dataloader: KITTI
+  split: train
+  train: ['00', '01', '02', '03', '04', '05', '06', '07', '09', '10']
+  num_points: 180000
+  max_range: 50.0
+  dataset_norm: false
+  std_axis_norm: false
+train:
+  n_gpus: 1
+  num_workers: 8
+  persistent_workers: true
+  prefetch_factor: 4
+  pin_memory: true
+  deterministic_worker_init: true
+  dataloader_seed: 42
+  max_epoch: 1
+  limit_train_batches: 16
+  lr: 0.0001
+  batch_size: 8
+  checkpoint_every_n_epochs: 999
+runtime:
+  compile_dense: false
+  async_batch_transfer: true
+  visualization_interval: 0
+  preflight_validation: true
+  preflight_steps: 16
+  expected_batch_size: 8
+model:
+  backbone: dip_s
+  flow: {type: linear}
+  condition: {lidar_channels: 32, layout_channels: 2, gate_init: 0.1}
+  dip:
+    input_size: 256
+    in_channels: 3
+    patch_size: 16
+    hidden_size: 384
+    num_groups: 6
+    num_cond_blocks: 8
+    local_channels: [64, 128, 256, 512]

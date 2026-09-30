@@ -2,6 +2,7 @@ import click
 from os.path import join, dirname, abspath
 from os import environ, makedirs
 import subprocess
+import random
 from pytorch_lightning import Trainer
 from pytorch_lightning import loggers as pl_loggers
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
@@ -15,14 +16,20 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import fpsgen.datasets.datasets as datasets
 import fpsgen.models.gen_img as models
+from fpsgen.utils.training_callbacks import (
+    FiniteTrainingPreflightCallback,
+    ThroughputCSVCallback,
+)
 
 
 def set_deterministic():
     """Seed the stochastic training components for repeatable experiments."""
     np.random.seed(42)
+    random.seed(42)
     torch.manual_seed(42)
-    torch.cuda.manual_seed(42)
+    torch.cuda.manual_seed_all(42)
     torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 @click.command()
 @click.option('--config',
@@ -67,6 +74,13 @@ def main(config, weights, checkpoint, test):
 
     tb_logger = pl_loggers.TensorBoardLogger('experiments/'+cfg['experiment']['id'],
                                              default_hp_metric=False)
+    callbacks = [lr_monitor, checkpoint_saver]
+    runtime_cfg = cfg.get('runtime', {})
+    if runtime_cfg.get('throughput_csv'):
+        callbacks.append(ThroughputCSVCallback(runtime_cfg))
+    if runtime_cfg.get('preflight_validation', False):
+        callbacks.append(FiniteTrainingPreflightCallback(runtime_cfg))
+
     visible_gpus = torch.cuda.device_count()
     if visible_gpus < 1:
         raise RuntimeError('FPSGen training requires a CUDA-visible GPU. Set CUDA_VISIBLE_DEVICES correctly.')
@@ -86,7 +100,7 @@ def main(config, weights, checkpoint, test):
             max_epochs=cfg['train']['max_epoch'],
             limit_train_batches=cfg['train'].get('limit_train_batches', 1.0),
             limit_test_batches=cfg['train'].get('limit_test_batches', 1.0),
-            callbacks=[lr_monitor, checkpoint_saver],
+            callbacks=callbacks,
             check_val_every_n_epoch=1,
             num_sanity_val_steps=0,
             limit_val_batches=0.002,
@@ -99,7 +113,7 @@ def main(config, weights, checkpoint, test):
                           max_epochs= cfg['train']['max_epoch'],
                           limit_train_batches=cfg['train'].get('limit_train_batches', 1.0),
                           limit_test_batches=cfg['train'].get('limit_test_batches', 1.0),
-                          callbacks=[lr_monitor, checkpoint_saver],
+                          callbacks=callbacks,
                           check_val_every_n_epoch=1,
                           num_sanity_val_steps=0,
                           limit_val_batches=0.002,

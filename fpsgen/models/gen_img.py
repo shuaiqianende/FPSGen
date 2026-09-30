@@ -418,6 +418,30 @@ class FlowIMG(LightningModule):
 
         self.cnt = 0
 
+    def transfer_batch_to_device(self, batch, device, dataloader_idx):
+        """Optionally overlap pinned-host copies with CUDA execution.
+
+        Lightning's historical batch-transfer path remains in use unless a
+        config explicitly sets ``runtime.async_batch_transfer``.  The custom
+        path handles this project's nested tensor batches and requests a
+        non-blocking copy only when the research runtime opts in.
+        """
+        if not self.hparams.get('runtime', {}).get('async_batch_transfer', False):
+            return super().transfer_batch_to_device(batch, device, dataloader_idx)
+
+        def move(value):
+            if isinstance(value, torch.Tensor):
+                return value.to(device, non_blocking=True)
+            if isinstance(value, dict):
+                return {key: move(item) for key, item in value.items()}
+            if isinstance(value, tuple):
+                return tuple(move(item) for item in value)
+            if isinstance(value, list):
+                return [move(item) for item in value]
+            return value
+
+        return move(batch)
+
     def _shared_step(self, batch: dict, metric_prefix: str):
         """Compute :math:`\mathcal L_{BEV}` for training or smoke testing.
 
@@ -495,9 +519,13 @@ class FlowIMG(LightningModule):
         self.log(f'{metric_prefix}/loss_mse', loss_mse, prog_bar=True)
         self.log(f'{metric_prefix}/loss', loss, prog_bar=True)
 
+        visualization_interval = int(
+            self.hparams.get('runtime', {}).get('visualization_interval', 100)
+        )
         if (
             metric_prefix == 'train'
-            and self.global_step % 100 == 0
+            and visualization_interval > 0
+            and self.global_step % visualization_interval == 0
             and (self.global_rank == 0 or self.trainer.is_global_zero)
         ):
             with torch.no_grad():
@@ -519,7 +547,7 @@ class FlowIMG(LightningModule):
                     pred_mask=pred_mask,
                     gt_mask=gt_mask,
                     save_dir=save_dir,
-                    step=(self.global_step // 100) % 10
+                    step=(self.global_step // visualization_interval) % 10
                 )
 
         if metric_prefix == 'train':

@@ -1,3 +1,6 @@
+import random
+
+import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
 from pytorch_lightning import LightningDataModule
@@ -8,6 +11,23 @@ import warnings
 warnings.filterwarnings('ignore')
 
 __all__ = ['TemporalKittiDataModule']
+
+
+def deterministic_worker_init(worker_id):
+    """Seed one DataLoader worker without inheriting CPU thread pools.
+
+    ``torch.initial_seed`` is set by DataLoader from its (optionally seeded)
+    generator and is unique per worker.  Keeping this helper at module scope
+    makes it picklable for both fork and spawn worker start methods.
+    """
+    worker_seed = torch.initial_seed() % 2**32
+    random.seed(worker_seed)
+    np.random.seed(worker_seed)
+    torch.manual_seed(worker_seed)
+    # Eight workers each using a large OpenMP pool makes point preprocessing
+    # contend with the training process.  This is enabled only by research
+    # configs that opt into deterministic workers.
+    torch.set_num_threads(1)
 
 class TemporalKittiDataModule(LightningDataModule):
     """Lightning data module for full-sequence SemanticKITTI training frames."""
@@ -43,6 +63,13 @@ class TemporalKittiDataModule(LightningDataModule):
             # configs can opt into pinned memory for asynchronous H2D copies.
             'pin_memory': self.cfg['train'].get('pin_memory', False),
         }
+        if self.cfg['train'].get('deterministic_worker_init', False):
+            generator = torch.Generator()
+            generator.manual_seed(int(self.cfg['train'].get('dataloader_seed', 42)))
+            loader_kwargs.update(
+                worker_init_fn=deterministic_worker_init,
+                generator=generator,
+            )
         # Worker-only options are invalid when loading synchronously in the main process.
         if num_workers > 0:
             loader_kwargs.update(

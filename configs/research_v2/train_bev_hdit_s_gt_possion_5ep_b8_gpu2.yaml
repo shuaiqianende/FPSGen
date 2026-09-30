@@ -1,0 +1,54 @@
+# Formal Stage-1 HDiT-S run.  All runtime tuning below is opt-in and leaves
+# historical BEV configs unchanged.
+experiment:
+  id: fpsgen_bev_hdit_s_5ep_b8_gpu2
+data:
+  data_dir: ''
+  gt_dir: gt_possion
+  resolution: 0.05
+  dataloader: KITTI
+  split: train
+  train: ['00', '01', '02', '03', '04', '05', '06', '07', '09', '10']
+  num_points: 180000
+  max_range: 50.0
+  dataset_norm: false
+  std_axis_norm: false
+train:
+  n_gpus: 1
+  num_workers: 8
+  persistent_workers: true
+  prefetch_factor: 4
+  pin_memory: true
+  deterministic_worker_init: true
+  dataloader_seed: 42
+  max_epoch: 5
+  lr: 0.0001
+  batch_size: 8
+  checkpoint_every_n_epochs: 1
+runtime:
+  # Eager FP32 is intentional for this stage; neither AMP nor Inductor is used.
+  compile_dense: false
+  async_batch_transfer: true
+  visualization_interval: 1000
+  throughput_csv: outputs/research_v2/bev_train/profiles/fpsgen_bev_hdit_s_5ep_b8_gpu2_throughput.csv
+  throughput_interval_steps: 50
+  throughput_window_steps: 200
+model:
+  backbone: hdit_s
+  flow: {type: linear}
+  condition: {lidar_channels: 32, layout_channels: 2, gate_init: 0.1}
+  hdit:
+    input_size: 256
+    in_channels: 3
+    patch_size: [4, 4]
+    widths: [128, 256, 512]
+    depths: [2, 2, 4]
+    d_ffs: [384, 768, 1536]
+    self_attns:
+      - {type: shifted_window, d_head: 64, window_size: 8}
+      - {type: shifted_window, d_head: 64, window_size: 8}
+      - {type: global, d_head: 64}
+    mapping_width: 256
+    mapping_depth: 2
+    mapping_d_ff: 768
+    dropout: [0.0, 0.0, 0.1]
