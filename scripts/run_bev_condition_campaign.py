@@ -121,6 +121,25 @@ def final_checkpoint(run_id: str) -> Path:
     return candidates[0]
 
 
+def phase1_artifacts_complete(backbone: str, variant: str) -> bool:
+    """Return whether a variant has its reproducible training and both screens.
+
+    Workers are intentionally restartable: a failed subsequent variant must not
+    make a recovery rerun an already completed five-epoch experiment.  The
+    checkpoint alone is insufficient because condition-usage and B20 artifacts
+    are part of the Phase-1 acceptance contract.
+    """
+    run_id = f"bev_cond_{backbone}_{variant}_s42_5ep"
+    try:
+        final_checkpoint(run_id)
+    except FileNotFoundError:
+        return False
+    return (
+        (OUTPUT / "condition_usage" / f"{backbone}_{variant}.json").is_file()
+        and (OUTPUT / "screen_eval" / f"{backbone}_{variant}" / "summary.json").is_file()
+    )
+
+
 def ncsn_c0_complete() -> bool:
     root = ROOT / "experiments" / CHECKPOINT_PREFIX["ncsnpp"]
     return any(root.glob("lightning_logs/version_*/checkpoints/*epoch=04.ckpt"))
@@ -134,6 +153,9 @@ def wait_for_ncsn_c0() -> None:
 
 
 def run_one(backbone: str, variant: str, settings: dict, gpu: int) -> None:
+    if phase1_artifacts_complete(backbone, variant):
+        print(f"{backbone}/{variant}: completed artifacts found; skipping on recovery.", flush=True)
+        return
     (OUTPUT / "smoke").mkdir(parents=True, exist_ok=True)
     smoke = materialize(backbone, variant, settings, smoke=True)
     formal = materialize(backbone, variant, settings, smoke=False)
@@ -141,9 +163,13 @@ def run_one(backbone: str, variant: str, settings: dict, gpu: int) -> None:
     run([sys.executable, "fpsgen/train_bev.py", "--config", str(smoke)], gpu,
         OUTPUT / "logs" / f"{smoke.stem}.log")
     # A full-condition derivative check proves condition encoder connectivity.
+    # DiP's official AdaLN output starts at zero.  One in-memory optimizer
+    # update activates that path without changing the saved experiment, then
+    # the measured derivative verifies the condition encoder itself.
     run([sys.executable, "scripts/probe_bev_backbone_gradients.py", "--config", str(formal),
          "--data-root", command_env(gpu)["TRAIN_DATABASE"], "--output",
-         str(OUTPUT / "smoke" / f"{backbone}_{variant}_gradients.json")], gpu,
+         str(OUTPUT / "smoke" / f"{backbone}_{variant}_gradients.json"),
+         "--warmup-steps", "1"], gpu,
         OUTPUT / "logs" / f"{backbone}_{variant}_gradients.log")
     run([sys.executable, "fpsgen/train_bev.py", "--config", str(formal)], gpu,
         OUTPUT / "logs" / f"{formal.stem}.log")

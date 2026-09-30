@@ -52,11 +52,16 @@ parameters stay under 5% of each core before a run starts.
 ## Guardrails and measurements
 
 For every C1–C4 run, `scripts/run_bev_condition_campaign.py` performs a
-three-step batch-1 smoke, verifies finite loss and nonzero/finite condition
-gradients with formal batch 8, then starts the five-epoch run. The Lightning
-module records gate values and condition feature norms every 100 steps. For
-C3 it additionally records independent `lidar_norm`, `vehicle_norm` and
-`road_norm` before the first shared fusion layer. A
+three-step batch-1 smoke, then verifies finite loss and nonzero/finite
+condition gradients with formal batch 8 before starting the five-epoch run.
+The derivative probe has one in-memory optimizer warmup step: this is needed
+for DiP's zero-initialized AdaLN output to expose its otherwise valid global
+condition derivative, and never changes the saved formal run. Workers are
+restartable and skip a variant only when its epoch-04 checkpoint, B100
+condition-use JSON, and B20 summary all exist. The Lightning module records
+gate values and condition feature norms every 100 steps. For C3 it additionally
+records independent `lidar_norm`, `vehicle_norm` and `road_norm` before the
+first shared fusion layer. A
 CUDA-synchronized profiler records step and data-ready timing every 50 steps.
 Its bottleneck rule is median data gap greater than 20% of median step time or
 p95 gap greater than twice the median gap; this is evidence for tune-first,
