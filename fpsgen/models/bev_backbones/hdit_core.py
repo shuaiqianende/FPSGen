@@ -211,22 +211,33 @@ class HDiTConditionEncoder(nn.Module):
             self.level_global_proj = nn.ModuleList(
                 nn.Linear(width, mapping_width, bias=False) for width in self.widths
             )
+        self._modality_norms = {}
 
     def forward(self, raw_pc: torch.Tensor, layout: torch.Tensor):
         x = _require_bchw(raw_pc, layout, self.in_channels)
         if self.fusion == "shared":
             c0 = self.patch(x)
+            self._modality_norms = {}
         else:
-            c0 = (
-                self.lidar_patch(raw_pc)
-                + self.vehicle_patch(layout[:, 0:1])
-                + self.road_patch(layout[:, 1:2])
-            )
+            components = {
+                "lidar": self.lidar_patch(raw_pc),
+                "vehicle": self.vehicle_patch(layout[:, 0:1]),
+                "road": self.road_patch(layout[:, 1:2]),
+            }
+            c0 = sum(components.values())
+            self._modality_norms = {
+                f"{name}_norm": value.detach().float().norm(dim=1).mean()
+                for name, value in components.items()
+            }
         c0 = c0.permute(0, 2, 3, 1)
         c1 = self.merge0(c0)
         c2 = self.merge1(c1)
         global_condition = self.global_proj(c0.mean(dim=(1, 2)))
         return c0, c1, c2, global_condition
+
+    def modality_norms(self):
+        """Detached C3 component norms for low-frequency diagnostic logging."""
+        return self._modality_norms
 
     def native_global_conditions(self, maps):
         if not self.native:

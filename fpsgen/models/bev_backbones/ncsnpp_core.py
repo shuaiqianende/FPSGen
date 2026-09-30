@@ -130,17 +130,24 @@ class NCSNConditionEncoder(nn.Module):
                 nn.Linear(channels, int(temb_dim or nf * 4), bias=False)
                 for channels in self.channels
             )
+        self._modality_norms = {}
 
     def forward(self, raw_pc: torch.Tensor, layout: torch.Tensor):
         x = _require_bchw(raw_pc, layout, self.in_channels)
         if self.fusion == "shared":
             hidden_maps = [self.level0(x)]
+            self._modality_norms = {}
         else:
-            hidden_maps = [
-                self.lidar_level0(raw_pc)
-                + self.vehicle_level0(layout[:, 0:1])
-                + self.road_level0(layout[:, 1:2])
-            ]
+            components = {
+                "lidar": self.lidar_level0(raw_pc),
+                "vehicle": self.vehicle_level0(layout[:, 0:1]),
+                "road": self.road_level0(layout[:, 1:2]),
+            }
+            hidden_maps = [sum(components.values())]
+            self._modality_norms = {
+                f"{name}_norm": value.detach().float().norm(dim=1).mean()
+                for name, value in components.items()
+            }
         for transition in self.transitions:
             hidden_maps.append(transition(F.avg_pool2d(hidden_maps[-1], 2)))
         maps = hidden_maps if not hasattr(self, "spatial_out") else [
@@ -148,6 +155,10 @@ class NCSNConditionEncoder(nn.Module):
         ]
         global_condition = self.global_proj(hidden_maps[0].mean(dim=(2, 3)))
         return tuple(maps), global_condition
+
+    def modality_norms(self):
+        """Detached C3 component norms for low-frequency diagnostic logging."""
+        return self._modality_norms
 
     def native_global_conditions(self, maps):
         if not self.native:

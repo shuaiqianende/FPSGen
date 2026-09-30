@@ -155,6 +155,7 @@ def run_one(backbone: str, variant: str, settings: dict, gpu: int) -> None:
     run([sys.executable, "scripts/eval_bevflow_lidar_only.py", "--bev-ckpt", str(checkpoint),
          "--dataset-root", command_env(gpu)["TRAIN_DATABASE"], "--manifest",
          "configs/research_v2/gate_seq08_20.txt", "--samples-per-frame", "1", "--save-visuals", "0",
+         "--base-seed", "20261001",
          "--output", str(OUTPUT / "screen_eval" / f"{backbone}_{variant}")], gpu,
         OUTPUT / "logs" / f"{backbone}_{variant}_screen.log")
 

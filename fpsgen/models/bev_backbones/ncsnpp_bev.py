@@ -54,4 +54,4 @@ class BEVNCSNppS(nn.Module):
         values["gate_global"] = self.global_gate.detach()
         if hasattr(self, "native_global_gates"):
             values.update({f"gate_native_{index}": gate.detach() for index, gate in enumerate(self.native_global_gates)})
-        return {**values, **self._feature_norms}
+        return {**values, **self._feature_norms, **self.condition_encoder.modality_norms()}

@@ -54,7 +54,9 @@ parameters stay under 5% of each core before a run starts.
 For every C1–C4 run, `scripts/run_bev_condition_campaign.py` performs a
 three-step batch-1 smoke, verifies finite loss and nonzero/finite condition
 gradients with formal batch 8, then starts the five-epoch run. The Lightning
-module records gate values and condition feature norms every 100 steps. A
+module records gate values and condition feature norms every 100 steps. For
+C3 it additionally records independent `lidar_norm`, `vehicle_norm` and
+`road_norm` before the first shared fusion layer. A
 CUDA-synchronized profiler records step and data-ready timing every 50 steps.
 Its bottleneck rule is median data gap greater than 20% of median step time or
 p95 gap greater than twice the median gap; this is evidence for tune-first,
@@ -87,6 +89,21 @@ python scripts/summarize_bev_condition_campaign.py
 
 It writes `outputs/condition_campaign/phase1_summary.{json,md}`. Missing
 checkpoints, probes or evaluations render as `—`, so an unfinished run cannot
-silently enter ranking. Phase-1 ranking and any seed-123 eight-epoch rerun are
-deferred until all C1–C4 artifacts and the existing NCSNpp C0 checkpoint are
-present.
+silently enter ranking.
+
+`scripts/run_bev_condition_coordinator.py` is started once in its own tmux
+session. It owns no CUDA device while waiting for the C1–C4 barrier. At the
+barrier it reruns every C0–C4 B20 screen with the fixed generation seed
+`20261001`, writes `phase1_summary.csv` and `phase1_ranking.json`, and ranks
+only within each backbone. The score uses final sampled 500-step FM loss,
+condition-use gains and the four screen metrics with the predeclared weights.
+Runs with both `Gshuffle_100` and `Gshuffle_111` at or below `0.01` are marked
+`condition_insensitive`.
+
+The coordinator then trains each backbone's two ranked policies from scratch
+at seed 123 for eight epochs, using one serial process on GPU2 and one on
+GPU3. Every candidate receives condition-usage B100 and LiDAR-only B100 with
+three generation seeds, both at seed 20261001. It emits
+`phase2_summary.csv`, `seed_stability.csv` and
+`final_condition_comparison.csv`; it deliberately stops there and never
+starts a long formal run.

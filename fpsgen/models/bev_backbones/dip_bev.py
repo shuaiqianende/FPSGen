@@ -38,6 +38,7 @@ class DiPConditionEncoder(nn.Module):
         else:
             raise ValueError("DiP condition fusion must be shared or separate")
         self.global_proj = nn.Linear(self.hidden_size, self.hidden_size, bias=False)
+        self._modality_norms = {}
         if self.native:
             c0, c1, c2, c3 = (int(value) for value in local_channels)
             local_width = int(local_condition_width)
@@ -61,15 +62,25 @@ class DiPConditionEncoder(nn.Module):
         if self.fusion == "shared":
             patch_input = patches.reshape(b, gh * gw, -1)
             patch = self.patch_proj(patch_input) if self.bottleneck_dim is None else self.patch_proj2(self.patch_proj1(patch_input))
+            self._modality_norms = {}
         else:
-            patch = (
-                self.lidar_patch_proj(patches[:, :, :, :self.lidar_channels].reshape(b, gh * gw, -1))
-                + self.vehicle_patch_proj(patches[:, :, :, self.lidar_channels:self.lidar_channels + 1].reshape(b, gh * gw, -1))
-                + self.road_patch_proj(patches[:, :, :, self.lidar_channels + 1:].reshape(b, gh * gw, -1))
-            )
+            components = {
+                "lidar": self.lidar_patch_proj(patches[:, :, :, :self.lidar_channels].reshape(b, gh * gw, -1)),
+                "vehicle": self.vehicle_patch_proj(patches[:, :, :, self.lidar_channels:self.lidar_channels + 1].reshape(b, gh * gw, -1)),
+                "road": self.road_patch_proj(patches[:, :, :, self.lidar_channels + 1:].reshape(b, gh * gw, -1)),
+            }
+            patch = sum(components.values())
+            self._modality_norms = {
+                f"{name}_norm": value.detach().float().norm(dim=-1).mean()
+                for name, value in components.items()
+            }
             if self.bottleneck_dim is not None:
                 patch = self.patch_proj2(patch)
         return patch, self.global_proj(patch.mean(dim=1))
+
+    def modality_norms(self):
+        """Detached C3 component norms for low-frequency diagnostic logging."""
+        return self._modality_norms
 
     def local_conditions(self, raw_pc: torch.Tensor, layout: torch.Tensor):
         if not self.native:
@@ -118,4 +129,4 @@ class BEVDiPS(nn.Module):
         values = {"gate_spatial": self.patch_gate.detach(), "gate_global": self.global_gate.detach()}
         if hasattr(self, "local_gates"):
             values.update({f"gate_local_{index}": gate.detach() for index, gate in enumerate(self.local_gates)})
-        return {**values, **self._feature_norms}
+        return {**values, **self._feature_norms, **self.condition_encoder.modality_norms()}

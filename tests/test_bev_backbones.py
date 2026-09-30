@@ -62,6 +62,8 @@ def test_hdit_separate_native_condition_is_exactly_zero_and_differentiable():
     maps = encoder(raw, layout)
     native = encoder.native_global_conditions(maps[:3])
     assert all(torch.count_nonzero(value) == 0 for value in (*maps, *native))
+    assert set(encoder.modality_norms()) == {"lidar_norm", "vehicle_norm", "road_norm"}
+    assert all(torch.count_nonzero(value) == 0 for value in encoder.modality_norms().values())
     (sum(value.square().sum() for value in maps) + sum(value.square().sum() for value in native)).backward()
     assert all(parameter.grad is not None and torch.isfinite(parameter.grad).all() for parameter in encoder.parameters())
 
@@ -94,6 +96,8 @@ def test_dip_separate_native_condition_is_exactly_zero_and_differentiable():
     patch, global_condition = encoder(raw, layout)
     local = encoder.local_conditions(raw, layout)
     assert all(torch.count_nonzero(value) == 0 for value in (patch, global_condition, *local))
+    assert set(encoder.modality_norms()) == {"lidar_norm", "vehicle_norm", "road_norm"}
+    assert all(torch.count_nonzero(value) == 0 for value in encoder.modality_norms().values())
     (patch.square().sum() + global_condition.square().sum() + sum(value.square().sum() for value in local)).backward()
     assert all(parameter.grad is not None and torch.isfinite(parameter.grad).all() for parameter in encoder.parameters())
 
@@ -123,6 +127,8 @@ def test_ncsnpp_separate_native_condition_is_exactly_zero_and_differentiable():
     maps, global_condition = encoder(raw, layout)
     native = encoder.native_global_conditions(maps)
     assert all(torch.count_nonzero(value) == 0 for value in (*maps, global_condition, *native))
+    assert set(encoder.modality_norms()) == {"lidar_norm", "vehicle_norm", "road_norm"}
+    assert all(torch.count_nonzero(value) == 0 for value in encoder.modality_norms().values())
     (sum(value.square().sum() for value in maps) + global_condition.square().sum() + sum(value.square().sum() for value in native)).backward()
     assert all(parameter.grad is not None and torch.isfinite(parameter.grad).all() for parameter in encoder.parameters())
 

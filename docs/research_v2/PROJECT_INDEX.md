@@ -94,7 +94,7 @@
 - `scripts/eval_teacher_endpoint.py`、`scripts/eval_teacher_distribution.py`：几何与局部点分布评测。
 - `scripts/eval_bevflow_lidar_only.py`：Stage-1 仅 LiDAR 的三通道 BEV 评测。
 - `scripts/eval_bev_condition_usage.py`：固定 sequence 08 的条件正确/置零/循环错配使用率评测。
-- `scripts/run_bev_condition_campaign.py`、`scripts/summarize_bev_condition_campaign.py`：C1–C4 训练协调与可审计汇总。
+- `scripts/run_bev_condition_campaign.py`、`scripts/summarize_bev_condition_campaign.py`、`scripts/rank_bev_condition_campaign.py`、`scripts/run_bev_condition_coordinator.py`：C1–C4 队列、可审计汇总、同 backbone 排名与 seed-123 Phase-2 协调。
 - `scripts/infer_student_oracle_bev.py`：不运行 BEVFlow 的 Student-only oracle-BEV 推理。
 - `scripts/render_student_trajectory_bev_video.py`：Student trajectory 的三视图视频渲染。
 - `scripts/inspect_bev_backbone.py`：CPU 参数量与 backbone 合约检查。

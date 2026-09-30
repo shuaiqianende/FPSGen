@@ -175,6 +175,8 @@ def main() -> None:
     parser.add_argument("--allow-gt-mismatch", action="store_true")
     parser.add_argument("--samples-per-frame", type=int, default=None)
     parser.add_argument("--save-visuals", type=int, default=None)
+    parser.add_argument("--base-seed", type=int, default=None,
+                        help="Override eval.base_seed for a fixed campaign seed.")
     args = parser.parse_args()
 
     config = yaml.safe_load(Path(args.config).read_text())
@@ -224,7 +226,7 @@ def main() -> None:
     range_rows: List[Dict] = []
     saved_visuals = 0
     radial_bins = evaluate["radial_bins"]
-    base_seed = int(evaluate["base_seed"])
+    base_seed = int(evaluate["base_seed"] if args.base_seed is None else args.base_seed)
 
     for frame_index, batch in enumerate(loader):
         stem = frame_stems[frame_index]
