@@ -519,6 +519,14 @@ class FlowIMG(LightningModule):
         self.log(f'{metric_prefix}/loss_mse', loss_mse, prog_bar=True)
         self.log(f'{metric_prefix}/loss', loss, prog_bar=True)
 
+        if (
+            metric_prefix == 'train'
+            and self.global_step % 100 == 0
+            and hasattr(self.model, 'condition_diagnostics')
+        ):
+            for name, value in self.model.condition_diagnostics().items():
+                self.log(f'cond/{name}', value, on_step=True, on_epoch=False)
+
         visualization_interval = int(
             self.hparams.get('runtime', {}).get('visualization_interval', 100)
         )

@@ -1,6 +1,6 @@
 # FPSGen Research V2 — 项目索引
 
-更新日期：2026-09-30。本文是 Research V2 的**导航与状态索引**；它不替代每项实验的原始配置、日志或结果文档。
+更新日期：2026-10-01。本文是 Research V2 的**导航与状态索引**；它不替代每项实验的原始配置、日志或结果文档。
 
 ## 工作区规则
 
@@ -37,7 +37,7 @@
 | LiDiff-compatible fixed-voxel + Hard-Poisson GT | 已生成/QA；当前训练数据契约 | [GT_POISSON_GENERATION.md](GT_POISSON_GENERATION.md)、[GT_POSSSION_TRAINING_CONTRACT.md](GT_POSSSION_TRAINING_CONTRACT.md) |
 | Stage-1 LiDAR-only BEV 评价 | 代码与协议已准备 | [BEVFLOW_LIDAR_ONLY_EVALUATION.md](BEVFLOW_LIDAR_ONLY_EVALUATION.md) |
 | Stage-1 DiC-S / PixelU-S backbone | 已有训练动态结果；DiC-S 候选、PixelU-S HOLD | [BEV_BACKBONE_DIC_PIXELU.md](BEV_BACKBONE_DIC_PIXELU.md)、[BEV_BACKBONE_TRAINING_DYNAMICS.md](BEV_BACKBONE_TRAINING_DYNAMICS.md)、[backbone_sources.yaml](backbone_sources.yaml) |
-| Stage-1 HDiT-S / DiP-S / NCSNpp-S backbone | 代码、静态检查与 8-step smoke 已完成；未开始训练 | [BEV_BACKBONE_HDIT_DIP_NCSNPP.md](BEV_BACKBONE_HDIT_DIP_NCSNPP.md)、[BEV_BACKBONE_HDIT_DIP_NCSNPP_SMOKE.md](BEV_BACKBONE_HDIT_DIP_NCSNPP_SMOKE.md) |
+| Stage-1 HDiT-S / DiP-S / NCSNpp-S backbone | C0 五轮基线：HDiT/DiP 已完成、NCSNpp 运行中；C1–C4 条件注入：HDiT/DiP C1 运行中 | [BEV_BACKBONE_HDIT_DIP_NCSNPP.md](BEV_BACKBONE_HDIT_DIP_NCSNPP.md)、[BEV_CONDITION_INJECTION_STUDY.md](BEV_CONDITION_INJECTION_STUDY.md) |
 | Teacher speed environment / AMP / Inductor | 独立工程实验 | [TEACHER_SPEED_ENV_PROBE.md](TEACHER_SPEED_ENV_PROBE.md) |
 
 ## 可复现配置与清单
@@ -70,6 +70,8 @@
 - `configs/research_v2/train_bev_hdit_s_gt_possion.yaml`
 - `configs/research_v2/train_bev_dip_s_gt_possion.yaml`
 - `configs/research_v2/train_bev_ncsnpp_s_gt_possion.yaml`
+- `configs/research_v2/condition_ablation/phase1.yaml`：Stage-1 条件注入
+  C1–C4 的统一清单；具体运行配置由协调器从 C0 配置物化，避免手工复制。
 
 三份配置都使用 `gt_possion`；它们的唯一区别应是 BEV backbone，不应借此混入不同的数据或训练目标。
 
@@ -91,6 +93,8 @@
 - `scripts/cache_teacher_endpoints.py`、`scripts/run_sinkhorn_gate.py`、`scripts/run_direct_source_sinkhorn.py`：Teacher / Direct Sinkhorn 诊断。
 - `scripts/eval_teacher_endpoint.py`、`scripts/eval_teacher_distribution.py`：几何与局部点分布评测。
 - `scripts/eval_bevflow_lidar_only.py`：Stage-1 仅 LiDAR 的三通道 BEV 评测。
+- `scripts/eval_bev_condition_usage.py`：固定 sequence 08 的条件正确/置零/循环错配使用率评测。
+- `scripts/run_bev_condition_campaign.py`、`scripts/summarize_bev_condition_campaign.py`：C1–C4 训练协调与可审计汇总。
 - `scripts/infer_student_oracle_bev.py`：不运行 BEVFlow 的 Student-only oracle-BEV 推理。
 - `scripts/render_student_trajectory_bev_video.py`：Student trajectory 的三视图视频渲染。
 - `scripts/inspect_bev_backbone.py`：CPU 参数量与 backbone 合约检查。
@@ -108,6 +112,7 @@
 | `outputs/research_v2/feature_train/` | Feature Guidance 短训练产物 | 保留，独立于当前 Student |
 | `outputs/research_v2/direct_source_sinkhorn/` | P0 直接 Sinkhorn 诊断与 PLY | 保留为诊断基线 |
 | `outputs/research_v2/bev_backbone_speed/` | BEV backbone 速度记录 | 保留小型结果；原始 Inductor cache 不提交 |
+| `outputs/condition_campaign/` | 条件注入 smoke、配置物化、同步吞吐、使用率与汇总 | 活跃；不提交、不移动 |
 | `outputs/research_v2/student_train/` | 当前 Student 文本日志 | 活跃，禁止清理 |
 | `outputs/research_v2/student_oracle_bev/` | Student-only PLY、轨迹与视频 | 保留推荐结果与历史可视化变体 |
 | `env/inductor_cache/`、`env/keops_cache_legacy/` | 环境特定编译 cache | 不提交；仅在确认不再需要后清理 |

@@ -190,22 +190,51 @@ class HDiTConditionEncoder(nn.Module):
     """
 
     def __init__(self, lidar_channels=32, layout_channels=2, widths=(128, 256, 512), patch_size=4,
-                 mapping_width=256):
+                 mapping_width=256, fusion="shared", native=False):
         super().__init__()
-        self.in_channels = int(lidar_channels + layout_channels)
+        self.lidar_channels, self.layout_channels = int(lidar_channels), int(layout_channels)
+        self.in_channels = self.lidar_channels + self.layout_channels
         self.widths = tuple(map(int, widths))
-        self.patch = nn.Conv2d(self.in_channels, self.widths[0], patch_size, stride=patch_size, bias=False)
+        self.fusion, self.native = str(fusion), bool(native)
+        if self.fusion == "shared":
+            self.patch = nn.Conv2d(self.in_channels, self.widths[0], patch_size, stride=patch_size, bias=False)
+        elif self.fusion == "separate":
+            self.lidar_patch = nn.Conv2d(self.lidar_channels, self.widths[0], patch_size, stride=patch_size, bias=False)
+            self.vehicle_patch = nn.Conv2d(1, self.widths[0], patch_size, stride=patch_size, bias=False)
+            self.road_patch = nn.Conv2d(1, self.widths[0], patch_size, stride=patch_size, bias=False)
+        else:
+            raise ValueError("HDiT condition fusion must be shared or separate")
         self.merge0 = TokenMerge(self.widths[0], self.widths[1])
         self.merge1 = TokenMerge(self.widths[1], self.widths[2])
         self.global_proj = nn.Linear(self.widths[0], mapping_width, bias=False)
+        if self.native:
+            self.level_global_proj = nn.ModuleList(
+                nn.Linear(width, mapping_width, bias=False) for width in self.widths
+            )
 
     def forward(self, raw_pc: torch.Tensor, layout: torch.Tensor):
         x = _require_bchw(raw_pc, layout, self.in_channels)
-        c0 = self.patch(x).permute(0, 2, 3, 1)
+        if self.fusion == "shared":
+            c0 = self.patch(x)
+        else:
+            c0 = (
+                self.lidar_patch(raw_pc)
+                + self.vehicle_patch(layout[:, 0:1])
+                + self.road_patch(layout[:, 1:2])
+            )
+        c0 = c0.permute(0, 2, 3, 1)
         c1 = self.merge0(c0)
         c2 = self.merge1(c1)
         global_condition = self.global_proj(c0.mean(dim=(1, 2)))
         return c0, c1, c2, global_condition
+
+    def native_global_conditions(self, maps):
+        if not self.native:
+            raise RuntimeError("Native HDiT condition projections were not enabled")
+        return tuple(
+            projection(value.mean(dim=(1, 2)))
+            for projection, value in zip(self.level_global_proj, maps)
+        )
 
 
 class HDiTCore(nn.Module):
@@ -242,14 +271,23 @@ class HDiTCore(nn.Module):
         self.unpatchify = nn.ConvTranspose2d(self.widths[0], self.in_channels, self.patch_size, stride=self.patch_size)
 
     def forward(self, xt: torch.Tensor, t: torch.Tensor, global_condition: Optional[torch.Tensor] = None,
-                stage_add: Optional[Callable[[int, torch.Tensor], torch.Tensor]] = None) -> torch.Tensor:
+                stage_add: Optional[Callable[[int, torch.Tensor], torch.Tensor]] = None,
+                stage_global_conditions: Optional[Sequence[torch.Tensor]] = None) -> torch.Tensor:
         if xt.shape[-2:] != (self.input_size, self.input_size):
             raise ValueError(f"Expected {self.input_size}x{self.input_size}, got {tuple(xt.shape[-2:])}")
         mapping_input = self.time_features(t)
         if global_condition is not None:
             mapping_input = mapping_input + global_condition
         mapped = self.mapping(mapping_input)
-        conds = [layer(mapped) for layer in self.to_stage_cond]
+        if stage_global_conditions is None:
+            conds = [layer(mapped) for layer in self.to_stage_cond]
+        else:
+            if len(stage_global_conditions) != 3:
+                raise ValueError("HDiT native condition requires three level-global vectors")
+            conds = [
+                layer(mapped + stage_global_conditions[level])
+                for level, layer in enumerate(self.to_stage_cond)
+            ]
         inject = stage_add if stage_add is not None else (lambda _stage, x: x)
         x = self.patch_embed(xt).permute(0, 2, 3, 1)
         x = inject(0, x)

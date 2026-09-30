@@ -102,21 +102,60 @@ class NCSNConditionEncoder(nn.Module):
     """Bias-free seven-resolution spatial/global FPSGen condition pyramid."""
 
     def __init__(self, lidar_channels=32, layout_channels=2, nf=64,
-                 ch_mult=(1, 1, 2, 2, 2, 2, 2), temb_dim=None):
+                 ch_mult=(1, 1, 2, 2, 2, 2, 2), temb_dim=None, fusion="shared",
+                 native=False, condition_nf=None):
         super().__init__()
-        self.in_channels = int(lidar_channels + layout_channels)
+        self.lidar_channels, self.layout_channels = int(lidar_channels), int(layout_channels)
+        self.in_channels = self.lidar_channels + self.layout_channels
         self.channels = tuple(int(nf * m) for m in ch_mult)
-        self.level0 = nn.Conv2d(self.in_channels, self.channels[0], 3, padding=1, bias=False)
-        self.transitions = nn.ModuleList(nn.Conv2d(self.channels[i], self.channels[i + 1], 3, padding=1, bias=False) for i in range(len(self.channels) - 1))
-        self.global_proj = nn.Linear(self.channels[0], int(temb_dim or nf * 4), bias=False)
+        self.hidden_channels = self.channels if condition_nf is None else tuple(int(condition_nf * m) for m in ch_mult)
+        self.fusion, self.native = str(fusion), bool(native)
+        if self.fusion == "shared":
+            self.level0 = nn.Conv2d(self.in_channels, self.hidden_channels[0], 3, padding=1, bias=False)
+        elif self.fusion == "separate":
+            self.lidar_level0 = nn.Conv2d(self.lidar_channels, self.hidden_channels[0], 3, padding=1, bias=False)
+            self.vehicle_level0 = nn.Conv2d(1, self.hidden_channels[0], 3, padding=1, bias=False)
+            self.road_level0 = nn.Conv2d(1, self.hidden_channels[0], 3, padding=1, bias=False)
+        else:
+            raise ValueError("NCSN++ condition fusion must be shared or separate")
+        self.transitions = nn.ModuleList(nn.Conv2d(self.hidden_channels[i], self.hidden_channels[i + 1], 3, padding=1, bias=False) for i in range(len(self.channels) - 1))
+        self.global_proj = nn.Linear(self.hidden_channels[0], int(temb_dim or nf * 4), bias=False)
+        if self.hidden_channels != self.channels:
+            self.spatial_out = nn.ModuleList(
+                nn.Conv2d(hidden, output, 1, bias=False)
+                for hidden, output in zip(self.hidden_channels, self.channels)
+            )
+        if self.native:
+            self.level_global_proj = nn.ModuleList(
+                nn.Linear(channels, int(temb_dim or nf * 4), bias=False)
+                for channels in self.channels
+            )
 
     def forward(self, raw_pc: torch.Tensor, layout: torch.Tensor):
         x = _require_bchw(raw_pc, layout, self.in_channels)
-        maps = [self.level0(x)]
+        if self.fusion == "shared":
+            hidden_maps = [self.level0(x)]
+        else:
+            hidden_maps = [
+                self.lidar_level0(raw_pc)
+                + self.vehicle_level0(layout[:, 0:1])
+                + self.road_level0(layout[:, 1:2])
+            ]
         for transition in self.transitions:
-            maps.append(transition(F.avg_pool2d(maps[-1], 2)))
-        global_condition = self.global_proj(maps[0].mean(dim=(2, 3)))
+            hidden_maps.append(transition(F.avg_pool2d(hidden_maps[-1], 2)))
+        maps = hidden_maps if not hasattr(self, "spatial_out") else [
+            projection(value) for projection, value in zip(self.spatial_out, hidden_maps)
+        ]
+        global_condition = self.global_proj(hidden_maps[0].mean(dim=(2, 3)))
         return tuple(maps), global_condition
+
+    def native_global_conditions(self, maps):
+        if not self.native:
+            raise RuntimeError("Native NCSN++ condition projections were not enabled")
+        return tuple(
+            projection(value.mean(dim=(2, 3)))
+            for projection, value in zip(self.level_global_proj, maps)
+        )
 
 
 class NCSNppCore(nn.Module):
@@ -203,11 +242,14 @@ class NCSNppCore(nn.Module):
             nn.init.constant_(head[-1].weight, self.init_scale)
             nn.init.zeros_(head[-1].bias)
 
-    def forward(self, xt: torch.Tensor, t: torch.Tensor, condition_maps=None, global_condition=None) -> torch.Tensor:
+    def forward(self, xt: torch.Tensor, t: torch.Tensor, condition_maps=None, global_condition=None,
+                level_global_conditions=None) -> torch.Tensor:
         if xt.shape[-2:] != (self.input_size, self.input_size):
             raise ValueError(f"Expected {self.input_size}x{self.input_size}, got {tuple(xt.shape[-2:])}")
         if condition_maps is not None and len(condition_maps) != len(self.channels):
             raise ValueError("NCSN++ condition must contain seven resolution maps")
+        if level_global_conditions is not None and len(level_global_conditions) != len(self.channels):
+            raise ValueError("NCSN++ native condition must contain seven level-global vectors")
         temb = self.t_embedder(t)
         if global_condition is not None:
             temb = temb + self.global_condition_proj(global_condition)
@@ -220,20 +262,23 @@ class NCSNppCore(nn.Module):
                 if h.shape != condition.shape:
                     raise RuntimeError(f"NCSN++ condition level {level} mismatch: {tuple(h.shape)} vs {tuple(condition.shape)}")
                 h = h + condition
+            level_temb = temb if level_global_conditions is None else temb + level_global_conditions[level]
             for block, attn in zip(blocks, attns):
-                h = attn(block(h, temb))
+                h = attn(block(h, level_temb))
             skips.append(h)
             if level < len(self.channels) - 1:
                 h = self.down_projs[level](self.downsamplers[level](h))
                 input_pyramid = self.downsamplers[level](input_pyramid)
                 h = (h + self.input_pyramid_proj[level](input_pyramid)) * (1.0 / math.sqrt(2.0))
-        h = self.mid2(self.mid_attn(self.mid1(h, temb)), temb)
+        middle_temb = temb if level_global_conditions is None else temb + level_global_conditions[-1]
+        h = self.mid2(self.mid_attn(self.mid1(h, middle_temb)), middle_temb)
         output_pyramid = None
         up_index = 0
         for index, level in enumerate(reversed(range(len(self.channels)))):
             skip = skips[level]
-            h = self.dec_attn[index][0](self.dec_blocks[index][0](torch.cat((h, skip), dim=1), temb))
-            h = self.dec_attn[index][1](self.dec_blocks[index][1](h, temb))
+            level_temb = temb if level_global_conditions is None else temb + level_global_conditions[level]
+            h = self.dec_attn[index][0](self.dec_blocks[index][0](torch.cat((h, skip), dim=1), level_temb))
+            h = self.dec_attn[index][1](self.dec_blocks[index][1](h, level_temb))
             current = self.output_heads[index](h)
             output_pyramid = current if output_pyramid is None else F.interpolate(output_pyramid, scale_factor=2, mode="nearest") + current
             if level > 0:

@@ -4,6 +4,7 @@ import pytest
 import torch
 
 from fpsgen.models.bev_backbones.condition import DiCConditionEncoder, PixelUConditionEncoder
+from fpsgen.models.bev_backbones.condition_config import condition_options
 from fpsgen.models.bev_backbones.dic_core import DiCCore
 from fpsgen.models.bev_backbones.hdit_core import HDiTConditionEncoder, HDiTCore
 from fpsgen.models.bev_backbones.dip_bev import DiPConditionEncoder
@@ -53,6 +54,18 @@ def test_hdit_condition_is_exactly_zero_for_inactive_conditions():
     assert all(torch.count_nonzero(item) == 0 for item in features)
 
 
+def test_hdit_separate_native_condition_is_exactly_zero_and_differentiable():
+    encoder = HDiTConditionEncoder(widths=(16, 32, 64), patch_size=4, mapping_width=32,
+                                   fusion="separate", native=True)
+    raw = torch.zeros(2, 32, 64, 64, requires_grad=True)
+    layout = torch.zeros(2, 2, 64, 64, requires_grad=True)
+    maps = encoder(raw, layout)
+    native = encoder.native_global_conditions(maps[:3])
+    assert all(torch.count_nonzero(value) == 0 for value in (*maps, *native))
+    (sum(value.square().sum() for value in maps) + sum(value.square().sum() for value in native)).backward()
+    assert all(parameter.grad is not None and torch.isfinite(parameter.grad).all() for parameter in encoder.parameters())
+
+
 def test_hdit_tiny_spatial_forward_keeps_bchw_shape_at_all_times():
     core = HDiTCore(input_size=64, patch_size=4, widths=(16, 32, 64), depths=(2, 2, 4),
                     d_ffs=(48, 96, 192), d_head=16, mapping_width=32, mapping_d_ff=64)
@@ -73,6 +86,20 @@ def test_dip_condition_is_exactly_zero_for_inactive_conditions():
 
 @pytest.mark.skipif(not hasattr(torch.nn.functional, "scaled_dot_product_attention"),
                     reason="DiP requires the PyTorch-2 SDPA API")
+def test_dip_separate_native_condition_is_exactly_zero_and_differentiable():
+    encoder = DiPConditionEncoder(patch_size=16, hidden_size=96, fusion="separate", native=True,
+                                  local_channels=(16, 32, 64, 64), bottleneck_dim=16)
+    raw = torch.zeros(2, 32, 64, 64, requires_grad=True)
+    layout = torch.zeros(2, 2, 64, 64, requires_grad=True)
+    patch, global_condition = encoder(raw, layout)
+    local = encoder.local_conditions(raw, layout)
+    assert all(torch.count_nonzero(value) == 0 for value in (patch, global_condition, *local))
+    (patch.square().sum() + global_condition.square().sum() + sum(value.square().sum() for value in local)).backward()
+    assert all(parameter.grad is not None and torch.isfinite(parameter.grad).all() for parameter in encoder.parameters())
+
+
+@pytest.mark.skipif(not hasattr(torch.nn.functional, "scaled_dot_product_attention"),
+                    reason="DiP requires the PyTorch-2 SDPA API")
 def test_dip_tiny_spatial_forward_keeps_bchw_shape_at_all_times():
     core = DiPCore(input_size=64, patch_size=16, hidden_size=192, num_groups=3, num_cond_blocks=2)
     for time in (0.0, 0.5, 1.0):
@@ -87,6 +114,24 @@ def test_ncsnpp_condition_is_exactly_zero_for_inactive_conditions():
     assert [tuple(item.shape) for item in maps] == [(2, 16, 64, 64), (2, 16, 32, 32), (2, 32, 16, 16), (2, 32, 8, 8), (2, 32, 4, 4), (2, 32, 2, 2), (2, 32, 1, 1)]
     assert all(torch.count_nonzero(item) == 0 for item in maps)
     assert torch.count_nonzero(global_condition) == 0
+
+
+def test_ncsnpp_separate_native_condition_is_exactly_zero_and_differentiable():
+    encoder = NCSNConditionEncoder(nf=16, fusion="separate", native=True)
+    raw = torch.zeros(2, 32, 64, 64, requires_grad=True)
+    layout = torch.zeros(2, 2, 64, 64, requires_grad=True)
+    maps, global_condition = encoder(raw, layout)
+    native = encoder.native_global_conditions(maps)
+    assert all(torch.count_nonzero(value) == 0 for value in (*maps, global_condition, *native))
+    (sum(value.square().sum() for value in maps) + global_condition.square().sum() + sum(value.square().sum() for value in native)).backward()
+    assert all(parameter.grad is not None and torch.isfinite(parameter.grad).all() for parameter in encoder.parameters())
+
+
+def test_condition_api_rejects_biased_or_unknown_fusion():
+    with pytest.raises(ValueError, match="bias-free"):
+        condition_options({"condition": {"bias": True}})
+    with pytest.raises(ValueError, match="fusion"):
+        condition_options({"condition": {"fusion": "unknown"}})
 
 
 def test_ncsnpp_tiny_spatial_forward_keeps_bchw_shape_at_all_times():

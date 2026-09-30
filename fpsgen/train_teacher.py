@@ -17,9 +17,9 @@ from fpsgen.utils.training_runtime import (
     seed_training,
 )
 
-def set_deterministic():
+def set_deterministic(seed=42):
     """Seed the stochastic training components for repeatable experiments."""
-    seed_training(42)
+    seed_training(seed)
 
 @click.command()
 @click.option('--config',
@@ -40,9 +40,8 @@ def set_deterministic():
 @click.option('--test', '-t', is_flag=True, help='test mode')
 def main(config, weights, checkpoint, test):
     """Launch stage-2 teacher training, checkpoint resume, or evaluation."""
-    set_deterministic()
-
     cfg = apply_training_environment(load_training_config(config))
+    set_deterministic(int(cfg['train'].get('seed', 42)))
 
     if weights is None:
         model = models.DiffusionPoints(cfg)

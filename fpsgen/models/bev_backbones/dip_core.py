@@ -56,17 +56,30 @@ class LocalDetailer(nn.Module):
         self.up0 = nn.Sequential(nn.ConvTranspose2d(c1 + c1, c0, 4, stride=2, padding=1), nn.SiLU())
         self.out = nn.Sequential(nn.Conv2d(c0 + c0, c0, 3, padding=1), nn.SiLU(), nn.Conv2d(c0, in_channels, 3, padding=1))
 
-    def forward(self, patches: torch.Tensor, tokens: torch.Tensor) -> torch.Tensor:
+    def forward(self, patches: torch.Tensor, tokens: torch.Tensor, local_conditions=None, local_gates=None) -> torch.Tensor:
         b, n, c, h, w = patches.shape
         if (h, w) != (self.patch_size, self.patch_size):
             raise ValueError(f"LocalDetailer expects {self.patch_size}x{self.patch_size} patches")
         x = patches.reshape(b * n, c, h, w)
         token = tokens.reshape(b * n, -1)
+        if local_conditions is not None and len(local_conditions) != 5:
+            raise ValueError("DiP local condition requires five resolution maps")
+        def inject(value, index):
+            if local_conditions is None:
+                return value
+            condition = local_conditions[index].reshape_as(value)
+            gate = 1.0 if local_gates is None else local_gates[index].to(value.dtype)
+            return value + gate * condition
         e0 = self.down0(x)
+        e0 = inject(e0, 0)
         e1 = self.down1(e0)
+        e1 = inject(e1, 1)
         e2 = self.down2(e1)
+        e2 = inject(e2, 2)
         e3 = self.down3(e2)
+        e3 = inject(e3, 3)
         mid = self.down4(e3) + self.global_inject(token)[:, :, None, None]
+        mid = inject(mid, 4)
         d3 = self.up3(mid)
         d2 = self.up2(torch.cat((d3, e3), dim=1))
         d1 = self.up1(torch.cat((d2, e2), dim=1))
@@ -126,7 +139,8 @@ class DiPCore(nn.Module):
         return patches.reshape(b, self.grid, self.grid, c, ph, pw).permute(0, 3, 1, 4, 2, 5).reshape(b, c, self.input_size, self.input_size)
 
     def forward(self, xt: torch.Tensor, t: torch.Tensor, patch_condition: torch.Tensor | None = None,
-                global_condition: torch.Tensor | None = None) -> torch.Tensor:
+                global_condition: torch.Tensor | None = None, local_conditions=None,
+                local_gates=None) -> torch.Tensor:
         patches = self.patchify(xt)
         tokens = self.patch_embed(patches.flatten(2)) + self.pos_embed.to(xt.dtype)
         if patch_condition is not None:
@@ -138,4 +152,4 @@ class DiPCore(nn.Module):
             context = F.silu(context + self.global_condition_proj(global_condition))
         for block in self.blocks:
             tokens = block(tokens, context, self.rope)
-        return self.unpatchify(self.detailer(patches, tokens))
+        return self.unpatchify(self.detailer(patches, tokens, local_conditions, local_gates))

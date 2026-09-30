@@ -1,0 +1,12 @@
+# Campaign manifest; scripts/run_bev_condition_campaign.py materializes the
+# individual run configs so backbone definitions are never hand-copied.
+campaign:
+  seed: 42
+  epochs: 5
+  batch_size: 8
+  allowed_physical_gpus: [2, 3]
+  variants:
+    spatial: {spatial: true, global: false, fusion: shared, native: false}
+    global: {spatial: false, global: true, fusion: shared, native: false}
+    separate: {spatial: true, global: true, fusion: separate, native: false}
+    native: {spatial: true, global: true, fusion: shared, native: true}
