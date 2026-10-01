@@ -151,6 +151,9 @@ def test_pixeldit_s_topology_guard():
     core = PixelDiTCore(input_size=64, hidden_size=128, num_groups=2, patch_depth=2, pixel_hidden_size=8, pixel_depth=2)
     assert isinstance(core.patch_blocks[0], AugmentedDiTBlock) and isinstance(core.pixel_blocks[0], PiTBlock)
     assert len(core.patch_blocks) == 2 and len(core.pixel_blocks) == 2
+    assert core.pixel_blocks[0].norm1.__class__.__name__ == "RMSNorm"
+    assert core.pixel_blocks[0].attn.__class__.__name__ == "Attention"
+    assert core.pixel_blocks[0].pixel_mlp.__class__.__name__ == "SwiGLUFFN"
 
 
 def test_new_pixel_backbones_do_not_depend_on_vae_or_latents():

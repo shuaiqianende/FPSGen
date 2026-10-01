@@ -40,28 +40,28 @@ class PiTBlock(nn.Module):
         super().__init__()
         self.pixel_hidden_size, self.semantic_size = int(pixel_hidden_size), int(semantic_size)
         self.patch_pixels, self.post_modulation = int(patch_pixels), bool(post_modulation)
-        flat = self.patch_pixels * self.pixel_hidden_size
         self.norm1 = RMSNorm(pixel_hidden_size)
         self.norm2 = RMSNorm(pixel_hidden_size)
+        # PiT must contain an actual pixel-level Transformer. Attention is
+        # local to each 16x16 patch; Patch-DiT carries global semantics.
+        self.attn = Attention(pixel_hidden_size, 1, qkv_bias=False, qk_norm=True)
         self.pixel_mlp = SwiGLUFFN(pixel_hidden_size, pixel_hidden_size * 4, bias=False)
-        self.to_semantic = nn.Linear(flat, semantic_size, bias=False)
-        self.from_semantic = nn.Linear(semantic_size, flat, bias=False)
-        self.ada = nn.Sequential(nn.SiLU(), nn.Linear(semantic_size, flat * 4))
+        self.ada = nn.Sequential(nn.SiLU(), nn.Linear(semantic_size, pixel_hidden_size * 4))
         nn.init.zeros_(self.ada[-1].weight)
         nn.init.zeros_(self.ada[-1].bias)
 
     def forward(self, pixels: torch.Tensor, semantic: torch.Tensor,
                 rope: VisionRotaryEmbeddingFast) -> torch.Tensor:
-        # pixels [B, L, P, C], semantic [B, L, D].  Cross-patch mixing is
-        # deliberately at the compressed patch semantic level, as in PiT.
+        # pixels [B, L, P, C], semantic [B, L, D]. Global mixing happens in
+        # Patch-DiT; PiT restores spatial detail within each patch.
         b, l, p, c = pixels.shape
         if (p, c) != (self.patch_pixels, self.pixel_hidden_size):
             raise ValueError("PixelDiT PiT token shape mismatch")
-        shift1, scale1, shift2, scale2 = self.ada(semantic).view(b, l, 4, p, c).unbind(2)
+        shift1, scale1, shift2, scale2 = self.ada(semantic).view(b, l, 4, 1, c).unbind(2)
         first = self.norm1(pixels)
         if not self.post_modulation:
             first = first * (1 + scale1) + shift1
-        mixed = self.from_semantic(self.to_semantic(first.reshape(b, l, p * c))).view(b, l, p, c)
+        mixed = self.attn(first.reshape(b * l, p, c), rope).view(b, l, p, c)
         pixels = pixels + (mixed * (1 + scale1) + shift1 if self.post_modulation else mixed)
         second = self.norm2(pixels)
         if not self.post_modulation:
@@ -90,6 +90,7 @@ class PixelDiTCore(nn.Module):
         self.pixel_embed = nn.Linear(self.in_channels, self.pixel_hidden_size)
         self.t_embedder = TimestepEmbedder(self.hidden_size)
         self.patch_rope = VisionRotaryEmbeddingFast(self.hidden_size // self.num_groups // 2, self.grid, 0)
+        self.pixel_rope = VisionRotaryEmbeddingFast(self.pixel_hidden_size // 2, self.patch_size, 0)
         self.patch_blocks = nn.ModuleList(AugmentedDiTBlock(self.hidden_size, self.num_groups) for _ in range(self.patch_depth))
         self.pixel_blocks = nn.ModuleList(PiTBlock(self.pixel_hidden_size, self.hidden_size, self.patch_pixels, self.pit_adaln_post_modulation) for _ in range(self.pixel_depth))
         self.pixel_out = nn.Linear(self.pixel_hidden_size, self.in_channels)
@@ -129,5 +130,5 @@ class PixelDiTCore(nn.Module):
             if pixel_condition.shape != pixel_tokens.shape: raise ValueError("PixelDiT pixel condition shape mismatch")
             pixel_tokens = pixel_tokens + torch.as_tensor(pixel_gate, dtype=pixel_tokens.dtype, device=pixel_tokens.device) * pixel_condition
         for block in self.pixel_blocks:
-            pixel_tokens = block(pixel_tokens, tokens, self.patch_rope)
+            pixel_tokens = block(pixel_tokens, tokens, self.pixel_rope)
         return self.unpatchify(self.pixel_out(pixel_tokens))
