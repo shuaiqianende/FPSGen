@@ -1,0 +1,410 @@
+{
+  "base_seed": 20261001,
+  "bev_steps": 10,
+  "bevflow_lidar_only": {
+    "bev_generation_ms": {
+      "mean": 363.64964372478426,
+      "std": 386.17793389642435
+    },
+    "completion_density_log_mae": {
+      "mean": 0.6306048303842544,
+      "std": 0.060096932380128566
+    },
+    "completion_f1": {
+      "mean": 0.7392917543649673,
+      "std": 0.05613041522304055
+    },
+    "completion_gt_cells": {
+      "mean": 18625.4,
+      "std": 5738.625910442325
+    },
+    "completion_height_mae_m": {
+      "mean": 2.229371500015259,
+      "std": 0.2164786579304211
+    },
+    "completion_precision": {
+      "mean": 0.8134734153747558,
+      "std": 0.07077296243656894
+    },
+    "completion_recall": {
+      "mean": 0.679567638039589,
+      "std": 0.05858499197382923
+    },
+    "density_log_mae_intersection": {
+      "mean": 0.5254235878586769,
+      "std": 0.02104426262775621
+    },
+    "density_log_mae_union": {
+      "mean": 0.6221073746681214,
+      "std": 0.050242610808225036
+    },
+    "density_mass_ratio": {
+      "mean": 1.2185570448637009,
+      "std": 0.16773420621701812
+    },
+    "density_mass_tv": {
+      "mean": 0.552319347858429,
+      "std": 0.019239011653043436
+    },
+    "density_raw_mae_intersection": {
+      "mean": 9.556354928016663,
+      "std": 1.8059546505493564
+    },
+    "density_raw_rmse_intersection": {
+      "mean": 14.509868097305297,
+      "std": 1.9721656158989502
+    },
+    "gt_occupied_cells": {
+      "mean": 25120.5,
+      "std": 7620.982315292433
+    },
+    "height_bias_intersection_m": {
+      "mean": 0.014017308177426458,
+      "std": 0.2747401806974261
+    },
+    "height_mae_gtocc_m": {
+      "mean": 2.082868766784668,
+      "std": 0.18318183032272983
+    },
+    "height_mae_intersection_m": {
+      "mean": 1.6313886880874633,
+      "std": 0.08291536925709311
+    },
+    "height_rmse_intersection_m": {
+      "mean": 2.1003646731376646,
+      "std": 0.10614640918376197
+    },
+    "occupancy_f1": {
+      "mean": 0.8017015010118484,
+      "std": 0.043785043565697776
+    },
+    "occupancy_iou": {
+      "mean": 0.6711739778518677,
+      "std": 0.058631027115119944
+    },
+    "occupancy_precision": {
+      "mean": 0.8652135461568833,
+      "std": 0.05255784009292765
+    },
+    "occupancy_recall": {
+      "mean": 0.7481194525957108,
+      "std": 0.047816828643509904
+    },
+    "pred_occupied_cells": {
+      "mean": 21638.4,
+      "std": 6303.647074511706
+    },
+    "valid_cells": {
+      "mean": 51468.0,
+      "std": 0.0
+    }
+  },
+  "checkpoint": "/data-12/M2024-HWZ/FPSGen/experiments/fpsgen_bevflow_legacy_fp16_fast_seed42_gpu3/lightning_logs/version_0/checkpoints/fpsgen_bevflow_legacy_fp16_fast_seed42_gpu3_epoch=00.ckpt",
+  "checkpoint_sha256": "e8f4ddc2cef63d32fdf29c39252ad66ca982688e803f426cc754be80ec1f2820",
+  "condition": "100",
+  "git_commit": "b8799fd5c19b0ce1cc197f08508689fe2730ca2c",
+  "gt_dir": "gt_possion",
+  "guidance_scale": 2.0,
+  "improved_frame_ratio": {
+    "completion_f1": 1.0,
+    "density_mass_tv": 1.0,
+    "height_mae_gtocc_m": 1.0,
+    "occupancy_iou": 1.0
+  },
+  "input_bev": {
+    "completion_density_log_mae": {
+      "mean": 0.8672875702381134,
+      "std": 0.11582649479991186
+    },
+    "completion_f1": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "completion_gt_cells": {
+      "mean": 18625.4,
+      "std": 5738.625910442325
+    },
+    "completion_height_mae_m": {
+      "mean": 3.2646324157714846,
+      "std": 0.29145651968531666
+    },
+    "completion_precision": {
+      "mean": 1.0,
+      "std": 0.0
+    },
+    "completion_recall": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "density_log_mae_intersection": {
+      "mean": 0.526058341562748,
+      "std": 0.06456794361236565
+    },
+    "density_log_mae_union": {
+      "mean": 0.7790608942508698,
+      "std": 0.10223329176549176
+    },
+    "density_mass_ratio": {
+      "mean": 0.10066510252654552,
+      "std": 0.0008935625029436785
+    },
+    "density_mass_tv": {
+      "mean": 0.6465293675661087,
+      "std": 0.02656690597233221
+    },
+    "density_raw_mae_intersection": {
+      "mean": 9.091043281555176,
+      "std": 3.1815141920143795
+    },
+    "density_raw_rmse_intersection": {
+      "mean": 12.96595323085785,
+      "std": 3.9975928830474827
+    },
+    "gt_occupied_cells": {
+      "mean": 25120.5,
+      "std": 7620.982315292433
+    },
+    "height_bias_intersection_m": {
+      "mean": -0.6458126232028008,
+      "std": 0.20183992232836936
+    },
+    "height_mae_gtocc_m": {
+      "mean": 2.595321720838547,
+      "std": 0.25626930018634936
+    },
+    "height_mae_intersection_m": {
+      "mean": 0.6720665156841278,
+      "std": 0.1995118736155303
+    },
+    "height_rmse_intersection_m": {
+      "mean": 1.2123525202274323,
+      "std": 0.2892005059128873
+    },
+    "occupancy_f1": {
+      "mean": 0.4093812629580498,
+      "std": 0.035235388809556595
+    },
+    "occupancy_iou": {
+      "mean": 0.2579877480864525,
+      "std": 0.027790984585084392
+    },
+    "occupancy_precision": {
+      "mean": 0.9980992645025253,
+      "std": 0.0015026331959186602
+    },
+    "occupancy_recall": {
+      "mean": 0.25811856612563133,
+      "std": 0.027825200374267813
+    },
+    "pred_occupied_cells": {
+      "mean": 6509.8,
+      "std": 2067.4801716098755
+    },
+    "valid_cells": {
+      "mean": 51468.0,
+      "std": 0.0
+    }
+  },
+  "layout_source": "literal_all_zero_no_semantic_layout",
+  "manifest": "configs/research_v2/gate_seq08_20.txt",
+  "mean_stochastic_std_across_frames": {
+    "bev_generation_ms": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "completion_density_log_mae": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "completion_f1": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "completion_gt_cells": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "completion_height_mae_m": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "completion_precision": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "completion_recall": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "density_log_mae_intersection": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "density_log_mae_union": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "density_mass_ratio": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "density_mass_tv": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "density_raw_mae_intersection": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "density_raw_rmse_intersection": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "gt_occupied_cells": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "height_bias_intersection_m": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "height_mae_gtocc_m": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "height_mae_intersection_m": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "height_rmse_intersection_m": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "occupancy_f1": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "occupancy_iou": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "occupancy_precision": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "occupancy_recall": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "pred_occupied_cells": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "valid_cells": {
+      "mean": 0.0,
+      "std": 0.0
+    }
+  },
+  "num_frames": 20,
+  "occupancy_threshold": "pred_M > 0",
+  "runtime": {
+    "bev_generation_ms": {
+      "mean": 363.64964372478426,
+      "std": 386.17793389642435
+    },
+    "completion_density_log_mae": {
+      "mean": 0.6306048303842544,
+      "std": 0.060096932380128566
+    },
+    "completion_f1": {
+      "mean": 0.7392917543649673,
+      "std": 0.05613041522304055
+    },
+    "completion_gt_cells": {
+      "mean": 18625.4,
+      "std": 5738.625910442325
+    },
+    "completion_height_mae_m": {
+      "mean": 2.229371500015259,
+      "std": 0.2164786579304211
+    },
+    "completion_precision": {
+      "mean": 0.8134734153747558,
+      "std": 0.07077296243656894
+    },
+    "completion_recall": {
+      "mean": 0.679567638039589,
+      "std": 0.05858499197382923
+    },
+    "density_log_mae_intersection": {
+      "mean": 0.5254235878586769,
+      "std": 0.02104426262775621
+    },
+    "density_log_mae_union": {
+      "mean": 0.6221073746681214,
+      "std": 0.050242610808225036
+    },
+    "density_mass_ratio": {
+      "mean": 1.2185570448637009,
+      "std": 0.16773420621701812
+    },
+    "density_mass_tv": {
+      "mean": 0.552319347858429,
+      "std": 0.019239011653043436
+    },
+    "density_raw_mae_intersection": {
+      "mean": 9.556354928016663,
+      "std": 1.8059546505493564
+    },
+    "density_raw_rmse_intersection": {
+      "mean": 14.509868097305297,
+      "std": 1.9721656158989502
+    },
+    "gt_occupied_cells": {
+      "mean": 25120.5,
+      "std": 7620.982315292433
+    },
+    "height_bias_intersection_m": {
+      "mean": 0.014017308177426458,
+      "std": 0.2747401806974261
+    },
+    "height_mae_gtocc_m": {
+      "mean": 2.082868766784668,
+      "std": 0.18318183032272983
+    },
+    "height_mae_intersection_m": {
+      "mean": 1.6313886880874633,
+      "std": 0.08291536925709311
+    },
+    "height_rmse_intersection_m": {
+      "mean": 2.1003646731376646,
+      "std": 0.10614640918376197
+    },
+    "occupancy_f1": {
+      "mean": 0.8017015010118484,
+      "std": 0.043785043565697776
+    },
+    "occupancy_iou": {
+      "mean": 0.6711739778518677,
+      "std": 0.058631027115119944
+    },
+    "occupancy_precision": {
+      "mean": 0.8652135461568833,
+      "std": 0.05255784009292765
+    },
+    "occupancy_recall": {
+      "mean": 0.7481194525957108,
+      "std": 0.047816828643509904
+    },
+    "pred_occupied_cells": {
+      "mean": 21638.4,
+      "std": 6303.647074511706
+    },
+    "valid_cells": {
+      "mean": 51468.0,
+      "std": 0.0
+    }
+  },
+  "samples_per_frame": 1,
+  "valid_radius_m": 50.0
+}

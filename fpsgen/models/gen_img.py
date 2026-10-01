@@ -6,6 +6,7 @@ Flow-Matching objective, and Euler sampler. A scene is represented by
 """
 
 import math
+from contextlib import nullcontext
 import torch
 import torch.nn.functional as F
 import numpy as np
@@ -101,6 +102,19 @@ class BEVDataProcessor:
         self.z_range = max_z - min_z
         self.grid_size = int(grid_size)
         self.pc_range = pc_range
+        # The SemanticKITTI IDs and class groups are immutable.  Cache their
+        # LUT per device instead of constructing small tensors and invoking
+        # ``torch.isin`` for every optimizer step.
+        self._layout_luts = {}
+
+    def _layout_lut(self, device):
+        key = str(device)
+        if key not in self._layout_luts:
+            lut = torch.zeros((260, 2), dtype=torch.float32, device=device)
+            lut[torch.tensor([10, 13, 18, 20, 252, 256, 258, 259], device=device), 0] = 1.0
+            lut[torch.tensor([40, 44, 48, 49], device=device), 1] = 1.0
+            self._layout_luts[key] = lut
+        return self._layout_luts[key]
 
     def points_to_bev_target(self, pcd):
         """Rasterize batched XYZ points into the normalized target ``[D,H,M]``.
@@ -229,6 +243,19 @@ class BEVDataProcessor:
         B = pcd.shape[0]
         G = self.grid_size
         device = pcd.device
+
+        # The common training path is exactly vehicle + ground.  Keep the
+        # historical general path below for optional visualization classes.
+        if tuple(target_classes) == ('vehicle', 'ground'):
+            xy = pcd[:, :, :2].float()
+            xy_pixels = ((xy + self.pc_range) / (self.pc_range * 2.0) * G).long().clamp(0, G - 1)
+            flat_indices = xy_pixels[:, :, 0] * G + xy_pixels[:, :, 1]
+            labels_sq = labels.squeeze(-1).long()
+            in_lut = (labels_sq >= 0) & (labels_sq < 260)
+            flags = self._layout_lut(device)[labels_sq.clamp(0, 259)] * in_lut.unsqueeze(-1)
+            layout = torch.zeros((B, 2, G * G), dtype=torch.float32, device=device)
+            layout.scatter_add_(2, flat_indices.unsqueeze(1).expand(-1, 2, -1), flags.permute(0, 2, 1))
+            return (layout > 0).to(torch.float32).view(B, 2, G, G)
 
         class_label_dict = {
             'vehicle': [10, 13, 18, 20, 252, 256, 258, 259],
@@ -417,6 +444,10 @@ class FlowIMG(LightningModule):
             )
 
         self.cnt = 0
+        # Non-persistent buffers keep old checkpoint loading byte-compatible
+        # while removing tiny per-step CUDA allocations from the hot path.
+        self.register_buffer('fm_channel_weights', torch.tensor([1.0, 2.0, 1.0]), persistent=False)
+        self.register_buffer('condition_mode_probabilities', torch.full((8,), 0.125), persistent=False)
         # Independent stochastic streams make paired short-run experiments
         # compare identical flow noise, times and condition states.
         self._flow_generators = {}
@@ -464,20 +495,9 @@ class FlowIMG(LightningModule):
         gt_points = batch['pcd_full']
         B = gt_points.shape[0]
 
-        probs = torch.tensor([
-            0.125,
-            0.125,
-            0.125,
-            0.125,
-            0.125,
-            0.125,
-            0.125,
-            0.125
-        ], device=self.device)
-
         # Sample all eight LiDAR/vehicle/road conditioning combinations uniformly.
         state_indices = torch.multinomial(
-            probs, num_samples=B, replacement=True,
+            self.condition_mode_probabilities, num_samples=B, replacement=True,
             generator=self._flow_generator("condition", 1003),
         )
 
@@ -489,8 +509,15 @@ class FlowIMG(LightningModule):
         drop_vehicle_mask = drop_vehicle.view(B, 1, 1, 1)
         drop_road_mask = drop_road.view(B, 1, 1, 1)
 
-        layout_mask = self.processor.get_layout_bev(batch['pcd_full'], batch['full_label'])
-        layout_mask = layout_mask * 2.0 - 1.0
+        # CUDA AMP is intentionally restricted to the dense BEVFlow core.
+        # Coordinates, KNN distance/indexing, semantic rasterization and the
+        # target stay FP32 even in the opt-in performance runtime.
+        def geometry_context():
+            return (torch.autocast(device_type="cuda", enabled=False)
+                    if batch['pcd_full'].is_cuda else nullcontext())
+        with geometry_context():
+            layout_mask = self.processor.get_layout_bev(batch['pcd_full'], batch['full_label'])
+            layout_mask = layout_mask * 2.0 - 1.0
 
         vehicle_channels = [0]
         road_channels = [1]
@@ -509,10 +536,12 @@ class FlowIMG(LightningModule):
 
         condition_keep = torch.stack((~drop_lidar, ~drop_vehicle, ~drop_road), dim=1)
         cond_points = batch['pcd_part']
-        raw_pc_cond = self.model.get_raw_pc_bev(cond_points)
+        with geometry_context():
+            raw_pc_cond = self.model.get_raw_pc_bev(cond_points)
         raw_pc_cond = torch.where(drop_lidar_mask, torch.zeros_like(raw_pc_cond), raw_pc_cond)
 
-        x1 = self.processor.points_to_bev_target(gt_points)
+        with geometry_context():
+            x1 = self.processor.points_to_bev_target(gt_points)
 
         t = torch.rand((B,), device=self.device, generator=self._flow_generator("time", 2003))
         t_expand = t.view(B, 1, 1, 1)
@@ -528,8 +557,8 @@ class FlowIMG(LightningModule):
         else:
             out = self._dense_forward(xt, t, raw_pc_cond, layout_mask)
 
-        w = torch.tensor([1.0, 2.0, 1.0], device=out.device).view(1, -1, 1, 1)
-        loss_mse = (F.mse_loss(out, ut, reduction='none') * w).mean()
+        w = self.fm_channel_weights.view(1, -1, 1, 1)
+        loss_mse = (F.mse_loss(out.float(), ut.float(), reduction='none') * w).mean()
 
         loss = loss_mse
 
@@ -548,9 +577,8 @@ class FlowIMG(LightningModule):
             for name, value in self.model.condition_diagnostics().items():
                 self.log(f'cond/{name}', value, on_step=True, on_epoch=False)
 
-        visualization_interval = int(
-            self.hparams.get('runtime', {}).get('visualization_interval', 100)
-        )
+        runtime = self.hparams.get('runtime', {})
+        visualization_interval = int(runtime.get('train_vis_interval', runtime.get('visualization_interval', 100)))
         if (
             metric_prefix == 'train'
             and visualization_interval > 0

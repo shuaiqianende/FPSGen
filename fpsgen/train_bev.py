@@ -60,6 +60,19 @@ def main(config, weights, checkpoint, test, preflight_steps):
         cfg['experiment'] = dict(cfg['experiment'])
         cfg['experiment']['id'] = cfg['experiment']['id'] + '_preflight'
     set_deterministic(int(cfg['train'].get('seed', 42)))
+    runtime = cfg.get('runtime', {})
+    performance_mode = not bool(runtime.get('deterministic', True))
+    if performance_mode:
+        torch.backends.cudnn.deterministic = False
+        torch.backends.cudnn.benchmark = bool(runtime.get('cudnn_benchmark', True))
+    if runtime.get('allow_tf32', False):
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
+        torch.set_float32_matmul_precision('high')
+    precision_name = str(runtime.get('precision', 'fp32')).lower()
+    trainer_precision = {'fp32': 32, 'fp16': 16}.get(precision_name)
+    if trainer_precision is None:
+        raise ValueError("runtime.precision must be fp32 or fp16 in this PyTorch-2.0 environment")
 
     if weights is None:
         model = models. FlowIMG(cfg)
@@ -90,9 +103,17 @@ def main(config, weights, checkpoint, test, preflight_steps):
         raise RuntimeError('FPSGen training requires a CUDA-visible GPU. Set CUDA_VISIBLE_DEVICES correctly.')
     requested_gpus = min(cfg['train']['n_gpus'], visible_gpus)
     if requested_gpus > 1:
-        # Use synchronized sparse batch normalization when training with DDP.
+        # Legacy BEVFlow uses LayerNorm/GroupNorm in its active path.  Do not
+        # pay conversion/setup cost for Minkowski SyncBN unless a sparse
+        # MinkowskiBatchNorm module actually exists (the optional depth model
+        # and unrelated backbones may still require it).
         cfg['train']['n_gpus'] = requested_gpus
-        model = ME.MinkowskiSyncBatchNorm.convert_sync_batchnorm(model)
+        has_sparse_bn = any(
+            module.__class__.__name__ == 'MinkowskiBatchNorm'
+            for module in model.modules()
+        )
+        if has_sparse_bn:
+            model = ME.MinkowskiSyncBatchNorm.convert_sync_batchnorm(model)
         trainer = Trainer(
             gpus=requested_gpus,
             # Lightning 1.8 selects DDP through ``strategy``; ``accelerator``
@@ -109,6 +130,7 @@ def main(config, weights, checkpoint, test, preflight_steps):
             check_val_every_n_epoch=1,
             num_sanity_val_steps=0,
             limit_val_batches=0.002,
+            precision=trainer_precision,
         )
     else:
         trainer = Trainer(gpus=1,
@@ -123,6 +145,7 @@ def main(config, weights, checkpoint, test, preflight_steps):
                           check_val_every_n_epoch=1,
                           num_sanity_val_steps=0,
                           limit_val_batches=0.002,
+                          precision=trainer_precision,
                           )
 
 

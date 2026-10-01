@@ -1,0 +1,17 @@
+experiment: {id: fpsgen_bevflow_legacy_fp16_fast_seed42_gpu3}
+data: {data_dir: '', gt_dir: gt_possion, resolution: 0.05, dataloader: KITTI, split: train, train: ['00','01','02','03','04','05','06','07','09','10'], num_points: 180000, max_range: 50.0, dataset_norm: false, std_axis_norm: false, zero_copy_numpy: true}
+train: {n_gpus: 1, num_workers: 4, persistent_workers: true, prefetch_factor: 4, pin_memory: true, deterministic_worker_init: true, dataloader_seed: 42, max_epoch: 1, limit_train_batches: 1500, checkpoint_every_n_epochs: 1, lr: 0.0001, batch_size: 8, seed: 42}
+model: {backbone: legacy}
+runtime:
+  # The benchmarked F0 candidate: compile only the dense BEVFlow core.  Point
+  # geometry, KeOps KNN, rasterization and the DataLoader remain eager/FP32.
+  compile_dense: true
+  async_batch_transfer: true
+  train_vis_interval: 0
+  precision: fp16
+  deterministic: false
+  allow_tf32: true
+  cudnn_benchmark: true
+  throughput_csv: outputs/research_v2/bevflow_speed/final_fp16_throughput.csv
+  throughput_interval_steps: 50
+  throughput_window_steps: 200

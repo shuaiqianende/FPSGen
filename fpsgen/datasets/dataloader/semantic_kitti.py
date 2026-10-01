@@ -51,9 +51,21 @@ def load_preprocessed_points(path):
         raise ValueError(f"Non-finite XYZ values in preprocessed target: {path}")
     return points
 
-def point_set_to_sparse(p_full, p_part, filename, pos_tran, part_label, full_label):
-    p_full = torch.tensor(p_full)
-    pos_tran = torch.tensor(pos_tran)
+def point_set_to_sparse(p_full, p_part, filename, pos_tran, part_label, full_label,
+                        zero_copy_numpy=False):
+    """Convert one sample while retaining the historical default copies.
+
+    ``zero_copy_numpy`` is opt-in for the speed study.  Arrays are made
+    contiguous first, so ``torch.from_numpy`` has identical values/dtypes but
+    avoids an otherwise unconditional second CPU allocation.
+    """
+    convert = (lambda value: torch.from_numpy(np.ascontiguousarray(value))
+               if isinstance(value, np.ndarray) else torch.as_tensor(value)) if zero_copy_numpy else torch.tensor
+    p_full = convert(p_full)
+    p_part = convert(p_part)
+    pos_tran = convert(pos_tran)
+    part_label = convert(part_label)
+    full_label = convert(full_label)
 
     return [p_full, p_part, filename, pos_tran, part_label, full_label]
 
@@ -66,7 +78,8 @@ class TemporalKITTISet(Dataset):
     the immutable sibling ``input_`` directory.
     """
     def __init__(self, data_dir, seqs, split, resolution, num_points, max_range,
-                 dataset_norm=False, std_axis_norm=False, HW=[64, 1024], gt_dir='gt_'):
+                 dataset_norm=False, std_axis_norm=False, HW=[64, 1024], gt_dir='gt_',
+                 zero_copy_numpy=False):
         super().__init__()
         self.data_dir = data_dir
 
@@ -75,6 +88,7 @@ class TemporalKITTISet(Dataset):
         self.num_points = num_points
         self.max_range = max_range
         self.gt_dir = gt_dir
+        self.zero_copy_numpy = bool(zero_copy_numpy)
 
         self.HW = HW
         self.split = split
@@ -306,10 +320,6 @@ class TemporalKITTISet(Dataset):
             p_part = p_concat[-len(p_part):]
 
         n_part = int(self.num_points / 10.)
-        p_part = torch.tensor(p_part)
-        part_label = torch.tensor(part_label)
-        full_label = torch.tensor(full_label)
-
         return point_set_to_sparse(
             p_full,
             p_part,
@@ -317,6 +327,7 @@ class TemporalKITTISet(Dataset):
             self.point_poses[index],
             part_label,
             full_label,
+            zero_copy_numpy=self.zero_copy_numpy,
         )
 
     def __len__(self):

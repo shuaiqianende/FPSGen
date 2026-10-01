@@ -168,11 +168,24 @@ class FiniteTrainingPreflightCallback(Callback):
     def on_after_backward(self, trainer, pl_module):
         if not _finite_grads(pl_module):
             raise RuntimeError("Preflight found non-finite model gradients")
+        # New research backbones expose one ``condition_encoder``.  The
+        # historical Legacy BEVFlow instead uses a PointPillar ``pc_encoder``
+        # followed by ``cond_fpn``.  Treat both as the condition path so the
+        # same preflight can validate the preserved baseline.
         condition_encoder = getattr(pl_module.model, "condition_encoder", None)
-        if condition_encoder is None:
-            raise RuntimeError("Preflight backbone does not expose condition_encoder")
+        if condition_encoder is not None:
+            condition_modules = [condition_encoder]
+        else:
+            condition_modules = [
+                module for module in (
+                    getattr(pl_module.model, "pc_encoder", None),
+                    getattr(pl_module.model, "cond_fpn", None),
+                ) if module is not None
+            ]
+        if not condition_modules:
+            raise RuntimeError("Preflight backbone does not expose a condition path")
         condition_grads = [
-            parameter.grad for parameter in condition_encoder.parameters()
+            parameter.grad for module in condition_modules for parameter in module.parameters()
             if parameter.grad is not None
         ]
         if not all(torch.isfinite(grad).all().item() for grad in condition_grads):
