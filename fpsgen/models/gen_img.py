@@ -566,6 +566,23 @@ class FlowIMG(LightningModule):
         """Train a velocity field from Gaussian BEV noise (t=0) to target BEV (t=1)."""
         return self._shared_step(batch, metric_prefix='train')
 
+    @staticmethod
+    def _gradient_l2(module):
+        """Detached aggregate gradient norm without materializing a flat copy."""
+        squares = [parameter.grad.detach().float().square().sum()
+                   for parameter in module.parameters() if parameter.grad is not None]
+        return torch.stack(squares).sum().sqrt() if squares else torch.tensor(0.0)
+
+    def on_after_backward(self):
+        """Record adapter/core gradient activity at a low, opt-in-safe cadence."""
+        if self.global_step % 500 or not hasattr(self.model, "condition_encoder"):
+            return
+        self.log("cond/condition_grad_norm", self._gradient_l2(self.model.condition_encoder),
+                 on_step=True, on_epoch=False)
+        if hasattr(self.model, "core"):
+            self.log("cond/core_grad_norm", self._gradient_l2(self.model.core),
+                     on_step=True, on_epoch=False)
+
     @torch.no_grad()
     def p_sample_loop(self, cond_points, layout_mask, steps=25):
         """Integrate :math:`v_\phi` from :math:`B_0` with forward Euler."""
