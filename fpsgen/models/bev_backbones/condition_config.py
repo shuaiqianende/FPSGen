@@ -19,6 +19,10 @@ def condition_options(model_cfg) -> ConditionOptions:
     """Parse the backward-compatible condition API and validate hard contracts."""
     raw = model_cfg.get("condition", {})
     fusion = str(raw.get("fusion", "shared")).lower()
+    # ``separate_first`` is the research-facing spelling.  Existing adapters
+    # use the shorter internal name and retain their historical defaults.
+    if fusion == "separate_first":
+        fusion = "separate"
     if fusion not in {"shared", "separate"}:
         raise ValueError("model.condition.fusion must be 'shared' or 'separate'")
     if bool(raw.get("bias", False)):

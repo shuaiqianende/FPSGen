@@ -1,0 +1,5 @@
+experiment: {id: smoke_bev_sid2_s_b4}
+data: {data_dir: '', gt_dir: gt_possion, resolution: 0.05, dataloader: KITTI, split: train, train: ['00'], num_points: 180000, max_range: 50.0, dataset_norm: false, std_axis_norm: false}
+train: {n_gpus: 1, num_workers: 2, max_epoch: 1, batch_size: 4, limit_train_batches: 3, checkpoint_every_n_epochs: 999, lr: 0.0001, seed: 42}
+runtime: {compile_dense: false, visualization_interval: 0, preflight_validation: true, preflight_steps: 3, expected_batch_size: 4}
+model: {backbone: sid2_s, flow: {type: linear}, condition: {lidar_channels: 32, layout_channels: 2, fusion: separate_first, spatial: true, global: true, gate_init: 0.1, bias: false}, sid2: {input_size: 256, patch_size: 2, in_channels: 3, channels: [64, 128, 256, 384], num_updown_blocks: [3, 3, 3], num_mid_blocks: 16, block_types: [resblock, resblock, transformer, transformer], head_dim: 64, time_dim: 256}}

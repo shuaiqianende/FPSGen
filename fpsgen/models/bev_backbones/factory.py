@@ -34,7 +34,14 @@ def build_bev_backbone(cfg):
     if name == "ncsnpp_s":
         from .ncsnpp_bev import BEVNCSNppS
         return BEVNCSNppS(model_cfg)
+    if name == "sid2_s":
+        from .sid2_bev import BEVSiD2S
+        return BEVSiD2S(model_cfg)
+    if name == "pixeldit_s":
+        from .pixeldit_bev import BEVPixelDiTS
+        return BEVPixelDiTS(model_cfg)
     raise ValueError(
         f"Unknown BEV backbone {name!r}; expected one of "
-        "'legacy', 'dic_s', 'pixelu_s', 'hdit_s', 'dip_s', or 'ncsnpp_s'."
+        "'legacy', 'dic_s', 'pixelu_s', 'hdit_s', 'dip_s', 'ncsnpp_s', "
+        "'sid2_s', or 'pixeldit_s'."
     )

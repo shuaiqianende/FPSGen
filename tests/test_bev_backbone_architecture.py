@@ -124,9 +124,38 @@ def test_ncsnpp_s_architecture_guard():
     assert any(isinstance(module, AttnBlockpp) for stage in core.enc_attn for module in stage)
 
 
+def test_sid2_s_topology_guard():
+    from fpsgen.models.bev_backbones.sid2_core import AdaResBlock, AdaTransformerBlock, SiD2Core
+    cfg = yaml.safe_load(open("configs/research_v2/train_bev_sid2_s_gt_possion.yaml"))
+    sid2 = cfg["model"]["sid2"]
+    assert sid2["patch_size"] == 2 and sid2["channels"] == [64, 128, 256, 384]
+    assert sid2["num_updown_blocks"] == [3, 3, 3] and sid2["num_mid_blocks"] == 16
+    assert sid2["block_types"] == ["resblock", "resblock", "transformer", "transformer"]
+    core = SiD2Core(input_size=64, channels=(16, 32, 64, 64), num_mid_blocks=2, head_dim=16, time_dim=32)
+    assert len(core.enc0) == len(core.enc1) == len(core.enc2) == 3
+    assert len(core.dec0) == len(core.dec1) == len(core.dec2) == 3 and len(core.mid) == 2
+    assert isinstance(core.enc0[0], AdaResBlock) and isinstance(core.enc2[0], AdaTransformerBlock)
+    # Residual U-ViT must not retain traditional per-block concatenative skips.
+    assert not any("skip" in name.lower() for name, _ in core.named_modules())
+
+
+@pytest.mark.skipif(not hasattr(__import__("torch").nn.functional, "scaled_dot_product_attention"),
+                    reason="PixelDiT requires the PyTorch-2 SDPA API")
+def test_pixeldit_s_topology_guard():
+    from fpsgen.models.bev_backbones.pixeldit_core import AugmentedDiTBlock, PiTBlock, PixelDiTCore
+    cfg = yaml.safe_load(open("configs/research_v2/train_bev_pixeldit_s_gt_possion.yaml"))
+    pixeldit = cfg["model"]["pixeldit"]
+    assert pixeldit["patch_size"] == 16 and pixeldit["hidden_size"] == 384 and pixeldit["num_groups"] == 6
+    assert pixeldit["patch_depth"] == 8 and pixeldit["pixel_hidden_size"] == 8 and pixeldit["pixel_depth"] == 4
+    assert pixeldit["pit_adaln_post_modulation"] is True and pixeldit["time_scale"] == 1.0 and pixeldit["repa"] is False
+    core = PixelDiTCore(input_size=64, hidden_size=128, num_groups=2, patch_depth=2, pixel_hidden_size=8, pixel_depth=2)
+    assert isinstance(core.patch_blocks[0], AugmentedDiTBlock) and isinstance(core.pixel_blocks[0], PiTBlock)
+    assert len(core.patch_blocks) == 2 and len(core.pixel_blocks) == 2
+
+
 def test_new_pixel_backbones_do_not_depend_on_vae_or_latents():
     root = Path("fpsgen/models/bev_backbones")
-    for name in ("hdit_core.py", "hdit_bev.py", "dip_core.py", "dip_bev.py", "ncsnpp_core.py", "ncsnpp_bev.py"):
+    for name in ("hdit_core.py", "hdit_bev.py", "dip_core.py", "dip_bev.py", "ncsnpp_core.py", "ncsnpp_bev.py", "sid2_core.py", "sid2_bev.py", "pixeldit_core.py", "pixeldit_bev.py"):
         source = (root / name).read_text().lower()
         assert "autoencoderkl" not in source
         assert "import vae" not in source

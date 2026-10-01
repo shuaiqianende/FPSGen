@@ -10,6 +10,10 @@ from fpsgen.models.bev_backbones.hdit_core import HDiTConditionEncoder, HDiTCore
 from fpsgen.models.bev_backbones.dip_bev import DiPConditionEncoder
 from fpsgen.models.bev_backbones.dip_core import DiPCore
 from fpsgen.models.bev_backbones.ncsnpp_core import NCSNConditionEncoder, NCSNppCore
+from fpsgen.models.bev_backbones.sid2_bev import SiD2ConditionEncoder
+from fpsgen.models.bev_backbones.sid2_core import SiD2Core
+from fpsgen.models.bev_backbones.pixeldit_bev import PixelDiTConditionEncoder
+from fpsgen.models.bev_backbones.pixeldit_core import PixelDiTCore
 
 
 def test_dic_condition_is_exactly_zero_for_inactive_conditions():
@@ -147,6 +151,29 @@ def test_condition_api_rejects_biased_or_unknown_fusion():
         condition_options({"condition": {"bias": True}})
     with pytest.raises(ValueError, match="fusion"):
         condition_options({"condition": {"fusion": "unknown"}})
+    assert condition_options({"condition": {"fusion": "separate_first"}}).fusion == "separate"
+
+
+def test_sid2_separate_condition_is_exactly_zero_and_tiny_core_is_finite():
+    encoder = SiD2ConditionEncoder(channels=(16, 32, 64, 64), time_dim=32)
+    maps, global_values = encoder(torch.zeros(2, 32, 64, 64), torch.zeros(2, 2, 64, 64))
+    assert all(torch.count_nonzero(value) == 0 for value in (*maps, *global_values))
+    core = SiD2Core(input_size=64, channels=(16, 32, 64, 64), num_mid_blocks=2, head_dim=16, time_dim=32)
+    for time in (0., .25, .5, .75, 1.):
+        result = core(torch.randn(1, 3, 64, 64), torch.tensor([time]))
+        assert result.shape == (1, 3, 64, 64) and torch.isfinite(result).all()
+
+
+@pytest.mark.skipif(not hasattr(torch.nn.functional, "scaled_dot_product_attention"),
+                    reason="PixelDiT requires the PyTorch-2 SDPA API")
+def test_pixeldit_separate_condition_is_exactly_zero_and_tiny_core_is_finite():
+    encoder = PixelDiTConditionEncoder(patch_size=16, pixel_hidden_size=8, hidden_size=96)
+    pixel, patch, global_value = encoder(torch.zeros(2, 32, 64, 64), torch.zeros(2, 2, 64, 64))
+    assert all(torch.count_nonzero(value) == 0 for value in (pixel, patch, global_value))
+    core = PixelDiTCore(input_size=64, hidden_size=128, num_groups=2, patch_depth=2, pixel_hidden_size=8, pixel_depth=2)
+    for time in (0., .25, .5, .75, 1.):
+        result = core(torch.randn(1, 3, 64, 64), torch.tensor([time]))
+        assert result.shape == (1, 3, 64, 64) and torch.isfinite(result).all()
 
 
 def test_ncsnpp_tiny_spatial_forward_keeps_bchw_shape_at_all_times():

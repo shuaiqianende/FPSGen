@@ -29,3 +29,18 @@ ncsnpp:
   reference_config: configs/ve/ffhq_256_ncsnpp_continuous.py
   license: Apache-2.0
   fpsgen_variant: NCSNpp-S-BEV
+sid2:
+  paper: Simpler Diffusion
+  venue: CVPR 2025
+  architecture: Residual U-ViT
+  official_code: not_available_in_current_source_check
+  implementation: paper_based_reimplementation
+  fpsgen_variant: SiD2-S-BEV
+pixeldit:
+  repository: NVlabs/PixelDiT
+  commit: 41f73006ae532b0b41fee72b181dc22891a5a01a
+  source:
+    - pixdit_core/pixeldit_c2i.py
+    - pixdit_core/modules.py
+  reference_config: c2i/configs/pix256_xl_pit_post_modulation.yaml
+  fpsgen_variant: PixelDiT-S-BEV

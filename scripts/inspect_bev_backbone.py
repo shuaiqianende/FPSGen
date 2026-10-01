@@ -48,6 +48,15 @@ def main():
                        "resblocks": model.core.num_res_blocks, "attention": list(model.core.attn_resolutions),
                        "resblock_type": model.core.resblock_type, "fir": model.core.fir,
                        "progressive": model.core.progressive, "progressive_input": model.core.progressive_input})
+    if name == "sid2_s":
+        result.update({"patch": model.core.patch_size, "channels": list(model.core.channels),
+                       "updown_depth": list(model.core.num_updown_blocks),
+                       "mid_blocks": model.core.num_mid_blocks, "head_dim": model.core.head_dim})
+    if name == "pixeldit_s":
+        result.update({"patch": model.core.patch_size, "hidden": model.core.hidden_size,
+                       "groups": model.core.num_groups, "patch_depth": model.core.patch_depth,
+                       "pixel_hidden": model.core.pixel_hidden_size, "pixel_depth": model.core.pixel_depth,
+                       "pit_post_modulation": model.core.pit_adaln_post_modulation})
     for key, value in result.items():
         print(f"{key}: {value}")
 
