@@ -5,7 +5,7 @@ from __future__ import annotations
 import torch
 import torch.nn as nn
 
-from .condition import _require_bchw
+from .condition import _require_bchw, modality_norms_and_ratios
 from .condition_config import condition_options
 from .dip_core import DiPCore
 
@@ -70,10 +70,7 @@ class DiPConditionEncoder(nn.Module):
                 "road": self.road_patch_proj(patches[:, :, :, self.lidar_channels + 1:].reshape(b, gh * gw, -1)),
             }
             patch = sum(components.values())
-            self._modality_norms = {
-                f"{name}_norm": value.detach().float().norm(dim=-1).mean()
-                for name, value in components.items()
-            }
+            self._modality_norms = modality_norms_and_ratios(components, channel_dim=-1)
             if self.bottleneck_dim is not None:
                 patch = self.patch_proj2(patch)
         return patch, self.global_proj(patch.mean(dim=1))

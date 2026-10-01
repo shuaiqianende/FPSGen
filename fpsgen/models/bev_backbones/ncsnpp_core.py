@@ -16,7 +16,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .condition import _require_bchw
+from .condition import _require_bchw, modality_norms_and_ratios
 from .pixelu_core import TimestepEmbedder
 
 
@@ -144,10 +144,7 @@ class NCSNConditionEncoder(nn.Module):
                 "road": self.road_level0(layout[:, 1:2]),
             }
             hidden_maps = [sum(components.values())]
-            self._modality_norms = {
-                f"{name}_norm": value.detach().float().norm(dim=1).mean()
-                for name, value in components.items()
-            }
+            self._modality_norms = modality_norms_and_ratios(components, channel_dim=1)
         for transition in self.transitions:
             hidden_maps.append(transition(F.avg_pool2d(hidden_maps[-1], 2)))
         maps = hidden_maps if not hasattr(self, "spatial_out") else [

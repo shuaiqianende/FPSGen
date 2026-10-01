@@ -16,7 +16,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .condition import _require_bchw
+from .condition import _require_bchw, modality_norms_and_ratios
 
 
 class RMSNorm(nn.Module):
@@ -225,10 +225,7 @@ class HDiTConditionEncoder(nn.Module):
                 "road": self.road_patch(layout[:, 1:2]),
             }
             c0 = sum(components.values())
-            self._modality_norms = {
-                f"{name}_norm": value.detach().float().norm(dim=1).mean()
-                for name, value in components.items()
-            }
+            self._modality_norms = modality_norms_and_ratios(components, channel_dim=1)
         c0 = c0.permute(0, 2, 3, 1)
         c1 = self.merge0(c0)
         c2 = self.merge1(c1)

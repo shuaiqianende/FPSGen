@@ -6,6 +6,27 @@ import torch
 import torch.nn as nn
 
 
+def modality_norms_and_ratios(components: dict[str, torch.Tensor], *, channel_dim: int) -> dict[str, torch.Tensor]:
+    """Return detached component norms plus their stable normalized ratios.
+
+    The ratios are diagnostics only: they never feed the model or loss.  An
+    epsilon makes all-zero conditions report exact zero ratios rather than a
+    NaN, preserving the inactive-condition contract in tests and logs.
+    """
+    norms = {
+        f"{name}_norm": value.detach().float().norm(dim=channel_dim).mean()
+        for name, value in components.items()
+    }
+    total = sum(norms.values())
+    return {
+        **norms,
+        **{
+            f"{name}_ratio": norm / (total + 1e-12)
+            for name, norm in ((key.removesuffix("_norm"), value) for key, value in norms.items())
+        },
+    }
+
+
 def _require_bchw(raw_pc: torch.Tensor, layout: torch.Tensor, channels: int) -> torch.Tensor:
     if raw_pc.ndim != 4 or layout.ndim != 4:
         raise ValueError("raw_pc and layout must both have BCHW layout")

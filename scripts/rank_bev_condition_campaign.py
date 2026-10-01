@@ -37,15 +37,16 @@ C0_RUN_IDS = {
     "ncsnpp": "fpsgen_bev_ncsnpp_s_5ep_b8_gpu1",
 }
 LOWER_IS_BETTER = ("final_500_sampled_loss", "density_mass_tv", "height_mae_gtocc_m")
-HIGHER_IS_BETTER = ("gshuffle_100", "gshuffle_layout_mean", "occupancy_iou", "completion_f1")
+HIGHER_IS_BETTER = ("gshuffle_100_t_lt_0_2", "gshuffle_100_t_lt_0_4", "gshuffle_111", "occupancy_iou", "completion_f1")
 WEIGHTS = {
     "final_500_sampled_loss": 1,
-    "gshuffle_100": 2,
-    "gshuffle_layout_mean": 1,
+    "gshuffle_100_t_lt_0_2": 3,
+    "gshuffle_100_t_lt_0_4": 2,
+    "gshuffle_111": 1,
     "density_mass_tv": 1,
     "height_mae_gtocc_m": 1,
     "occupancy_iou": 2,
-    "completion_f1": 2,
+    "completion_f1": 3,
 }
 
 
@@ -119,6 +120,8 @@ def usage_metrics(path: Path) -> dict[str, float | None]:
         "gshuffle_001": gain("001"),
         "gshuffle_111": gain("111"),
         "gshuffle_layout_mean": sum(value for value in layouts if value is not None) / len(layouts) if all(value is not None for value in layouts) else None,
+        "gshuffle_100_t_lt_0_2": usage.get("headlines", {}).get("gshuffle_100_t_lt_0_2"),
+        "gshuffle_100_t_lt_0_4": usage.get("headlines", {}).get("gshuffle_100_t_lt_0_4"),
     }
 
 
@@ -138,10 +141,8 @@ def record(backbone: str, variant: str) -> dict[str, Any]:
         **screen_metrics(OUTPUT / "screen_eval" / f"{backbone}_{variant}"),
     }
     record["condition_insensitive"] = bool(
-        record["gshuffle_100"] is not None
-        and record["gshuffle_111"] is not None
-        and abs(record["gshuffle_100"]) <= 0.01
-        and abs(record["gshuffle_111"]) <= 0.01
+        record["gshuffle_100_t_lt_0_4"] is not None
+        and record["gshuffle_100_t_lt_0_4"] < 0.02
     )
     return record
 
@@ -176,7 +177,7 @@ def require_complete(records: list[dict[str, Any]]) -> None:
 
 
 def write_csv(path: Path, records: list[dict[str, Any]]) -> None:
-    columns = ["backbone", "variant", "injection", "complete", "final_500_sampled_loss", "gshuffle_100", "gshuffle_010", "gshuffle_001", "gshuffle_111", "gshuffle_layout_mean", "density_mass_tv", "height_mae_gtocc_m", "occupancy_iou", "completion_f1", "condition_insensitive", "weighted_rank_score", "overall_rank"]
+    columns = ["backbone", "variant", "injection", "complete", "final_500_sampled_loss", "gshuffle_100_t_lt_0_2", "gshuffle_100_t_lt_0_4", "gshuffle_100", "gshuffle_010", "gshuffle_001", "gshuffle_111", "gshuffle_layout_mean", "density_mass_tv", "height_mae_gtocc_m", "occupancy_iou", "completion_f1", "condition_insensitive", "weighted_rank_score", "overall_rank"]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=columns)
         writer.writeheader()
@@ -197,7 +198,7 @@ def main() -> None:
         ranked = [item for backbone in BACKBONES for item in by_backbone[backbone]]
         write_csv(OUTPUT / "phase1_summary.csv", ranked)
         result = {
-            "ranking_contract": {"weights": WEIGHTS, "condition_insensitive_threshold": 0.01},
+            "ranking_contract": {"weights": WEIGHTS, "condition_insensitive_threshold": {"gshuffle_100_t_lt_0_4": 0.02}},
             "records": ranked,
             "top2": {backbone: [item["variant"] for item in by_backbone[backbone][:2]] for backbone in BACKBONES},
         }

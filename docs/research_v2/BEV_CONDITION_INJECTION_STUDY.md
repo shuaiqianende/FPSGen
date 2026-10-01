@@ -61,7 +61,9 @@ restartable and skip a variant only when its epoch-04 checkpoint, B100
 condition-use JSON, and B20 summary all exist. The Lightning module records
 gate values and condition feature norms every 100 steps. For C3 it additionally
 records independent `lidar_norm`, `vehicle_norm` and `road_norm` before the
-first shared fusion layer. A
+first shared fusion layer, together with the diagnostic-only normalized
+`lidar_ratio`, `vehicle_ratio` and `road_ratio`. These values never feed the
+model or loss. A
 CUDA-synchronized profiler records step and data-ready timing every 50 steps.
 Its bottleneck rule is median data gap greater than 20% of median step time or
 p95 gap greater than twice the median gap; this is evidence for tune-first,
@@ -71,7 +73,10 @@ After each epoch-04 checkpoint, the coordinator runs:
 
 - `scripts/eval_bev_condition_usage.py`: sequence 08, B100, seed 20261001,
   times `0.1,0.3,0.5,0.7,0.9`, all eight condition modes, correct/zero/cyclic
-  shuffle conditions, and `Gzero`, `Gshuffle`, `Δv`.
+  shuffle conditions, and `Gzero`, `Gshuffle`, `Δv`. It preserves the overall
+  mean for backwards-compatible live summaries and additionally writes all
+  five `0.2`-wide time bins plus the protocol headlines
+  `Gshuffle_100(t<0.2)` and `Gshuffle_100(t<0.4)`.
 - `scripts/eval_bevflow_lidar_only.py`: the fixed B20 screen evaluation with
   one sample/frame and no visual artifacts.
 
@@ -101,9 +106,12 @@ session. It owns no CUDA device while waiting for the C1–C4 barrier. At the
 barrier it reruns every C0–C4 B20 screen with the fixed generation seed
 `20261001`, writes `phase1_summary.csv` and `phase1_ranking.json`, and ranks
 only within each backbone. The score uses final sampled 500-step FM loss,
-condition-use gains and the four screen metrics with the predeclared weights.
-Runs with both `Gshuffle_100` and `Gshuffle_111` at or below `0.01` are marked
-`condition_insensitive`.
+early-time condition-use gains and the four screen metrics with the
+predeclared weights: final loss `1`, `Gshuffle_100(t<0.2)` `3`,
+`Gshuffle_100(t<0.4)` `2`, `Gshuffle_111` `1`, Mass-TV `1`, Height MAE `1`,
+IoU `2`, and Completion F1 `3`. A run with
+`Gshuffle_100(t<0.4) < 0.02` is marked `condition_insensitive`, regardless of
+its FM loss.
 
 The coordinator then trains each backbone's two ranked policies from scratch
 at seed 123 for eight epochs, using one serial process on GPU2 and one on

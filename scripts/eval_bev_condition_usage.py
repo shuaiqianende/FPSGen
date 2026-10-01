@@ -21,6 +21,7 @@ from fpsgen.models.gen_img import FlowIMG
 
 MODES = ("000", "100", "010", "001", "110", "101", "011", "111")
 TIMES = (0.1, 0.3, 0.5, 0.7, 0.9)
+TIME_BINS = ((0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0))
 
 
 def move(value, device):
@@ -67,6 +68,35 @@ def velocity_loss(model, xt, t, target, raw_pc, layout):
     return ((velocity - target).square() * weights).mean(), velocity
 
 
+def summarize_records(values):
+    """Compute condition gains for a nonempty set of fixed-time observations."""
+    if not values["correct"]:
+        return None
+    correct = sum(values["correct"]) / len(values["correct"])
+    zero = sum(values["zero"]) / len(values["zero"])
+    shuffle_loss = sum(values["shuffle"]) / len(values["shuffle"])
+    return {
+        "loss_correct": correct,
+        "loss_zero": zero,
+        "loss_shuffle": shuffle_loss,
+        "g_zero": 1.0 - correct / zero,
+        "g_shuffle": 1.0 - correct / shuffle_loss,
+        "delta_v": sum(values["delta_v"]) / len(values["delta_v"]),
+    }
+
+
+def merge_records(records):
+    merged = {"correct": [], "zero": [], "shuffle": [], "delta_v": []}
+    for values in records:
+        for key in merged:
+            merged[key].extend(values[key])
+    return merged
+
+
+def bin_label(lower, upper):
+    return f"{lower:.1f}-{upper:.1f}"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", required=True, type=Path)
@@ -88,7 +118,13 @@ def main():
     model = FlowIMG.load_from_checkpoint(str(args.checkpoint), hparams=cfg).cuda().eval()
     loader = datasets.dataloaders[cfg["data"]["dataloader"]](cfg)._dataloader(["08"], "train", shuffle=False)
     generator = torch.Generator(device="cuda").manual_seed(args.seed)
-    records = {mode: {"correct": [], "zero": [], "shuffle": [], "delta_v": []} for mode in MODES}
+    records = {
+        mode: {
+            time: {"correct": [], "zero": [], "shuffle": [], "delta_v": []}
+            for time in TIMES
+        }
+        for mode in MODES
+    }
     seen = 0
 
     with torch.no_grad():
@@ -113,25 +149,35 @@ def main():
                     shuffle_raw, shuffle_layout = shuffled(raw_pc, layout, mode)
                     correct_loss, correct_velocity = velocity_loss(model, xt, t, target_velocity, correct_raw, correct_layout)
                     shuffle_loss, _ = velocity_loss(model, xt, t, target_velocity, shuffle_raw, shuffle_layout)
-                    records[mode]["correct"].append(float(correct_loss))
-                    records[mode]["zero"].append(float(zero_loss))
-                    records[mode]["shuffle"].append(float(shuffle_loss))
-                    records[mode]["delta_v"].append(float((correct_velocity - zero_velocity).abs().mean() / (zero_velocity.abs().mean() + 1e-8)))
+                    records[mode][time]["correct"].append(float(correct_loss))
+                    records[mode][time]["zero"].append(float(zero_loss))
+                    records[mode][time]["shuffle"].append(float(shuffle_loss))
+                    records[mode][time]["delta_v"].append(float((correct_velocity - zero_velocity).abs().mean() / (zero_velocity.abs().mean() + 1e-8)))
             seen += gt.shape[0]
 
-    summary = {"checkpoint": str(args.checkpoint), "frames": seen, "seed": args.seed, "times": TIMES, "modes": {}}
+    summary = {
+        "checkpoint": str(args.checkpoint), "frames": seen, "seed": args.seed,
+        "times": TIMES, "time_bins": [bin_label(*bounds) for bounds in TIME_BINS],
+        "modes": {}, "headlines": {},
+    }
     for mode, values in records.items():
-        correct = sum(values["correct"]) / len(values["correct"])
-        zero = sum(values["zero"]) / len(values["zero"])
-        shuffle_loss = sum(values["shuffle"]) / len(values["shuffle"])
-        summary["modes"][mode] = {
-            "loss_correct": correct,
-            "loss_zero": zero,
-            "loss_shuffle": shuffle_loss,
-            "g_zero": 1.0 - correct / zero,
-            "g_shuffle": 1.0 - correct / shuffle_loss,
-            "delta_v": sum(values["delta_v"]) / len(values["delta_v"]),
+        summary["modes"][mode] = summarize_records(merge_records(values.values()))
+        summary["modes"][mode]["by_time"] = {
+            f"{time:.1f}": summarize_records(values[time]) for time in TIMES
         }
+        summary["modes"][mode]["by_time_bin"] = {
+            bin_label(lower, upper): summarize_records(merge_records(
+                values[time] for time in TIMES
+                if lower <= time < upper or (upper == 1.0 and time == upper)
+            ))
+            for lower, upper in TIME_BINS
+        }
+    for mode in MODES:
+        for upper, key in ((0.2, "t_lt_0_2"), (0.4, "t_lt_0_4")):
+            gain = summarize_records(merge_records(
+                records[mode][time] for time in TIMES if time < upper
+            ))
+            summary["headlines"][f"gshuffle_{mode}_{key}"] = gain["g_shuffle"] if gain else None
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary, sort_keys=True))
