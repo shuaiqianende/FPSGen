@@ -1,0 +1,9 @@
+experiment: {id: fpsgen_spatial_u0_generic_b8_gpu2}
+data: {data_dir: '', gt_dir: gt_possion, resolution: 0.05, dataloader: KITTI, split: train, train: ['00','01','02','03','04','05','06','07','09','10'], num_points: 180000, max_range: 50.0, dataset_norm: false, std_axis_norm: false}
+train: {n_gpus: 1, num_workers: 8, persistent_workers: true, prefetch_factor: 4, pin_memory: true, deterministic_worker_init: true, dataloader_seed: 42, max_epoch: 1, limit_train_batches: 1500, lr: 0.0001, batch_size: 8, accumulate_grad_batches: 1, checkpoint_every_n_epochs: 1, seed: 42}
+runtime: {compile_dense: false, async_batch_transfer: true, visualization_interval: 1000, throughput_csv: outputs/research_v2/spatial_control/fpsgen_spatial_u0_generic_b8_gpu2_throughput.csv, throughput_interval_steps: 50, throughput_window_steps: 200}
+model:
+  backbone: unet_generic_bev_s
+  flow: {type: linear}
+  condition: {source: concat34, keep_mask: explicit, encoder: nonlinear_pyramid, injection: {type: generic_add, encoder: true, middle: true, decoder: true}, boundary: {enabled: false}}
+  synflow: {input_size: 256, in_channels: 3, model_channels: 64, channel_mult: [1,1,2,2,4,4], num_res_blocks: 2, attention_spatial_resolutions: [32,16,8], num_head_channels: 64, use_scale_shift_norm: true, resblock_updown: true, time_scale: 1000.0}

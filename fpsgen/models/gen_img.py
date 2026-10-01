@@ -417,6 +417,18 @@ class FlowIMG(LightningModule):
             )
 
         self.cnt = 0
+        # Independent stochastic streams make paired short-run experiments
+        # compare identical flow noise, times and condition states.
+        self._flow_generators = {}
+
+    def _flow_generator(self, stream: str, offset: int) -> torch.Generator:
+        """Create a device-local deterministic RNG stream on first use."""
+        key = (stream, str(self.device))
+        if key not in self._flow_generators:
+            generator = torch.Generator(device=self.device)
+            generator.manual_seed(int(self.hparams.get('train', {}).get('seed', 42)) + int(offset))
+            self._flow_generators[key] = generator
+        return self._flow_generators[key]
 
     def transfer_batch_to_device(self, batch, device, dataloader_idx):
         """Optionally overlap pinned-host copies with CUDA execution.
@@ -464,7 +476,10 @@ class FlowIMG(LightningModule):
         ], device=self.device)
 
         # Sample all eight LiDAR/vehicle/road conditioning combinations uniformly.
-        state_indices = torch.multinomial(probs, num_samples=B, replacement=True)
+        state_indices = torch.multinomial(
+            probs, num_samples=B, replacement=True,
+            generator=self._flow_generator("condition", 1003),
+        )
 
         drop_lidar = ~((state_indices & 4) > 0)
         drop_vehicle = ~((state_indices & 2) > 0)
@@ -492,24 +507,26 @@ class FlowIMG(LightningModule):
             layout_mask[:, road_channels]
         )
 
+        condition_keep = torch.stack((~drop_lidar, ~drop_vehicle, ~drop_road), dim=1)
         cond_points = batch['pcd_part']
         raw_pc_cond = self.model.get_raw_pc_bev(cond_points)
-
-
-        if self.training:
-            raw_pc_cond = torch.where(drop_lidar_mask, torch.zeros_like(raw_pc_cond), raw_pc_cond)
+        raw_pc_cond = torch.where(drop_lidar_mask, torch.zeros_like(raw_pc_cond), raw_pc_cond)
 
         x1 = self.processor.points_to_bev_target(gt_points)
 
-        t = torch.rand((B,), device=self.device)
+        t = torch.rand((B,), device=self.device, generator=self._flow_generator("time", 2003))
         t_expand = t.view(B, 1, 1, 1)
 
         # B_tau = (1-tau)B_0 + tau B_1; u_B = B_1 - B_0.
-        x0 = torch.randn_like(x1)
+        x0 = torch.randn(x1.shape, device=x1.device, dtype=x1.dtype,
+                         generator=self._flow_generator("noise", 3003))
         xt = (1 - t_expand) * x0 + t_expand * x1
         ut = x1 - x0
 
-        out = self._dense_forward(xt, t, raw_pc_cond, layout_mask)
+        if getattr(self.model, "supports_condition_keep", False):
+            out = self._dense_forward(xt, t, raw_pc_cond, layout_mask, condition_keep)
+        else:
+            out = self._dense_forward(xt, t, raw_pc_cond, layout_mask)
 
         w = torch.tensor([1.0, 2.0, 1.0], device=out.device).view(1, -1, 1, 1)
         loss_mse = (F.mse_loss(out, ut, reduction='none') * w).mean()
@@ -518,6 +535,10 @@ class FlowIMG(LightningModule):
 
         self.log(f'{metric_prefix}/loss_mse', loss_mse, prog_bar=True)
         self.log(f'{metric_prefix}/loss', loss, prog_bar=True)
+        per_channel = F.mse_loss(out, ut, reduction='none').mean(dim=(0, 2, 3))
+        self.log(f'{metric_prefix}/loss_D', per_channel[0], on_step=True, on_epoch=True)
+        self.log(f'{metric_prefix}/loss_H', per_channel[1], on_step=True, on_epoch=True)
+        self.log(f'{metric_prefix}/loss_M', per_channel[2], on_step=True, on_epoch=True)
 
         if (
             metric_prefix == 'train'

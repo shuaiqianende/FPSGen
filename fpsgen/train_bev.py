@@ -43,9 +43,22 @@ def set_deterministic(seed=42):
               help='path to checkpoint file (.point_cloud) to resume training.',
               default=None)
 @click.option('--test', '-t', is_flag=True, help='test mode')
-def main(config, weights, checkpoint, test):
+@click.option('--preflight-steps', type=int, default=0,
+              help='Run exactly this many finite-gradient steps, then stop.')
+def main(config, weights, checkpoint, test, preflight_steps):
     """Launch stage-1 BEV Flow training, checkpoint resume, or evaluation."""
     cfg = apply_training_environment(load_training_config(config))
+    if preflight_steps:
+        cfg['train']['max_epoch'] = 1
+        cfg['train']['limit_train_batches'] = int(preflight_steps)
+        cfg.setdefault('runtime', {}).update({
+            'preflight_validation': True,
+            'preflight_only': True,
+            'preflight_steps': int(preflight_steps),
+            'expected_batch_size': int(cfg['train']['batch_size']),
+        })
+        cfg['experiment'] = dict(cfg['experiment'])
+        cfg['experiment']['id'] = cfg['experiment']['id'] + '_preflight'
     set_deterministic(int(cfg['train'].get('seed', 42)))
 
     if weights is None:

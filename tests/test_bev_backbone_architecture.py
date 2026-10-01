@@ -162,3 +162,15 @@ def test_new_pixel_backbones_do_not_depend_on_vae_or_latents():
         source = (root / name).read_text().lower()
         assert "autoencoderkl" not in source
         assert "import vae" not in source
+
+
+def test_spatial_control_config_topology_guards():
+    syn = yaml.safe_load(open("configs/research_v2/spatial_control/synflow_bev_s_b8.yaml"))
+    crack = yaml.safe_load(open("configs/research_v2/spatial_control/cracksegflow_bev_s_b8.yaml"))
+    pixel = yaml.safe_load(open("configs/research_v2/spatial_control/pixelcontrol_bev_s_b8.yaml"))
+    assert syn["model"]["synflow"]["channel_mult"] == [1, 1, 2, 2, 4, 4]
+    assert syn["model"]["condition"]["injection"] == {"type": "spade", "encoder": True, "middle": True, "decoder": True}
+    assert crack["model"]["condition"]["injection"] == {"type": "spade", "encoder": False, "middle": False, "decoder": True}
+    assert pixel["model"]["pixeldit"]["patch_size"] == 16
+    assert pixel["model"]["pixelcontrol"]["inject_every"] == 1
+    assert pixel["model"]["pixelcontrol"]["zero_proj"] is True

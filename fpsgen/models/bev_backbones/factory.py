@@ -40,8 +40,18 @@ def build_bev_backbone(cfg):
     if name == "pixeldit_s":
         from .pixeldit_bev import BEVPixelDiTS
         return BEVPixelDiTS(model_cfg)
+    if name in {"synflow_bev_s", "unet_generic_bev_s"}:
+        from .synflow_bev import BEVSynFlowS
+        return BEVSynFlowS(model_cfg)
+    if name == "cracksegflow_bev_s":
+        from .cracksegflow_bev import BEVCrackSegFlowS
+        return BEVCrackSegFlowS(model_cfg)
+    if name in {"pixeldit_generic_bev_s", "pixelcontrol_bev_s"}:
+        from .pixelcontrol_bev import BEVPixelControlS
+        return BEVPixelControlS(model_cfg)
     raise ValueError(
         f"Unknown BEV backbone {name!r}; expected one of "
         "'legacy', 'dic_s', 'pixelu_s', 'hdit_s', 'dip_s', 'ncsnpp_s', "
-        "'sid2_s', or 'pixeldit_s'."
+        "'sid2_s', 'pixeldit_s', 'unet_generic_bev_s', 'synflow_bev_s', "
+        "'cracksegflow_bev_s', 'pixeldit_generic_bev_s', or 'pixelcontrol_bev_s'."
     )

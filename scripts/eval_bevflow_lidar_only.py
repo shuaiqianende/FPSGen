@@ -98,15 +98,24 @@ def sample_bev_cfg(flow: FlowIMG, raw_pc_cond: torch.Tensor, layout_cond: torch.
     for i in range(steps):
         t = torch.full((batch_size,), i / steps, device=device, dtype=torch.float32)
         if guidance_scale > 1.0:
-            velocities = flow.model(
-                torch.cat((xt, xt)), torch.cat((t, t)),
-                torch.cat((raw_pc_uncond, raw_pc_cond)),
-                torch.cat((layout_uncond, layout_cond)),
-            )
+            inputs = (torch.cat((xt, xt)), torch.cat((t, t)),
+                      torch.cat((raw_pc_uncond, raw_pc_cond)),
+                      torch.cat((layout_uncond, layout_cond)))
+            if getattr(flow.model, "supports_condition_keep", False):
+                keep = torch.zeros((batch_size * 2, 3), device=device, dtype=torch.bool)
+                keep[batch_size:, 0] = True
+                velocities = flow.model(*inputs, keep)
+            else:
+                velocities = flow.model(*inputs)
             velocity_uncond, velocity_cond = velocities.chunk(2, dim=0)
             velocity = velocity_uncond + guidance_scale * (velocity_cond - velocity_uncond)
         else:
-            velocity = flow.model(xt, t, raw_pc_cond, layout_cond)
+            if getattr(flow.model, "supports_condition_keep", False):
+                keep = torch.zeros((batch_size, 3), device=device, dtype=torch.bool)
+                keep[:, 0] = True
+                velocity = flow.model(xt, t, raw_pc_cond, layout_cond, keep)
+            else:
+                velocity = flow.model(xt, t, raw_pc_cond, layout_cond)
         xt = xt + dt * velocity
     torch.cuda.synchronize(device)
     runtime_ms = (time.perf_counter() - started) * 1000.0

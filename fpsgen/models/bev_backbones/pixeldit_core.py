@@ -111,7 +111,8 @@ class PixelDiTCore(nn.Module):
 
     def forward(self, xt: torch.Tensor, t: torch.Tensor, pixel_condition: torch.Tensor | None = None,
                 patch_condition: torch.Tensor | None = None, global_condition: torch.Tensor | None = None,
-                pixel_gate=0., patch_gate=0., global_gate=0.) -> torch.Tensor:
+                pixel_gate=0., patch_gate=0., global_gate=0., patch_adapter=None,
+                control_tokens: torch.Tensor | None = None) -> torch.Tensor:
         pixels = self.patchify(xt)
         tokens = self.patch_embed(pixels.flatten(2))
         if patch_condition is not None:
@@ -121,8 +122,12 @@ class PixelDiTCore(nn.Module):
         if global_condition is not None:
             if global_condition.shape != context.shape: raise ValueError("PixelDiT global condition shape mismatch")
             context = F.silu(context + torch.as_tensor(global_gate, dtype=context.dtype, device=context.device) * global_condition)
-        for block in self.patch_blocks:
+        if patch_adapter is not None and control_tokens is None:
+            raise ValueError("PixelControl adapter requires patch-aligned control tokens")
+        for index, block in enumerate(self.patch_blocks):
             tokens = block(tokens, context, self.patch_rope)
+            if patch_adapter is not None:
+                tokens = tokens + patch_adapter.residual(index, control_tokens, tokens)
         # A semantic residual keeps patch-level condition available to every PiT block.
         tokens = F.silu(tokens + context[:, None])
         pixel_tokens = self.pixel_embed(pixels)

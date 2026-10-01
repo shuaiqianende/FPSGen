@@ -146,6 +146,7 @@ class FiniteTrainingPreflightCallback(Callback):
     """Fail a short preflight unless all losses/gradients stay finite and active."""
 
     def __init__(self, runtime_cfg):
+        self.runtime_cfg = runtime_cfg
         self.expected_steps = int(runtime_cfg.get("preflight_steps", 16))
         self.expected_batch_size = int(runtime_cfg.get("expected_batch_size", 8))
         self.steps_seen = 0
@@ -177,6 +178,8 @@ class FiniteTrainingPreflightCallback(Callback):
         if not math.isfinite(loss):
             raise RuntimeError(f"Preflight found non-finite loss: {loss}")
         self.steps_seen += 1
+        if self.steps_seen >= self.expected_steps and self.runtime_cfg.get("preflight_only", False):
+            trainer.should_stop = True
 
     def on_fit_end(self, trainer, pl_module):
         if self.steps_seen != self.expected_steps:

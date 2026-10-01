@@ -21,12 +21,17 @@ def main():
     cfg = yaml.safe_load(args.config.read_text())
     model = build_bev_backbone(cfg)
     name = cfg.get("model", {}).get("backbone", "legacy")
+    core_params = count(getattr(model, "core", model))
+    pc_params = count(getattr(model, "pc_encoder", None)) if hasattr(model, "pc_encoder") else 0
+    total_params = count(model)
     result = {
         "backbone": name,
-        "generator_core_params": count(getattr(model, "core", model)),
-        "condition_adapter_params": count(getattr(model, "condition_encoder", None)) if hasattr(model, "condition_encoder") else 0,
-        "shared_lidar_encoder_params": count(getattr(model, "pc_encoder", None)) if hasattr(model, "pc_encoder") else 0,
-        "total_params": count(model),
+        "generator_core_params": core_params,
+        # Covers condition encoders, gates and zero/control adapters rather
+        # than silently omitting wrapper-owned condition projections.
+        "condition_adapter_params": total_params - core_params - pc_params,
+        "shared_lidar_encoder_params": pc_params,
+        "total_params": total_params,
     }
     if name == "dic_s":
         result.update({"hidden": model.core.hidden_size, "depth": list(model.core.depth),
@@ -57,6 +62,13 @@ def main():
                        "groups": model.core.num_groups, "patch_depth": model.core.patch_depth,
                        "pixel_hidden": model.core.pixel_hidden_size, "pixel_depth": model.core.pixel_depth,
                        "pit_post_modulation": model.core.pit_adaln_post_modulation})
+    if name in {"unet_generic_bev_s", "synflow_bev_s", "cracksegflow_bev_s"}:
+        result.update({"channels": list(model.core.channels), "resblocks": model.core.num_res_blocks,
+                       "attention": [32, 16, 8], "injection": model.core.injection})
+    if name in {"pixeldit_generic_bev_s", "pixelcontrol_bev_s"}:
+        result.update({"patch": model.core.patch_size, "hidden": model.core.hidden_size,
+                       "patch_depth": model.core.patch_depth, "pixel_depth": model.core.pixel_depth,
+                       "control_mode": model.mode})
     for key, value in result.items():
         print(f"{key}: {value}")
 

@@ -49,7 +49,13 @@ def apply_mode(raw_pc, layout, mode):
     )
 
 
+def keep_for_mode(mode, batch, device):
+    return torch.tensor([[bit == "1" for bit in mode]], device=device, dtype=torch.bool).expand(batch, -1)
+
+
 def shuffled(raw_pc, layout, mode):
+    if raw_pc.shape[0] < 2:
+        raise ValueError("wrong-frame evaluation requires batch size >= 2; refusing self-roll")
     raw, semantic = apply_mode(raw_pc, layout, mode)
     shift = 1
     lidar, vehicle, road = (bit == "1" for bit in mode)
@@ -62,8 +68,12 @@ def shuffled(raw_pc, layout, mode):
     return raw, semantic
 
 
-def velocity_loss(model, xt, t, target, raw_pc, layout):
-    velocity = model.model(xt, t, raw_pc, layout)
+def velocity_loss(model, xt, t, target, raw_pc, layout, mode):
+    keep = keep_for_mode(mode, xt.shape[0], xt.device)
+    if getattr(model.model, "supports_condition_keep", False):
+        velocity = model.model(xt, t, raw_pc, layout, keep)
+    else:
+        velocity = model.model(xt, t, raw_pc, layout)
     weights = torch.tensor((1.0, 2.0, 1.0), device=velocity.device).view(1, 3, 1, 1)
     return ((velocity - target).square() * weights).mean(), velocity
 
@@ -143,12 +153,12 @@ def main():
                 t = torch.full((gt.shape[0],), time, device="cuda")
                 xt = (1.0 - time) * x0 + time * target_bev
                 zero_raw, zero_layout = apply_mode(raw_pc, layout, "000")
-                zero_loss, zero_velocity = velocity_loss(model, xt, t, target_velocity, zero_raw, zero_layout)
+                zero_loss, zero_velocity = velocity_loss(model, xt, t, target_velocity, zero_raw, zero_layout, "000")
                 for mode in MODES:
                     correct_raw, correct_layout = apply_mode(raw_pc, layout, mode)
                     shuffle_raw, shuffle_layout = shuffled(raw_pc, layout, mode)
-                    correct_loss, correct_velocity = velocity_loss(model, xt, t, target_velocity, correct_raw, correct_layout)
-                    shuffle_loss, _ = velocity_loss(model, xt, t, target_velocity, shuffle_raw, shuffle_layout)
+                    correct_loss, correct_velocity = velocity_loss(model, xt, t, target_velocity, correct_raw, correct_layout, mode)
+                    shuffle_loss, _ = velocity_loss(model, xt, t, target_velocity, shuffle_raw, shuffle_layout, mode)
                     records[mode][time]["correct"].append(float(correct_loss))
                     records[mode][time]["zero"].append(float(zero_loss))
                     records[mode][time]["shuffle"].append(float(shuffle_loss))
