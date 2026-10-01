@@ -190,6 +190,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--gpu", required=True, type=int, choices=(2, 3))
     parser.add_argument("--backbone", action="append", choices=tuple(BASE), default=[])
+    parser.add_argument(
+        "--variant",
+        action="append",
+        choices=("spatial", "global", "separate", "native"),
+        default=[],
+        help="Run only named condition variants (for safe recovery or GPU rebalancing).",
+    )
     args = parser.parse_args()
     manifest = load_manifest()
     if set(manifest["allowed_physical_gpus"]) != {2, 3}:
@@ -202,6 +209,12 @@ def main() -> None:
         variants = ("spatial", "global") if backbone == "ncsnpp" and args.gpu == 2 else (
             ("separate", "native") if backbone == "ncsnpp" else tuple(manifest["variants"])
         )
+        if args.variant:
+            variants = tuple(variant for variant in variants if variant in args.variant)
+            # Explicit selection permits a pending NCSNpp variant to be moved
+            # between the two campaign GPUs without changing model semantics.
+            if backbone == "ncsnpp":
+                variants = tuple(args.variant)
         for variant in variants:
             run_one(backbone, variant, manifest["variants"][variant], args.gpu)
 

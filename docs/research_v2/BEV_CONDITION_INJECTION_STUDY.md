@@ -115,3 +115,67 @@ starts a long formal run. The historical C0 checkpoint remains immutable for
 Phase-1; if C0 is selected for Phase-2, it uses the same shared spatial/global
 policy through the v2 compact, bias-free adapter so it passes the common <5%
 adapter/core fairness audit.
+
+## 2026-10-01 interim result: NCSNpp-S versus original FPSGenBEV
+
+This is a loss-only interim comparison, recorded while the NCSNpp-S Spatial
+and Global Phase-1 runs are still in progress. Of the completed new
+backbone-policy pairs, NCSNpp-S with C3 `separate` is the current candidate:
+it has the lowest completed epoch-04 sampled loss (`0.1168`) and a nonzero
+condition-use response (`Gshuffle_100=0.1816`, `Gshuffle_111=0.2014`). It is
+not a final policy selection; the missing C1/C2 results may change the
+within-NCSNpp ranking.
+
+The reference is the completed historical checkpoint
+`bev_legacy_gt_possion_gpu0_bs8_5ep_epoch=04.ckpt` (the original FPSGenBEV
+BEVFlowTransNet). Both rows below use `gt_possion`, the same ten train
+sequences, 180,000 points, batch 8, the `[1,2,1]` flow-matching loss, learning
+rate `1e-4`, and five epochs. They differ in backbone and condition adapter,
+so this table establishes optimization behaviour only; it is not a causal
+attribution of any difference to a single architectural choice.
+
+Each number is the mean of scalar `train/loss_mse` samples in the stated
+500-optimizer-step interval, read directly from the two TensorBoard event
+files. The final partial window contains steps 11,500--11,899.
+
+| Steps | Original FPSGenBEV | NCSNpp-S / C3 Separate |
+| --- | ---: | ---: |
+| 0--499 | 1.6711 | 1.0514 |
+| 500--999 | 1.0084 | 0.2071 |
+| 1,000--1,499 | 0.3966 | 0.1660 |
+| 1,500--1,999 | 0.2352 | 0.1709 |
+| 2,000--2,499 | 0.2256 | 0.1803 |
+| 2,500--2,999 | 0.1900 | 0.1567 |
+| 3,000--3,499 | 0.1775 | 0.1630 |
+| 3,500--3,999 | 0.1480 | 0.1298 |
+| 4,000--4,499 | 0.1749 | 0.1322 |
+| 4,500--4,999 | 0.1273 | 0.1252 |
+| 5,000--5,499 | 0.1781 | 0.1467 |
+| 5,500--5,999 | 0.1541 | 0.1420 |
+| 6,000--6,499 | 0.1314 | 0.1151 |
+| 6,500--6,999 | 0.1491 | 0.1312 |
+| 7,000--7,499 | 0.1149 | 0.1188 |
+| 7,500--7,999 | 0.1196 | 0.1228 |
+| 8,000--8,499 | 0.1345 | 0.1318 |
+| 8,500--8,999 | 0.1215 | 0.1198 |
+| 9,000--9,499 | 0.1433 | 0.1232 |
+| 9,500--9,999 | 0.1161 | 0.1113 |
+| 10,000--10,499 | 0.1165 | 0.1062 |
+| 10,500--10,999 | 0.1462 | 0.1252 |
+| 11,000--11,499 | 0.1253 | 0.1115 |
+| 11,500--11,899 | 0.1447 | 0.1329 |
+
+| Model | Epoch 0 | Epoch 1 | Epoch 2 | Epoch 3 | Epoch 4 | Last 2,000 steps |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Original FPSGenBEV | 0.7533 | 0.1698 | 0.1473 | 0.1279 | 0.1291 | 0.1326 |
+| NCSNpp-S / C3 Separate | **0.3737** | **0.1427** | **0.1322** | **0.1241** | **0.1168** | **0.1182** |
+
+NCSNpp-S therefore reaches the low-loss regime much earlier and has a lower
+late-window loss in this matched budget. The difference is modest after the
+first epoch, so it should not be interpreted as a finished quality claim.
+The pending fair quality comparison runs `eval_bevflow_lidar_only.py` for the
+original checkpoint on the exact C3 B20 manifest, one sample per frame,
+`base_seed=20261001`, `save_visuals=0`, and reports density/height/occupancy
+metrics beside the existing NCSNpp-S C3 result. It is intentionally deferred
+until GPU2 or GPU3 becomes available, rather than competing with the active
+Phase-1 training jobs.
