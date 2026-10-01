@@ -24,7 +24,9 @@ PixelDiT-S-BEV is architecture-aligned to NVlabs/PixelDiT commit
 `41f73006ae532b0b41fee72b181dc22891a5a01a`.  It is a custom scaled variant,
 not an official NVIDIA configuration: patch size 16, hidden size 384, six
 64-dimensional heads, eight patch DiT blocks, and four PiT blocks with pixel
-hidden size 8.  PiT post-AdaLN modulation is enabled.
+hidden size 8.  Each PiT block applies intra-patch pixel self-attention with
+RMSNorm, QK norm and pixel RoPE, followed by SwiGLU; PiT post-AdaLN
+modulation is enabled.
 
 Conditions are injected after bias-free separate-first cell projection at all
 three relevant paths: pixel tokens, patch tokens, and global AdaLN context.

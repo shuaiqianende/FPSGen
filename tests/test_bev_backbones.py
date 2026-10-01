@@ -162,6 +162,8 @@ def test_sid2_separate_condition_is_exactly_zero_and_tiny_core_is_finite():
     for time in (0., .25, .5, .75, 1.):
         result = core(torch.randn(1, 3, 64, 64), torch.tensor([time]))
         assert result.shape == (1, 3, 64, 64) and torch.isfinite(result).all()
+    active_maps, active_global = encoder(torch.ones(1, 32, 64, 64), torch.ones(1, 2, 64, 64))
+    assert all(value.norm() > 0 for value in (*active_maps, *active_global))
 
 
 @pytest.mark.skipif(not hasattr(torch.nn.functional, "scaled_dot_product_attention"),
@@ -174,6 +176,8 @@ def test_pixeldit_separate_condition_is_exactly_zero_and_tiny_core_is_finite():
     for time in (0., .25, .5, .75, 1.):
         result = core(torch.randn(1, 3, 64, 64), torch.tensor([time]))
         assert result.shape == (1, 3, 64, 64) and torch.isfinite(result).all()
+    active_pixel, active_patch, active_global = encoder(torch.ones(1, 32, 64, 64), torch.ones(1, 2, 64, 64))
+    assert active_pixel.norm() > 0 and active_patch.norm() > 0 and active_global.norm() > 0
 
 
 def test_ncsnpp_tiny_spatial_forward_keeps_bchw_shape_at_all_times():
