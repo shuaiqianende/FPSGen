@@ -9,7 +9,9 @@ export XDG_CACHE_HOME="${ROOT}/env/xdg_cache" MPLCONFIGDIR="${ROOT}/env/mpl_cach
 ROOT_OUT="${ROOT}/outputs/research_v2/ncsnpp_spade"; mkdir -p "${ROOT_OUT}/logs" "${ROOT_OUT}/barrier"
 cd "${ROOT}"
 if [[ "${GPU}" == 2 ]]; then PREFIX=n0_generic; OWN=n0; PEER=n1; else PREFIX=n1_spade; OWN=n1; PEER=n0; fi
-run() { local name="$1"; shift; echo "[$(date -Is)] START ${name}" | tee -a "${ROOT_OUT}/logs/${name}.log"; "$@" >> "${ROOT_OUT}/logs/${name}.log" 2>&1; local code=$?; echo "[$(date -Is)] END ${name} status=${code}" | tee -a "${ROOT_OUT}/logs/${name}.log"; return $code; }
+# Keep the loss/progress stream visible in the tmux pane *and* persistent in a
+# logfile.  PIPESTATUS preserves the training command status rather than tee's.
+run() { local name="$1"; shift; echo "[$(date -Is)] START ${name}" | tee -a "${ROOT_OUT}/logs/${name}.log"; "$@" 2>&1 | tee -a "${ROOT_OUT}/logs/${name}.log"; local code=${PIPESTATUS[0]}; echo "[$(date -Is)] END ${name} status=${code}" | tee -a "${ROOT_OUT}/logs/${name}.log"; return $code; }
 for seed in 42 123; do
   config="configs/research_v2/ncsnpp_spade/${PREFIX}_seed${seed}.yaml"
   run_id="$(python -c 'import sys,yaml; print(yaml.safe_load(open(sys.argv[1]))["experiment"]["id"])' "${config}")"
