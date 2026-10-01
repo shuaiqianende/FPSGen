@@ -18,6 +18,7 @@ import torch.nn.functional as F
 
 from .condition import _require_bchw, modality_norms_and_ratios
 from .pixelu_core import TimestepEmbedder
+from fpsgen.models.bev_conditioning.ncsnpp_spade import NCSNppSPADEPair
 
 
 def _groups(channels: int) -> int:
@@ -66,10 +67,13 @@ class BigGANResBlock(nn.Module):
         self.skip = nn.Conv2d(in_ch, out_ch, 1) if in_ch != out_ch else nn.Identity()
         self.skip_rescale = bool(skip_rescale)
 
-    def forward(self, x: torch.Tensor, temb: torch.Tensor) -> torch.Tensor:
-        h = self.conv1(F.silu(self.norm1(x)))
+    def forward(self, x: torch.Tensor, temb: torch.Tensor, condition: torch.Tensor | None = None,
+                spade: NCSNppSPADEPair | None = None) -> torch.Tensor:
+        first = self.norm1(x) if spade is None else spade.norm1(x, condition, self.norm1)
+        h = self.conv1(F.silu(first))
         h = h + self.temb_proj(F.silu(temb))[:, :, None, None]
-        h = self.conv2(self.dropout(F.silu(self.norm2(h))))
+        second = self.norm2(h) if spade is None else spade.norm2(h, condition, self.norm2)
+        h = self.conv2(self.dropout(F.silu(second)))
         out = self.skip(x) + h
         return out * (1.0 / math.sqrt(2.0) if self.skip_rescale else 1.0)
 
@@ -235,6 +239,11 @@ class NCSNppCore(nn.Module):
                 self.upsamplers.append(FIRResample(self.fir_kernel, up=True))
         self._init_weights()
 
+        # N0 leaves this absent.  N1 adds only these spatial adapters, while
+        # retaining all original core modules and the existing global path.
+        self.spade_conditioning = False
+        self._spade_pairs = None
+
     def _resolution(self, level: int) -> int:
         return self.input_size // (2 ** level)
 
@@ -250,14 +259,45 @@ class NCSNppCore(nn.Module):
             nn.init.constant_(head[-1].weight, self.init_scale)
             nn.init.zeros_(head[-1].bias)
 
+    def enable_spade_conditioning(self, cond_dim: int = 8) -> None:
+        """Attach zero-neutral adapters at all BigGAN GroupNorm sites once."""
+        if self.spade_conditioning:
+            raise RuntimeError("NCSN++ SPADE conditioning is already enabled")
+        self.enc_spade = nn.ModuleList(nn.ModuleList(
+            NCSNppSPADEPair(self.channels[level], block.norm1.num_channels,
+                             block.norm2.num_channels, cond_dim)
+            for block in blocks) for level, blocks in enumerate(self.enc_blocks))
+        self.mid1_spade = NCSNppSPADEPair(self.channels[-1], self.mid1.norm1.num_channels,
+                                           self.mid1.norm2.num_channels, cond_dim)
+        self.mid2_spade = NCSNppSPADEPair(self.channels[-1], self.mid2.norm1.num_channels,
+                                           self.mid2.norm2.num_channels, cond_dim)
+        self.dec_spade = nn.ModuleList(nn.ModuleList(
+            NCSNppSPADEPair(self.channels[level], block.norm1.num_channels,
+                             block.norm2.num_channels, cond_dim)
+            for block in blocks) for level, blocks in zip(reversed(range(len(self.channels))), self.dec_blocks))
+        self.spade_conditioning = True
+
+    def spade_diagnostics(self):
+        if not self.spade_conditioning:
+            return {}
+        values = {}
+        for level, pairs in enumerate(self.enc_spade):
+            for index, pair in enumerate(pairs): values.update(pair.diagnostics(f"enc_{level}_{index}"))
+        values.update(self.mid1_spade.diagnostics("mid_1")); values.update(self.mid2_spade.diagnostics("mid_2"))
+        for index, pairs in enumerate(self.dec_spade):
+            for block, pair in enumerate(pairs): values.update(pair.diagnostics(f"dec_{index}_{block}"))
+        return values
+
     def forward(self, xt: torch.Tensor, t: torch.Tensor, condition_maps=None, global_condition=None,
-                level_global_conditions=None) -> torch.Tensor:
+                level_global_conditions=None, spade_maps=None) -> torch.Tensor:
         if xt.shape[-2:] != (self.input_size, self.input_size):
             raise ValueError(f"Expected {self.input_size}x{self.input_size}, got {tuple(xt.shape[-2:])}")
         if condition_maps is not None and len(condition_maps) != len(self.channels):
             raise ValueError("NCSN++ condition must contain seven resolution maps")
         if level_global_conditions is not None and len(level_global_conditions) != len(self.channels):
             raise ValueError("NCSN++ native condition must contain seven level-global vectors")
+        if spade_maps is not None and (not self.spade_conditioning or len(spade_maps) != len(self.channels)):
+            raise ValueError("NCSN++ SPADE condition must contain seven maps and enabled adapters")
         temb = self.t_embedder(t)
         if global_condition is not None:
             temb = temb + self.global_condition_proj(global_condition)
@@ -271,22 +311,29 @@ class NCSNppCore(nn.Module):
                     raise RuntimeError(f"NCSN++ condition level {level} mismatch: {tuple(h.shape)} vs {tuple(condition.shape)}")
                 h = h + condition
             level_temb = temb if level_global_conditions is None else temb + level_global_conditions[level]
-            for block, attn in zip(blocks, attns):
-                h = attn(block(h, level_temb))
+            for block_index, (block, attn) in enumerate(zip(blocks, attns)):
+                pair = self.enc_spade[level][block_index] if spade_maps is not None else None
+                h = attn(block(h, level_temb, None if pair is None else spade_maps[level], pair))
             skips.append(h)
             if level < len(self.channels) - 1:
                 h = self.down_projs[level](self.downsamplers[level](h))
                 input_pyramid = self.downsamplers[level](input_pyramid)
                 h = (h + self.input_pyramid_proj[level](input_pyramid)) * (1.0 / math.sqrt(2.0))
         middle_temb = temb if level_global_conditions is None else temb + level_global_conditions[-1]
-        h = self.mid2(self.mid_attn(self.mid1(h, middle_temb)), middle_temb)
+        mid_condition = None if spade_maps is None else spade_maps[-1]
+        h = self.mid2(self.mid_attn(self.mid1(h, middle_temb, mid_condition,
+                                                  None if spade_maps is None else self.mid1_spade)), middle_temb,
+                      mid_condition, None if spade_maps is None else self.mid2_spade)
         output_pyramid = None
         up_index = 0
         for index, level in enumerate(reversed(range(len(self.channels)))):
             skip = skips[level]
             level_temb = temb if level_global_conditions is None else temb + level_global_conditions[level]
-            h = self.dec_attn[index][0](self.dec_blocks[index][0](torch.cat((h, skip), dim=1), level_temb))
-            h = self.dec_attn[index][1](self.dec_blocks[index][1](h, level_temb))
+            pair0 = self.dec_spade[index][0] if spade_maps is not None else None
+            pair1 = self.dec_spade[index][1] if spade_maps is not None else None
+            condition = None if spade_maps is None else spade_maps[level]
+            h = self.dec_attn[index][0](self.dec_blocks[index][0](torch.cat((h, skip), dim=1), level_temb, condition, pair0))
+            h = self.dec_attn[index][1](self.dec_blocks[index][1](h, level_temb, condition, pair1))
             current = self.output_heads[index](h)
             output_pyramid = current if output_pyramid is None else F.interpolate(output_pyramid, scale_factor=2, mode="nearest") + current
             if level > 0:

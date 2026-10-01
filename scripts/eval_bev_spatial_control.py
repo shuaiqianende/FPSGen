@@ -8,6 +8,7 @@ keeps correct/zero/wrong conditions paired with identical x0, t and GT.
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 from pathlib import Path
 
@@ -55,6 +56,11 @@ def weighted_region_loss(prediction, target, region):
     return float((per_cell * region).sum() / denom)
 
 
+def weighted_full_per_sample(prediction, target):
+    weights = prediction.new_tensor((1., 2., 1.)).view(1, 3, 1, 1)
+    return ((prediction - target).square() * weights).mean(dim=(1, 2, 3))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", required=True, type=Path)
@@ -85,6 +91,7 @@ def main():
     if len(cached) < 2: raise RuntimeError("need at least two frames for a real wrong-frame condition")
     generator = torch.Generator(device="cuda").manual_seed(args.seed)
     records = {mode: {f"{time:.1f}": {name: {"correct": [], "zero": [], "shuffle": []} for name in ("full", "occupied", "completion", "boundary")} for time in TIMES} for mode in MODES}
+    frame_records = []
     with torch.no_grad():
         for start in range(0, len(cached), args.batch_size):
             ids = list(range(start, min(start + args.batch_size, len(cached))))
@@ -106,6 +113,14 @@ def main():
                     shuffled_raw, shuffled_layout = masked(wrong_raw, wrong_layout, mode)
                     correct = call(model, xt, t, correct_raw, correct_layout, mode_keep(mode, len(ids), "cuda"))
                     shuffle = call(model, xt, t, shuffled_raw, shuffled_layout, mode_keep(mode, len(ids), "cuda"))
+                    full_correct = weighted_full_per_sample(correct, velocity_target)
+                    full_zero = weighted_full_per_sample(zero, velocity_target)
+                    full_shuffle = weighted_full_per_sample(shuffle, velocity_target)
+                    for local, frame_index in enumerate(ids):
+                        c, z, s = (float(full_correct[local]), float(full_zero[local]), float(full_shuffle[local]))
+                        frame_records.append({"frame_index": frame_index, "mode": mode, "time": time,
+                                              "correct": c, "zero": z, "shuffle": s,
+                                              "delta_shuffle": s - c, "g_shuffle": 1 - c / (s + 1e-8)})
                     for name, region in regions(target, observed).items():
                         records[mode][f"{time:.1f}"][name]["correct"].append(weighted_region_loss(correct, velocity_target, region))
                         records[mode][f"{time:.1f}"][name]["zero"].append(weighted_region_loss(zero, velocity_target, region))
@@ -125,6 +140,10 @@ def main():
             output["modes"][mode][label] = {region: summary(values) for region, values in pooled.items()}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(output, indent=2) + "\n", encoding="utf-8")
+    records_path = args.output.with_name(args.output.stem + "_records.csv")
+    with records_path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=("frame_index", "mode", "time", "correct", "zero", "shuffle", "delta_shuffle", "g_shuffle"))
+        writer.writeheader(); writer.writerows(frame_records)
     print(json.dumps(output, sort_keys=True))
 
 

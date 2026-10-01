@@ -7,9 +7,11 @@ import torch.nn as nn
 
 from .ncsnpp_core import NCSNConditionEncoder, NCSNppCore
 from .condition_config import condition_options
+from fpsgen.models.bev_conditioning.condition_packet import make_condition_packet
 
 
 class BEVNCSNppS(nn.Module):
+    supports_condition_keep = True
     def __init__(self, model_cfg):
         super().__init__()
         from fpsgen.models.image_flow_net import DynamicKNNPillarEncoder
@@ -28,7 +30,14 @@ class BEVNCSNppS(nn.Module):
                                 skip_rescale=bool(cfg.get("skip_rescale", True)), progressive=cfg.get("progressive", "output_skip"),
                                 progressive_input=cfg.get("progressive_input", "input_skip"), progressive_combine=cfg.get("progressive_combine", "sum"),
                                 attention_type=cfg.get("attention_type", "ddpm"), init_scale=float(cfg.get("init_scale", 0.0)), conv_size=int(cfg.get("conv_size", 3)))
-        self.condition_gates = nn.Parameter(torch.full((7,), self.condition_options.gate_init))
+        spade_cfg = cond.get("spade", {})
+        self.spade_enabled = bool(spade_cfg.get("enabled", False))
+        if self.spade_enabled:
+            if not self.condition_options.spatial:
+                raise ValueError("NCSN++ SPADE requires the baseline spatial condition pyramid")
+            self.core.enable_spade_conditioning(int(spade_cfg.get("cond_dim", 8)))
+        else:
+            self.condition_gates = nn.Parameter(torch.full((7,), self.condition_options.gate_init))
         self.global_gate = nn.Parameter(torch.tensor(self.condition_options.gate_init))
         if self.condition_options.native:
             self.native_global_gates = nn.Parameter(torch.full((7,), self.condition_options.gate_init))
@@ -38,20 +47,27 @@ class BEVNCSNppS(nn.Module):
     def get_raw_pc_bev(self, points: torch.Tensor) -> torch.Tensor:
         return self.pc_encoder(points)
 
-    def forward(self, xt: torch.Tensor, t: torch.Tensor, raw_pc: torch.Tensor, layout_mask: torch.Tensor) -> torch.Tensor:
-        maps, global_condition = self.condition_encoder(raw_pc, layout_mask)
-        spatial = tuple(self.condition_gates[i].to(xt.dtype) * value for i, value in enumerate(maps)) if self.condition_options.spatial else None
+    def forward(self, xt: torch.Tensor, t: torch.Tensor, raw_pc: torch.Tensor, layout_mask: torch.Tensor,
+                condition_keep=None) -> torch.Tensor:
+        packet = make_condition_packet(raw_pc, layout_mask, condition_keep)
+        maps, global_condition = self.condition_encoder(packet.map[:, :32], packet.map[:, 32:])
+        spatial = (tuple(self.condition_gates[i].to(xt.dtype) * value for i, value in enumerate(maps))
+                   if self.condition_options.spatial and not self.spade_enabled else None)
         global_value = self.global_gate.to(xt.dtype) * global_condition if self.condition_options.global_modulation else None
         self._feature_norms = {"spatial_norm": maps[0].detach().float().norm(dim=1).mean(), "global_norm": global_condition.detach().float().norm(dim=-1).mean()}
         if self.condition_options.native and self.condition_options.global_modulation:
             native = self.condition_encoder.native_global_conditions(maps)
             native = tuple(self.native_global_gates[index].to(xt.dtype) * value for index, value in enumerate(native))
-            return self.core(xt, t * self.time_scale, spatial, None, native)
-        return self.core(xt, t * self.time_scale, spatial, global_value)
+            return self.core(xt, t * self.time_scale, spatial, None, native,
+                             tuple(maps) if self.spade_enabled else None)
+        return self.core(xt, t * self.time_scale, spatial, global_value, None,
+                         tuple(maps) if self.spade_enabled else None)
 
     def condition_diagnostics(self):
-        values = {f"gate_spatial_{index}": gate.detach() for index, gate in enumerate(self.condition_gates)}
+        values = ({f"gate_spatial_{index}": gate.detach() for index, gate in enumerate(self.condition_gates)}
+                  if hasattr(self, "condition_gates") else {})
         values["gate_global"] = self.global_gate.detach()
         if hasattr(self, "native_global_gates"):
             values.update({f"gate_native_{index}": gate.detach() for index, gate in enumerate(self.native_global_gates)})
-        return {**values, **self._feature_norms, **self.condition_encoder.modality_norms()}
+        return {**values, **self._feature_norms, **self.condition_encoder.modality_norms(),
+                **self.core.spade_diagnostics()}

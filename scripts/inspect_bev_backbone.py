@@ -22,14 +22,18 @@ def main():
     model = build_bev_backbone(cfg)
     name = cfg.get("model", {}).get("backbone", "legacy")
     core_params = count(getattr(model, "core", model))
+    spade_params = 0
+    if getattr(getattr(model, "core", None), "spade_conditioning", False):
+        spade_params = sum(count(getattr(model.core, name)) for name in ("enc_spade", "mid1_spade", "mid2_spade", "dec_spade"))
     pc_params = count(getattr(model, "pc_encoder", None)) if hasattr(model, "pc_encoder") else 0
     total_params = count(model)
     result = {
         "backbone": name,
-        "generator_core_params": core_params,
+        "generator_core_params": core_params - spade_params,
         # Covers condition encoders, gates and zero/control adapters rather
         # than silently omitting wrapper-owned condition projections.
-        "condition_adapter_params": total_params - core_params - pc_params,
+        "condition_adapter_params": total_params - core_params - pc_params + spade_params,
+        "spade_adapter_params": spade_params,
         "shared_lidar_encoder_params": pc_params,
         "total_params": total_params,
     }

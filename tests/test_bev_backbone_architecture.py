@@ -174,3 +174,11 @@ def test_spatial_control_config_topology_guards():
     assert pixel["model"]["pixeldit"]["patch_size"] == 16
     assert pixel["model"]["pixelcontrol"]["inject_every"] == 1
     assert pixel["model"]["pixelcontrol"]["zero_proj"] is True
+
+
+def test_ncsnpp_spade_config_keeps_the_historical_core_topology():
+    n0 = yaml.safe_load(open("configs/research_v2/ncsnpp_spade/n0_generic_seed42.yaml"))
+    n1 = yaml.safe_load(open("configs/research_v2/ncsnpp_spade/n1_spade_seed42.yaml"))
+    assert n0["model"]["ncsnpp"] == n1["model"]["ncsnpp"]
+    assert n0["model"]["condition"]["fusion"] == n1["model"]["condition"]["fusion"] == "shared"
+    assert n1["model"]["condition"]["spade"] == {"enabled": True, "cond_dim": 8, "boundary_gate": False}

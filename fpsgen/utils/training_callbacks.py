@@ -51,6 +51,10 @@ class ThroughputCSVCallback(Callback):
         self.steps = deque(maxlen=self.window)
         self.gaps = deque(maxlen=self.window)
         self.losses = deque(maxlen=200)
+        # The short-run protocol compares the actual 1000--1499 mean at
+        # step 1500.  Keep this independently of the display/throughput
+        # window so it is never reconstructed from sparse TensorBoard logs.
+        self.losses_500 = deque(maxlen=500)
         self.epoch_losses = []
         self._batch_started_at = None
         self._previous_batch_ended_at = None
@@ -94,6 +98,7 @@ class ThroughputCSVCallback(Callback):
         self.gaps.append(self._data_gap)
         loss = _scalar_loss(outputs)
         self.losses.append(loss)
+        self.losses_500.append(loss)
         self.epoch_losses.append(loss)
         # At this hook, Lightning has completed the optimizer step but has not
         # necessarily advanced ``global_step`` on every supported 1.x release.
@@ -122,6 +127,7 @@ class ThroughputCSVCallback(Callback):
             csv.DictWriter(handle, fieldnames=self.fieldnames).writerow(row)
         if step % 500 == 0:
             self._write_summary("trailing_200", step, trainer.current_epoch, self.losses)
+            self._write_summary("trailing_500", step, trainer.current_epoch, self.losses_500)
 
     def on_train_epoch_end(self, trainer, pl_module):
         if trainer.is_global_zero:

@@ -603,6 +603,11 @@ class FlowIMG(LightningModule):
         if hasattr(self.model, "core"):
             self.log("cond/core_grad_norm", self._gradient_l2(self.model.core),
                      on_step=True, on_epoch=False)
+            if getattr(self.model.core, "spade_conditioning", False):
+                for name in ("enc_spade", "mid1_spade", "mid2_spade", "dec_spade"):
+                    self.log(f"cond/spade_grad_norm_{name}",
+                             self._gradient_l2(getattr(self.model.core, name)),
+                             on_step=True, on_epoch=False)
 
     @torch.no_grad()
     def p_sample_loop(self, cond_points, layout_mask, steps=25):
