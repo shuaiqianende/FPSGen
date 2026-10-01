@@ -28,6 +28,11 @@ zero-projection/nonzero-gate PixelControl initialization.  The training module
 uses separate seeded streams for condition state, time, and flow noise so the
 paired runs consume matching stochastic draws.
 
+`scripts/test_bev_forced_condition.py` is the explicit paired synthetic
+diagnostic: same `x0`, `t=0`, left/right vehicle rectangles, and matching
+left/right occupancy targets.  It accepts at most 300 updates and reports
+whether the matched layout beats the swapped layout.
+
 `scripts/eval_bev_spatial_control.py` evaluates full, occupied, completion,
 and boundary FM errors and maps wrong conditions using frame `i -> i+17`
 instead of a batch-one self-roll.  `scripts/eval_bev_condition_usage.py`
