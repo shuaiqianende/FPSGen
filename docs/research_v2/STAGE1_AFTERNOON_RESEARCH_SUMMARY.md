@@ -24,6 +24,19 @@ All results below retain the Stage-1 objective and representation:
 condition lowers velocity loss more than a mismatched condition.  It is an
 *usage* metric, not a generation-quality metric.
 
+### Historical original-FPSGen reference (not a paired short-run comparison)
+
+The original FPSGenBEV / legacy BEVFlowTransNet has a completed matched
+five-epoch run: the epoch means were `0.7533, 0.1698, 0.1473, 0.1279, 0.1291`.
+An earlier five-epoch NCSNpp-S C3/separate run reached `0.3737, 0.1427,
+0.1322, 0.1241, 0.1168`.  The early optimization advantage is real in that
+historical matched setup, but it is **not** a causal conditioning comparison:
+the backbone and condition adapter both differ, and it used a different
+five-epoch protocol from the 1,500-step N0/N1 paired study below.  The full
+500-step loss curve and caveat are retained in
+`BEV_CONDITION_INJECTION_STUDY.md` (section “NCSNpp-S versus original
+FPSGenBEV”).
+
 ## 2. Spatial-control screen (one training seed, 1,500 steps)
 
 | Model | Final 200 FM loss | LiDAR Gshuffle `<0.2` | B20 IoU CFG2 | B20 Completion F1 CFG2 |
