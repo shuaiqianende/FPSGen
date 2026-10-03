@@ -408,6 +408,24 @@ explicit monitoring-only hash exception; first32 actual formal updates
 still check finite unscaled gradients. This supersedes speed-triggered
 stopping only, not numerical protections or the failure-stop queue policy.
 
+Follow-up snapshot (training source commit24757a1, observed through1400
+updates on both ranks): SiD2 remains RUNNING with zero scaler skips. Completed
+epoch means are1.592458 (epoch0,598updates,483.864s) and0.755871 (epoch1,
+1196updates,190.915s). First13-sample tail:56.720s, Dynamo unique graphs4→8.
+Second13-sample tail:0.224655s with graph count unchanged at8. This directly
+supports a first-use compilation component, rather than a recurring
+minute-long tail every epoch. Windows ending700–1300 reported92.86–110.60
+global samples/s; these short windows do not establish long-run stability.
+At1300 the trailing200-step actual loss mean was0.384115.
+
+A simultaneous2s host sample on the verified ext4 `/dev/sdd1` storage saw
+92.8% device busy time,61.47ms mean read-request duration and17.83 average
+queue depth, with148 system-wide major faults and zero swap activity.
+These whole-device/system observations support an input-storage contention
+component but cannot attribute every stall to this trainer. Both storage
+waiting and first-use compilation must be distinguished; no dataset cache,
+serialization, model, loss or optimizer change was applied to this run.
+
 ## 10. Limitations
 
 DiC, DiP and SiD2 are adapted to the common FPSGen BEV Flow-Matching objective
