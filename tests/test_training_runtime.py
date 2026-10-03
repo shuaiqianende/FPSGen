@@ -3,6 +3,7 @@ import random
 import numpy as np
 import pytest
 import torch
+import yaml
 
 from fpsgen.utils.training_runtime import (
     apply_training_environment,
@@ -28,6 +29,13 @@ def test_load_training_config_requires_mapping(tmp_path):
     invalid.write_text("- not\n- a mapping\n", encoding="utf-8")
     with pytest.raises(ValueError, match="YAML mapping"):
         load_training_config(invalid)
+
+
+def test_load_training_config_rejects_duplicate_keys(tmp_path):
+    config = tmp_path / "duplicate.yaml"
+    config.write_text("train:\n  batch_size: 8\n  batch_size: 16\n", encoding="utf-8")
+    with pytest.raises(yaml.constructor.ConstructorError, match="duplicate configuration key"):
+        load_training_config(config)
 
 
 def test_apply_training_environment_overrides_only_data_root():

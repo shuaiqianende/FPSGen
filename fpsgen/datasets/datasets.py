@@ -53,7 +53,8 @@ class TemporalKittiDataModule(LightningDataModule):
             dataset_norm=self.cfg['data']['dataset_norm'],
             std_axis_norm=self.cfg['data']['std_axis_norm'],
             gt_dir=self.cfg['data'].get('gt_dir', 'gt_'),
-            zero_copy_numpy=self.cfg['data'].get('zero_copy_numpy', False))
+            zero_copy_numpy=self.cfg['data'].get('zero_copy_numpy', False),
+            fast_y_flip=self.cfg['data'].get('fast_y_flip', False))
         num_workers = self.cfg['train']['num_workers']
         loader_kwargs = {
             'batch_size': self.cfg['train']['batch_size'],

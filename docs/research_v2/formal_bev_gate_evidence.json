@@ -1,0 +1,76 @@
+{
+  "record_date": "2026-10-03",
+  "branch": "research/fpsgen-v2",
+  "head_before": "ddd6fc166964e3b8b8299c156a78601b32a9ad6f",
+  "physical_gpus": [2, 3],
+  "per_gpu_batch": 16,
+  "global_batch": 32,
+  "cpu_tests_passed": 55,
+  "formal_status": {
+    "legacy": "VERIFIED_COMPLETED_500_EPOCHS_RETROSPECTIVE",
+    "dic_s": "NOT_STARTED",
+    "sid2_s": "NOT_STARTED",
+    "dip_s16": "NOT_STARTED"
+  },
+  "legacy_pipeline_initial_timing": {
+    "steps": 400,
+    "excluded_startup_steps": 100,
+    "steady_steps": 300,
+    "steady_wall_seconds": 122.98154771,
+    "global_samples_per_second": 78.06049,
+    "host_gap_max_ms_rank0": 31.852,
+    "host_gap_max_ms_rank1": 13.900,
+    "skip_counter_status": "INVALID_INITIAL_COUNTER; RAW_OUTPUT_PRESERVED_AND_ANNOTATED",
+    "corrected_monitor_revalidation": "REQUIRED_BEFORE_PILOTS"
+  },
+  "ddp_preflights": {
+    "dic_s": {
+      "stage": "dic_s_ddp_b16_checkpointed_gate01_scale8192",
+      "steps": 32,
+      "both_ranks": "PASS",
+      "precision": "fp16",
+      "backend": "eager",
+      "activation_checkpointing": true,
+      "gate_init": 0.1,
+      "gate_change": "EXPLICITLY_APPROVED_BY_USER",
+      "grad_scaler_initial_scale": 8192,
+      "skipped_optimizer_steps_each_rank": 0,
+      "max_allocated_mb": 18140.32080078125,
+      "max_reserved_mb": 19520.0,
+      "inductor_exception": "Checkpointed GroupNorm conversion fails with FakeTensor in torch2.0.1",
+      "compile_failure_stage": "dic_s_inductor_b16_checkpointed_rng_safe_v2"
+    },
+    "sid2_s": {
+      "stage": "sid2_s_ddp_b16",
+      "steps": 32,
+      "both_ranks": "PASS",
+      "precision": "fp16",
+      "backend": "inductor",
+      "activation_checkpointing": false,
+      "grad_scaler_initial_scale": 65536,
+      "skipped_optimizer_steps_each_rank": 0,
+      "max_allocated_mb": 9366.57666015625,
+      "max_reserved_mb": 9548.0,
+      "unique_graphs": 4,
+      "graph_breaks": {"missing: DICT_UPDATE": 2},
+      "new_common_scale8192": "REVALIDATE_IN_FRESH_QUEUE"
+    },
+    "dip_s16": {
+      "stage": "dip_s16_ddp_b16",
+      "steps": 32,
+      "both_ranks": "PASS",
+      "precision": "fp16",
+      "backend": "inductor",
+      "activation_checkpointing": false,
+      "grad_scaler_initial_scale": 8192,
+      "skipped_optimizer_steps_each_rank": 0,
+      "max_allocated_mb": 22235.1220703125,
+      "max_reserved_mb": 22340.0,
+      "unique_graphs": 1,
+      "graph_breaks": {},
+      "memory_margin": "SMALL; 10_EPOCH_REAL_DATA_PILOT_MANDATORY"
+    }
+  },
+  "final_b200_quality": "NOT_EVALUATED_YET",
+  "interpretation": "Preflight correctness evidence only; not training throughput or generation ranking. New runs share initial GradScaler8192; historical Legacy and initial SiD2 gate used historical scaler setup. All new500-epoch runs must wait for all10-epoch pilots and evaluation gates."
+}

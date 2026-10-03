@@ -8,6 +8,7 @@ from pathlib import Path
 import yaml
 
 from fpsgen.models.bev_backbones import build_bev_backbone
+from fpsgen.utils.formal_bev import parameter_counts
 
 
 def count(module) -> int:
@@ -27,12 +28,13 @@ def main():
         spade_params = sum(count(getattr(model.core, name)) for name in ("enc_spade", "mid1_spade", "mid2_spade", "dec_spade"))
     pc_params = count(getattr(model, "pc_encoder", None)) if hasattr(model, "pc_encoder") else 0
     total_params = count(model)
+    partition = parameter_counts(model)
     result = {
         "backbone": name,
-        "generator_core_params": core_params - spade_params,
+        "generator_core_params": partition["core"] - spade_params,
         # Covers condition encoders, gates and zero/control adapters rather
         # than silently omitting wrapper-owned condition projections.
-        "condition_adapter_params": total_params - core_params - pc_params + spade_params,
+        "condition_adapter_params": partition["condition"] + spade_params,
         "spade_adapter_params": spade_params,
         "shared_lidar_encoder_params": pc_params,
         "total_params": total_params,

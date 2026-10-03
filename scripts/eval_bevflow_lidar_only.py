@@ -93,6 +93,11 @@ def sample_bev_cfg(flow: FlowIMG, raw_pc_cond: torch.Tensor, layout_cond: torch.
     raw_pc_uncond = torch.zeros_like(raw_pc_cond)
     layout_uncond = torch.zeros_like(layout_cond)
     dt = 1.0 / steps
+    dense = getattr(flow, "_eval_dense_forward", flow.model)
+    def forward(*inputs):
+        with torch.autocast(device_type="cuda", dtype=torch.float16,
+                            enabled=bool(getattr(flow, "_eval_fp16", False))):
+            return dense(*inputs)
     torch.cuda.synchronize(device)
     started = time.perf_counter()
     for i in range(steps):
@@ -104,18 +109,18 @@ def sample_bev_cfg(flow: FlowIMG, raw_pc_cond: torch.Tensor, layout_cond: torch.
             if getattr(flow.model, "supports_condition_keep", False):
                 keep = torch.zeros((batch_size * 2, 3), device=device, dtype=torch.bool)
                 keep[batch_size:, 0] = True
-                velocities = flow.model(*inputs, keep)
+                velocities = forward(*inputs, keep)
             else:
-                velocities = flow.model(*inputs)
+                velocities = forward(*inputs)
             velocity_uncond, velocity_cond = velocities.chunk(2, dim=0)
             velocity = velocity_uncond + guidance_scale * (velocity_cond - velocity_uncond)
         else:
             if getattr(flow.model, "supports_condition_keep", False):
                 keep = torch.zeros((batch_size, 3), device=device, dtype=torch.bool)
                 keep[:, 0] = True
-                velocity = flow.model(xt, t, raw_pc_cond, layout_cond, keep)
+                velocity = forward(xt, t, raw_pc_cond, layout_cond, keep)
             else:
-                velocity = flow.model(xt, t, raw_pc_cond, layout_cond)
+                velocity = forward(xt, t, raw_pc_cond, layout_cond)
         xt = xt + dt * velocity
     torch.cuda.synchronize(device)
     runtime_ms = (time.perf_counter() - started) * 1000.0
@@ -180,16 +185,38 @@ def main() -> None:
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--dataset-root", default=None)
     parser.add_argument("--manifest", default=None)
+    parser.add_argument("--frame-stride", type=int, default=None,
+                        help="Evaluate every Nth frame in the selected test sequence, starting at index 0.")
     parser.add_argument("--gt-dir", default="auto")
     parser.add_argument("--allow-gt-mismatch", action="store_true")
     parser.add_argument("--samples-per-frame", type=int, default=None)
     parser.add_argument("--save-visuals", type=int, default=None)
+    parser.add_argument("--guidance-scale", type=float, default=None,
+                        help="Override CFG scale; use 1.0 for direct LiDAR-conditioned sampling without CFG.")
     parser.add_argument("--base-seed", type=int, default=None,
                         help="Override eval.base_seed for a fixed campaign seed.")
+    parser.add_argument("--generation-seeds", type=int, nargs="+",
+                        help="Exact seeds used for EVERY frame (no frame-index offset).")
+    parser.add_argument("--runtime-precision", choices=("fp32", "fp16"), default="fp32")
+    parser.add_argument("--bev-steps", type=int, default=None,
+                        help="Explicit Euler step count; defaults to the evaluation YAML.")
+    parser.add_argument("--dense-backend", choices=("eager", "inductor"), default="eager")
+    parser.add_argument("--progress-interval", type=int, default=0,
+                        help="Print progress every N frames; 0 preserves quiet historical behavior.")
     args = parser.parse_args()
+    if args.progress_interval < 0:
+        parser.error("--progress-interval must be non-negative")
+    if args.frame_stride is not None and args.frame_stride < 1:
+        parser.error("--frame-stride must be a positive integer")
+    if args.frame_stride is not None and args.manifest is not None:
+        parser.error("--frame-stride and --manifest are mutually exclusive")
 
     config = yaml.safe_load(Path(args.config).read_text())
     evaluate = config["eval"]
+    if args.bev_steps is not None:
+        if args.bev_steps < 1:
+            parser.error("--bev-steps must be positive")
+        evaluate["bev_steps"] = args.bev_steps
     data_config = config["data"]
     if evaluate["condition"] != "100":
         raise ValueError("This evaluator is intentionally restricted to LiDAR-only condition=100")
@@ -204,21 +231,34 @@ def main() -> None:
     if not raw_data_root:
         raise ValueError("Set --dataset-root or use a checkpoint with data.data_dir")
     data_root = Path(raw_data_root)
-    manifest = Path(args.manifest or evaluate["manifest"])
-    frame_stems = _load_manifest(manifest)
+    manifest = None if args.frame_stride is not None else Path(args.manifest or evaluate["manifest"])
+    frame_stems = None if manifest is None else _load_manifest(manifest)
     samples_per_frame = args.samples_per_frame or int(evaluate["samples_per_frame"])
+    if args.generation_seeds:
+        samples_per_frame = len(args.generation_seeds)
+    guidance_scale = (float(evaluate["guidance_scale"]) if args.guidance_scale is None
+                      else float(args.guidance_scale))
     visual_limit = args.save_visuals if args.save_visuals is not None else int(evaluate["save_visuals"])
     if samples_per_frame < 1:
         raise ValueError("samples_per_frame must be positive")
 
-    flow = FlowIMG(checkpoint["hyper_parameters"])
+    # Explicit evaluation backend: avoid silently constructing an unused
+    # compiled function inherited from a training checkpoint.
+    import copy
+    model_config = copy.deepcopy(checkpoint["hyper_parameters"])
+    model_config.setdefault("runtime", {})["compile_dense"] = args.dense_backend == "inductor"
+    flow = FlowIMG(model_config)
     flow.load_state_dict(checkpoint["state_dict"], strict=True)
     flow.to(device).eval()
+    flow._eval_dense_forward = flow._dense_forward
+    flow._eval_fp16 = args.runtime_precision == "fp16"
     dataset = TemporalKITTISet(
         data_dir=str(data_root), seqs=[str(data_config["sequence"])], split="test",
         resolution=.05, num_points=int(data_config["num_points"]),
         max_range=float(data_config["max_range"]), gt_dir=gt_dir,
     )
+    if args.frame_stride is not None:
+        frame_stems = [Path(item).stem for item in dataset.points_datapath[::args.frame_stride]]
     index_for_stem = {Path(item).stem: i for i, item in enumerate(dataset.points_datapath)}
     missing = [stem for stem in frame_stems if stem not in index_for_stem]
     if missing:
@@ -236,6 +276,12 @@ def main() -> None:
     saved_visuals = 0
     radial_bins = evaluate["radial_bins"]
     base_seed = int(evaluate["base_seed"] if args.base_seed is None else args.base_seed)
+
+    started = time.perf_counter()
+    if args.progress_interval:
+        print(f"START checkpoint={args.bev_ckpt} frames={len(frame_stems)} "
+              f"GT={gt_dir} condition=100 steps={evaluate['bev_steps']} "
+              f"CFG={guidance_scale} seed={base_seed}", flush=True)
 
     for frame_index, batch in enumerate(loader):
         stem = frame_stems[frame_index]
@@ -258,10 +304,11 @@ def main() -> None:
             range_rows.append(result)
 
         for sample_index in range(samples_per_frame):
-            seed = base_seed + frame_index * 1000 + sample_index
+            seed = (args.generation_seeds[sample_index] if args.generation_seeds
+                    else base_seed + frame_index * 1000 + sample_index)
             pred_raw, runtime_ms = sample_bev_cfg(
                 flow, raw_pc_cond, layout_cond, steps=int(evaluate["bev_steps"]),
-                guidance_scale=float(evaluate["guidance_scale"]), seed=seed,
+                guidance_scale=guidance_scale, seed=seed,
             )
             metrics = compute_bev_metrics(pred_raw, gt_bev, input_bev, valid_mask)[0]
             metrics.update({"frame": stem, "seed": seed, "sample_index": sample_index,
@@ -275,6 +322,14 @@ def main() -> None:
             if sample_index == 0 and saved_visuals < visual_limit:
                 _save_visual(visuals / f"{stem}_seed0.png", input_bev[0], gt_bev[0], pred_raw[0])
                 saved_visuals += 1
+
+        if args.progress_interval and ((frame_index + 1) % args.progress_interval == 0
+                                      or frame_index + 1 == len(frame_stems)):
+            elapsed = time.perf_counter() - started
+            print(f"[{frame_index + 1}/{len(frame_stems)}] frame={stem} "
+                  f"IoU={metrics['occupancy_iou']:.4f} "
+                  f"Completion_F1={metrics['completion_f1']:.4f} "
+                  f"elapsed={elapsed:.1f}s", flush=True)
 
     per_frame_rows: List[Dict] = []
     by_frame: Dict[str, List[Dict]] = defaultdict(list)
@@ -309,16 +364,22 @@ def main() -> None:
     summary = {
         "checkpoint": str(args.bev_ckpt.resolve()),
         "checkpoint_sha256": _sha256(args.bev_ckpt),
+        "checkpoint_epoch": checkpoint.get("epoch"),
+        "checkpoint_global_step": checkpoint.get("global_step"),
         "git_commit": _git_sha(),
         "gt_dir": gt_dir,
         "condition": "100",
         "layout_source": "literal_all_zero_no_semantic_layout",
-        "manifest": str(manifest),
+        "manifest": str(manifest) if manifest is not None else None,
+        "frame_stride": args.frame_stride,
         "num_frames": len(frame_stems),
         "samples_per_frame": samples_per_frame,
         "base_seed": base_seed,
+        "generation_seeds": args.generation_seeds,
+        "runtime_precision": args.runtime_precision,
+        "dense_backend": args.dense_backend,
         "bev_steps": int(evaluate["bev_steps"]),
-        "guidance_scale": float(evaluate["guidance_scale"]),
+        "guidance_scale": guidance_scale,
         "occupancy_threshold": "pred_M > 0",
         "valid_radius_m": float(data_config["max_range"]),
         "input_bev": _mean_std(input_rows, skip=("frame", "method")),
@@ -336,6 +397,8 @@ def main() -> None:
         "runtime": _mean_std(sample_rows, skip=("frame", "seed", "sample_index", "method")),
     }
     output.mkdir(parents=True, exist_ok=True)
+    if args.frame_stride is not None:
+        (output / "frame_manifest.txt").write_text("\n".join(frame_stems) + "\n")
     _write_csv(output / "samples.csv", sample_rows)
     _write_csv(output / "per_frame.csv", per_frame_rows)
     _write_csv(output / "range_metrics.csv", range_rows)

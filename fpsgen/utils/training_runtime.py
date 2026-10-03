@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import os
 import random
-from pathlib import Path
 from typing import Any, Mapping, MutableMapping
 
 import numpy as np
 import torch
-import yaml
+
+from fpsgen.utils.config_validation import load_yaml_mapping
 
 
 def seed_training(seed: int = 42) -> None:
@@ -24,15 +24,7 @@ def seed_training(seed: int = 42) -> None:
 
 def load_training_config(path: str | os.PathLike[str]) -> dict[str, Any]:
     """Load a YAML mapping and fail early for empty or malformed configs."""
-    config_path = Path(path)
-    with config_path.open("r", encoding="utf-8") as handle:
-        config = yaml.safe_load(handle)
-    if not isinstance(config, dict):
-        raise ValueError(
-            f"Training config must be a YAML mapping, got {type(config).__name__}: "
-            f"{config_path}"
-        )
-    return config
+    return load_yaml_mapping(path)
 
 
 def apply_training_environment(

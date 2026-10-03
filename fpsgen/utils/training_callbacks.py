@@ -24,6 +24,17 @@ def _scalar_loss(outputs):
     return float("nan")
 
 
+def _loss_tensor(outputs):
+    """Get a detached scalar tensor without forcing a device-to-host sync."""
+    if isinstance(outputs, torch.Tensor):
+        return outputs.detach().float().reshape(())
+    if isinstance(outputs, dict):
+        value = outputs.get("loss")
+        if isinstance(value, torch.Tensor):
+            return value.detach().float().reshape(())
+    return None
+
+
 def _finite_grads(module):
     return all(
         torch.isfinite(parameter.grad).all().item()
@@ -148,6 +159,113 @@ class ThroughputCSVCallback(Callback):
             })
 
 
+class LightweightThroughputCSVCallback(Callback):
+    """Low-overhead wall-clock monitor; never synchronizes CUDA per batch.
+
+    Detached scalar losses stay on-device until a report boundary. This
+    callback measures interval wall throughput, not a standalone data-loader
+    wait; use the benchmark harness for stage-level diagnostics.
+    """
+
+    fields = [
+        "global_step", "epoch", "loss", "host_batch_ms", "interval_wall_ms",
+        "rolling_samples_per_second", "trailing_200_loss", "gpu_allocated_mb",
+        "gpu_reserved_mb",
+    ]
+
+    def __init__(self, runtime_cfg):
+        self.path = Path(runtime_cfg["throughput_csv"])
+        self.interval = max(1, int(runtime_cfg.get("throughput_interval_steps", 50)))
+        self.loss_window = deque(maxlen=200)
+        self.losses_500 = deque(maxlen=500)
+        self.epoch_losses = []
+        self.batch_started = None
+        self.report_started = None
+        self.last_batch_size = 1
+
+    def on_fit_start(self, trainer, pl_module):
+        if not trainer.is_global_zero:
+            return
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with self.path.open("w", newline="") as handle:
+            csv.DictWriter(handle, fieldnames=self.fields).writeheader()
+        summary = self.path.with_name(self.path.stem + "_loss_summary.csv")
+        with summary.open("w", newline="") as handle:
+            csv.DictWriter(handle, fieldnames=["kind", "global_step", "epoch", "samples", "mean_loss"]).writeheader()
+        self.report_started = time.perf_counter()
+
+    def on_train_epoch_start(self, trainer, pl_module):
+        self.epoch_losses = []
+
+    def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
+        if trainer.is_global_zero:
+            self.batch_started = time.perf_counter()
+            self.last_batch_size = int(batch["pcd_full"].shape[0])
+
+    def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+        if not trainer.is_global_zero or self.batch_started is None:
+            return
+        now = time.perf_counter()
+        host_batch_ms = (now - self.batch_started) * 1000.0
+        loss = _loss_tensor(outputs)
+        if loss is not None:
+            self.loss_window.append(loss)
+            self.losses_500.append(loss)
+            self.epoch_losses.append(loss)
+        step = int(trainer.global_step) + 1
+        if step % self.interval:
+            return
+
+        interval_ms = max(1e-6, (now - self.report_started) * 1000.0)
+        if self.loss_window:
+            window_mean = float(torch.stack(tuple(self.loss_window)).mean().cpu())
+            current_loss = float(loss.cpu()) if loss is not None else float("nan")
+        else:
+            window_mean = current_loss = float("nan")
+        row = {
+            "global_step": step,
+            "epoch": int(trainer.current_epoch),
+            "loss": current_loss,
+            "host_batch_ms": host_batch_ms,
+            "interval_wall_ms": interval_ms,
+            # This callback runs on global rank zero and sees only that rank's
+            # local batch.  Report aggregate DDP throughput, not rank-local
+            # throughput, so the number matches samples processed by all ranks.
+            "rolling_samples_per_second": (
+                self.last_batch_size * max(1, int(getattr(trainer, "world_size", 1)))
+                * self.interval * 1000.0 / interval_ms
+            ),
+            "trailing_200_loss": window_mean,
+            "gpu_allocated_mb": torch.cuda.memory_allocated() / 2**20 if torch.cuda.is_available() else 0.0,
+            "gpu_reserved_mb": torch.cuda.memory_reserved() / 2**20 if torch.cuda.is_available() else 0.0,
+        }
+        with self.path.open("a", newline="") as handle:
+            csv.DictWriter(handle, fieldnames=self.fields).writerow(row)
+        if step % 500 == 0:
+            self._write_summary("trailing_200", step, trainer.current_epoch, self.loss_window)
+            self._write_summary("trailing_500", step, trainer.current_epoch, self.losses_500)
+        self.report_started = time.perf_counter()
+
+    def on_train_epoch_end(self, trainer, pl_module):
+        if trainer.is_global_zero:
+            self._write_summary("epoch", int(trainer.global_step), trainer.current_epoch, self.epoch_losses)
+
+    def on_fit_end(self, trainer, pl_module):
+        # One final materialization at shutdown, rather than one CUDA sync per batch.
+        if trainer.is_global_zero and self.epoch_losses:
+            torch.stack(tuple(self.epoch_losses)).mean().cpu()
+
+    def _write_summary(self, kind, step, epoch, losses):
+        values = tuple(losses)
+        mean_loss = float(torch.stack(values).mean().cpu()) if values else float("nan")
+        summary = self.path.with_name(self.path.stem + "_loss_summary.csv")
+        with summary.open("a", newline="") as handle:
+            csv.DictWriter(handle, fieldnames=["kind", "global_step", "epoch", "samples", "mean_loss"]).writerow({
+                "kind": kind, "global_step": step, "epoch": int(epoch),
+                "samples": len(values), "mean_loss": mean_loss,
+            })
+
+
 class FiniteTrainingPreflightCallback(Callback):
     """Fail a short preflight unless all losses/gradients stay finite and active."""
 
@@ -157,15 +275,23 @@ class FiniteTrainingPreflightCallback(Callback):
         self.expected_batch_size = int(runtime_cfg.get("expected_batch_size", 8))
         self.steps_seen = 0
         self.condition_gradient_seen = False
+        self.condition_gate_gradient_seen = False
 
     def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
+        if self.steps_seen >= self.expected_steps:
+            return
         batch_size = int(batch["pcd_full"].shape[0])
         if batch_size != self.expected_batch_size:
             raise RuntimeError(
                 f"Preflight expected batch_size={self.expected_batch_size}, got {batch_size}"
             )
 
-    def on_after_backward(self, trainer, pl_module):
+    def on_before_optimizer_step(self, trainer, pl_module, optimizer, optimizer_idx):
+        if self.steps_seen >= self.expected_steps:
+            return
+        # Lightning's AMP plugin has unscaled gradients before this hook.
+        # Checking on_after_backward instead tests scaled gradients, not the
+        # gradients that AdamW receives. A genuine overflow still fails here.
         if not _finite_grads(pl_module):
             raise RuntimeError("Preflight found non-finite model gradients")
         # New research backbones expose one ``condition_encoder``.  The
@@ -191,8 +317,16 @@ class FiniteTrainingPreflightCallback(Callback):
         if not all(torch.isfinite(grad).all().item() for grad in condition_grads):
             raise RuntimeError("Preflight found non-finite condition gradients")
         self.condition_gradient_seen |= any(grad.abs().sum().item() > 0 for grad in condition_grads)
+        # A historical zero-gated adapter learns its gates before its feature
+        # encoder. Record that state separately; never call the encoder active
+        # just because the gate receives a gradient.
+        gates = getattr(pl_module.model, 'condition_gates', None)
+        if isinstance(gates, torch.nn.Parameter) and gates.grad is not None:
+            self.condition_gate_gradient_seen |= bool(gates.grad.abs().sum().item() > 0)
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+        if self.steps_seen >= self.expected_steps:
+            return
         loss = _scalar_loss(outputs)
         if not math.isfinite(loss):
             raise RuntimeError(f"Preflight found non-finite loss: {loss}")
@@ -207,6 +341,18 @@ class FiniteTrainingPreflightCallback(Callback):
             )
         if not self.condition_gradient_seen:
             raise RuntimeError("Preflight did not observe a non-zero condition gradient")
+        if self.runtime_cfg.get('formal_manifest_dir'):
+            import json
+            directory = Path(self.runtime_cfg['formal_manifest_dir'])
+            directory.mkdir(parents=True, exist_ok=True)
+            (directory / f'preflight_rank{trainer.global_rank}.json').write_text(json.dumps({
+                'status': 'PASS', 'steps': self.steps_seen,
+                'per_gpu_batch': self.expected_batch_size,
+                'world_size': trainer.world_size,
+                'all_gradients_finite': True,
+                'condition_encoder_gradient_nonzero': self.condition_gradient_seen,
+                'condition_gate_gradient_nonzero': self.condition_gate_gradient_seen,
+            }, indent=2) + '\n')
         if trainer.is_global_zero:
             print(
                 "PRELIGHT PASS: "

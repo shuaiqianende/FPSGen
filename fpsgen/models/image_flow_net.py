@@ -64,7 +64,7 @@ class DynamicKNNPillarEncoder(nn.Module):
         center_points = points.unsqueeze(2).expand(B, N, k, C)
         return torch.cat([knn_points - center_points, center_points], dim=-1)
 
-    def forward(self, points):
+    def forward(self, points, knn_indices=None):
         """Pillarize batched XYZ coordinates into a dense condition map.
 
         Args:
@@ -73,10 +73,24 @@ class DynamicKNNPillarEncoder(nn.Module):
         Returns:
             Dense features with shape ``[B, out_channels, G, G]``.
         """
+        if knn_indices is None:
+            _, knn_indices = keops_knn(points, points, self.k)
+        return self.forward_with_knn(points, knn_indices)
+
+    def forward_with_knn(self, points, knn_indices):
+        """Run the PointPillar path with precomputed neighbor indices.
+
+        This preserves ``forward(points)`` as the historical default while
+        exposing an exact seam for profiling and optional immutable KNN-index
+        caches. ``knn_indices`` must correspond to this point order and have
+        shape ``[B, N, K]``.
+        """
         B, N, C = points.shape
         device = points.device
-
-        _, knn_indices = keops_knn(points, points, self.k)
+        if knn_indices.shape != (B, N, self.k):
+            raise ValueError(
+                f"Expected knn_indices shape {(B, N, self.k)}, got {tuple(knn_indices.shape)}"
+            )
         edge_features = self.get_edge_features(points, knn_indices)
 
         edge_features_flat = edge_features.view(B * N * self.k, -1)
@@ -540,9 +554,9 @@ class BEVFlowTransNet(nn.Module):
         nn.init.zeros_(self.final_conv[-1].weight)
         nn.init.zeros_(self.final_conv[-1].bias)
 
-    def get_raw_pc_bev(self, points):
+    def get_raw_pc_bev(self, points, knn_indices=None):
         """Encode input points into the LiDAR conditioning BEV feature map."""
-        return self.pc_encoder(points)
+        return self.pc_encoder(points, knn_indices=knn_indices)
 
     def get_time_embedding(self, t, dim=256):
         """Create a sinusoidal embedding for continuous BEV flow times in [0, 1]."""

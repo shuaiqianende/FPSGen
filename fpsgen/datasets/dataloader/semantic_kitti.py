@@ -51,6 +51,22 @@ def load_preprocessed_points(path):
         raise ValueError(f"Non-finite XYZ values in preprocessed target: {path}")
     return points
 
+
+def apply_shared_y_flip(p_full, p_part, flip_y):
+    """Apply one legacy-equivalent Y flip to full and partial XYZ arrays.
+
+    The historical training path concatenated both arrays, called
+    ``random_flip_point_cloud`` once, and split them again.  Since that
+    transform only negates Y for the single concatenated sample, applying the
+    same decision to each input separately is value-identical and avoids a
+    large temporary allocation.  The caller owns the random decision so an
+    A/B test can replay it exactly.
+    """
+    if flip_y:
+        p_full[:, 1] *= -1
+        p_part[:, 1] *= -1
+    return p_full, p_part
+
 def point_set_to_sparse(p_full, p_part, filename, pos_tran, part_label, full_label,
                         zero_copy_numpy=False):
     """Convert one sample while retaining the historical default copies.
@@ -79,7 +95,7 @@ class TemporalKITTISet(Dataset):
     """
     def __init__(self, data_dir, seqs, split, resolution, num_points, max_range,
                  dataset_norm=False, std_axis_norm=False, HW=[64, 1024], gt_dir='gt_',
-                 zero_copy_numpy=False):
+                 zero_copy_numpy=False, fast_y_flip=False):
         super().__init__()
         self.data_dir = data_dir
 
@@ -89,6 +105,7 @@ class TemporalKITTISet(Dataset):
         self.max_range = max_range
         self.gt_dir = gt_dir
         self.zero_copy_numpy = bool(zero_copy_numpy)
+        self.fast_y_flip = bool(fast_y_flip)
 
         self.HW = HW
         self.split = split
@@ -313,11 +330,15 @@ class TemporalKITTISet(Dataset):
         p_part = p_part.reshape((-1,3))
         p_full = p_full.reshape((-1,3))
         if self.split == 'train':
-            p_concat = np.concatenate((p_full, p_part), axis=0)
-            p_concat = self.transforms(p_concat)
+            if self.fast_y_flip:
+                flip_y = np.random.random() > 0.5
+                p_full, p_part = apply_shared_y_flip(p_full, p_part, flip_y)
+            else:
+                p_concat = np.concatenate((p_full, p_part), axis=0)
+                p_concat = self.transforms(p_concat)
 
-            p_full = p_concat[:-len(p_part)]
-            p_part = p_concat[-len(p_part):]
+                p_full = p_concat[:-len(p_part)]
+                p_part = p_concat[-len(p_part):]
 
         n_part = int(self.num_points / 10.)
         return point_set_to_sparse(

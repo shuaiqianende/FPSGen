@@ -13,6 +13,7 @@ import fpsgen.datasets.datasets as datasets
 import fpsgen.models.gen_img as models
 from fpsgen.utils.training_callbacks import (
     FiniteTrainingPreflightCallback,
+    LightweightThroughputCSVCallback,
     ThroughputCSVCallback,
 )
 from fpsgen.utils.training_runtime import (
@@ -20,6 +21,7 @@ from fpsgen.utils.training_runtime import (
     load_training_config,
     seed_training,
 )
+from fpsgen.utils.formal_bev_callbacks import FormalBEVRunCallback
 
 
 def set_deterministic(seed=42):
@@ -73,6 +75,15 @@ def main(config, weights, checkpoint, test, preflight_steps):
     trainer_precision = {'fp32': 32, 'fp16': 16}.get(precision_name)
     if trainer_precision is None:
         raise ValueError("runtime.precision must be fp32 or fp16 in this PyTorch-2.0 environment")
+    precision_plugins = []
+    if runtime.get('grad_scaler_init_scale') is not None:
+        if trainer_precision != 16:
+            raise ValueError('grad_scaler_init_scale requires FP16')
+        from pytorch_lightning.plugins.precision import NativeMixedPrecisionPlugin
+        precision_plugins.append(NativeMixedPrecisionPlugin(
+            precision=16, device='cuda',
+            scaler=torch.cuda.amp.GradScaler(init_scale=float(runtime['grad_scaler_init_scale'])),
+        ))
 
     if weights is None:
         model = models. FlowIMG(cfg)
@@ -86,15 +97,20 @@ def main(config, weights, checkpoint, test, preflight_steps):
     checkpoint_saver = ModelCheckpoint(
                                  filename=cfg['experiment']['id']+'_{epoch:02d}',
                                  save_top_k=-1,
-                                 every_n_epochs=cfg['train'].get('checkpoint_every_n_epochs', 20)
+                                 every_n_epochs=cfg['train'].get('checkpoint_every_n_epochs', 10)
                                  )
 
     tb_logger = pl_loggers.TensorBoardLogger('experiments/'+cfg['experiment']['id'],
                                              default_hp_metric=False)
     callbacks = [lr_monitor, checkpoint_saver]
     runtime_cfg = cfg.get('runtime', {})
+    if runtime_cfg.get('formal_manifest_dir'):
+        callbacks.append(FormalBEVRunCallback(runtime_cfg))
     if runtime_cfg.get('throughput_csv'):
-        callbacks.append(ThroughputCSVCallback(runtime_cfg))
+        if runtime_cfg.get('throughput_mode', 'synchronized') == 'lightweight':
+            callbacks.append(LightweightThroughputCSVCallback(runtime_cfg))
+        else:
+            callbacks.append(ThroughputCSVCallback(runtime_cfg))
     if runtime_cfg.get('preflight_validation', False):
         callbacks.append(FiniteTrainingPreflightCallback(runtime_cfg))
 
@@ -123,6 +139,7 @@ def main(config, weights, checkpoint, test, preflight_steps):
             log_every_n_steps=100,
             resume_from_checkpoint=checkpoint,
             max_epochs=cfg['train']['max_epoch'],
+            max_steps=int(cfg['train'].get('max_steps', -1)),
             limit_train_batches=cfg['train'].get('limit_train_batches', 1.0),
             accumulate_grad_batches=cfg['train'].get('accumulate_grad_batches', 1),
             limit_test_batches=cfg['train'].get('limit_test_batches', 1.0),
@@ -131,6 +148,7 @@ def main(config, weights, checkpoint, test, preflight_steps):
             num_sanity_val_steps=0,
             limit_val_batches=0.002,
             precision=trainer_precision,
+            plugins=precision_plugins,
         )
     else:
         trainer = Trainer(gpus=1,
@@ -138,6 +156,7 @@ def main(config, weights, checkpoint, test, preflight_steps):
                           log_every_n_steps=100,
                           resume_from_checkpoint=checkpoint,
                           max_epochs= cfg['train']['max_epoch'],
+                          max_steps=int(cfg['train'].get('max_steps', -1)),
                           limit_train_batches=cfg['train'].get('limit_train_batches', 1.0),
                           accumulate_grad_batches=cfg['train'].get('accumulate_grad_batches', 1),
                           limit_test_batches=cfg['train'].get('limit_test_batches', 1.0),
@@ -146,6 +165,7 @@ def main(config, weights, checkpoint, test, preflight_steps):
                           num_sanity_val_steps=0,
                           limit_val_batches=0.002,
                           precision=trainer_precision,
+                          plugins=precision_plugins,
                           )
 
 
