@@ -377,6 +377,37 @@ DiP worker `fpsgen_formal_dip` is created only after SiD2 completes.
 Fresh evidence root: `outputs/research_v2/formal_bev_compare/sid2_dip_direct_500ep_20261003/`.
 No completed500-epoch result is claimed by this launch record.
 
+### Continued formal training: speed warnings only
+
+The user subsequently requested continued follow-up and entry into formal
+training after the preceding speed protection stopped SiD2 at update800.
+That run had zero scaler skips on both ranks and finite loss0.897. The
+first epoch's last batch took about190s, while the adjacent full-sized
+batch took under1s. Each rank receives9565 samples, so the final batch is13
+rather than16; compilation/autotuning of a previously unseen batch size is
+a plausible cause, not a confirmed diagnosis. A host-wait burst also
+occurred before that tail batch. No checkpoint had reached cadence50, so
+the new run starts fresh rather than claiming to resume800 updates.
+
+New selected configs explicitly use `formal_stall_policy: warn_only`.
+Slowdown evidence, reference comparison and `would_stop` remain logged,
+but speed alone never raises an exception. Loss/gradient/overflow/OOM and
+process-failure checks are retained. No batch is dropped or padded; all
+data and the existing Inductor cache are preserved. Long batches and tail
+batches log actual size, host duration and Dynamo graph counters to help
+separate input stalls from compilation. Host timing is not CUDA timing.
+
+Fresh evidence: `outputs/research_v2/formal_bev_compare/sid2_dip_warnonly_500ep_20261003/`.
+Master: `fpsgen_formal_gpu23_live`; workers: `fpsgen_formal_sid2_live` then
+`fpsgen_formal_dip_live`, serially on GPU2+3. The separate read-only monitor
+`fpsgen_formal_monitor_gpu23` samples queue progress, GPU clocks/power/
+utilization and host memory/load every30s, writes `live_monitor.csv`, and
+never changes or restarts training. The previous failed runs and terminals
+are preserved. Correctness preflight evidence remains reused with the
+explicit monitoring-only hash exception; first32 actual formal updates
+still check finite unscaled gradients. This supersedes speed-triggered
+stopping only, not numerical protections or the failure-stop queue policy.
+
 ## 10. Limitations
 
 DiC, DiP and SiD2 are adapted to the common FPSGen BEV Flow-Matching objective

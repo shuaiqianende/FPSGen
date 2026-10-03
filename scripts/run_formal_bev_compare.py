@@ -25,6 +25,7 @@ CONFIGS = ROOT/"configs/research_v2/formal_bev_compare"
 OUTPUT = ROOT/"outputs/research_v2/formal_bev_compare"
 METHODS = ("dic_s", "sid2_s", "dip_s16")
 EXPECTED_SOURCE_HASH = None
+SESSION_SUFFIX = ''
 LEGACY = ROOT/"experiments/fpsgen_bevflow_legacy_gt_possion_formal_500ep_b16_gpu23_fp16_inductor/lightning_logs/version_0/checkpoints/fpsgen_bevflow_legacy_gt_possion_formal_500ep_b16_gpu23_fp16_inductor_epoch=499.ckpt"
 
 
@@ -214,6 +215,7 @@ def run_command(command, label, visible="2,3"):
                      'dip_s16_formal':'fpsgen_formal_dip'}
     session=formal_sessions.get(label)
     if session:
+        session += SESSION_SUFFIX
         if subprocess.run(['tmux','has-session','-t',session],capture_output=True).returncode==0:
             raise RuntimeError(f'Existing tmux session {session}; STOP without replacing it')
         runtime_env=environment(visible)
@@ -343,7 +345,7 @@ def verify_legacy():
 
 
 def main():
-    global OUTPUT, EXPECTED_SOURCE_HASH
+    global OUTPUT, EXPECTED_SOURCE_HASH, SESSION_SUFFIX
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output-root',type=Path,default=OUTPUT,
                         help='Fresh campaign directory under repository outputs; old failures are never overwritten')
@@ -355,6 +357,8 @@ def main():
                         help='Validate and reuse completed gates with identical fpsgen training sources/config; does not resume weights')
     parser.add_argument('--skip-pilots',action='store_true',
                         help='Explicit user-authorized direct fresh500 training; first32 steps still validate gradients')
+    parser.add_argument('--session-suffix',default='',
+                        help='Unique worker-session suffix for a fresh campaign; never replaces previous tmux evidence')
     parser.add_argument("--skip-legacy-eval",action="store_true",help="Defer Legacy final evaluation explicitly; never implies completion")
     parser.add_argument("--diagnostic-stage",choices=("single-inductor","single-eager","ddp","pipeline","throughput"),
                         help="Explicit isolated diagnostic after a stopped queue; never starts pilot/formal")
@@ -368,6 +372,9 @@ def main():
     parser.add_argument("--diagnostic-steps",type=int,
                         help="Additional isolated cold-start investigation, not a replacement for the required16/32-step gates")
     args=parser.parse_args()
+    if any(not (char.isalnum() or char=='_') for char in args.session_suffix):
+        raise ValueError('Session suffix must use letters, digits or underscores')
+    SESSION_SUFFIX=args.session_suffix
     OUTPUT=args.output_root.resolve()
     if not OUTPUT.is_relative_to(ROOT/'outputs'):
         raise ValueError('Campaign evidence must remain inside repository outputs')
@@ -437,7 +444,9 @@ def main():
         'deferred_methods':['dic_s'] if args.defer_dic else [],
         'gate_reuse_root':str(args.reuse_preflights_from.resolve()) if args.reuse_preflights_from else None,
         'pilot_waiver_user_authorized':args.skip_pilots,
-        'policy':('Direct fresh500 with inline32-step gradient checks; transient stalls warn, sustained stalls stop'
+        'worker_session_suffix':SESSION_SUFFIX,
+        'stall_policies':{method:cfg['runtime'].get('formal_stall_policy','strict') for method,cfg in frozen_formal.items()},
+        'policy':('Direct fresh500 with inline32-step gradient checks; speed policy explicitly recorded per model'
                   if args.skip_pilots else 'Fresh all pilots before any new formal500; first failure stops; source/config plan frozen')},indent=2)+'\n')
     # Exact production loader/runtime on both GPUs. First100 steps include
     # compile startup, next300 constitute the stable host-gap/throughput gate.
@@ -499,6 +508,9 @@ def main():
             "--data-root",data_root,"--manifest",str(CONFIGS/"seq08_b200.txt"),
             "--output",str(OUTPUT/"legacy/inference_efficiency.json")],"legacy_inference_benchmark","2")
     subprocess.run([sys.executable,"scripts/summarize_formal_bev_compare.py","--root",str(OUTPUT)],cwd=ROOT,check=True)
+    (OUTPUT/'queue_status.json').write_text(json.dumps(dict(status='COMPLETE',
+        selected_methods=args.methods, deferred_methods=['dic_s'] if args.defer_dic else [],
+        end=datetime.datetime.now(datetime.timezone.utc).isoformat()),indent=2)+'\n')
     print("QUEUE COMPLETE (requested stages only)",flush=True)
 
 

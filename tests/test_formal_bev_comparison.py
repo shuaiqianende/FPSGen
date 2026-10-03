@@ -270,3 +270,37 @@ def test_sustained_stalls_stop_only_after_three_bad_windows():
     severe=SustainedStallMonitor()
     for count in range(1,4):
         assert severe.observe([3.]*100,330)['stop']==(count==3)
+
+
+def test_warn_only_keeps_evidence_but_never_stops_on_speed():
+    from fpsgen.utils.formal_bev_callbacks import SustainedStallMonitor, apply_stall_policy
+    monitor=SustainedStallMonitor()
+    for _ in range(3): monitor.observe([.005]*100,32)
+    for count in range(1,10):
+        original=monitor.observe([3.]*100,330)
+        result=apply_stall_policy(original,'warn_only')
+        assert result['warning'] and not result['stop']
+        assert result['would_stop']==(count>=3)
+        assert original['stop']==(count>=3)
+
+
+def test_live_monitor_is_read_only_and_queries_gpu23(tmp_path,monkeypatch):
+    import json
+    from types import SimpleNamespace
+    from scripts import monitor_formal_bev_campaign as monitor
+    stage=tmp_path/'sid2_s_formal'
+    stage.mkdir()
+    queue=tmp_path/'queue_status.json'
+    queue.write_text(json.dumps(dict(status='RUNNING',stage=stage.name)))
+    manifest=stage/'run_manifest_rank0.json'
+    manifest.write_text(json.dumps(dict(status='RUNNING',optimizer_steps=1200,
+        last_stall_window=dict(warning=True,would_stop=True))))
+    before={p.name:p.read_bytes() for p in (queue,manifest)}
+    def gpu_query(command,**kwargs):
+        assert command[0]=='nvidia-smi' and command[2]=='2,3'
+        return SimpleNamespace(returncode=0,stdout='2, 95, 10000, 1700, 65, 290\n3, 90, 10000, 1700, 65, 290',stderr='')
+    monkeypatch.setattr(monitor.subprocess,'run',gpu_query)
+    result=monitor.snapshot(tmp_path)
+    assert result['step']==1200 and result['would_stop'] and result['speed_warning']
+    assert result['queue_status']=='RUNNING' and ' | ' in result['gpu23']
+    assert {p.name:p.read_bytes() for p in (queue,manifest)}==before

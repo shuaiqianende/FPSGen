@@ -54,12 +54,20 @@ class SustainedStallMonitor:
                     warning=bool(stalls or bad), stop=self.bad_windows >= 3)
 
 
+def apply_stall_policy(evidence, policy):
+    """Keep the protection signal in evidence even when stopping is waived."""
+    result = dict(evidence, would_stop=evidence['stop'], policy=policy)
+    if policy == 'warn_only':
+        result['stop'] = False
+    return result
+
+
 class FormalBEVRunCallback(Callback):
     def __init__(self, runtime):
         self.directory = Path(runtime["formal_manifest_dir"])
         self.strict_stalls = bool(runtime.get("formal_stall_gate", False))
         self.stall_policy = runtime.get("formal_stall_policy", "strict")
-        if self.stall_policy not in ("strict", "sustained"):
+        if self.stall_policy not in ("strict", "sustained", "warn_only"):
             raise ValueError("Unknown formal stall policy")
         self.stall_monitor = SustainedStallMonitor()
         self.window_gaps = []
@@ -74,6 +82,8 @@ class FormalBEVRunCallback(Callback):
         self.gaps = []
         self.last_end = None
         self.batch_sizes = set()
+        self.batch_started = None
+        self.actual_batch = None
         self.state = {}
 
     def write(self, trainer):
@@ -140,8 +150,10 @@ class FormalBEVRunCallback(Callback):
         if actual > self.state["per_gpu_batch"]:
             raise RuntimeError("Unexpected batch larger than per-GPU contract")
         self.batch_sizes.add(actual)
+        self.actual_batch = actual
         self.samples += actual
         now = time.perf_counter()
+        self.batch_started = now
         if self.last_end is not None and self.steps >= 100:
             self.gaps.append(now-self.last_end)
             self.window_gaps.append(now-self.last_end)
@@ -167,6 +179,15 @@ class FormalBEVRunCallback(Callback):
             self.losses.append(loss)
         self.steps += 1
         self.last_end = time.perf_counter()
+        from torch._dynamo.utils import counters
+        if self.batch_started is not None:
+            batch_seconds = self.last_end-self.batch_started
+            if batch_seconds > 5 or self.actual_batch != self.state['per_gpu_batch']:
+                event = dict(step=self.steps, epoch=int(trainer.current_epoch),
+                    batch_size=self.actual_batch, host_batch_seconds=batch_seconds,
+                    dynamo_stats=dict(counters['stats']))
+                self.state['last_long_or_tail_batch'] = event
+                print(f"LONG/TAIL BATCH rank={trainer.global_rank}: {event}", flush=True)
         if self.steps % 100 == 0:
             self.collect_skips()
             self.scale = self.scaler.get_scale() if self.scaler else None
@@ -181,11 +202,14 @@ class FormalBEVRunCallback(Callback):
                 "peak_allocated_mb": torch.cuda.max_memory_allocated()/2**20,
                 "peak_reserved_mb": torch.cuda.max_memory_reserved()/2**20,
                 "rank_seen_samples": self.samples, "wall_seconds": time.perf_counter()-self.start})
+            self.state['observed_local_batch_sizes'] = sorted(self.batch_sizes)
+            self.state['dynamo_stats'] = {name:dict(counters[name]) for name in ('stats','frames','graph_break')}
             self.state['total_seen_samples']=self.samples*trainer.world_size
             now = time.perf_counter()
-            if self.strict_stalls and self.stall_policy == "sustained":
+            if self.strict_stalls and self.stall_policy in ("sustained", "warn_only"):
                 if self.window_started is not None and self.window_gaps:
                     evidence = self.stall_monitor.observe(self.window_gaps, now-self.window_started)
+                    evidence = apply_stall_policy(evidence, self.stall_policy)
                     self.state['last_stall_window'] = evidence
                     path = self.directory/f"stall_windows_rank{trainer.global_rank}.csv"
                     exists = path.exists()
