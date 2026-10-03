@@ -247,7 +247,71 @@ DDP peak allocated22,235.12MiB is close to the3090 limit, so the full-data
 pilot remains mandatory. These gates are separate diagnostics,
 not authorization to skip DiC's failure
 and start formal training. Full10-epoch pilots and new500-epoch runs have
-**not started**.
+**had not started at the preflight snapshot**.
+
+### Budget stop: 2026-10-03
+
+The fresh `revalidated_gpu23_20261003` campaign passed the400-step Legacy
+pipeline gate, then repeated the candidate preflights and started the DiC
+10-epoch pilot. The user rejected its compute cost. The pilot and master
+queue were interrupted at07:28 UTC; GPU2/3 were verified released, and other
+GPU jobs were untouched. No new500-epoch formal run was started. Do not
+automatically restart this queue or move to another long training run.
+
+The latest two complete100-step DiC pilot intervals took201.89s and202.02s,
+or about2.02s/step and15.85/15.84 global samples/s. This was FP16 eager with
+all-block non-reentrant activation checkpointing, not Inductor. The Legacy
+gate's three post-warmup100-step intervals achieved75.98/76.18/76.37 global
+samples/s. These are different architectures/runtime configurations, not
+evidence that the Legacy training pipeline itself regressed fivefold.
+
+Both DiC GPUs were sampled at100% utilization and about348W, but utilization
+alone does not identify the slow operator. The compile failure specifically
+reported a non-FakeTensor parameter dtype conversion in the custom GroupNorm
+path. Neither the fraction attributable to recomputation nor the attainable
+compiled DiC speed has been isolated. Treat both as runtime issues requiring
+a tightly bounded operator-level diagnostic, not proof that the upstream
+DiC architecture inherently requires seven days. Any further long training
+needs an acceptable measured throughput and revised compute-budget approval.
+
+### Bounded SiD2 / DiP speed check: 2026-10-03
+
+At the user's request DiC was deferred. Only SiD2 and DiP were tested,
+serially on physicalGPU2+3,16/rank (global32), FP16 dense Inductor, eager
+FP32 geometry and unchanged `gt_possion` data/180000-point task. Each fresh
+run had a hard200-update limit and no pilot/formal continuation. Expensive
+finite-gradient checks were restricted to the first16 updates. Both ranks
+passed finite core/condition gradients with nonzero condition-encoder
+gradients. Both models performed200 actual updates, with zero scaler skips
+and no OOM. GPU2/3 were verified released after the two stages finished.
+
+| Model | Stable ms/update | Global samples/s | Peak allocated GiB | Host gap p99 / max ms | Approx min/epoch |
+|---|---:|---:|---:|---:|---:|
+| SiD2-style Residual U-ViT-S-BEV |317.10|100.91|9.16|13.53 /58.82|3.16|
+| DiP-S/16-BEV |250.10|127.95|21.71|8.79 /29.65|2.49|
+
+The100-update timed interval excludes startup; the retained historical
+lightweight logger's `global_step` label has a+1 offset, so CSV boundaries
+100..200 correspond to actual updates100..199 (99 startup updates excluded,
+last update200 also outside timing). The summary records this explicitly;
+no extra GPU run was needed to correct a label. Host gap is still a framework
+batch-end/start gap, not pure storage latency. Peak memory is the maximum
+across both ranks and includes startup. SiD2 captured4 graphs with2 known
+`DICT_UPDATE` diagnostic-dictionary breaks; DiP captured1 graph without
+breaks. Neither observation is a generation-quality ranking.
+
+The10-epoch compute-only projections are about32min (SiD2) and25min (DiP);
+500-epoch projections are26.3h and20.8h, not an authorization or launch.
+These estimates assume the sampled speed persists and exclude startup,
+checkpoint/evaluation cost, last-batch recompilation and long-term I/O
+variation.200 steps did not exercise an epoch boundary or every point-count
+tail; DiP's small startup memory margin still requires caution.
+
+Evidence: `outputs/research_v2/formal_bev_compare/sid2_dip_speed_20261003/`
+contains the separate200-step manifests, preflight checks, CSV timings,
+`throughput_summary.csv` and `throughput_summary.json`. No10-epoch pilot or
+new500-epoch run was started by this diagnostic. The tmux session
+`fpsgen_sid2_dip_speed_gpu23` retains console results for inspection.
 
 ## 10. Limitations
 

@@ -6,6 +6,7 @@ random initialization. Nothing resumes, overwrites a checkpoint, kills an
 existing GPU process, or silently changes batch/precision/architecture.
 """
 import argparse
+import csv
 import copy
 import datetime
 import json
@@ -35,6 +36,61 @@ def selected_config_path(method, pilot=False):
     else:
         suffix='10ep_pilot' if pilot else '500ep_ddp2_b16_fp16_inductor'
     return CONFIGS/f'{method}_{suffix}.yaml'
+
+
+def bounded_throughput_config(base, steps):
+    """Short speed diagnostic, never a pilot or a formal training launch."""
+    if not 200 <= steps <= 400 or steps % 100:
+        raise ValueError('Throughput diagnostic must use200,300 or400 steps (first100 are warmup)')
+    cfg=copy.deepcopy(base)
+    cfg['train'].update(max_epoch=1, max_steps=steps)
+    cfg['runtime'].update(preflight_validation=True, preflight_only=False,
+                          preflight_steps=16, expected_batch_size=16,
+                          formal_stall_gate=True)
+    return cfg
+
+
+def write_throughput_summary(labels):
+    rows=[]
+    for label in labels:
+        directory=OUTPUT/label
+        ranks=[json.loads((directory/f'run_manifest_rank{rank}.json').read_text()) for rank in (0,1)]
+        gates=[json.loads((directory/f'preflight_rank{rank}.json').read_text()) for rank in (0,1)]
+        if any(m['status']!='COMPLETE' or m['world_size']!=2 or m['observed_local_batch_sizes']!=[16] for m in ranks):
+            raise RuntimeError('Incomplete or mismatched B16/rank throughput evidence')
+        if any(g['status']!='PASS' for g in gates):
+            raise RuntimeError('Missing finite/core/condition preflight PASS')
+        with (directory/'throughput.csv').open() as handle:
+            intervals=[r for r in csv.DictReader(handle) if int(r['global_step'])>100]
+        if not intervals:
+            raise RuntimeError('No post-warmup throughput interval')
+        steady_seconds=sum(float(r['interval_wall_ms']) for r in intervals)/1000
+        steady_steps=100*len(intervals)
+        step_seconds=steady_seconds/steady_steps
+        rows.append(dict(model=ranks[0]['model'], per_gpu_batch=16, global_batch=32,
+            backend='inductor' if ranks[0]['compile_requested'] else 'eager', precision='fp16',
+            # Historical lightweight logger labels completed global_step+1.
+            # Preserve its raw CSV; label200 is after update199, so the
+            # second interval measures updates100..199, not101..200.
+            warmup_steps=99, timed_steps=steady_steps,
+            csv_step_label_offset=1, timed_first_optimizer_update=100,
+            timed_last_optimizer_update=99+steady_steps,
+            mean_ms_per_step=step_seconds*1000,
+            global_samples_per_second=32/step_seconds,
+            peak_allocated_mb=max(m['peak_allocated_mb'] for m in ranks),
+            peak_reserved_mb=max(m['peak_reserved_mb'] for m in ranks),
+            skipped_steps_rank0=ranks[0]['skipped_optimizer_steps'],
+            skipped_steps_rank1=ranks[1]['skipped_optimizer_steps'],
+            host_gap_p99_ms=max(m['host_ready_gap_ms']['p99'] for m in ranks),
+            host_gap_max_ms=max(m['host_ready_gap_ms']['max'] for m in ranks),
+            estimated_epoch_seconds=step_seconds*ranks[0]['steps_per_epoch'],
+            source_stage=label, scope='short throughput diagnostic; not a generation quality result'))
+    (OUTPUT/'throughput_summary.json').write_text(json.dumps(rows,indent=2)+'\n')
+    with (OUTPUT/'throughput_summary.csv').open('w',newline='') as handle:
+        writer=csv.DictWriter(handle,fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    print('BOUNDED THROUGHPUT RESULTS\n'+json.dumps(rows,indent=2),flush=True)
 
 
 def assert_free():
@@ -234,7 +290,7 @@ def main():
     parser.add_argument("--preflight-only",action="store_true",help="Only eager/single/DDP model gates, no pilots/formal training")
     parser.add_argument("--methods",nargs="+",choices=METHODS,default=list(METHODS))
     parser.add_argument("--skip-legacy-eval",action="store_true",help="Defer Legacy final evaluation explicitly; never implies completion")
-    parser.add_argument("--diagnostic-stage",choices=("single-inductor","single-eager","ddp","pipeline"),
+    parser.add_argument("--diagnostic-stage",choices=("single-inductor","single-eager","ddp","pipeline","throughput"),
                         help="Explicit isolated diagnostic after a stopped queue; never starts pilot/formal")
     parser.add_argument("--activation-checkpointing",action="store_true",
                         help="Explicit isolated DiC B16 diagnostic after confirmed OOM; not a silent formal change")
@@ -257,6 +313,10 @@ def main():
         raise ValueError('Positive GradScaler initial scale required')
     if args.diagnostic_steps is not None and args.diagnostic_steps<=0:
         raise ValueError('Positive diagnostic step count required')
+    if args.diagnostic_stage=='throughput':
+        if any(method not in ('sid2_s','dip_s16') for method in args.methods):
+            raise ValueError('Budgeted throughput queue excludes DiC; explicitly select sid2_s/dip_s16')
+        bounded_throughput_config(yaml.safe_load(selected_config_path(args.methods[0]).read_text()),args.diagnostic_steps or 200)
     os.chdir(ROOT)
     OUTPUT.mkdir(parents=True,exist_ok=True)
     assert_free()
@@ -264,7 +324,17 @@ def main():
     data_root=environment()["TRAIN_DATABASE"]
     freeze_frames(data_root,200)
     if args.diagnostic_stage:
-        if args.diagnostic_stage == "pipeline":
+        if args.diagnostic_stage == 'throughput':
+            finished=[]
+            for method in args.methods:
+                steps=args.diagnostic_steps or 200
+                cfg=bounded_throughput_config(yaml.safe_load(selected_config_path(method).read_text()),steps)
+                label=method+'_ddp_throughput_b16'+args.diagnostic_tag
+                train(cfg,label,compile_dense=args.diagnostic_backend=='inductor',max_steps=steps)
+                finished.append(label)
+                write_throughput_summary(finished)
+            print('SHORT SPEED TESTS COMPLETE; pilot/formal training NOT STARTED',flush=True)
+        elif args.diagnostic_stage == "pipeline":
             cfg=yaml.safe_load((CONFIGS/"fpsgen_legacy_500ep_ddp2_b16_fp16_inductor.yaml").read_text())
             cfg["runtime"]["formal_stall_gate"]=True
             train(cfg,"legacy_ddp_pipeline_gate_v2",max_steps=400)

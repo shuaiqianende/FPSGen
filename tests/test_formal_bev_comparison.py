@@ -158,3 +158,41 @@ def test_pipeline_preflight_stops_checks_without_stopping_training():
     # preflight checks. They must not inflate the validation-window counter.
     callback.on_train_batch_end(trainer,None,torch.tensor(float('nan')),None,1)
     assert callback.steps_seen==1 and not trainer.should_stop
+
+
+def test_budgeted_throughput_is_bounded_and_does_not_mutate_formal_config():
+    import pytest
+    from scripts.run_formal_bev_compare import bounded_throughput_config, selected_config_path
+    base=yaml.safe_load(selected_config_path('sid2_s').read_text())
+    original=copy.deepcopy(base)
+    cfg=bounded_throughput_config(base,200)
+    assert base==original and base['train']['max_epoch']==500
+    assert cfg['train']['max_epoch']==1 and cfg['train']['max_steps']==200
+    assert cfg['train']['batch_size']==16 and cfg['train']['n_gpus']==2
+    assert cfg['runtime']['preflight_steps']==16 and not cfg['runtime']['preflight_only']
+    assert cfg['model']==base['model'] and cfg['data']==base['data']
+    for steps in (16,199,250,500,5980):
+        with pytest.raises(ValueError):
+            bounded_throughput_config(base,steps)
+
+
+def test_throughput_summary_excludes_first_interval_and_keeps_both_ranks(tmp_path,monkeypatch):
+    import json
+    from scripts import run_formal_bev_compare as campaign
+    monkeypatch.setattr(campaign,'OUTPUT',tmp_path)
+    directory=tmp_path/'speed'
+    directory.mkdir()
+    manifest=dict(status='COMPLETE',world_size=2,observed_local_batch_sizes=[16],model='sid2_s',
+        compile_requested=True,peak_allocated_mb=100,peak_reserved_mb=120,
+        skipped_optimizer_steps=0,host_ready_gap_ms={'p99':5,'max':10},steps_per_epoch=598)
+    for rank in (0,1):
+        (directory/f'run_manifest_rank{rank}.json').write_text(json.dumps(dict(manifest,peak_allocated_mb=100+rank)))
+        (directory/f'preflight_rank{rank}.json').write_text(json.dumps({'status':'PASS'}))
+    (directory/'throughput.csv').write_text('global_step,interval_wall_ms\n100,200000\n200,50000\n')
+    campaign.write_throughput_summary(['speed'])
+    result=json.loads((tmp_path/'throughput_summary.json').read_text())[0]
+    assert result['timed_steps']==100 and result['mean_ms_per_step']==500
+    assert result['warmup_steps']==99 and result['csv_step_label_offset']==1
+    assert result['timed_first_optimizer_update']==100 and result['timed_last_optimizer_update']==199
+    assert result['global_samples_per_second']==64
+    assert result['peak_allocated_mb']==101 and result['estimated_epoch_seconds']==299
