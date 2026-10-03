@@ -240,3 +240,33 @@ def test_reused_gates_require_sources_config_and_actual_updates_to_match(tmp_pat
     monkeypatch.setattr(formal_bev,'source_fingerprint',lambda root:{'files':{'fpsgen/model.py':'changed'}})
     with pytest.raises(ValueError,match='Training sources changed'):
         campaign.validate_reused_gate(tmp_path,base,32)
+
+
+def test_sustained_stalls_warn_on_burst_and_reset_on_recovery():
+    from fpsgen.utils.formal_bev_callbacks import SustainedStallMonitor
+    monitor=SustainedStallMonitor()
+    for _ in range(3):
+        assert not monitor.observe([.005]*100,32)['stop']
+    burst=monitor.observe([7.]*12+[.005]*88,120)
+    assert burst['warning'] and not burst['stop']
+    recovered=monitor.observe([.005]*100,33)
+    assert recovered['consecutive_bad_windows']==0 and not recovered['stop']
+    # Repeated isolated events are not a cumulative-lifetime failure.
+    for _ in range(10):
+        assert not monitor.observe([7.]*12+[.005]*88,120)['stop']
+        assert not monitor.observe([.005]*100,33)['stop']
+
+
+def test_sustained_stalls_stop_only_after_three_bad_windows():
+    from fpsgen.utils.formal_bev_callbacks import SustainedStallMonitor
+    monitor=SustainedStallMonitor()
+    for _ in range(3): monitor.observe([.005]*100,32)
+    for count in range(1,4):
+        evidence=monitor.observe([.005]*100,50)
+        assert evidence['consecutive_bad_windows']==count
+        assert evidence['stop']==(count==3)
+    assert monitor.reference==32
+    # Severe host starvation also stops before calibration completes.
+    severe=SustainedStallMonitor()
+    for count in range(1,4):
+        assert severe.observe([3.]*100,330)['stop']==(count==3)

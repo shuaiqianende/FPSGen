@@ -39,6 +39,7 @@ runtime:
   throughput_mode: lightweight
   throughput_interval_steps: 100
   formal_stall_gate: true
+  formal_stall_policy: sustained
   throughput_csv: outputs/research_v2/formal_bev_compare/dip_s16_500ep_ddp2_b16_fp16_inductor/throughput.csv
   formal_manifest_dir: outputs/research_v2/formal_bev_compare/dip_s16_500ep_ddp2_b16_fp16_inductor
 model:

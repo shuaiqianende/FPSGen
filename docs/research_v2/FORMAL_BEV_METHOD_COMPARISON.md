@@ -343,6 +343,40 @@ The frozen plan records DiC as deferred. Final summaries retain the missing
 DiC entry and distinguish completion of this selected scope from completion
 of the full original four-method main table.
 
+### Direct formal authorization and transient-stall policy (2026-10-03)
+
+The preceding pilot-first policy is superseded by the user's explicit request
+to start formal training directly and tolerate occasional stalls. The first
+SiD2 pilot stopped at update500 under the old cumulative host-gap rule, not
+because of OOM, non-finite loss or scaler skips. Its100-step throughput
+intervals were85.66,89.44,98.65 then26.81 global samples/s after startup;
+this is evidence of a burst, not proof that storage alone caused it. Raw
+failed evidence remains in `sid2_dip_formal_20261003/` without relabelling.
+
+The new direct queue uses fresh seed42 initialization for SiD2 then DiP,
+500epochs each, GPU2+3 serially,16/rank,FP16+dense Inductor,gt_possion.
+DiC remains explicitly deferred. Completed model gates are reused only when
+all training-source hashes match except the audited monitoring callback
+change from commit28b1112; both old/new hashes are recorded. The first32
+steps of each actual formal run recheck unscaled finite core/condition
+gradients, without a separate throwaway training or pilot checkpoint.
+
+`formal_stall_policy: sustained` excludes the first100 compile-startup steps.
+Every100 steps it records wall time and host gaps to rank-specific CSV.
+Gaps above2seconds warn only. Three initial non-severe windows calibrate a
+frozen median reference. Protection stops only after three consecutive
+windows each taking over1.5times reference wall time, or with at least20%
+multi-second gaps /100seconds accumulated host gaps. Healthy windows reset
+the counter. This is a production policy, not a diagnosis of disk I/O, and
+does not prove that bursts were fixed. No per-batch CUDA synchronization is
+introduced. Existing loss, overflow and failure protections remain enabled.
+
+Master: `tmux attach -t fpsgen_formal_direct_gpu23`.
+Active first worker: `tmux attach -t fpsgen_formal_sid2`.
+DiP worker `fpsgen_formal_dip` is created only after SiD2 completes.
+Fresh evidence root: `outputs/research_v2/formal_bev_compare/sid2_dip_direct_500ep_20261003/`.
+No completed500-epoch result is claimed by this launch record.
+
 ## 10. Limitations
 
 DiC, DiP and SiD2 are adapted to the common FPSGen BEV Flow-Matching objective

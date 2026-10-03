@@ -9,6 +9,7 @@ import json
 import os
 import subprocess
 import time
+import statistics
 from pathlib import Path
 
 import torch
@@ -22,10 +23,47 @@ def utc_now():
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 
+class SustainedStallMonitor:
+    """CPU-only 100-step windows; isolated bursts cannot stop production.
+
+    First three steady windows calibrate wall time, excluding compile warmup.
+    The reference is frozen, so a long slowdown cannot normalize itself away.
+    Host gaps include framework/transfer/logging, not just storage I/O.
+    """
+    def __init__(self):
+        self.calibration = []
+        self.reference = None
+        self.bad_windows = 0
+
+    def observe(self, gaps, wall_seconds):
+        stalls = sum(gap > 2 for gap in gaps)
+        gap_seconds = sum(gaps)
+        slow = self.reference is not None and wall_seconds > 1.5*self.reference
+        severe = stalls >= .2*len(gaps) or gap_seconds >= 100
+        bad = bool(severe or slow)
+        self.bad_windows = self.bad_windows+1 if bad else 0
+        if self.reference is None and not severe:
+            self.calibration.append(wall_seconds)
+            if len(self.calibration) == 3:
+                self.reference = statistics.median(self.calibration)
+        return dict(wall_seconds=wall_seconds, gap_count=len(gaps),
+                    multi_second_gaps=stalls, total_host_gap_seconds=gap_seconds,
+                    max_host_gap_seconds=max(gaps, default=0),
+                    reference_window_seconds=self.reference,
+                    consecutive_bad_windows=self.bad_windows,
+                    warning=bool(stalls or bad), stop=self.bad_windows >= 3)
+
+
 class FormalBEVRunCallback(Callback):
     def __init__(self, runtime):
         self.directory = Path(runtime["formal_manifest_dir"])
         self.strict_stalls = bool(runtime.get("formal_stall_gate", False))
+        self.stall_policy = runtime.get("formal_stall_policy", "strict")
+        if self.stall_policy not in ("strict", "sustained"):
+            raise ValueError("Unknown formal stall policy")
+        self.stall_monitor = SustainedStallMonitor()
+        self.window_gaps = []
+        self.window_started = None
         self.max_skip_fraction = float(runtime.get("formal_max_skip_fraction", .01))
         self.start = None
         self.losses = []
@@ -89,6 +127,7 @@ class FormalBEVRunCallback(Callback):
             "compile_startup_included_in_first_interval": True,
             "skipped_optimizer_steps": 0,
             "gap_measurement": "host batch-end to next batch-start, NOT pure DataLoader or disk wait",
+            "stall_policy": self.stall_policy,
         }
         self.write(trainer)
 
@@ -105,6 +144,7 @@ class FormalBEVRunCallback(Callback):
         now = time.perf_counter()
         if self.last_end is not None and self.steps >= 100:
             self.gaps.append(now-self.last_end)
+            self.window_gaps.append(now-self.last_end)
 
     def on_before_optimizer_step(self, trainer, pl_module, optimizer, optimizer_idx):
         # Lightning1.8 calls this AFTER GradScaler.unscale_. Preserve the
@@ -142,8 +182,28 @@ class FormalBEVRunCallback(Callback):
                 "peak_reserved_mb": torch.cuda.max_memory_reserved()/2**20,
                 "rank_seen_samples": self.samples, "wall_seconds": time.perf_counter()-self.start})
             self.state['total_seen_samples']=self.samples*trainer.world_size
+            now = time.perf_counter()
+            if self.strict_stalls and self.stall_policy == "sustained":
+                if self.window_started is not None and self.window_gaps:
+                    evidence = self.stall_monitor.observe(self.window_gaps, now-self.window_started)
+                    self.state['last_stall_window'] = evidence
+                    path = self.directory/f"stall_windows_rank{trainer.global_rank}.csv"
+                    exists = path.exists()
+                    with path.open('a', newline='') as handle:
+                        writer = csv.DictWriter(handle, fieldnames=['step', *evidence])
+                        if not exists: writer.writeheader()
+                        writer.writerow(dict(step=self.steps, **evidence))
+                    if evidence['warning']:
+                        print(f"STALL WARNING rank={trainer.global_rank} step={self.steps}: {evidence}", flush=True)
+                    if evidence['stop']:
+                        self.state.update(status='FAILED', end_time=utc_now(),
+                            exception='Sustained slowdown across three consecutive100-step windows')
+                        self.write(trainer)
+                        raise RuntimeError(self.state['exception'])
+                self.window_started = now
+                self.window_gaps.clear()
             self.write(trainer)
-            if self.strict_stalls and len(self.gaps) >= 100:
+            if self.strict_stalls and self.stall_policy == "strict" and len(self.gaps) >= 100:
                 stalls = sum(gap > 2 for gap in self.gaps)
                 if stalls/len(self.gaps) > .01:
                     raise RuntimeError("Repeated multi-second host-ready stalls; STOP formal queue")
