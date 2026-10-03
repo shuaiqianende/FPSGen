@@ -38,6 +38,55 @@ def selected_config_path(method, pilot=False):
     return CONFIGS/f'{method}_{suffix}.yaml'
 
 
+def validate_formal_selection(methods, defer_dic=False):
+    expected={'sid2_s','dip_s16'} if defer_dic else set(METHODS)
+    if len(methods)!=len(expected) or set(methods)!=expected:
+        raise ValueError('Formal queue requires all candidates, or explicitly deferred DiC with only sid2_s/dip_s16')
+
+
+def validate_reused_gate(directory, base, steps, *, gpus=2, compiled=True, validation_steps=None):
+    """Reuse correctness evidence only when training sources/config still match."""
+    from fpsgen.utils.formal_bev import source_fingerprint
+    current=source_fingerprint(ROOT)['files']
+    current={name:digest for name,digest in current.items() if name.startswith('fpsgen/')}
+    if not current:
+        raise ValueError('No training-source fingerprint available')
+    records=[]
+    stage=json.loads((directory/'stage_status.json').read_text())
+    if stage['status']!='PASS' or stage['returncode']!=0:
+        raise ValueError(f'Cannot reuse failed/incomplete gate: {directory}')
+    for rank in range(gpus):
+        record=json.loads((directory/f'run_manifest_rank{rank}.json').read_text())
+        gate=json.loads((directory/f'preflight_rank{rank}.json').read_text())
+        old={name:digest for name,digest in record['local_source_fingerprint']['files'].items()
+             if name.startswith('fpsgen/')}
+        if old!=current:
+            raise ValueError(f'Training sources changed since gate: {directory}')
+        if (record['status']!='COMPLETE' or record['world_size']!=gpus or
+            record['actual_optimizer_updates']!=steps or record['skipped_optimizer_steps']!=0 or
+            record['observed_local_batch_sizes']!=[16] or record['compile_requested']!=compiled):
+            raise ValueError(f'Gate execution contract mismatch: {directory}')
+        if (gate['status']!='PASS' or gate['steps']!=(validation_steps or steps) or
+            not gate['all_gradients_finite'] or not gate['condition_encoder_gradient_nonzero']):
+            raise ValueError(f'Condition/core gradient gate mismatch: {directory}')
+        cfg=record['config']
+        expected_data=copy.deepcopy(base['data'])
+        expected_data['data_dir']=environment()['TRAIN_DATABASE']
+        if cfg['model']!=base['model'] or cfg['data']!=expected_data:
+            raise ValueError(f'Gate model/data changed: {directory}')
+        for key in ('batch_size','seed','lr','num_workers','prefetch_factor','pin_memory',
+                    'persistent_workers','deterministic_worker_init','dataloader_seed'):
+            if cfg['train'].get(key)!=base['train'].get(key):
+                raise ValueError(f'Gate train.{key} changed: {directory}')
+        for key in ('precision','grad_scaler_init_scale','compile_backend','deterministic',
+                    'allow_tf32','cudnn_benchmark','async_batch_transfer','train_vis_interval'):
+            if cfg['runtime'].get(key)!=base['runtime'].get(key):
+                raise ValueError(f'Gate runtime.{key} changed: {directory}')
+        records.append(dict(rank=rank,steps=steps,condition_gradients='PASS',
+                            training_sources_match=True,skipped_optimizer_steps=0))
+    return dict(directory=str(directory.resolve()),status='VALIDATED_REUSE',ranks=records)
+
+
 def bounded_throughput_config(base, steps):
     """Short speed diagnostic, never a pilot or a formal training launch."""
     if not 200 <= steps <= 400 or steps % 100:
@@ -289,6 +338,10 @@ def main():
                         help='Fresh campaign directory under repository outputs; old failures are never overwritten')
     parser.add_argument("--preflight-only",action="store_true",help="Only eager/single/DDP model gates, no pilots/formal training")
     parser.add_argument("--methods",nargs="+",choices=METHODS,default=list(METHODS))
+    parser.add_argument('--defer-dic',action='store_true',
+                        help='Explicit user-authorized DiC deferral; formal queue must contain only SiD2 and DiP')
+    parser.add_argument('--reuse-preflights-from',type=Path,
+                        help='Validate and reuse completed gates with identical fpsgen training sources/config; does not resume weights')
     parser.add_argument("--skip-legacy-eval",action="store_true",help="Defer Legacy final evaluation explicitly; never implies completion")
     parser.add_argument("--diagnostic-stage",choices=("single-inductor","single-eager","ddp","pipeline","throughput"),
                         help="Explicit isolated diagnostic after a stopped queue; never starts pilot/formal")
@@ -305,8 +358,10 @@ def main():
     OUTPUT=args.output_root.resolve()
     if not OUTPUT.is_relative_to(ROOT/'outputs'):
         raise ValueError('Campaign evidence must remain inside repository outputs')
-    if not args.diagnostic_stage and not args.preflight_only and set(args.methods)!=set(METHODS):
-        raise ValueError('Formal main-table queue cannot silently omit a failed candidate; use diagnostics to investigate')
+    if not args.diagnostic_stage and not args.preflight_only:
+        validate_formal_selection(args.methods,args.defer_dic)
+    if args.reuse_preflights_from and (args.diagnostic_stage or args.preflight_only):
+        raise ValueError('Gate reuse is for the pilot/formal campaign, not a diagnostic override')
     if not args.diagnostic_stage and (args.activation_checkpointing or args.diagnostic_init_scale is not None or args.diagnostic_steps):
         raise ValueError('Diagnostic overrides must not silently modify a formal run')
     if args.diagnostic_init_scale is not None and args.diagnostic_init_scale<=0:
@@ -364,6 +419,8 @@ def main():
         'git_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
         'local_source_fingerprint':fingerprint,'selected_formal_configs':frozen_formal,
         'selected_pilot_configs':frozen_pilot,'gpu_visibility':'2,3',
+        'deferred_methods':['dic_s'] if args.defer_dic else [],
+        'gate_reuse_root':str(args.reuse_preflights_from.resolve()) if args.reuse_preflights_from else None,
         'policy':'Fresh all pilots before any new formal500; first failure stops; source/config plan frozen'},indent=2)+'\n')
     # Exact production loader/runtime on both GPUs. First100 steps include
     # compile startup, next300 constitute the stable host-gap/throughput gate.
@@ -371,19 +428,31 @@ def main():
     legacy["runtime"]["formal_stall_gate"]=True
     legacy['runtime'].update(preflight_validation=True,preflight_only=False,
                              preflight_steps=32,expected_batch_size=16)
-    train(legacy,"legacy_ddp_pipeline_gate",max_steps=400)
-    for method in args.methods:
-        formal=frozen_formal[method]
-        train(formal,method+"_eager_b16",gpus=1,compile_dense=False,preflight=16)
-        if formal['runtime'].get('compile_dense'):
-            train(formal,method+"_inductor_b16",gpus=1,preflight=16)
-        else:
-            reason=formal['runtime'].get('backend_exception')
-            proof=ROOT/formal['runtime'].get('compile_failure_stage','')
-            if not reason or not proof.is_file() or json.loads(proof.read_text())['status']!='FAILED':
-                raise RuntimeError('Eager formal backend requires an explicit documented failed compile stage')
-            print(f'EXPLICIT BACKEND EXCEPTION {method}: {reason}',flush=True)
-        train(formal,method+"_ddp_b16",preflight=32)
+    if args.reuse_preflights_from:
+        proof_root=args.reuse_preflights_from.resolve()
+        reused=[validate_reused_gate(proof_root/'legacy_ddp_pipeline_gate',legacy,400,validation_steps=32)]
+        for method in args.methods:
+            formal=frozen_formal[method]
+            reused.extend((
+                validate_reused_gate(proof_root/(method+'_eager_b16'),formal,16,gpus=1,compiled=False),
+                validate_reused_gate(proof_root/(method+'_inductor_b16'),formal,16,gpus=1),
+                validate_reused_gate(proof_root/(method+'_ddp_b16'),formal,32)))
+        (OUTPUT/'preflight_reuse.json').write_text(json.dumps(reused,indent=2)+'\n')
+        print('REUSED VERIFIED GATES: identical training sources/config; no repeated compute or checkpoint resume',flush=True)
+    else:
+        train(legacy,"legacy_ddp_pipeline_gate",max_steps=400)
+        for method in args.methods:
+            formal=frozen_formal[method]
+            train(formal,method+"_eager_b16",gpus=1,compile_dense=False,preflight=16)
+            if formal['runtime'].get('compile_dense'):
+                train(formal,method+"_inductor_b16",gpus=1,preflight=16)
+            else:
+                reason=formal['runtime'].get('backend_exception')
+                proof=ROOT/formal['runtime'].get('compile_failure_stage','')
+                if not reason or not proof.is_file() or json.loads(proof.read_text())['status']!='FAILED':
+                    raise RuntimeError('Eager formal backend requires an explicit documented failed compile stage')
+                print(f'EXPLICIT BACKEND EXCEPTION {method}: {reason}',flush=True)
+            train(formal,method+"_ddp_b16",preflight=32)
     if args.preflight_only:
         print("ALL MODEL PREFLIGHTS PASS; pilots/formal NOT STARTED",flush=True)
         return

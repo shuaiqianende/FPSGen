@@ -78,6 +78,9 @@ def main():
     args.root.mkdir(parents=True,exist_ok=True)
     expected_frames=Path('configs/research_v2/formal_bev_compare/seq08_b200.txt').read_text().splitlines()
     quality=[];usage=[];efficiency=[];per_frame={};missing=[]
+    plan=args.root/'campaign_plan.json'
+    deferred_ids=json.loads(plan.read_text()).get('deferred_methods',[]) if plan.exists() else []
+    deferred=[name for name,(directory,_) in METHODS.items() if directory.removesuffix('_formal') in deferred_ids]
     for method,(directory,year) in METHODS.items():
         root=args.root/directory
         if not all((root/f"cfg{cfg}/samples.csv").exists() for cfg in (1,2)):
@@ -153,8 +156,11 @@ def main():
     for name,rows in (("final_quality.csv",quality),("final_condition_usage.csv",usage),("final_efficiency.csv",efficiency)):
         write_csv(args.root/name,rows)
     (args.root/"paired_bootstrap.json").write_text(json.dumps({"policy":"Average3 seeds within each frame, then paired frame bootstrap",
-        "complete":not missing,"missing_models":missing,"comparisons":comparisons},indent=2)+"\n")
-    print(json.dumps({"complete":not missing,"missing_models":missing},indent=2))
+        "complete":not missing,"missing_models":missing,"deferred_models":deferred,
+        "selected_scope_complete":not [method for method in missing if method not in deferred],
+        "comparisons":comparisons},indent=2)+"\n")
+    print(json.dumps({"complete":not missing,"missing_models":missing,"deferred_models":deferred,
+        "selected_scope_complete":not [method for method in missing if method not in deferred]},indent=2))
 
 
 if __name__=="__main__":

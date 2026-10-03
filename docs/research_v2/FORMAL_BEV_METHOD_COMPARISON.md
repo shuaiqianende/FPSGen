@@ -313,6 +313,36 @@ contains the separate200-step manifests, preflight checks, CSV timings,
 new500-epoch run was started by this diagnostic. The tmux session
 `fpsgen_sid2_dip_speed_gpu23` retains console results for inspection.
 
+### Authorized SiD2 / DiP training campaign
+
+After the speed checks the user authorized training, with DiC still deferred.
+The explicit `--defer-dic --methods sid2_s dip_s16` scope preserves the
+original fail-stop policy: it is not an automatic fallback after a failed
+candidate. The reused400-step Legacy data-pipeline gate and eager16/
+Inductor16/DDP32 gates for both selected models are accepted only after
+checking every `fpsgen/` Python source hash, model/data/loader/runtime
+controls, actual updates, zero skips and both-rank gradient PASS records.
+The orchestration script may change without rerunning unchanged model
+compute. This reuses evidence, not weights or optimizer state.
+
+Execution order: fresh SiD2 pilot10 + B100/B20 checks, fresh DiP pilot10 +
+B100/B20 checks, then fresh SiD2 formal500 and final evaluation, fresh DiP
+formal500 and final evaluation, followed by final Legacy evaluation.
+All pilot gates must pass before the first new500-epoch run; formal runs
+never resume pilot weights. New runs use GPU2+3 serially,16/rank, seed42,
+FP16 dense Inductor, `gt_possion`, AdamW1e-4/warmup1000/cosine, and cadence50
+with a final checkpoint. Repeated multi-second host gaps, excessive scaler
+skips, OOM, NaN or process errors stop the queue without changing configuration.
+
+Master: `tmux attach -t fpsgen_formal_sid2_dip_gpu23`.
+Formal worker sessions (created only after pilot gates):
+`fpsgen_formal_sid2` and `fpsgen_formal_dip`.
+Evidence root:
+`outputs/research_v2/formal_bev_compare/sid2_dip_formal_20261003/`.
+The frozen plan records DiC as deferred. Final summaries retain the missing
+DiC entry and distinguish completion of this selected scope from completion
+of the full original four-method main table.
+
 ## 10. Limitations
 
 DiC, DiP and SiD2 are adapted to the common FPSGen BEV Flow-Matching objective

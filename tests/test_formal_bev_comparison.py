@@ -196,3 +196,47 @@ def test_throughput_summary_excludes_first_interval_and_keeps_both_ranks(tmp_pat
     assert result['timed_first_optimizer_update']==100 and result['timed_last_optimizer_update']==199
     assert result['global_samples_per_second']==64
     assert result['peak_allocated_mb']==101 and result['estimated_epoch_seconds']==299
+
+
+def test_formal_candidate_deferral_requires_explicit_choice():
+    import pytest
+    from scripts.run_formal_bev_compare import validate_formal_selection
+    validate_formal_selection(['dic_s','sid2_s','dip_s16'])
+    validate_formal_selection(['sid2_s','dip_s16'],defer_dic=True)
+    for methods,deferred in ((['sid2_s','dip_s16'],False),(['sid2_s'],True),
+                             (['dic_s','sid2_s','dip_s16'],True),(['sid2_s','sid2_s'],True)):
+        with pytest.raises(ValueError):
+            validate_formal_selection(methods,deferred)
+
+
+def test_reused_gates_require_sources_config_and_actual_updates_to_match(tmp_path,monkeypatch):
+    import json
+    import pytest
+    from scripts import run_formal_bev_compare as campaign
+    from fpsgen.utils import formal_bev
+    monkeypatch.setattr(formal_bev,'source_fingerprint',lambda root:{'files':{'fpsgen/model.py':'same','scripts/runner.py':'new'}})
+    monkeypatch.setattr(campaign,'environment',lambda:{'TRAIN_DATABASE':'/dataset'})
+    base=yaml.safe_load(campaign.selected_config_path('sid2_s').read_text())
+    cfg=copy.deepcopy(base)
+    cfg['data']['data_dir']='/dataset'
+    (tmp_path/'stage_status.json').write_text(json.dumps({'status':'PASS','returncode':0}))
+    manifest=dict(status='COMPLETE',world_size=2,actual_optimizer_updates=32,
+        skipped_optimizer_steps=0,observed_local_batch_sizes=[16],compile_requested=True,
+        config=cfg,local_source_fingerprint={'files':{'fpsgen/model.py':'same','scripts/runner.py':'old'}})
+    for rank in (0,1):
+        (tmp_path/f'run_manifest_rank{rank}.json').write_text(json.dumps(manifest))
+        (tmp_path/f'preflight_rank{rank}.json').write_text(json.dumps(dict(status='PASS',steps=32,
+            all_gradients_finite=True,condition_encoder_gradient_nonzero=True)))
+    assert campaign.validate_reused_gate(tmp_path,base,32)['status']=='VALIDATED_REUSE'
+    path=tmp_path/'run_manifest_rank1.json'
+    path.write_text(json.dumps(dict(manifest,skipped_optimizer_steps=1)))
+    with pytest.raises(ValueError,match='execution contract'):
+        campaign.validate_reused_gate(tmp_path,base,32)
+    path.write_text(json.dumps(manifest))
+    changed=copy.deepcopy(base)
+    changed['model']['condition']['gate_init']=.2
+    with pytest.raises(ValueError,match='model/data'):
+        campaign.validate_reused_gate(tmp_path,changed,32)
+    monkeypatch.setattr(formal_bev,'source_fingerprint',lambda root:{'files':{'fpsgen/model.py':'changed'}})
+    with pytest.raises(ValueError,match='Training sources changed'):
+        campaign.validate_reused_gate(tmp_path,base,32)
