@@ -432,6 +432,11 @@ class FlowIMG(LightningModule):
         # PyTorch-2 environment without compiling PyKeOps or point geometry.
         self._dense_forward = self.model.forward
         runtime_cfg = self.hparams.get('runtime', {})
+        if runtime_cfg.get('activation_checkpointing', False):
+            core = getattr(self.model, 'core', None)
+            if core is None or not hasattr(core, 'activation_checkpointing'):
+                raise ValueError('This BEV core has no validated activation-checkpointing seam')
+            core.activation_checkpointing = True
         if bool(runtime_cfg.get('compile_dense', False)):
             compile_fn = getattr(torch, 'compile', None)
             if compile_fn is None:

@@ -32,6 +32,10 @@ class BEVDiCS(nn.Module):
             hidden_size=hidden, depth=tuple(dic.get("depth", [6, 6, 5, 6, 6])),
             mult_channels=tuple(dic.get("mult_channels", [1, 2, 4, 2, 1])),
             skip_stride=int(dic.get("skip_stride", 3)),
+            # Old checkpoint hyperparameters omit this key and contain
+            # trainable GroupNorm weights. Preserve their strict-load path;
+            # formal configs explicitly choose the corrected official norm.
+            final_norm=str(dic.get("final_norm", "groupnorm")),
         )
         gate_init = float(cond.get("gate_init", 0.0))
         self.condition_gates = nn.Parameter(torch.full((5,), gate_init))

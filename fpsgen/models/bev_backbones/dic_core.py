@@ -60,12 +60,27 @@ class TimestepEmbedder(nn.Module):
         return self.mlp(self.timestep_embedding(t, self.frequency_embedding_size))
 
 
-class FinalLayer(nn.Module):
-    """Official DiC final GroupNorm + adaptive modulation + 3x3 projection."""
+class LayerNorm2d(nn.LayerNorm):
+    """Official DiC channel-wise LayerNorm at each spatial cell."""
 
-    def __init__(self, hidden_size: int, out_channels: int):
+    def __init__(self, num_channels, eps=1e-6, affine=True):
+        super().__init__(num_channels, eps=eps, elementwise_affine=affine)
+
+    def forward(self, x):
+        x = x.permute(0, 2, 3, 1)
+        return F.layer_norm(x, self.normalized_shape, self.weight, self.bias,
+                            self.eps).permute(0, 3, 1, 2)
+
+
+class FinalLayer(nn.Module):
+    """Official LayerNorm2d + modulation + projection; legacy opt-in only."""
+
+    def __init__(self, hidden_size: int, out_channels: int, final_norm="layernorm2d"):
         super().__init__()
-        self.norm_final = GroupNorm(hidden_size, eps=1e-6)
+        if final_norm not in {"layernorm2d", "groupnorm"}:
+            raise ValueError("DiC final_norm must be layernorm2d or historical groupnorm")
+        self.norm_final = (LayerNorm2d(hidden_size, affine=False, eps=1e-6)
+                           if final_norm == "layernorm2d" else GroupNorm(hidden_size, eps=1e-6))
         self.out_proj = nn.Conv2d(hidden_size, out_channels, 3, padding=1)
         self.adaLN_modulation = nn.Sequential(nn.SiLU(), nn.Linear(hidden_size, 2 * hidden_size))
 
@@ -154,7 +169,8 @@ class DiCCore(nn.Module):
 
     def __init__(self, input_size: int = 256, in_channels: int = 3,
                  hidden_size: int = 96, depth=(6, 6, 5, 6, 6),
-                 mult_channels=(1, 2, 4, 2, 1), skip_stride: int = 3):
+                 mult_channels=(1, 2, 4, 2, 1), skip_stride: int = 3,
+                 final_norm="layernorm2d"):
         super().__init__()
         self.input_size = int(input_size)
         self.in_channels = int(in_channels)
@@ -163,6 +179,7 @@ class DiCCore(nn.Module):
         self.depth = tuple(int(v) for v in depth)
         self.mult_channels = tuple(int(v) for v in mult_channels)
         self.skip_stride = int(skip_stride)
+        self.activation_checkpointing = False
         if self.depth != (6, 6, 5, 6, 6) or self.mult_channels != (1, 2, 4, 2, 1):
             raise ValueError("DiC-S requires official depth=[6,6,5,6,6] and mult_channels=[1,2,4,2,1]")
         if self.skip_stride != 3:
@@ -200,7 +217,7 @@ class DiCCore(nn.Module):
             ),
         ])
         self.output = nn.Conv2d(hidden_size, hidden_size, 3, padding=1)
-        self.final_layer = FinalLayer(hidden_size, in_channels)
+        self.final_layer = FinalLayer(hidden_size, in_channels, final_norm=final_norm)
         self.initialize_weights()
 
     def initialize_weights(self):
@@ -210,6 +227,11 @@ class DiCCore(nn.Module):
                 if module.bias is not None:
                     nn.init.zeros_(module.bias)
         self.apply(basic_init)
+        if isinstance(self.final_layer.norm_final, LayerNorm2d):
+            # Official patch projection is initialized as a flattened Linear.
+            # The historical GroupNorm variant retains its old RNG path.
+            weight = self.x_embedder.proj.weight
+            nn.init.xavier_uniform_(weight.view(weight.shape[0], -1))
         for embedder in self.t_embedder_ls:
             nn.init.normal_(embedder.mlp[0].weight, std=.02)
             nn.init.normal_(embedder.mlp[2].weight, std=.02)
@@ -217,6 +239,15 @@ class DiCCore(nn.Module):
         nn.init.zeros_(self.final_layer.adaLN_modulation[-1].bias)
         nn.init.zeros_(self.final_layer.out_proj.weight)
         nn.init.zeros_(self.final_layer.out_proj.bias)
+
+    def _run_block(self, block, x, condition):
+        if self.activation_checkpointing and self.training and torch.is_grad_enabled():
+            from torch.utils.checkpoint import checkpoint
+            # These blocks have no dropout or other random operation. RNG
+            # preservation is unnecessary and hits an unsupported Dynamo2.0
+            # get_rng_state trace. No random training stream is consumed here.
+            return checkpoint(block, x, condition, use_reentrant=False, preserve_rng_state=False)
+        return block(x, condition)
 
     def forward(self, x: torch.Tensor, t: torch.Tensor, stage_add=None) -> torch.Tensor:
         if x.shape[-2:] != (self.input_size, self.input_size):
@@ -227,21 +258,23 @@ class DiCCore(nn.Module):
         x = inject(0, self.x_embedder(x))
         skips = []
         for block_index, block in enumerate(self.enc_blocks[0]):
-            x = block(x, conditions[0])
+            x = self._run_block(block, x, conditions[0])
             if (len(self.enc_blocks[0]) - 1 - block_index) % self.skip_stride == 0:
                 skips.append(x)
         x = inject(1, self.downs[0](x))
         for block_index, block in enumerate(self.enc_blocks[1]):
-            x = block(x, conditions[1])
+            x = self._run_block(block, x, conditions[1])
             if (len(self.enc_blocks[1]) - 1 - block_index) % self.skip_stride == 0:
                 skips.append(x)
         x = inject(2, self.downs[1](x))
         for block in self.lat_blocks:
-            x = block(x, conditions[2])
+            x = self._run_block(block, x, conditions[2])
         x = inject(3, self.ups[0](x))
         for block_index, block in enumerate(self.dec_blocks[0]):
-            x = block(torch.cat((x, skips.pop()), dim=1), conditions[3]) if block_index % self.skip_stride == 0 else block(x, conditions[3])
+            block_input = torch.cat((x, skips.pop()), dim=1) if block_index % self.skip_stride == 0 else x
+            x = self._run_block(block, block_input, conditions[3])
         x = inject(4, self.ups[1](x))
         for block_index, block in enumerate(self.dec_blocks[1]):
-            x = block(torch.cat((x, skips.pop()), dim=1), conditions[4]) if block_index % self.skip_stride == 0 else block(x, conditions[4])
+            block_input = torch.cat((x, skips.pop()), dim=1) if block_index % self.skip_stride == 0 else x
+            x = self._run_block(block, block_input, conditions[4])
         return self.final_layer(self.output(x), conditions[4])
