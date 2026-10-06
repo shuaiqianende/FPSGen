@@ -14,7 +14,7 @@ conclusions and dated results; live job status must be read from local logs.
 | Spatial control | [Source audit](SPATIAL_CONTROL_SOURCE_AUDIT.md), [design](SYNFLOW_CRACKSEGFLOW_PIXELCONTROL.md), [short runs](SPATIAL_CONTROL_SHORT_RUN_RESULTS.md), [statistics](SPATIAL_CONTROL_STATISTICAL_ANALYSIS.md) |
 | NCSN++ SPADE | [Study](NCSNPP_SPADE_STUDY.md) |
 | Legacy training performance | [Speed audit](BEVFLOW_TRAINING_SPEED_AUDIT.md), [packed shard pilot](BEVFLOW_PACKED_SHARD_PILOT.md) |
-| Formal BEV method comparison | [Protocol, architecture corrections and mandatory GPU23 gates](FORMAL_BEV_METHOD_COMPARISON.md) |
+| Formal BEV method comparison | [Protocol, architecture corrections and mandatory GPU23 gates](FORMAL_BEV_METHOD_COMPARISON.md), [final full-seq08 seed42 results (2026-10-06)](FULL_SEQ08_SEED42_FINAL_RESULTS.md) |
 | BEV-only evaluation | [Protocol](BEVFLOW_LIDAR_ONLY_EVALUATION.md) |
 | Original versus current checkpoints | [PointFlow screen and seeded crossover](ORIGINAL_FPSGEN_CHECKPOINT_COMPARISON.md) |
 | PointFlow XYZ visualization | [Source / actual trajectories / endpoint figure](POINTFLOW_XYZ_TRAJECTORY_VISUALIZATION.md) |

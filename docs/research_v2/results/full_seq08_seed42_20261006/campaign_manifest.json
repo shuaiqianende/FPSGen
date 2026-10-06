@@ -1,0 +1,23 @@
+{
+  "sequence": "08",
+  "expected_full_frames": 4071,
+  "generation_seeds": [
+    42
+  ],
+  "cfg": [
+    1,
+    2
+  ],
+  "condition": "100",
+  "gt_dir": "gt_possion",
+  "sampler": "Euler10",
+  "precision": "fp16",
+  "physical_gpu": 3,
+  "checkpoints": {
+    "FPSGen": "/data-12/M2024-HWZ/FPSGen/experiments/fpsgen_bevflow_legacy_gt_possion_formal_500ep_b16_gpu23_fp16_inductor/lightning_logs/version_0/checkpoints/fpsgen_bevflow_legacy_gt_possion_formal_500ep_b16_gpu23_fp16_inductor_epoch=499.ckpt",
+    "SiD2-style": "/data-12/M2024-HWZ/FPSGen/outputs/research_v2/formal_bev_compare/sid2_dip_warnonly_500ep_20261003/sid2_s_formal/final.ckpt",
+    "DiP-S16": "/data-12/M2024-HWZ/FPSGen/outputs/research_v2/formal_bev_compare/dip_single_gpu3_resume50_b32_20261005/final.ckpt"
+  },
+  "policy": "ALL available frames, not B200 subset; exact seed42 for every frame; no reuse of previous seed/B200 metrics",
+  "start": "2026-10-06T05:11:07.938165+00:00"
+}

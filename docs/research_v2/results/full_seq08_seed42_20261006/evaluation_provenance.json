@@ -1,0 +1,164 @@
+{
+  "status": "COMPLETE",
+  "end": "2026-10-06T07:01:54.654382+00:00",
+  "source_root": "outputs/research_v2/formal_bev_compare/full_seq08_seed42_gpu3_20261006",
+  "stages": [
+    {
+      "checkpoint": "/data-12/M2024-HWZ/FPSGen/experiments/fpsgen_bevflow_legacy_gt_possion_formal_500ep_b16_gpu23_fp16_inductor/lightning_logs/version_0/checkpoints/fpsgen_bevflow_legacy_gt_possion_formal_500ep_b16_gpu23_fp16_inductor_epoch=499.ckpt",
+      "checkpoint_sha256": "50cbd2d15fb0d6848ef439cbf3439460f2c75383dec4f2dd3ea538f0eb3d6c73",
+      "checkpoint_epoch": 499,
+      "checkpoint_global_step": 299000,
+      "git_commit": "e4aa153d3cca51312ee12b5478e5c8e7a4088b02",
+      "gt_dir": "gt_possion",
+      "condition": "100",
+      "layout_source": "literal_all_zero_no_semantic_layout",
+      "num_frames": 4071,
+      "samples_per_frame": 1,
+      "generation_seeds": [
+        42
+      ],
+      "runtime_precision": "fp16",
+      "dense_backend": "eager",
+      "bev_steps": 10,
+      "guidance_scale": 1.0,
+      "method": "FPSGen",
+      "validation": "PASS",
+      "finite_metric_values": 20355,
+      "frame_manifest_sha256": "7499a58405e7c939228f50f0d1e25c567f84f2aa53028f558d6030c8cfb93229"
+    },
+    {
+      "checkpoint": "/data-12/M2024-HWZ/FPSGen/experiments/fpsgen_bevflow_legacy_gt_possion_formal_500ep_b16_gpu23_fp16_inductor/lightning_logs/version_0/checkpoints/fpsgen_bevflow_legacy_gt_possion_formal_500ep_b16_gpu23_fp16_inductor_epoch=499.ckpt",
+      "checkpoint_sha256": "50cbd2d15fb0d6848ef439cbf3439460f2c75383dec4f2dd3ea538f0eb3d6c73",
+      "checkpoint_epoch": 499,
+      "checkpoint_global_step": 299000,
+      "git_commit": "e4aa153d3cca51312ee12b5478e5c8e7a4088b02",
+      "gt_dir": "gt_possion",
+      "condition": "100",
+      "layout_source": "literal_all_zero_no_semantic_layout",
+      "num_frames": 4071,
+      "samples_per_frame": 1,
+      "generation_seeds": [
+        42
+      ],
+      "runtime_precision": "fp16",
+      "dense_backend": "inductor",
+      "bev_steps": 10,
+      "guidance_scale": 2.0,
+      "method": "FPSGen",
+      "validation": "PASS",
+      "finite_metric_values": 20355,
+      "frame_manifest_sha256": "7499a58405e7c939228f50f0d1e25c567f84f2aa53028f558d6030c8cfb93229"
+    },
+    {
+      "checkpoint": "/data-12/M2024-HWZ/FPSGen/outputs/research_v2/formal_bev_compare/sid2_dip_warnonly_500ep_20261003/sid2_s_formal/final.ckpt",
+      "checkpoint_sha256": "0c47d6292d63ed3aa8e378caadcabcaeee142f6b71cd6a6f32282d6c33da0a1d",
+      "checkpoint_epoch": 500,
+      "checkpoint_global_step": 299000,
+      "git_commit": "e4aa153d3cca51312ee12b5478e5c8e7a4088b02",
+      "gt_dir": "gt_possion",
+      "condition": "100",
+      "layout_source": "literal_all_zero_no_semantic_layout",
+      "num_frames": 4071,
+      "samples_per_frame": 1,
+      "generation_seeds": [
+        42
+      ],
+      "runtime_precision": "fp16",
+      "dense_backend": "eager",
+      "bev_steps": 10,
+      "guidance_scale": 1.0,
+      "method": "SiD2-style",
+      "validation": "PASS",
+      "finite_metric_values": 20355,
+      "frame_manifest_sha256": "7499a58405e7c939228f50f0d1e25c567f84f2aa53028f558d6030c8cfb93229"
+    },
+    {
+      "checkpoint": "/data-12/M2024-HWZ/FPSGen/outputs/research_v2/formal_bev_compare/sid2_dip_warnonly_500ep_20261003/sid2_s_formal/final.ckpt",
+      "checkpoint_sha256": "0c47d6292d63ed3aa8e378caadcabcaeee142f6b71cd6a6f32282d6c33da0a1d",
+      "checkpoint_epoch": 500,
+      "checkpoint_global_step": 299000,
+      "git_commit": "e4aa153d3cca51312ee12b5478e5c8e7a4088b02",
+      "gt_dir": "gt_possion",
+      "condition": "100",
+      "layout_source": "literal_all_zero_no_semantic_layout",
+      "num_frames": 4071,
+      "samples_per_frame": 1,
+      "generation_seeds": [
+        42
+      ],
+      "runtime_precision": "fp16",
+      "dense_backend": "inductor",
+      "bev_steps": 10,
+      "guidance_scale": 2.0,
+      "method": "SiD2-style",
+      "validation": "PASS",
+      "finite_metric_values": 20355,
+      "frame_manifest_sha256": "7499a58405e7c939228f50f0d1e25c567f84f2aa53028f558d6030c8cfb93229"
+    },
+    {
+      "checkpoint": "/data-12/M2024-HWZ/FPSGen/outputs/research_v2/formal_bev_compare/dip_single_gpu3_resume50_b32_20261005/final.ckpt",
+      "checkpoint_sha256": "af640453aef2defcc105adcc323d2f6f0621d938c3d47acac0bde1b1fe1bc9f0",
+      "checkpoint_epoch": 500,
+      "checkpoint_global_step": 299000,
+      "git_commit": "e4aa153d3cca51312ee12b5478e5c8e7a4088b02",
+      "gt_dir": "gt_possion",
+      "condition": "100",
+      "layout_source": "literal_all_zero_no_semantic_layout",
+      "num_frames": 4071,
+      "samples_per_frame": 1,
+      "generation_seeds": [
+        42
+      ],
+      "runtime_precision": "fp16",
+      "dense_backend": "eager",
+      "bev_steps": 10,
+      "guidance_scale": 1.0,
+      "method": "DiP-S16",
+      "validation": "PASS",
+      "finite_metric_values": 20355,
+      "frame_manifest_sha256": "7499a58405e7c939228f50f0d1e25c567f84f2aa53028f558d6030c8cfb93229"
+    },
+    {
+      "checkpoint": "/data-12/M2024-HWZ/FPSGen/outputs/research_v2/formal_bev_compare/dip_single_gpu3_resume50_b32_20261005/final.ckpt",
+      "checkpoint_sha256": "af640453aef2defcc105adcc323d2f6f0621d938c3d47acac0bde1b1fe1bc9f0",
+      "checkpoint_epoch": 500,
+      "checkpoint_global_step": 299000,
+      "git_commit": "e4aa153d3cca51312ee12b5478e5c8e7a4088b02",
+      "gt_dir": "gt_possion",
+      "condition": "100",
+      "layout_source": "literal_all_zero_no_semantic_layout",
+      "num_frames": 4071,
+      "samples_per_frame": 1,
+      "generation_seeds": [
+        42
+      ],
+      "runtime_precision": "fp16",
+      "dense_backend": "inductor",
+      "bev_steps": 10,
+      "guidance_scale": 2.0,
+      "method": "DiP-S16",
+      "validation": "PASS",
+      "finite_metric_values": 20355,
+      "frame_manifest_sha256": "7499a58405e7c939228f50f0d1e25c567f84f2aa53028f558d6030c8cfb93229"
+    }
+  ],
+  "artifacts": {
+    "final_quality_full_seq08_seed42.csv": {
+      "source_sha256": "03f57ceccd2f9bb59afed4f5f09118982e9ee729b952d24f1ebf221f302e9a47",
+      "source_bytes": 1797
+    },
+    "training_and_parameters.csv": {
+      "source_sha256": "b00be9c5ac4ffd9959bbe06fa308762bf0b4e339f80eea9561835f1795bbb90f",
+      "source_bytes": 882
+    },
+    "paired_bootstrap_full_seq08_seed42.json": {
+      "source_sha256": "eaeffc135c1257bdff54ac98fe08d2049d3e70c3702d5024852f23ec69eaf54b",
+      "source_bytes": 6930
+    },
+    "final_report.json": {
+      "source_sha256": "eb6281bfc8ba1baf5b1ade38f9c51846267e5201f262309bd9de46acce34611a",
+      "source_bytes": 13190
+    }
+  },
+  "export_note": "Summary CSV line endings normalized to LF; numerical fields unchanged. Large raw frame metrics and checkpoints remain local."
+}

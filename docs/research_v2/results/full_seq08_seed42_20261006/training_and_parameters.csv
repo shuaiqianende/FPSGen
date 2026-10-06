@@ -1,0 +1,4 @@
+method,params_core,params_condition,params_pointpillar,params_total,train_loss_final500,train_loss_final200,execution,wall_seconds,skipped_updates,historical_limitations,skipped_updates_by_rank,peak_allocated_mib,continuation_wall_seconds,continuation_skipped_updates,peak_allocated_mib_continuation,limitation
+FPSGen,21498179,2032736,1600,23532515,0.08148056268692017,0.0814843699336052,500ep DDP2 x batch16,,,No complete original rank manifests/scaler skip count,,,,,,
+SiD2-style,44114188,360968,1600,44476756,0.0890362560749054,0.08929973095655441,500ep DDP2 x batch16,100880.09914662968,,,"[113, 113]",9375.10009765625,,,,
+DiP-S16,39038467,3489794,1600,42529861,0.10023187100887299,0.09959966689348221,epoch1-50 DDP2 x16; epoch51-500 GPU3 x32,,,,,,130052.4873458948,99,9804.01708984375,Global batch32 preserved; world-size/data ordering/private RNG stream changed at resume

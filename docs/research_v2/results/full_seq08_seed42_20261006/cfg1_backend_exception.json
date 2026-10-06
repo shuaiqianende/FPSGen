@@ -1,0 +1,9 @@
+{
+  "cfg1_dense_backend": "eager",
+  "cfg2_dense_backend": "inductor",
+  "runtime_precision": "fp16",
+  "scope": "All three CFG1 methods, not only FPSGen; completed CFG2 preserved",
+  "reason": "Repeated CFG1 compiled runtime NaN with finite inputs; same-input eager replays finite",
+  "diagnosis": "Exact low-level cause unresolved; baddbmm probe fix did NOT resolve real evaluation",
+  "policy": "Stop on any eager failure; no frame skipping or precision/seed changes"
+}

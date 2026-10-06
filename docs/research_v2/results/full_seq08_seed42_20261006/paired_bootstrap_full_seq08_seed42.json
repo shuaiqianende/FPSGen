@@ -1,0 +1,217 @@
+{
+  "comparisons": {
+    "SiD2-style": {
+      "cfg1": {
+        "occupancy_iou": {
+          "mean_delta_fpsgen_minus_baseline": 0.0125237328945873,
+          "ci95": [
+            0.011910474367002337,
+            0.013129646325032326
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "occupancy_f1": {
+          "mean_delta_fpsgen_minus_baseline": 0.007892016168602325,
+          "ci95": [
+            0.007494438493231302,
+            0.00828517836124415
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "completion_f1": {
+          "mean_delta_fpsgen_minus_baseline": 0.010866996317230726,
+          "ci95": [
+            0.010322594337368502,
+            0.011407809888473222
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "height_mae_gtocc_m": {
+          "mean_delta_fpsgen_minus_baseline": -0.060998702292300595,
+          "ci95": [
+            -0.06326611565411808,
+            -0.058746490945059966
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "negative"
+        },
+        "density_mass_tv": {
+          "mean_delta_fpsgen_minus_baseline": -0.011896094264752213,
+          "ci95": [
+            -0.012373104936929863,
+            -0.011414582218889725
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "negative"
+        }
+      },
+      "cfg2": {
+        "occupancy_iou": {
+          "mean_delta_fpsgen_minus_baseline": 0.008971464748143622,
+          "ci95": [
+            0.008293351510164925,
+            0.009647641119207923
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "occupancy_f1": {
+          "mean_delta_fpsgen_minus_baseline": 0.005630636326483677,
+          "ci95": [
+            0.005187178506909175,
+            0.0060685910956187845
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "completion_f1": {
+          "mean_delta_fpsgen_minus_baseline": 0.00810520447199481,
+          "ci95": [
+            0.0074978686007139165,
+            0.008699380952130076
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "height_mae_gtocc_m": {
+          "mean_delta_fpsgen_minus_baseline": -0.05586345439986789,
+          "ci95": [
+            -0.05842574386580867,
+            -0.05330008725603451
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "negative"
+        },
+        "density_mass_tv": {
+          "mean_delta_fpsgen_minus_baseline": -0.0057993883166843774,
+          "ci95": [
+            -0.006300988413065899,
+            -0.005293894138665756
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "negative"
+        }
+      }
+    },
+    "DiP-S16": {
+      "cfg1": {
+        "occupancy_iou": {
+          "mean_delta_fpsgen_minus_baseline": 0.002309818257280545,
+          "ci95": [
+            0.001710137027585515,
+            0.0029108501284458043
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "occupancy_f1": {
+          "mean_delta_fpsgen_minus_baseline": 0.001292757292808171,
+          "ci95": [
+            0.0009080625603808668,
+            0.0016773745545706088
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "completion_f1": {
+          "mean_delta_fpsgen_minus_baseline": 0.00040906014708329464,
+          "ci95": [
+            -0.00011547386565743715,
+            0.000936138444701157
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "height_mae_gtocc_m": {
+          "mean_delta_fpsgen_minus_baseline": 0.019876368770257346,
+          "ci95": [
+            0.017696665571483222,
+            0.02203473682501368
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "negative"
+        },
+        "density_mass_tv": {
+          "mean_delta_fpsgen_minus_baseline": 0.0004788109709196904,
+          "ci95": [
+            -4.685392227637839e-06,
+            0.0009628780818496514
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "negative"
+        }
+      },
+      "cfg2": {
+        "occupancy_iou": {
+          "mean_delta_fpsgen_minus_baseline": -0.001087398954821113,
+          "ci95": [
+            -0.0017571812244399822,
+            -0.0004114126440231878
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "occupancy_f1": {
+          "mean_delta_fpsgen_minus_baseline": -0.000921376285609201,
+          "ci95": [
+            -0.001353280968072812,
+            -0.00047965082723132167
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "completion_f1": {
+          "mean_delta_fpsgen_minus_baseline": -0.0018031536083319825,
+          "ci95": [
+            -0.0023838570752796272,
+            -0.0012106653503310444
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "positive"
+        },
+        "height_mae_gtocc_m": {
+          "mean_delta_fpsgen_minus_baseline": 0.004622835077544859,
+          "ci95": [
+            0.0021609782872461215,
+            0.007014004358332269
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "negative"
+        },
+        "density_mass_tv": {
+          "mean_delta_fpsgen_minus_baseline": 0.0006964173276838464,
+          "ci95": [
+            0.00017142126144984522,
+            0.001206197862878709
+          ],
+          "bootstrap_resamples": 10000,
+          "bootstrap_seed": 20261001,
+          "better_delta_sign": "negative"
+        }
+      }
+    }
+  },
+  "caveat": "Frame-level paired descriptive uncertainty; temporal seq08 frames are correlated; one training/generation seed, not across-seed or architecture-wide significance"
+}
