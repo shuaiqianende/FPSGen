@@ -1,0 +1,60 @@
+{
+  "stage": "stage1",
+  "status": "PASS",
+  "mechanics_smoke_only": true,
+  "source_distribution_validated": false,
+  "config_sha256": "5b5882920050fde8a6462145eddff1d5f183bdfd38325fe0a0601596f4306de5",
+  "parameter_count": 22082470,
+  "successful_updates": 16,
+  "attempts": 16,
+  "seen_frames": 16,
+  "all_gradients_finite": true,
+  "peak_vram_bytes": 5091105792,
+  "seconds": 17.327810410410166,
+  "mean_step_seconds": 1.0829881506506354,
+  "physical_visible": "2",
+  "world_size": 1,
+  "source_counts": {
+    "supervised_density": 16
+  },
+  "steady_step_seconds_excluding_first": 0.7668965594222148,
+  "first_step_details": [
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 0,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000000.ply"
+      },
+      "source_kind": "supervised_density",
+      "pos": 0.616814911365509,
+      "bg": 1.3998494523548288e-06,
+      "coarse": 0.1480376273393631,
+      "dist": 0.9659401178359985,
+      "mass": 0.9856325387954712,
+      "direction": 0.5001568794250488,
+      "auxiliary": 0.8812043070793152,
+      "total": 1.2003681659698486
+    }
+  ],
+  "last_step_details": [
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 0,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000000.ply"
+      },
+      "source_kind": "supervised_density",
+      "pos": 0.2926114499568939,
+      "bg": 0.008165687322616577,
+      "coarse": 0.08841574192047119,
+      "dist": 0.5732046365737915,
+      "mass": 0.2661685645580292,
+      "direction": 0.2141466736793518,
+      "auxiliary": 0.38666781783103943,
+      "total": 0.5589882135391235
+    }
+  ],
+  "refined_target_count": 0
+}

@@ -1,0 +1,73 @@
+{
+  "config_sha256": "b4cbdd877a5c33f05da3abcb90068acceafd405cd32f6c67971fb42992d0651f",
+  "upstream_commit": "e10d8280de96d4f03f54b616e57e7c6754044fa4",
+  "original_parameters": 22084900,
+  "adapted_parameters": 22082470,
+  "modules": {
+    "lidar_tokenizer": {
+      "original": 75596,
+      "adapted": 75596
+    },
+    "voxel_backbone": {
+      "original": 6639360,
+      "adapted": 6639360
+    },
+    "voxel_neck": {
+      "original": 951296,
+      "adapted": 951296
+    },
+    "local_backbone": {
+      "original": 9295104,
+      "adapted": 9295104
+    },
+    "local_neck": {
+      "original": 4190424,
+      "adapted": 4190424
+    },
+    "main_head": {
+      "original": 710528,
+      "adapted": 709313
+    },
+    "aux_head": {
+      "original": 222592,
+      "adapted": 221377
+    }
+  },
+  "output_shape": [
+    1,
+    1,
+    256,
+    256,
+    32
+  ],
+  "output_shape_note": "contract; forward gate recorded separately",
+  "tokenizer_preserved": true,
+  "backbone_preserved": true,
+  "neck_preserved": true,
+  "spatially_decoupled_encoder_preserved": true,
+  "six_direction_refinement_layers": 4,
+  "input_feature_adaptation": "relative XYZ + absolute XY + norm(XYZ)/50; no intensity or labels",
+  "coarse_grid": [
+    128,
+    128,
+    16
+  ],
+  "coarse_cell_size": [
+    0.78125,
+    0.78125,
+    0.525
+  ],
+  "compatibility_patches": [
+    "remove registry/semantic-loss imports",
+    "flatten parameterless Ident/VoxelAggregatorDual wrappers",
+    "correct grid_sample ZYX coordinates and align_corners=False normalization"
+  ],
+  "task_adaptations": [
+    "20 \u2192 1 output channels in main/aux heads",
+    "negative trainable final density bias",
+    "FP32 softplus/count losses",
+    "density-derived six-direction occupied-run supervision",
+    "open circle/Z ROI",
+    "no GT refinement / camera / semantic supervision"
+  ]
+}

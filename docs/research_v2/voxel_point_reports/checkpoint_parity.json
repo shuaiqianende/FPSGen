@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "points": 512,
+  "purpose": "checkpoint numerical parity only; 180k gates are separate",
+  "config_sha256": "581fc7a6c6325959ac183aff8d3df5466f6f36b0d9a1bc3f84b52e4f57f9a35d",
+  "max_output_difference": 0.0,
+  "max_gradient_difference": 0.0,
+  "finite": true
+}

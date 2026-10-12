@@ -1,0 +1,230 @@
+{
+  "config_sha256": "8d4a6e48c000e6f5638abea7f1c26bce4e9d26f681c0c97ec6a78358c2b45d11",
+  "mechanics_smoke_only": true,
+  "pseudo_targets_reliable": false,
+  "gate_note": "Requires frozen 20 \u2192 100 scene quality review on BOTH source kinds; never automatic from one smoke.",
+  "rows": [
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 0,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000000.ply"
+      },
+      "source_kind": "predicted_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 32,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.34921252727508545,
+          "spacing_mean": 0.186632439494133,
+          "spacing_cv": 1.062875509262085,
+          "fscore_0.1": 0.1377630842110714,
+          "coverage_0.1": 0.12933889031410217,
+          "fscore_0.2": 0.5509512767505158,
+          "coverage_0.2": 0.5405444502830505,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.31732457876205444,
+          "spacing_mean": 0.1517317146062851,
+          "spacing_cv": 1.3306288719177246,
+          "fscore_0.1": 0.2129746308723399,
+          "coverage_0.1": 0.1901833415031433,
+          "fscore_0.2": 0.659456523284909,
+          "coverage_0.2": 0.5815944671630859,
+          "out_of_range_ratio": 6.111110997153446e-05
+        },
+        "nearest_gt": {
+          "cd": 0.1308704912662506,
+          "spacing_mean": 0.04727422446012497,
+          "spacing_cv": 2.290712356567383,
+          "fscore_0.1": 0.6261639598608715,
+          "coverage_0.1": 0.4557777941226959,
+          "fscore_0.2": 0.7456577359948194,
+          "coverage_0.2": 0.5944611430168152,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.20716649293899536,
+          "spacing_mean": 0.09471669793128967,
+          "spacing_cv": 0.9876809120178223,
+          "fscore_0.1": 0.28259556098952077,
+          "coverage_0.1": 0.23126111924648285,
+          "fscore_0.2": 0.7443530607885975,
+          "coverage_0.2": 0.6155222058296204,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.31732457876205444,
+          "spacing_mean": 0.1517317146062851,
+          "spacing_cv": 1.3306288719177246,
+          "fscore_0.1": 0.2129746308723399,
+          "coverage_0.1": 0.1901833415031433,
+          "fscore_0.2": 0.659456523284909,
+          "coverage_0.2": 0.5815944671630859,
+          "out_of_range_ratio": 6.111110997153446e-05
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": false,
+        "fallback_used": true,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 0.004439234267920256,
+        "col_error": 3.551576810423285e-10,
+        "row_error_mean": 2.912759100581752e-06,
+        "col_error_mean": 1.4060449853026125e-11,
+        "bad_row_ratio": 0.9888222217559814,
+        "bad_col_ratio": 0.0,
+        "entropy": 13.091440200805664,
+        "num_edges": 7939619,
+        "edge_plan_finite": true,
+        "zero_row_ratio": 0.0,
+        "zero_column_ratio": 0.0,
+        "graph_every_source_target_covered": true,
+        "plan_every_source_target_covered": true,
+        "row_relative_error": 799.062168225646,
+        "column_relative_error": 6.392838258761913e-05,
+        "candidate": {
+          "cd": 0.11828488856554031,
+          "spacing_mean": 0.1302545964717865,
+          "spacing_cv": 0.6666666269302368,
+          "fscore_0.1": 0.5937745859467929,
+          "coverage_0.1": 0.5338166952133179,
+          "fscore_0.2": 0.8910598765965737,
+          "coverage_0.2": 0.8146944642066956,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 26.585838317871094,
+        "reason": "marginal or geometry gate failed",
+        "peak_vram_bytes": 1143606784,
+        "runtime_seconds": 1.4269482288509607
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 1,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000001.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000001.ply"
+      },
+      "source_kind": "predicted_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 32,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.34914207458496094,
+          "spacing_mean": 0.1858638972043991,
+          "spacing_cv": 1.0395936965942383,
+          "fscore_0.1": 0.13619084434445394,
+          "coverage_0.1": 0.12800556421279907,
+          "fscore_0.2": 0.5492671956095523,
+          "coverage_0.2": 0.5407721996307373,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.31739065051078796,
+          "spacing_mean": 0.15131503343582153,
+          "spacing_cv": 1.2987604141235352,
+          "fscore_0.1": 0.21337852906785995,
+          "coverage_0.1": 0.19056667387485504,
+          "fscore_0.2": 0.6556460836066293,
+          "coverage_0.2": 0.57868891954422,
+          "out_of_range_ratio": 8.333333244081587e-05
+        },
+        "nearest_gt": {
+          "cd": 0.1307581663131714,
+          "spacing_mean": 0.0467645637691021,
+          "spacing_cv": 2.295846700668335,
+          "fscore_0.1": 0.6244999662216894,
+          "coverage_0.1": 0.45401668548583984,
+          "fscore_0.2": 0.7419977159495608,
+          "coverage_0.2": 0.5898222327232361,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.2078293412923813,
+          "spacing_mean": 0.09472998231649399,
+          "spacing_cv": 0.9829562306404114,
+          "fscore_0.1": 0.28103462553959957,
+          "coverage_0.1": 0.2304111123085022,
+          "fscore_0.2": 0.7420627492264787,
+          "coverage_0.2": 0.6129500269889832,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.31739065051078796,
+          "spacing_mean": 0.15131503343582153,
+          "spacing_cv": 1.2987604141235352,
+          "fscore_0.1": 0.21337852906785995,
+          "coverage_0.1": 0.19056667387485504,
+          "fscore_0.2": 0.6556460836066293,
+          "coverage_0.2": 0.57868891954422,
+          "out_of_range_ratio": 8.333333244081587e-05
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": false,
+        "fallback_used": true,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 0.003140659537166357,
+        "col_error": 3.533386916387826e-10,
+        "row_error_mean": 2.9167354114179034e-06,
+        "col_error_mean": 1.3895957301501838e-11,
+        "bad_row_ratio": 0.988527774810791,
+        "bad_col_ratio": 0.0,
+        "entropy": 13.088876724243164,
+        "num_edges": 7941566,
+        "edge_plan_finite": true,
+        "zero_row_ratio": 0.0,
+        "zero_column_ratio": 0.0,
+        "graph_every_source_target_covered": true,
+        "plan_every_source_target_covered": true,
+        "row_relative_error": 565.3187166899443,
+        "column_relative_error": 6.360096449498087e-05,
+        "candidate": {
+          "cd": 0.11830630898475647,
+          "spacing_mean": 0.13036532700061798,
+          "spacing_cv": 0.6750233769416809,
+          "fscore_0.1": 0.5937563945994263,
+          "coverage_0.1": 0.5329166650772095,
+          "fscore_0.2": 0.889650649566021,
+          "coverage_0.2": 0.8124666810035706,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 25.613609313964844,
+        "reason": "marginal or geometry gate failed",
+        "peak_vram_bytes": 1145080832,
+        "runtime_seconds": 1.1787421647459269
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "cpu_tests": 18,
+  "cpu_status": "PASS",
+  "pip_check_voxdet": "PASS",
+  "pip_check_pointflow": "PASS",
+  "compileall": "PASS",
+  "shell_syntax": "PASS",
+  "no_dense_cost_call_in_active_code": true,
+  "final_reference_base_gpu_regression": "PASS"
+}

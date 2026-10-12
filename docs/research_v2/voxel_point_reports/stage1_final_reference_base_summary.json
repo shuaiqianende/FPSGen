@@ -1,0 +1,23 @@
+{
+  "stage": "stage1",
+  "status": "PASS",
+  "mechanics_smoke_only": true,
+  "source_distribution_validated": false,
+  "config_sha256": "b4cbdd877a5c33f05da3abcb90068acceafd405cd32f6c67971fb42992d0651f",
+  "parameter_count": 22082470,
+  "successful_updates": 1,
+  "attempts": 1,
+  "seen_frames": 1,
+  "attempted_frame_exposures": 1,
+  "all_gradients_finite": true,
+  "source_counts": {
+    "supervised_density": 1
+  },
+  "refined_target_count": 0,
+  "peak_vram_bytes": 4899258368,
+  "peak_reserved_bytes": 5221908480,
+  "seconds": 3.613061970099807,
+  "mean_step_seconds": 3.613061970099807,
+  "physical_visible": "2",
+  "world_size": 1
+}

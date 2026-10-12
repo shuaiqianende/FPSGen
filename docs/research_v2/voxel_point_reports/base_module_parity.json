@@ -1,0 +1,7 @@
+{
+  "before_state_sha256": "47fbbd644ff83c438e3956bcee1a87d11b04b89eb897928e471898612e860df4",
+  "after_state_sha256": "47fbbd644ff83c438e3956bcee1a87d11b04b89eb897928e471898612e860df4",
+  "parameters": 22082470,
+  "unchanged": true,
+  "note": "Preserve original MMCV BaseModule for tokenizer and MMEngine BaseModule for necks; parameter/state identity checked."
+}

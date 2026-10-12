@@ -1,0 +1,9 @@
+{
+  "LiDiff_commit": "570e73c5c8200813adf834822f0151f12dcef105",
+  "LiDiff_loader_path": "lidiff/datasets/dataloader/SemanticKITTITemporal.py",
+  "LiDiff_loader_sha256": "75eb1b622a1725381e4679ff242bb912a98686174d0359a28ec00b6eeb7733bc",
+  "LiDiff_lower_z_filter": "z > -4.0; no fixed VoxDet occupancy grid contract",
+  "scripts/generate_semantickitti_poisson_gt.py_sha256": "98d8891c745b6bfa1c3679f3f8ea729365c5c9b53c4b24e0975964580644e22d",
+  "fpsgen/datasets/dataloader/semantic_kitti.py_sha256": "70542a6a6c6d2217f997e20efa37527d4b8e9ee13b7143eeb8e6f52ad4500b60",
+  "docs/research_v2/GT_POSSSION_TRAINING_CONTRACT.md_sha256": "e11945216fa00663b75c145742e833684ae7b790c44f0387736750ac320b0b50"
+}

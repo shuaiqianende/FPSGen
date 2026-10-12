@@ -1,0 +1,3 @@
+# Retain byte-identical pinned upstream references, including their whitespace.
+VoxDet/** whitespace=-blank-at-eol,-blank-at-eof
+PWM/** whitespace=-blank-at-eol,-blank-at-eof

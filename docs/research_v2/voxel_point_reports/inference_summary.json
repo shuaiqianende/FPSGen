@@ -1,0 +1,340 @@
+{
+  "status": "PASS",
+  "gt_used": false,
+  "teacher_used": false,
+  "sinkhorn_used": false,
+  "stage1_hidden_features_passed": false,
+  "stage1_network_evaluations_per_frame": 1,
+  "peak_vram_bytes": 3203882496,
+  "mechanics_smoke_only": true,
+  "provenance": {
+    "config_sha256": "31c2d43d0b5dd3a6a8e7e1fbbc0bcb00e31c9335cd32059f344ac6228b16ae43",
+    "stage1_checkpoint_sha256": "ddb7c24241aa0482adc4a5d8d68811380604bded6e51f4306002d6c0aeaa055e",
+    "student_checkpoint_sha256": "95b5f21ec1db03f617e2fa9682b9736f13dab0403581a9508fe25f081518394f",
+    "physical_visible": "3",
+    "mechanics_smoke_only": true,
+    "euler_steps": 8
+  },
+  "frames": [
+    {
+      "id": "00_000000",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 2696.7649459838867,
+        "allocation_and_anchors": 21.97234146296978,
+        "pointflow": 3531.7874122411013,
+        "total": 6250.524699687958
+      }
+    },
+    {
+      "id": "00_000001",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 143.8710018992424,
+        "allocation_and_anchors": 20.755881443619728,
+        "pointflow": 2546.064890921116,
+        "total": 2710.691774263978
+      }
+    },
+    {
+      "id": "00_000002",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.16645653545856,
+        "allocation_and_anchors": 23.165442049503326,
+        "pointflow": 2548.787957057357,
+        "total": 2716.1198556423187
+      }
+    },
+    {
+      "id": "00_000003",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.31829564273357,
+        "allocation_and_anchors": 15.997534617781639,
+        "pointflow": 2535.36045178771,
+        "total": 2695.6762820482254
+      }
+    },
+    {
+      "id": "00_000004",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.28463764488697,
+        "allocation_and_anchors": 18.900740891695023,
+        "pointflow": 2536.6775635629892,
+        "total": 2699.8629420995712
+      }
+    },
+    {
+      "id": "00_000005",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 143.80493946373463,
+        "allocation_and_anchors": 20.86622826755047,
+        "pointflow": 2539.444014430046,
+        "total": 2704.115182161331
+      }
+    },
+    {
+      "id": "00_000006",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 143.84633861482143,
+        "allocation_and_anchors": 22.490648552775383,
+        "pointflow": 2541.82231426239,
+        "total": 2708.159301429987
+      }
+    },
+    {
+      "id": "00_000007",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 143.9083367586136,
+        "allocation_and_anchors": 21.57711423933506,
+        "pointflow": 2540.9481786191463,
+        "total": 2706.433629617095
+      }
+    },
+    {
+      "id": "00_000008",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 143.7110472470522,
+        "allocation_and_anchors": 21.44954726099968,
+        "pointflow": 2548.599001020193,
+        "total": 2713.759595528245
+      }
+    },
+    {
+      "id": "00_000009",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.11309733986855,
+        "allocation_and_anchors": 21.239057183265686,
+        "pointflow": 2552.6890587061644,
+        "total": 2718.0412132292986
+      }
+    },
+    {
+      "id": "00_000010",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.3621702492237,
+        "allocation_and_anchors": 22.735852748155594,
+        "pointflow": 2557.284738868475,
+        "total": 2724.3827618658543
+      }
+    },
+    {
+      "id": "00_000011",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.48915049433708,
+        "allocation_and_anchors": 20.4631220549345,
+        "pointflow": 2555.7530373334885,
+        "total": 2720.70530988276
+      }
+    },
+    {
+      "id": "00_000012",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.40950192511082,
+        "allocation_and_anchors": 25.192204862833023,
+        "pointflow": 2556.886589154601,
+        "total": 2726.488295942545
+      }
+    },
+    {
+      "id": "00_000013",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.31971311569214,
+        "allocation_and_anchors": 23.85522797703743,
+        "pointflow": 2563.323199748993,
+        "total": 2731.4981408417225
+      }
+    },
+    {
+      "id": "00_000014",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.74906027317047,
+        "allocation_and_anchors": 26.490258052945137,
+        "pointflow": 2561.3864045590162,
+        "total": 2732.625722885132
+      }
+    },
+    {
+      "id": "00_000015",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.57359164953232,
+        "allocation_and_anchors": 30.010856688022614,
+        "pointflow": 2573.786800727248,
+        "total": 2748.371249064803
+      }
+    },
+    {
+      "id": "00_000016",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.55908723175526,
+        "allocation_and_anchors": 25.16813389956951,
+        "pointflow": 2566.0886224359274,
+        "total": 2735.815843567252
+      }
+    },
+    {
+      "id": "00_000017",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.5448324084282,
+        "allocation_and_anchors": 25.69275163114071,
+        "pointflow": 2565.347107127309,
+        "total": 2735.5846911668777
+      }
+    },
+    {
+      "id": "00_000018",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.62267607450485,
+        "allocation_and_anchors": 28.611410409212112,
+        "pointflow": 2560.19982136786,
+        "total": 2733.433907851577
+      }
+    },
+    {
+      "id": "00_000019",
+      "final_shape": [
+        180000,
+        3
+      ],
+      "density_finite": true,
+      "allocated_points": 180000,
+      "final_finite": true,
+      "timing_ms": {
+        "stage1": 144.9426580220461,
+        "allocation_and_anchors": 21.772703155875206,
+        "pointflow": 2563.6190809309483,
+        "total": 2730.3344421088696
+      }
+    }
+  ]
+}

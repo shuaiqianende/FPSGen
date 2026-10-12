@@ -1,0 +1,2752 @@
+{
+  "config_sha256": "5b5882920050fde8a6462145eddff1d5f183bdfd38325fe0a0601596f4306de5",
+  "manifest_sha256": "c0d5babb4da5975284baf837be61a97c2dd7a9b8ec6f6b0d0ed2bf2d22daeedd",
+  "split_sizes": {
+    "train": 17870,
+    "development": 900,
+    "excluded_guard": 360
+  },
+  "audited_frames": 100,
+  "accepted": 100,
+  "anomalies": [],
+  "statistics": [
+    {
+      "sequence": "00",
+      "frame": 0,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 81654,
+      "occupancy_ratio": 0.0491275991528687,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2015498,
+        28532,
+        23894,
+        17303,
+        8571,
+        2715,
+        567,
+        66,
+        6
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 193,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 74139,
+      "occupancy_ratio": 0.044606156141701964,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2023013,
+        22929,
+        19505,
+        16189,
+        9845,
+        4217,
+        1188,
+        229,
+        35,
+        2
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 386,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 91641,
+      "occupancy_ratio": 0.05513633519445514,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2005511,
+        37089,
+        29719,
+        17368,
+        6116,
+        1194,
+        150,
+        5
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 579,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 87113,
+      "occupancy_ratio": 0.052412037928378896,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2010039,
+        32407,
+        27651,
+        18114,
+        7076,
+        1582,
+        251,
+        27,
+        5
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 772,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 54338,
+      "occupancy_ratio": 0.03269277050442819,
+      "maximum_count": 13,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2042814,
+        12098,
+        10199,
+        9180,
+        8387,
+        6504,
+        4163,
+        2254,
+        1024,
+        385,
+        108,
+        30,
+        5,
+        1
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 966,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 68630,
+      "occupancy_ratio": 0.041291634578359646,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2028522,
+        19908,
+        16665,
+        13757,
+        10017,
+        5299,
+        2167,
+        638,
+        153,
+        25,
+        0,
+        1
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 1159,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 83670,
+      "occupancy_ratio": 0.05034053715825953,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2013482,
+        29974,
+        25112,
+        17777,
+        8109,
+        2228,
+        405,
+        55,
+        10
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 1352,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 73417,
+      "occupancy_ratio": 0.044171760685406236,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2023735,
+        23322,
+        19106,
+        14784,
+        9509,
+        4632,
+        1618,
+        367,
+        70,
+        9
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 1545,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 70094,
+      "occupancy_ratio": 0.04217245860608394,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2027058,
+        20027,
+        17619,
+        15159,
+        10161,
+        4812,
+        1767,
+        461,
+        69,
+        17,
+        2
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 1739,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 55483,
+      "occupancy_ratio": 0.033381666345783594,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2041669,
+        12661,
+        10614,
+        9858,
+        8459,
+        6307,
+        3965,
+        2190,
+        961,
+        353,
+        89,
+        21,
+        5
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 1932,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 60229,
+      "occupancy_ratio": 0.03623712456680785,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2036923,
+        15820,
+        12285,
+        10953,
+        8790,
+        6320,
+        3530,
+        1683,
+        647,
+        162,
+        33,
+        6
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 2125,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 68695,
+      "occupancy_ratio": 0.0413307422025414,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2028457,
+        21001,
+        15844,
+        13266,
+        9790,
+        5541,
+        2361,
+        682,
+        184,
+        24,
+        2
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 2318,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 74480,
+      "occupancy_ratio": 0.04481132075471698,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2022672,
+        23334,
+        19600,
+        16120,
+        9829,
+        4108,
+        1211,
+        245,
+        28,
+        5
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 2511,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 68206,
+      "occupancy_ratio": 0.041036532537543316,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2028946,
+        20287,
+        15979,
+        13589,
+        9479,
+        5463,
+        2372,
+        805,
+        200,
+        30,
+        2
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 2705,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 58301,
+      "occupancy_ratio": 0.03507713226800154,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2038851,
+        14979,
+        11295,
+        10207,
+        8696,
+        6338,
+        3720,
+        1964,
+        745,
+        272,
+        76,
+        8,
+        1
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 2898,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 73652,
+      "occupancy_ratio": 0.044313149788217175,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2023500,
+        24859,
+        17970,
+        14174,
+        9573,
+        4744,
+        1781,
+        440,
+        98,
+        13
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 3091,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 59774,
+      "occupancy_ratio": 0.03596337119753562,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2037378,
+        15119,
+        12357,
+        11062,
+        9009,
+        6223,
+        3416,
+        1693,
+        631,
+        212,
+        46,
+        5,
+        1
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 3284,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 96642,
+      "occupancy_ratio": 0.05814521563342318,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        2000510,
+        42434,
+        31785,
+        16640,
+        4929,
+        767,
+        84,
+        3
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 3478,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 52881,
+      "occupancy_ratio": 0.03181615806700039,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2044271,
+        11087,
+        9564,
+        8879,
+        8214,
+        6709,
+        4405,
+        2475,
+        1077,
+        364,
+        81,
+        22,
+        4
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 3671,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 69975,
+      "occupancy_ratio": 0.042100861571043514,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2027177,
+        20547,
+        17236,
+        14677,
+        9969,
+        5040,
+        1833,
+        532,
+        119,
+        20,
+        2
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 3864,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 72366,
+      "occupancy_ratio": 0.0435394204851752,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2024786,
+        22124,
+        18681,
+        15070,
+        9779,
+        4616,
+        1649,
+        371,
+        67,
+        9
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 4057,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 55590,
+      "occupancy_ratio": 0.03344604351174432,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2041562,
+        12017,
+        10667,
+        10129,
+        9038,
+        6610,
+        4136,
+        2023,
+        708,
+        210,
+        43,
+        9
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 4250,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 55911,
+      "occupancy_ratio": 0.033639175009626494,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2041241,
+        12232,
+        10738,
+        10174,
+        8997,
+        6846,
+        4071,
+        1950,
+        696,
+        169,
+        32,
+        5,
+        1
+      ]
+    },
+    {
+      "sequence": "00",
+      "frame": 4444,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 80704,
+      "occupancy_ratio": 0.04855602618405853,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2016448,
+        27772,
+        23170,
+        17379,
+        8920,
+        2798,
+        583,
+        73,
+        9
+      ]
+    },
+    {
+      "sequence": "01",
+      "frame": 96,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 92235,
+      "occupancy_ratio": 0.05549371871390065,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2004917,
+        40375,
+        26775,
+        16472,
+        6706,
+        1635,
+        244,
+        28
+      ]
+    },
+    {
+      "sequence": "01",
+      "frame": 289,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 31218,
+      "occupancy_ratio": 0.018782489410858683,
+      "maximum_count": 20,
+      "occupied_quantiles": {
+        "p50": 5.0,
+        "p90": 11.0,
+        "p99": 14.0
+      },
+      "voxel_count_histogram": [
+        2065934,
+        4236,
+        3342,
+        3027,
+        2592,
+        2655,
+        2722,
+        2714,
+        2414,
+        2076,
+        1754,
+        1358,
+        952,
+        648,
+        420,
+        179,
+        78,
+        34,
+        12,
+        3,
+        2
+      ]
+    },
+    {
+      "sequence": "01",
+      "frame": 482,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 31384,
+      "occupancy_ratio": 0.018882364266461303,
+      "maximum_count": 20,
+      "occupied_quantiles": {
+        "p50": 6.0,
+        "p90": 10.0,
+        "p99": 14.0
+      },
+      "voxel_count_histogram": [
+        2065768,
+        3458,
+        3111,
+        3055,
+        2635,
+        3083,
+        3352,
+        3310,
+        2804,
+        2210,
+        1604,
+        1162,
+        737,
+        452,
+        221,
+        123,
+        39,
+        19,
+        4,
+        4,
+        1
+      ]
+    },
+    {
+      "sequence": "01",
+      "frame": 676,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 78100,
+      "occupancy_ratio": 0.04698931459376203,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2019052,
+        27305,
+        20814,
+        15569,
+        9262,
+        3866,
+        1044,
+        204,
+        34,
+        2
+      ]
+    },
+    {
+      "sequence": "01",
+      "frame": 869,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 70191,
+      "occupancy_ratio": 0.042230819214478243,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2026961,
+        21092,
+        16971,
+        14403,
+        10087,
+        5132,
+        1895,
+        518,
+        84,
+        9
+      ]
+    },
+    {
+      "sequence": "01",
+      "frame": 1062,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 96539,
+      "occupancy_ratio": 0.058083245090489025,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        2000613,
+        41719,
+        32450,
+        16924,
+        4671,
+        727,
+        46,
+        2
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 154,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 74132,
+      "occupancy_ratio": 0.04460194455140547,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2023020,
+        21817,
+        20147,
+        17102,
+        10136,
+        3757,
+        975,
+        180,
+        18
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 347,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 71958,
+      "occupancy_ratio": 0.04329394493646515,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2025194,
+        21430,
+        18292,
+        15704,
+        10129,
+        4518,
+        1502,
+        320,
+        53,
+        8,
+        2
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 541,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 78067,
+      "occupancy_ratio": 0.046969459953792835,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2019085,
+        23511,
+        23509,
+        18650,
+        9067,
+        2791,
+        480,
+        55,
+        3,
+        1
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 734,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 70871,
+      "occupancy_ratio": 0.042639945128994994,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2026281,
+        21964,
+        17255,
+        14077,
+        9862,
+        5148,
+        1967,
+        493,
+        91,
+        14
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 927,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 126048,
+      "occupancy_ratio": 0.07583750481324605,
+      "maximum_count": 6,
+      "occupied_quantiles": {
+        "p50": 1.0,
+        "p90": 2.0,
+        "p99": 3.0
+      },
+      "voxel_count_histogram": [
+        1971104,
+        80079,
+        38464,
+        7041,
+        451,
+        12,
+        1
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 1120,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 63232,
+      "occupancy_ratio": 0.03804389680400462,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2033920,
+        16015,
+        13708,
+        12921,
+        10361,
+        6342,
+        2817,
+        836,
+        195,
+        32,
+        5
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 1314,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 99618,
+      "occupancy_ratio": 0.059935743165190604,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        1997534,
+        45392,
+        33393,
+        16161,
+        4058,
+        579,
+        33,
+        2
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 1507,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 64127,
+      "occupancy_ratio": 0.03858237870619946,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2033025,
+        16707,
+        14342,
+        13009,
+        10027,
+        6167,
+        2757,
+        888,
+        193,
+        34,
+        2,
+        1
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 1700,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 52593,
+      "occupancy_ratio": 0.03164288120908741,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 9.0
+      },
+      "voxel_count_histogram": [
+        2044559,
+        11455,
+        9151,
+        8666,
+        8206,
+        6363,
+        4422,
+        2497,
+        1158,
+        468,
+        169,
+        27,
+        11
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 1893,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 63466,
+      "occupancy_ratio": 0.03818468425105891,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2033686,
+        13548,
+        14561,
+        15294,
+        11721,
+        5994,
+        1914,
+        369,
+        58,
+        7
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 2086,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 68495,
+      "occupancy_ratio": 0.04121041105121294,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2028657,
+        19936,
+        16229,
+        13946,
+        9992,
+        5465,
+        2184,
+        592,
+        132,
+        19
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 2280,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 75188,
+      "occupancy_ratio": 0.04523729303041971,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2021964,
+        23944,
+        20162,
+        15829,
+        9740,
+        4069,
+        1208,
+        203,
+        28,
+        3,
+        2
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 2473,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 71759,
+      "occupancy_ratio": 0.04317421544089334,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2025393,
+        21207,
+        18320,
+        15560,
+        10125,
+        4726,
+        1460,
+        309,
+        48,
+        4
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 2666,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 80325,
+      "occupancy_ratio": 0.04832799865229111,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2016827,
+        27998,
+        22699,
+        16916,
+        8732,
+        3110,
+        727,
+        130,
+        11,
+        2
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 2859,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 59938,
+      "occupancy_ratio": 0.03606204274162495,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2037214,
+        14153,
+        12508,
+        11685,
+        9889,
+        6433,
+        3416,
+        1379,
+        384,
+        78,
+        11,
+        2
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 3053,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 62120,
+      "occupancy_ratio": 0.037374855602618405,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2035032,
+        16676,
+        13462,
+        11282,
+        9001,
+        6396,
+        3283,
+        1432,
+        464,
+        107,
+        14,
+        3
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 3246,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 60919,
+      "occupancy_ratio": 0.03665226703889103,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2036233,
+        15063,
+        12906,
+        11614,
+        9622,
+        6597,
+        3465,
+        1270,
+        317,
+        57,
+        7,
+        1
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 3439,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 74027,
+      "occupancy_ratio": 0.04453877069695803,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2023125,
+        20191,
+        21062,
+        18429,
+        10202,
+        3377,
+        664,
+        95,
+        7
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 3632,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 65136,
+      "occupancy_ratio": 0.03918944936465152,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2032016,
+        16470,
+        15296,
+        13912,
+        10347,
+        5898,
+        2360,
+        685,
+        146,
+        19,
+        3
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 3825,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 73709,
+      "occupancy_ratio": 0.044347444166345784,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2023443,
+        21512,
+        20112,
+        16858,
+        9997,
+        3957,
+        1028,
+        215,
+        26,
+        4
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 4019,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 85343,
+      "occupancy_ratio": 0.051347107239122065,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2011809,
+        32094,
+        25600,
+        17109,
+        7849,
+        2220,
+        417,
+        51,
+        3
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 4212,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 113856,
+      "occupancy_ratio": 0.06850211782826338,
+      "maximum_count": 6,
+      "occupied_quantiles": {
+        "p50": 1.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        1983296,
+        62028,
+        38995,
+        11413,
+        1358,
+        61,
+        1
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 4405,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 75383,
+      "occupancy_ratio": 0.04535461590296496,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2021769,
+        22591,
+        20832,
+        17533,
+        10052,
+        3456,
+        791,
+        113,
+        14,
+        1
+      ]
+    },
+    {
+      "sequence": "02",
+      "frame": 4598,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 109236,
+      "occupancy_ratio": 0.06572246823257605,
+      "maximum_count": 6,
+      "occupied_quantiles": {
+        "p50": 1.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        1987916,
+        55551,
+        38753,
+        12932,
+        1857,
+        139,
+        4
+      ]
+    },
+    {
+      "sequence": "03",
+      "frame": 131,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 82559,
+      "occupancy_ratio": 0.04967209761262996,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2014593,
+        29141,
+        24298,
+        17760,
+        8430,
+        2392,
+        469,
+        63,
+        6
+      ]
+    },
+    {
+      "sequence": "03",
+      "frame": 324,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 66291,
+      "occupancy_ratio": 0.03988436176357335,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2030861,
+        18975,
+        14765,
+        12884,
+        10249,
+        5908,
+        2496,
+        815,
+        171,
+        22,
+        6
+      ]
+    },
+    {
+      "sequence": "03",
+      "frame": 517,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 77250,
+      "occupancy_ratio": 0.04647790720061609,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2019902,
+        25138,
+        20968,
+        17221,
+        9515,
+        3415,
+        835,
+        147,
+        10,
+        1
+      ]
+    },
+    {
+      "sequence": "03",
+      "frame": 710,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 57678,
+      "occupancy_ratio": 0.0347023007316134,
+      "maximum_count": 13,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2039474,
+        14342,
+        11121,
+        9944,
+        8905,
+        6554,
+        3926,
+        1847,
+        722,
+        249,
+        59,
+        7,
+        1,
+        1
+      ]
+    },
+    {
+      "sequence": "04",
+      "frame": 102,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 65947,
+      "occupancy_ratio": 0.03967739218328841,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2031205,
+        19757,
+        14499,
+        12039,
+        9380,
+        5927,
+        2911,
+        1050,
+        308,
+        68,
+        7,
+        1
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 25,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 83017,
+      "occupancy_ratio": 0.04994765594917212,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2014135,
+        29053,
+        25181,
+        17823,
+        8220,
+        2264,
+        418,
+        57,
+        0,
+        1
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 218,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 60075,
+      "occupancy_ratio": 0.036144469580284944,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2037077,
+        14255,
+        12424,
+        11984,
+        9872,
+        6394,
+        3230,
+        1356,
+        443,
+        100,
+        16,
+        1
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 411,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 62913,
+      "occupancy_ratio": 0.037851968617635734,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2034239,
+        15908,
+        13866,
+        12752,
+        10033,
+        6032,
+        2885,
+        1072,
+        295,
+        63,
+        6,
+        1
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 604,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 62233,
+      "occupancy_ratio": 0.037442842703118984,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2034919,
+        15664,
+        13367,
+        12389,
+        10100,
+        6152,
+        3092,
+        1103,
+        305,
+        48,
+        13
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 798,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 100518,
+      "occupancy_ratio": 0.060477233346168655,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        1996634,
+        45418,
+        35124,
+        16032,
+        3505,
+        417,
+        21,
+        1
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 991,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 56280,
+      "occupancy_ratio": 0.033861185983827494,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2040872,
+        12605,
+        10873,
+        10331,
+        9110,
+        6569,
+        3761,
+        1903,
+        773,
+        266,
+        74,
+        14,
+        1
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 1184,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 68511,
+      "occupancy_ratio": 0.04122003754331922,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2028641,
+        20030,
+        16257,
+        13875,
+        9956,
+        5405,
+        2145,
+        662,
+        157,
+        19,
+        4,
+        1
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 1377,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 65311,
+      "occupancy_ratio": 0.03929473912206392,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2031841,
+        16985,
+        15155,
+        13880,
+        10215,
+        5590,
+        2423,
+        825,
+        206,
+        26,
+        6
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 1570,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 102080,
+      "occupancy_ratio": 0.0614170196380439,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        1995072,
+        47271,
+        35751,
+        15391,
+        3307,
+        335,
+        24,
+        1
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 1764,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 57210,
+      "occupancy_ratio": 0.034420725837504815,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2039942,
+        13333,
+        11280,
+        10462,
+        9062,
+        6357,
+        3774,
+        1866,
+        783,
+        227,
+        53,
+        11,
+        2
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 1957,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 65730,
+      "occupancy_ratio": 0.039546832884097036,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2031422,
+        17911,
+        15039,
+        13463,
+        9988,
+        5709,
+        2533,
+        825,
+        214,
+        40,
+        8
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 2150,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 74679,
+      "occupancy_ratio": 0.0449310502502888,
+      "maximum_count": 9,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2022473,
+        22296,
+        20549,
+        17005,
+        9995,
+        3628,
+        1000,
+        179,
+        25,
+        2
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 2343,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 88640,
+      "occupancy_ratio": 0.05333076626877166,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2008512,
+        34236,
+        28034,
+        17812,
+        6798,
+        1510,
+        233,
+        16,
+        1
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 2537,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 87150,
+      "occupancy_ratio": 0.05243429919137466,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2010002,
+        31729,
+        28489,
+        18333,
+        6930,
+        1453,
+        203,
+        13
+      ]
+    },
+    {
+      "sequence": "05",
+      "frame": 2730,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 55401,
+      "occupancy_ratio": 0.03333233057373893,
+      "maximum_count": 13,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 9.0
+      },
+      "voxel_count_histogram": [
+        2041751,
+        12827,
+        10647,
+        9583,
+        8480,
+        6252,
+        3789,
+        2168,
+        1087,
+        391,
+        136,
+        30,
+        8,
+        3
+      ]
+    },
+    {
+      "sequence": "06",
+      "frame": 162,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 103219,
+      "occupancy_ratio": 0.06210230554485945,
+      "maximum_count": 6,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        1993933,
+        49314,
+        35189,
+        14990,
+        3320,
+        378,
+        28
+      ]
+    },
+    {
+      "sequence": "06",
+      "frame": 355,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 87330,
+      "occupancy_ratio": 0.05254259722757027,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2009822,
+        32303,
+        28242,
+        18078,
+        6847,
+        1593,
+        244,
+        22,
+        1
+      ]
+    },
+    {
+      "sequence": "06",
+      "frame": 548,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 86715,
+      "occupancy_ratio": 0.05217257893723527,
+      "maximum_count": 8,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2010437,
+        31542,
+        27954,
+        18334,
+        7111,
+        1561,
+        193,
+        19,
+        1
+      ]
+    },
+    {
+      "sequence": "06",
+      "frame": 742,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 70364,
+      "occupancy_ratio": 0.042334905660377356,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2026788,
+        19467,
+        17899,
+        15989,
+        10542,
+        4664,
+        1419,
+        319,
+        54,
+        9,
+        2
+      ]
+    },
+    {
+      "sequence": "06",
+      "frame": 935,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 100322,
+      "occupancy_ratio": 0.06035930881786677,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        1996830,
+        45264,
+        34898,
+        16142,
+        3602,
+        392,
+        22,
+        2
+      ]
+    },
+    {
+      "sequence": "07",
+      "frame": 27,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 66650,
+      "occupancy_ratio": 0.040100356180207936,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2030502,
+        19040,
+        14921,
+        13442,
+        10092,
+        5770,
+        2392,
+        766,
+        192,
+        29,
+        3,
+        3
+      ]
+    },
+    {
+      "sequence": "07",
+      "frame": 220,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 53894,
+      "occupancy_ratio": 0.03242563534847901,
+      "maximum_count": 13,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 9.0
+      },
+      "voxel_count_histogram": [
+        2043258,
+        13378,
+        9674,
+        8469,
+        7360,
+        5922,
+        4226,
+        2638,
+        1397,
+        558,
+        209,
+        50,
+        12,
+        1
+      ]
+    },
+    {
+      "sequence": "07",
+      "frame": 414,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 75832,
+      "occupancy_ratio": 0.04562475933769734,
+      "maximum_count": 10,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2021320,
+        25831,
+        19136,
+        15496,
+        9520,
+        4192,
+        1293,
+        308,
+        50,
+        5,
+        1
+      ]
+    },
+    {
+      "sequence": "07",
+      "frame": 607,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 47300,
+      "occupancy_ratio": 0.028458317289179823,
+      "maximum_count": 14,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 7.0,
+        "p99": 10.0
+      },
+      "voxel_count_histogram": [
+        2049852,
+        9813,
+        7646,
+        6815,
+        6318,
+        5521,
+        4329,
+        2843,
+        1954,
+        1092,
+        581,
+        263,
+        97,
+        21,
+        7
+      ]
+    },
+    {
+      "sequence": "07",
+      "frame": 800,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 41355,
+      "occupancy_ratio": 0.024881473815941472,
+      "maximum_count": 20,
+      "occupied_quantiles": {
+        "p50": 4.0,
+        "p90": 8.0,
+        "p99": 11.0
+      },
+      "voxel_count_histogram": [
+        2055797,
+        7032,
+        5584,
+        5282,
+        5085,
+        5269,
+        4415,
+        3225,
+        2227,
+        1467,
+        887,
+        516,
+        220,
+        86,
+        37,
+        13,
+        6,
+        2,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "sequence": "07",
+      "frame": 993,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 58362,
+      "occupancy_ratio": 0.03511383326915672,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2038790,
+        14029,
+        11715,
+        10807,
+        9192,
+        6318,
+        3595,
+        1758,
+        698,
+        207,
+        35,
+        7,
+        1
+      ]
+    },
+    {
+      "sequence": "09",
+      "frame": 85,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 101612,
+      "occupancy_ratio": 0.06113544474393531,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        1995540,
+        48473,
+        33039,
+        15518,
+        4044,
+        510,
+        27,
+        1
+      ]
+    },
+    {
+      "sequence": "09",
+      "frame": 279,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 102334,
+      "occupancy_ratio": 0.061569840200231034,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 4.0
+      },
+      "voxel_count_histogram": [
+        1994818,
+        49456,
+        33060,
+        15448,
+        3819,
+        504,
+        45,
+        2
+      ]
+    },
+    {
+      "sequence": "09",
+      "frame": 472,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 53952,
+      "occupancy_ratio": 0.032460531382364266,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2043200,
+        11789,
+        9888,
+        9255,
+        8440,
+        6633,
+        4133,
+        2238,
+        1064,
+        382,
+        102,
+        25,
+        3
+      ]
+    },
+    {
+      "sequence": "09",
+      "frame": 665,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 72083,
+      "occupancy_ratio": 0.043369151906045435,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 4.0,
+        "p99": 6.0
+      },
+      "voxel_count_histogram": [
+        2025069,
+        22743,
+        17592,
+        14793,
+        9920,
+        4841,
+        1681,
+        402,
+        94,
+        14,
+        2,
+        1
+      ]
+    },
+    {
+      "sequence": "09",
+      "frame": 858,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 55560,
+      "occupancy_ratio": 0.03342799383904505,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2041592,
+        13519,
+        10155,
+        9291,
+        8314,
+        6455,
+        4136,
+        2169,
+        1067,
+        335,
+        97,
+        17,
+        5
+      ]
+    },
+    {
+      "sequence": "09",
+      "frame": 1052,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 56509,
+      "occupancy_ratio": 0.033998965152098576,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2040643,
+        13457,
+        10530,
+        9975,
+        8898,
+        6649,
+        3857,
+        2012,
+        794,
+        247,
+        71,
+        18,
+        1
+      ]
+    },
+    {
+      "sequence": "09",
+      "frame": 1245,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 62872,
+      "occupancy_ratio": 0.0378273007316134,
+      "maximum_count": 11,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 7.0
+      },
+      "voxel_count_histogram": [
+        2034280,
+        17432,
+        13235,
+        11478,
+        9461,
+        6253,
+        3191,
+        1301,
+        409,
+        91,
+        20,
+        1
+      ]
+    },
+    {
+      "sequence": "09",
+      "frame": 1438,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 53445,
+      "occupancy_ratio": 0.03215549191374663,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2043707,
+        11768,
+        9503,
+        8846,
+        8338,
+        6648,
+        4432,
+        2392,
+        1045,
+        360,
+        86,
+        24,
+        3
+      ]
+    },
+    {
+      "sequence": "10",
+      "frame": 40,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 95583,
+      "occupancy_ratio": 0.057508062187139004,
+      "maximum_count": 7,
+      "occupied_quantiles": {
+        "p50": 2.0,
+        "p90": 3.0,
+        "p99": 5.0
+      },
+      "voxel_count_histogram": [
+        2001569,
+        41952,
+        30377,
+        16876,
+        5325,
+        956,
+        93,
+        4
+      ]
+    },
+    {
+      "sequence": "10",
+      "frame": 233,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 42642,
+      "occupancy_ratio": 0.025655804774740085,
+      "maximum_count": 17,
+      "occupied_quantiles": {
+        "p50": 4.0,
+        "p90": 8.0,
+        "p99": 11.0
+      },
+      "voxel_count_histogram": [
+        2054510,
+        8742,
+        6111,
+        5214,
+        4828,
+        4518,
+        3999,
+        3209,
+        2445,
+        1699,
+        1013,
+        509,
+        228,
+        83,
+        29,
+        8,
+        5,
+        2
+      ]
+    },
+    {
+      "sequence": "10",
+      "frame": 427,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 59622,
+      "occupancy_ratio": 0.03587191952252599,
+      "maximum_count": 13,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 5.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2037530,
+        14585,
+        12444,
+        11115,
+        9314,
+        6355,
+        3502,
+        1566,
+        533,
+        173,
+        31,
+        3,
+        0,
+        1
+      ]
+    },
+    {
+      "sequence": "10",
+      "frame": 620,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 56302,
+      "occupancy_ratio": 0.03387442241047362,
+      "maximum_count": 12,
+      "occupied_quantiles": {
+        "p50": 3.0,
+        "p90": 6.0,
+        "p99": 8.0
+      },
+      "voxel_count_histogram": [
+        2040850,
+        12750,
+        10718,
+        10308,
+        9276,
+        6461,
+        3699,
+        1919,
+        801,
+        270,
+        86,
+        12,
+        2
+      ]
+    },
+    {
+      "sequence": "10",
+      "frame": 813,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 47443,
+      "occupancy_ratio": 0.02854435406237967,
+      "maximum_count": 14,
+      "occupied_quantiles": {
+        "p50": 4.0,
+        "p90": 7.0,
+        "p99": 10.0
+      },
+      "voxel_count_histogram": [
+        2049709,
+        9199,
+        7373,
+        6968,
+        6924,
+        6151,
+        4597,
+        2989,
+        1768,
+        928,
+        367,
+        129,
+        42,
+        6,
+        2
+      ]
+    },
+    {
+      "sequence": "10",
+      "frame": 1006,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 46337,
+      "occupancy_ratio": 0.027878922795533306,
+      "maximum_count": 14,
+      "occupied_quantiles": {
+        "p50": 4.0,
+        "p90": 7.0,
+        "p99": 10.0
+      },
+      "voxel_count_histogram": [
+        2050815,
+        8904,
+        7166,
+        6758,
+        6489,
+        5519,
+        4522,
+        3188,
+        1893,
+        1069,
+        522,
+        213,
+        63,
+        27,
+        4
+      ]
+    },
+    {
+      "sequence": "10",
+      "frame": 1200,
+      "input_points": 18000,
+      "points": 180000,
+      "nonempty_voxel_count": 33509,
+      "occupancy_ratio": 0.020160882749326144,
+      "maximum_count": 19,
+      "occupied_quantiles": {
+        "p50": 5.0,
+        "p90": 10.0,
+        "p99": 14.0
+      },
+      "voxel_count_histogram": [
+        2063643,
+        5109,
+        3770,
+        3416,
+        3172,
+        3230,
+        3066,
+        2889,
+        2305,
+        1897,
+        1536,
+        1109,
+        788,
+        540,
+        361,
+        181,
+        74,
+        48,
+        13,
+        5
+      ]
+    }
+  ],
+  "strict_gt_contract_pass": true,
+  "statistics_summary": {
+    "nonempty_voxel_count": [
+      31218,
+      126048
+    ],
+    "occupancy_ratio": [
+      0.018782489410858683,
+      0.07583750481324605
+    ],
+    "maximum_count": [
+      6,
+      20
+    ]
+  }
+}

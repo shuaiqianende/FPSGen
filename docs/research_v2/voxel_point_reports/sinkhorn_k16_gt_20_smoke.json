@@ -1,0 +1,2208 @@
+{
+  "config_sha256": "b39d8ddc1669d5a6471dc7f323f1e76a20f352b7e2e959dcbaadddf7f8cfd962",
+  "mechanics_smoke_only": true,
+  "pseudo_targets_reliable": false,
+  "gate_note": "Requires frozen 20 \u2192 100 scene quality review on BOTH source kinds; never automatic from one smoke.",
+  "rows": [
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 0,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000000.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13660311698913574,
+          "spacing_mean": 0.15166905522346497,
+          "spacing_cv": 0.49597620964050293,
+          "fscore_0.1": 0.25505682110099864,
+          "coverage_0.1": 0.23769444227218628,
+          "fscore_0.2": 0.8808185918007868,
+          "coverage_0.2": 0.8696500062942505,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12945212423801422,
+          "spacing_mean": 0.12469883263111115,
+          "spacing_cv": 0.529025137424469,
+          "fscore_0.1": 0.3001335865123347,
+          "coverage_0.1": 0.269388884305954,
+          "fscore_0.2": 0.901049390286323,
+          "coverage_0.2": 0.8475000262260437,
+          "out_of_range_ratio": 8.333333244081587e-05
+        },
+        "nearest_gt": {
+          "cd": 0.04304473474621773,
+          "spacing_mean": 0.06847704946994781,
+          "spacing_cv": 1.523800253868103,
+          "fscore_0.1": 0.7431132923403904,
+          "coverage_0.1": 0.5912333130836487,
+          "fscore_0.2": 0.888405152255625,
+          "coverage_0.2": 0.7992166876792908,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.13273194432258606,
+          "spacing_mean": 0.08885038644075394,
+          "spacing_cv": 0.6715779304504395,
+          "fscore_0.1": 0.3131803949728578,
+          "coverage_0.1": 0.26124998927116394,
+          "fscore_0.2": 0.8698460185262734,
+          "coverage_0.2": 0.7811166644096375,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12945212423801422,
+          "spacing_mean": 0.12469883263111115,
+          "spacing_cv": 0.529025137424469,
+          "fscore_0.1": 0.3001335865123347,
+          "coverage_0.1": 0.269388884305954,
+          "fscore_0.2": 0.901049390286323,
+          "coverage_0.2": 0.8475000262260437,
+          "out_of_range_ratio": 8.333333244081587e-05
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.1941251614189241e-06,
+        "col_error": 1.318767317570746e-11,
+        "row_error_mean": 1.0512292192288442e-07,
+        "row_error_max": 1.1941251614189241e-06,
+        "col_error_mean": 2.1980364577067757e-12,
+        "col_error_max": 1.318767317570746e-11,
+        "bad_row_ratio": 0.6159055829048157,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1300793886184692,
+        "max_row_probability": 1.0,
+        "entropy": 13.230148315429688,
+        "num_edges": 3309846,
+        "row_relative_error": 0.21494252905540634,
+        "column_relative_error": 2.3737811716273427e-06,
+        "candidate": {
+          "cd": 0.08373931050300598,
+          "spacing_mean": 0.13880397379398346,
+          "spacing_cv": 0.4417937099933624,
+          "fscore_0.1": 0.6620704384607909,
+          "coverage_0.1": 0.6415277719497681,
+          "fscore_0.2": 0.9966381879953281,
+          "coverage_0.2": 0.9958000183105469,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5755255222320557,
+        "reason": "accepted",
+        "peak_vram_bytes": 612805120,
+        "runtime_seconds": 0.823982410132885
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 1,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000001.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000001.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13739576935768127,
+          "spacing_mean": 0.15234307944774628,
+          "spacing_cv": 0.4969096779823303,
+          "fscore_0.1": 0.2494704644877215,
+          "coverage_0.1": 0.23257222771644592,
+          "fscore_0.2": 0.8781318897134255,
+          "coverage_0.2": 0.86644446849823,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12942761182785034,
+          "spacing_mean": 0.12491068989038467,
+          "spacing_cv": 0.532480001449585,
+          "fscore_0.1": 0.29920929768424676,
+          "coverage_0.1": 0.26847222447395325,
+          "fscore_0.2": 0.9019149590467899,
+          "coverage_0.2": 0.8480611443519592,
+          "out_of_range_ratio": 7.777777500450611e-05
+        },
+        "nearest_gt": {
+          "cd": 0.04317770153284073,
+          "spacing_mean": 0.06875741481781006,
+          "spacing_cv": 1.5276508331298828,
+          "fscore_0.1": 0.743034333143983,
+          "coverage_0.1": 0.5911333560943604,
+          "fscore_0.2": 0.8860179725476053,
+          "coverage_0.2": 0.7953611016273499,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.13309870660305023,
+          "spacing_mean": 0.08884008228778839,
+          "spacing_cv": 0.6693297624588013,
+          "fscore_0.1": 0.31181580692817684,
+          "coverage_0.1": 0.2602444589138031,
+          "fscore_0.2": 0.8686715433480289,
+          "coverage_0.2": 0.77920001745224,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12942761182785034,
+          "spacing_mean": 0.12491068989038467,
+          "spacing_cv": 0.532480001449585,
+          "fscore_0.1": 0.29920929768424676,
+          "coverage_0.1": 0.26847222447395325,
+          "fscore_0.2": 0.9019149590467899,
+          "coverage_0.2": 0.8480611443519592,
+          "out_of_range_ratio": 7.777777500450611e-05
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.8497703422326595e-06,
+        "col_error": 1.3642420526593924e-11,
+        "row_error_mean": 1.0583701026689596e-07,
+        "row_error_max": 1.8497703422326595e-06,
+        "col_error_mean": 2.1982461424069344e-12,
+        "col_error_max": 1.3642420526593924e-11,
+        "bad_row_ratio": 0.6233722567558289,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.129644513130188,
+        "max_row_probability": 1.0,
+        "entropy": 13.229776382446289,
+        "num_edges": 3309767,
+        "row_relative_error": 0.3329586616018787,
+        "column_relative_error": 2.4556356947869062e-06,
+        "candidate": {
+          "cd": 0.08404576778411865,
+          "spacing_mean": 0.13925977051258087,
+          "spacing_cv": 0.4430568516254425,
+          "fscore_0.1": 0.6578442408481487,
+          "coverage_0.1": 0.6375555396080017,
+          "fscore_0.2": 0.9966601806730353,
+          "coverage_0.2": 0.9957055449485779,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5360155701637268,
+        "reason": "accepted",
+        "peak_vram_bytes": 614495744,
+        "runtime_seconds": 0.8220898378640413
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 2,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000002.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000002.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13651828467845917,
+          "spacing_mean": 0.15039800107479095,
+          "spacing_cv": 0.49859175086021423,
+          "fscore_0.1": 0.2552384878861884,
+          "coverage_0.1": 0.2377944439649582,
+          "fscore_0.2": 0.881103699141871,
+          "coverage_0.2": 0.8712388873100281,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12823094427585602,
+          "spacing_mean": 0.12357250601053238,
+          "spacing_cv": 0.5318100452423096,
+          "fscore_0.1": 0.30868807202592025,
+          "coverage_0.1": 0.2765222191810608,
+          "fscore_0.2": 0.904514428139257,
+          "coverage_0.2": 0.852138876914978,
+          "out_of_range_ratio": 6.111110997153446e-05
+        },
+        "nearest_gt": {
+          "cd": 0.04287221282720566,
+          "spacing_mean": 0.06714324653148651,
+          "spacing_cv": 1.5382343530654907,
+          "fscore_0.1": 0.7409065686201963,
+          "coverage_0.1": 0.5884444713592529,
+          "fscore_0.2": 0.8939616436347709,
+          "coverage_0.2": 0.8082555532455444,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.1314929574728012,
+          "spacing_mean": 0.08717884123325348,
+          "spacing_cv": 0.6781662106513977,
+          "fscore_0.1": 0.32094583555396766,
+          "coverage_0.1": 0.2668333351612091,
+          "fscore_0.2": 0.8729290686284705,
+          "coverage_0.2": 0.7857611179351807,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12823094427585602,
+          "spacing_mean": 0.12357250601053238,
+          "spacing_cv": 0.5318100452423096,
+          "fscore_0.1": 0.30868807202592025,
+          "coverage_0.1": 0.2765222191810608,
+          "fscore_0.2": 0.904514428139257,
+          "coverage_0.2": 0.852138876914978,
+          "out_of_range_ratio": 6.111110997153446e-05
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.1819420251413248e-06,
+        "col_error": 1.4097167877480388e-11,
+        "row_error_mean": 1.0527787708269898e-07,
+        "row_error_max": 1.1819420251413248e-06,
+        "col_error_mean": 2.1905888561435383e-12,
+        "col_error_max": 1.4097167877480388e-11,
+        "bad_row_ratio": 0.6122000217437744,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1475930213928223,
+        "max_row_probability": 1.0,
+        "entropy": 13.2477445602417,
+        "num_edges": 3310989,
+        "row_relative_error": 0.21274956452543847,
+        "column_relative_error": 2.5374902179464698e-06,
+        "candidate": {
+          "cd": 0.08350992202758789,
+          "spacing_mean": 0.13658668100833893,
+          "spacing_cv": 0.4466552734375,
+          "fscore_0.1": 0.6650490246845734,
+          "coverage_0.1": 0.6435944437980652,
+          "fscore_0.2": 0.9970382410151405,
+          "coverage_0.2": 0.9962278008460999,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5478004813194275,
+        "reason": "accepted",
+        "peak_vram_bytes": 616020480,
+        "runtime_seconds": 0.8237479440867901
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 3,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000003.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000003.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.1361411064863205,
+          "spacing_mean": 0.14957435429096222,
+          "spacing_cv": 0.499759703874588,
+          "fscore_0.1": 0.257073197751579,
+          "coverage_0.1": 0.23862221837043762,
+          "fscore_0.2": 0.883347773772681,
+          "coverage_0.2": 0.874738872051239,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.1278529316186905,
+          "spacing_mean": 0.12284747511148453,
+          "spacing_cv": 0.5336943864822388,
+          "fscore_0.1": 0.3102238046243924,
+          "coverage_0.1": 0.2774222195148468,
+          "fscore_0.2": 0.9058183232445447,
+          "coverage_0.2": 0.8547666668891907,
+          "out_of_range_ratio": 6.666666740784422e-05
+        },
+        "nearest_gt": {
+          "cd": 0.04259803891181946,
+          "spacing_mean": 0.0666961818933487,
+          "spacing_cv": 1.5385535955429077,
+          "fscore_0.1": 0.7408228902046896,
+          "coverage_0.1": 0.5883389115333557,
+          "fscore_0.2": 0.8980075323634278,
+          "coverage_0.2": 0.814894437789917,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.13093554973602295,
+          "spacing_mean": 0.08638858795166016,
+          "spacing_cv": 0.6772240996360779,
+          "fscore_0.1": 0.32621442995545846,
+          "coverage_0.1": 0.2701111137866974,
+          "fscore_0.2": 0.8742019064473359,
+          "coverage_0.2": 0.7872833609580994,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.1278529316186905,
+          "spacing_mean": 0.12284747511148453,
+          "spacing_cv": 0.5336943864822388,
+          "fscore_0.1": 0.3102238046243924,
+          "coverage_0.1": 0.2774222195148468,
+          "fscore_0.2": 0.9058183232445447,
+          "coverage_0.2": 0.8547666668891907,
+          "out_of_range_ratio": 6.666666740784422e-05
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 2.37652420764789e-06,
+        "col_error": 1.318767317570746e-11,
+        "row_error_mean": 1.0620669144145722e-07,
+        "row_error_max": 2.37652420764789e-06,
+        "col_error_mean": 2.1939639775064856e-12,
+        "col_error_max": 1.318767317570746e-11,
+        "bad_row_ratio": 0.608211100101471,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.157044529914856,
+        "max_row_probability": 1.0,
+        "entropy": 13.257190704345703,
+        "num_edges": 3313316,
+        "row_relative_error": 0.4277743573766202,
+        "column_relative_error": 2.3737811716273427e-06,
+        "candidate": {
+          "cd": 0.08334897458553314,
+          "spacing_mean": 0.13523997366428375,
+          "spacing_cv": 0.44940510392189026,
+          "fscore_0.1": 0.6683258139761111,
+          "coverage_0.1": 0.6455555558204651,
+          "fscore_0.2": 0.9971299875839347,
+          "coverage_0.2": 0.9963666796684265,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5278517603874207,
+        "reason": "accepted",
+        "peak_vram_bytes": 615901184,
+        "runtime_seconds": 0.8191149532794952
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 4,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000004.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000004.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.1361454725265503,
+          "spacing_mean": 0.14956845343112946,
+          "spacing_cv": 0.5001330971717834,
+          "fscore_0.1": 0.2578598096738642,
+          "coverage_0.1": 0.23972222208976746,
+          "fscore_0.2": 0.8823959385761098,
+          "coverage_0.2": 0.8738389015197754,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.1280088722705841,
+          "spacing_mean": 0.1231205090880394,
+          "spacing_cv": 0.5366155505180359,
+          "fscore_0.1": 0.30795551867393434,
+          "coverage_0.1": 0.2755388915538788,
+          "fscore_0.2": 0.9060330734441258,
+          "coverage_0.2": 0.8547555804252625,
+          "out_of_range_ratio": 0.00013888889225199819
+        },
+        "nearest_gt": {
+          "cd": 0.0426960252225399,
+          "spacing_mean": 0.06672582030296326,
+          "spacing_cv": 1.5425591468811035,
+          "fscore_0.1": 0.7406466613942199,
+          "coverage_0.1": 0.5881166458129883,
+          "fscore_0.2": 0.8965280643429576,
+          "coverage_0.2": 0.8124611377716064,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.13080665469169617,
+          "spacing_mean": 0.08671370893716812,
+          "spacing_cv": 0.6776101589202881,
+          "fscore_0.1": 0.3257109209596335,
+          "coverage_0.1": 0.27035000920295715,
+          "fscore_0.2": 0.8751257989765271,
+          "coverage_0.2": 0.788622260093689,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.1280088722705841,
+          "spacing_mean": 0.1231205090880394,
+          "spacing_cv": 0.5366155505180359,
+          "fscore_0.1": 0.30795551867393434,
+          "coverage_0.1": 0.2755388915538788,
+          "fscore_0.2": 0.9060330734441258,
+          "coverage_0.2": 0.8547555804252625,
+          "out_of_range_ratio": 0.00013888889225199819
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.1976176210737322e-06,
+        "col_error": 1.2732925824820995e-11,
+        "row_error_mean": 1.053765146252772e-07,
+        "row_error_max": 1.1976176210737322e-06,
+        "col_error_mean": 2.1890653352507616e-12,
+        "col_error_max": 1.2732925824820995e-11,
+        "bad_row_ratio": 0.6089777946472168,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1543508768081665,
+        "max_row_probability": 1.0,
+        "entropy": 13.254465103149414,
+        "num_edges": 3311406,
+        "row_relative_error": 0.2155711717932718,
+        "column_relative_error": 2.291926648467779e-06,
+        "candidate": {
+          "cd": 0.08341760188341141,
+          "spacing_mean": 0.13579368591308594,
+          "spacing_cv": 0.4485166668891907,
+          "fscore_0.1": 0.6674512266224859,
+          "coverage_0.1": 0.6456388831138611,
+          "fscore_0.2": 0.9971327803316614,
+          "coverage_0.2": 0.9963833689689636,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5259167551994324,
+        "reason": "accepted",
+        "peak_vram_bytes": 614279680,
+        "runtime_seconds": 0.8215261790901423
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 5,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000005.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000005.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13457432389259338,
+          "spacing_mean": 0.14712126553058624,
+          "spacing_cv": 0.49646666646003723,
+          "fscore_0.1": 0.2665698802089774,
+          "coverage_0.1": 0.24748888611793518,
+          "fscore_0.2": 0.8898365897750731,
+          "coverage_0.2": 0.8820722103118896,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12678010761737823,
+          "spacing_mean": 0.12098422646522522,
+          "spacing_cv": 0.5286272168159485,
+          "fscore_0.1": 0.3161270224061703,
+          "coverage_0.1": 0.28218889236450195,
+          "fscore_0.2": 0.9102483906470215,
+          "coverage_0.2": 0.8607000112533569,
+          "out_of_range_ratio": 7.222222484415397e-05
+        },
+        "nearest_gt": {
+          "cd": 0.04229672998189926,
+          "spacing_mean": 0.06512046605348587,
+          "spacing_cv": 1.5462919473648071,
+          "fscore_0.1": 0.7393236318283284,
+          "coverage_0.1": 0.5864499807357788,
+          "fscore_0.2": 0.9032983317628548,
+          "coverage_0.2": 0.8236500024795532,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12902730703353882,
+          "spacing_mean": 0.08580412715673447,
+          "spacing_cv": 0.672556459903717,
+          "fscore_0.1": 0.33508045943338965,
+          "coverage_0.1": 0.27762776613235474,
+          "fscore_0.2": 0.8816107707026297,
+          "coverage_0.2": 0.7981777787208557,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12678010761737823,
+          "spacing_mean": 0.12098422646522522,
+          "spacing_cv": 0.5286272168159485,
+          "fscore_0.1": 0.3161270224061703,
+          "coverage_0.1": 0.28218889236450195,
+          "fscore_0.2": 0.9102483906470215,
+          "coverage_0.2": 0.8607000112533569,
+          "out_of_range_ratio": 7.222222484415397e-05
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.0715284588513896e-06,
+        "col_error": 1.2732925824820995e-11,
+        "row_error_mean": 1.0649085879776976e-07,
+        "row_error_max": 1.0715284588513896e-06,
+        "col_error_mean": 2.1889820685239147e-12,
+        "col_error_max": 1.2732925824820995e-11,
+        "bad_row_ratio": 0.6234166622161865,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.177827000617981,
+        "max_row_probability": 1.0,
+        "entropy": 13.277932167053223,
+        "num_edges": 3314636,
+        "row_relative_error": 0.19287512259325013,
+        "column_relative_error": 2.291926648467779e-06,
+        "candidate": {
+          "cd": 0.08334650099277496,
+          "spacing_mean": 0.13319554924964905,
+          "spacing_cv": 0.44504690170288086,
+          "fscore_0.1": 0.6714718192720964,
+          "coverage_0.1": 0.648194432258606,
+          "fscore_0.2": 0.9972689939663504,
+          "coverage_0.2": 0.9965722560882568,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5716075301170349,
+        "reason": "accepted",
+        "peak_vram_bytes": 615971840,
+        "runtime_seconds": 0.818555410951376
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 6,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000006.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000006.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13436098396778107,
+          "spacing_mean": 0.14674286544322968,
+          "spacing_cv": 0.4961210787296295,
+          "fscore_0.1": 0.2682157820026308,
+          "coverage_0.1": 0.24917222559452057,
+          "fscore_0.2": 0.8894451983940942,
+          "coverage_0.2": 0.8821777701377869,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.1267092376947403,
+          "spacing_mean": 0.12111258506774902,
+          "spacing_cv": 0.528134822845459,
+          "fscore_0.1": 0.3186060237900219,
+          "coverage_0.1": 0.2845500111579895,
+          "fscore_0.2": 0.9101955469067259,
+          "coverage_0.2": 0.8609277606010437,
+          "out_of_range_ratio": 0.00013333333481568843
+        },
+        "nearest_gt": {
+          "cd": 0.04230307787656784,
+          "spacing_mean": 0.06484265625476837,
+          "spacing_cv": 1.548669457435608,
+          "fscore_0.1": 0.7385903746594737,
+          "coverage_0.1": 0.585527777671814,
+          "fscore_0.2": 0.9049929284287281,
+          "coverage_0.2": 0.8264722228050232,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12843234837055206,
+          "spacing_mean": 0.08566056936979294,
+          "spacing_cv": 0.6718072891235352,
+          "fscore_0.1": 0.3380328997103194,
+          "coverage_0.1": 0.2802833318710327,
+          "fscore_0.2": 0.8838573637887633,
+          "coverage_0.2": 0.8012833595275879,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.1267092376947403,
+          "spacing_mean": 0.12111258506774902,
+          "spacing_cv": 0.528134822845459,
+          "fscore_0.1": 0.3186060237900219,
+          "coverage_0.1": 0.2845500111579895,
+          "fscore_0.2": 0.9101955469067259,
+          "coverage_0.2": 0.8609277606010437,
+          "out_of_range_ratio": 0.00013333333481568843
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.054772837960627e-06,
+        "col_error": 1.318767317570746e-11,
+        "row_error_mean": 1.0644775727541855e-07,
+        "row_error_max": 1.054772837960627e-06,
+        "col_error_mean": 2.1908135028336773e-12,
+        "col_error_max": 1.318767317570746e-11,
+        "bad_row_ratio": 0.6147111058235168,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1779588460922241,
+        "max_row_probability": 1.0,
+        "entropy": 13.27804183959961,
+        "num_edges": 3313284,
+        "row_relative_error": 0.18985911083291285,
+        "column_relative_error": 2.3737811716273427e-06,
+        "candidate": {
+          "cd": 0.08302217721939087,
+          "spacing_mean": 0.13297031819820404,
+          "spacing_cv": 0.44359490275382996,
+          "fscore_0.1": 0.6754212729131764,
+          "coverage_0.1": 0.6522833108901978,
+          "fscore_0.2": 0.9973606629818421,
+          "coverage_0.2": 0.9966833591461182,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.633063018321991,
+        "reason": "accepted",
+        "peak_vram_bytes": 614080000,
+        "runtime_seconds": 0.8214453812688589
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 7,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000007.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000007.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.1345788538455963,
+          "spacing_mean": 0.14713038504123688,
+          "spacing_cv": 0.49683746695518494,
+          "fscore_0.1": 0.2665816468635776,
+          "coverage_0.1": 0.24730555713176727,
+          "fscore_0.2": 0.8885865746353857,
+          "coverage_0.2": 0.8813055753707886,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12704652547836304,
+          "spacing_mean": 0.12062517553567886,
+          "spacing_cv": 0.5331379175186157,
+          "fscore_0.1": 0.314896662055897,
+          "coverage_0.1": 0.28085556626319885,
+          "fscore_0.2": 0.9094262374608678,
+          "coverage_0.2": 0.8594333529472351,
+          "out_of_range_ratio": 0.00023333333956543356
+        },
+        "nearest_gt": {
+          "cd": 0.04242492839694023,
+          "spacing_mean": 0.06507041305303574,
+          "spacing_cv": 1.5490564107894897,
+          "fscore_0.1": 0.7389659721748536,
+          "coverage_0.1": 0.5860000252723694,
+          "fscore_0.2": 0.90208755446178,
+          "coverage_0.2": 0.8216388821601868,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12893491983413696,
+          "spacing_mean": 0.08580237627029419,
+          "spacing_cv": 0.6765420436859131,
+          "fscore_0.1": 0.33422118554696484,
+          "coverage_0.1": 0.27710556983947754,
+          "fscore_0.2": 0.8813156145682912,
+          "coverage_0.2": 0.7972277998924255,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12704652547836304,
+          "spacing_mean": 0.12062517553567886,
+          "spacing_cv": 0.5331379175186157,
+          "fscore_0.1": 0.314896662055897,
+          "coverage_0.1": 0.28085556626319885,
+          "fscore_0.2": 0.9094262374608678,
+          "coverage_0.2": 0.8594333529472351,
+          "out_of_range_ratio": 0.00023333333956543356
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.9208478079235647e-06,
+        "col_error": 1.318767317570746e-11,
+        "row_error_mean": 1.0453032217583313e-07,
+        "row_error_max": 1.9208478079235647e-06,
+        "col_error_mean": 2.1955050624744565e-12,
+        "col_error_max": 1.318767317570746e-11,
+        "bad_row_ratio": 0.6034611463546753,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1738266944885254,
+        "max_row_probability": 1.0,
+        "entropy": 13.273921012878418,
+        "num_edges": 3311554,
+        "row_relative_error": 0.34575260542624164,
+        "column_relative_error": 2.3737811716273427e-06,
+        "candidate": {
+          "cd": 0.08329083770513535,
+          "spacing_mean": 0.13327370584011078,
+          "spacing_cv": 0.447163850069046,
+          "fscore_0.1": 0.6710554128498527,
+          "coverage_0.1": 0.6480055451393127,
+          "fscore_0.2": 0.997360769271438,
+          "coverage_0.2": 0.9967666864395142,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.6355692744255066,
+        "reason": "accepted",
+        "peak_vram_bytes": 615567872,
+        "runtime_seconds": 0.8204818852245808
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 8,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000008.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000008.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13452599942684174,
+          "spacing_mean": 0.14681433141231537,
+          "spacing_cv": 0.5035887360572815,
+          "fscore_0.1": 0.2668259686174704,
+          "coverage_0.1": 0.24811111390590668,
+          "fscore_0.2": 0.889907747371103,
+          "coverage_0.2": 0.8836222290992737,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12682440876960754,
+          "spacing_mean": 0.12144338339567184,
+          "spacing_cv": 0.5398409962654114,
+          "fscore_0.1": 0.31585810717627905,
+          "coverage_0.1": 0.28228887915611267,
+          "fscore_0.2": 0.910308636251159,
+          "coverage_0.2": 0.8613777756690979,
+          "out_of_range_ratio": 0.0002888888993766159
+        },
+        "nearest_gt": {
+          "cd": 0.04220838099718094,
+          "spacing_mean": 0.0656469389796257,
+          "spacing_cv": 1.5498064756393433,
+          "fscore_0.1": 0.7399149429127305,
+          "coverage_0.1": 0.5871944427490234,
+          "fscore_0.2": 0.9037925890158844,
+          "coverage_0.2": 0.8244722485542297,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12872391939163208,
+          "spacing_mean": 0.0857703909277916,
+          "spacing_cv": 0.6756417155265808,
+          "fscore_0.1": 0.3360534616415461,
+          "coverage_0.1": 0.2785055637359619,
+          "fscore_0.2": 0.8839320686690056,
+          "coverage_0.2": 0.8014833331108093,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12682440876960754,
+          "spacing_mean": 0.12144338339567184,
+          "spacing_cv": 0.5398409962654114,
+          "fscore_0.1": 0.31585810717627905,
+          "coverage_0.1": 0.28228887915611267,
+          "fscore_0.2": 0.910308636251159,
+          "coverage_0.2": 0.8613777756690979,
+          "out_of_range_ratio": 0.0002888888993766159
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.2198729564261157e-06,
+        "col_error": 1.3642420526593924e-11,
+        "row_error_mean": 1.0445399567515778e-07,
+        "row_error_max": 1.2198729564261157e-06,
+        "col_error_mean": 2.1843410327043733e-12,
+        "col_error_max": 1.3642420526593924e-11,
+        "bad_row_ratio": 0.6057111024856567,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.174594759941101,
+        "max_row_probability": 1.0,
+        "entropy": 13.274757385253906,
+        "num_edges": 3310469,
+        "row_relative_error": 0.21957713215670083,
+        "column_relative_error": 2.4556356947869062e-06,
+        "candidate": {
+          "cd": 0.08305735886096954,
+          "spacing_mean": 0.1332351416349411,
+          "spacing_cv": 0.45361682772636414,
+          "fscore_0.1": 0.6741831568125818,
+          "coverage_0.1": 0.6511499881744385,
+          "fscore_0.2": 0.9972049829858053,
+          "coverage_0.2": 0.9964500069618225,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5259817242622375,
+        "reason": "accepted",
+        "peak_vram_bytes": 614878208,
+        "runtime_seconds": 0.8182608634233475
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 9,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000009.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000009.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13431823253631592,
+          "spacing_mean": 0.14626531302928925,
+          "spacing_cv": 0.49747222661972046,
+          "fscore_0.1": 0.2682973522032593,
+          "coverage_0.1": 0.2491944432258606,
+          "fscore_0.2": 0.8899931755715386,
+          "coverage_0.2": 0.8832889199256897,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12660089135169983,
+          "spacing_mean": 0.12050477415323257,
+          "spacing_cv": 0.5293978452682495,
+          "fscore_0.1": 0.3171613149985182,
+          "coverage_0.1": 0.2831999957561493,
+          "fscore_0.2": 0.9103243467091408,
+          "coverage_0.2": 0.8614944815635681,
+          "out_of_range_ratio": 0.00032777778687886894
+        },
+        "nearest_gt": {
+          "cd": 0.04219909384846687,
+          "spacing_mean": 0.06472615897655487,
+          "spacing_cv": 1.5468440055847168,
+          "fscore_0.1": 0.7386389783806466,
+          "coverage_0.1": 0.5855888724327087,
+          "fscore_0.2": 0.9052792987926874,
+          "coverage_0.2": 0.8269500136375427,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12817135453224182,
+          "spacing_mean": 0.08550865203142166,
+          "spacing_cv": 0.6711470484733582,
+          "fscore_0.1": 0.33948551736784405,
+          "coverage_0.1": 0.28136110305786133,
+          "fscore_0.2": 0.8849732441936905,
+          "coverage_0.2": 0.8029166460037231,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12660089135169983,
+          "spacing_mean": 0.12050477415323257,
+          "spacing_cv": 0.5293978452682495,
+          "fscore_0.1": 0.3171613149985182,
+          "coverage_0.1": 0.2831999957561493,
+          "fscore_0.2": 0.9103243467091408,
+          "coverage_0.2": 0.8614944815635681,
+          "out_of_range_ratio": 0.00032777778687886894
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.562386842124397e-06,
+        "col_error": 1.4551915228366852e-11,
+        "row_error_mean": 1.0312877662954634e-07,
+        "row_error_max": 1.562386842124397e-06,
+        "col_error_mean": 2.1851695800045867e-12,
+        "col_error_max": 1.4551915228366852e-11,
+        "bad_row_ratio": 0.601711094379425,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1818022727966309,
+        "max_row_probability": 1.0,
+        "entropy": 13.28192138671875,
+        "num_edges": 3312391,
+        "row_relative_error": 0.28122963158239145,
+        "column_relative_error": 2.6193447411060333e-06,
+        "candidate": {
+          "cd": 0.0831359475851059,
+          "spacing_mean": 0.13238447904586792,
+          "spacing_cv": 0.4444271922111511,
+          "fscore_0.1": 0.6735232740022298,
+          "coverage_0.1": 0.6502277851104736,
+          "fscore_0.2": 0.9975550627166857,
+          "coverage_0.2": 0.9968555569648743,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.6119973659515381,
+        "reason": "accepted",
+        "peak_vram_bytes": 615334912,
+        "runtime_seconds": 0.823176521807909
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 10,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000010.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000010.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13399361073970795,
+          "spacing_mean": 0.14592453837394714,
+          "spacing_cv": 0.5019083619117737,
+          "fscore_0.1": 0.2702060089138559,
+          "coverage_0.1": 0.25048333406448364,
+          "fscore_0.2": 0.8914394690637382,
+          "coverage_0.2": 0.8854277729988098,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12651561200618744,
+          "spacing_mean": 0.119896300137043,
+          "spacing_cv": 0.5389152765274048,
+          "fscore_0.1": 0.3192510732007193,
+          "coverage_0.1": 0.2847388982772827,
+          "fscore_0.2": 0.9108202206802711,
+          "coverage_0.2": 0.8614888787269592,
+          "out_of_range_ratio": 0.0002500000118743628
+        },
+        "nearest_gt": {
+          "cd": 0.04227760061621666,
+          "spacing_mean": 0.06450788676738739,
+          "spacing_cv": 1.560182809829712,
+          "fscore_0.1": 0.7378872171519949,
+          "coverage_0.1": 0.5846444368362427,
+          "fscore_0.2": 0.905275977240839,
+          "coverage_0.2": 0.8269444704055786,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.128268301486969,
+          "spacing_mean": 0.08514641225337982,
+          "spacing_cv": 0.6719620227813721,
+          "fscore_0.1": 0.3386132976783662,
+          "coverage_0.1": 0.2804777920246124,
+          "fscore_0.2": 0.8846293147151765,
+          "coverage_0.2": 0.8024500012397766,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12651561200618744,
+          "spacing_mean": 0.119896300137043,
+          "spacing_cv": 0.5389152765274048,
+          "fscore_0.1": 0.3192510732007193,
+          "coverage_0.1": 0.2847388982772827,
+          "fscore_0.2": 0.9108202206802711,
+          "coverage_0.2": 0.8614888787269592,
+          "out_of_range_ratio": 0.0002500000118743628
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.1046213330700994e-06,
+        "col_error": 1.2732925824820995e-11,
+        "row_error_mean": 1.0564605901208779e-07,
+        "row_error_max": 1.1046213330700994e-06,
+        "col_error_mean": 2.188603031444414e-12,
+        "col_error_max": 1.2732925824820995e-11,
+        "bad_row_ratio": 0.6100777983665466,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1818450689315796,
+        "max_row_probability": 1.0,
+        "entropy": 13.281965255737305,
+        "num_edges": 3313536,
+        "row_relative_error": 0.19883183995261788,
+        "column_relative_error": 2.291926648467779e-06,
+        "candidate": {
+          "cd": 0.08299925923347473,
+          "spacing_mean": 0.1321685016155243,
+          "spacing_cv": 0.4536226689815521,
+          "fscore_0.1": 0.6757435077564495,
+          "coverage_0.1": 0.6525999903678894,
+          "fscore_0.2": 0.9974716956243632,
+          "coverage_0.2": 0.9967444539070129,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5971193909645081,
+        "reason": "accepted",
+        "peak_vram_bytes": 615181824,
+        "runtime_seconds": 0.8233809061348438
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 11,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000011.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000011.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13449354469776154,
+          "spacing_mean": 0.14706820249557495,
+          "spacing_cv": 0.4993492066860199,
+          "fscore_0.1": 0.2681637663530172,
+          "coverage_0.1": 0.24897222220897675,
+          "fscore_0.2": 0.8891746993258351,
+          "coverage_0.2": 0.882183313369751,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12663516402244568,
+          "spacing_mean": 0.12094877660274506,
+          "spacing_cv": 0.5322887897491455,
+          "fscore_0.1": 0.3169451536499119,
+          "coverage_0.1": 0.28290000557899475,
+          "fscore_0.2": 0.9104202574973994,
+          "coverage_0.2": 0.8609499931335449,
+          "out_of_range_ratio": 0.00021111110982019454
+        },
+        "nearest_gt": {
+          "cd": 0.042288605123758316,
+          "spacing_mean": 0.06534868478775024,
+          "spacing_cv": 1.5431065559387207,
+          "fscore_0.1": 0.7392265261460026,
+          "coverage_0.1": 0.5863277912139893,
+          "fscore_0.2": 0.9041129463080065,
+          "coverage_0.2": 0.8250055909156799,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12913230061531067,
+          "spacing_mean": 0.08556399494409561,
+          "spacing_cv": 0.6744568943977356,
+          "fscore_0.1": 0.3337424246323208,
+          "coverage_0.1": 0.2766111195087433,
+          "fscore_0.2": 0.8814716160812146,
+          "coverage_0.2": 0.7979277968406677,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12663516402244568,
+          "spacing_mean": 0.12094877660274506,
+          "spacing_cv": 0.5322887897491455,
+          "fscore_0.1": 0.3169451536499119,
+          "coverage_0.1": 0.28290000557899475,
+          "fscore_0.2": 0.9104202574973994,
+          "coverage_0.2": 0.8609499931335449,
+          "out_of_range_ratio": 0.00021111110982019454
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.833566329878522e-06,
+        "col_error": 1.318767317570746e-11,
+        "row_error_mean": 1.0555504559306428e-07,
+        "row_error_max": 1.833566329878522e-06,
+        "col_error_mean": 2.186417713545552e-12,
+        "col_error_max": 1.318767317570746e-11,
+        "bad_row_ratio": 0.6063888669013977,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1767985820770264,
+        "max_row_probability": 1.0,
+        "entropy": 13.27685832977295,
+        "num_edges": 3312852,
+        "row_relative_error": 0.330041939378134,
+        "column_relative_error": 2.3737811716273427e-06,
+        "candidate": {
+          "cd": 0.08306576311588287,
+          "spacing_mean": 0.133132204413414,
+          "spacing_cv": 0.44751453399658203,
+          "fscore_0.1": 0.6739787989767455,
+          "coverage_0.1": 0.6505666971206665,
+          "fscore_0.2": 0.9973439882434929,
+          "coverage_0.2": 0.9966555833816528,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.6180392503738403,
+        "reason": "accepted",
+        "peak_vram_bytes": 615334400,
+        "runtime_seconds": 0.8236584085971117
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 12,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000012.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000012.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.1344422698020935,
+          "spacing_mean": 0.14674778282642365,
+          "spacing_cv": 0.49927040934562683,
+          "fscore_0.1": 0.2672089435981581,
+          "coverage_0.1": 0.24808889627456665,
+          "fscore_0.2": 0.8901594299435954,
+          "coverage_0.2": 0.8832499980926514,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12652909755706787,
+          "spacing_mean": 0.12045474350452423,
+          "spacing_cv": 0.5350052118301392,
+          "fscore_0.1": 0.31809718918684643,
+          "coverage_0.1": 0.2837222218513489,
+          "fscore_0.2": 0.9106620923721656,
+          "coverage_0.2": 0.8612722158432007,
+          "out_of_range_ratio": 0.00038333333213813603
+        },
+        "nearest_gt": {
+          "cd": 0.042234573513269424,
+          "spacing_mean": 0.0649295225739479,
+          "spacing_cv": 1.5487984418869019,
+          "fscore_0.1": 0.7388510838490864,
+          "coverage_0.1": 0.5858555436134338,
+          "fscore_0.2": 0.9044630914697548,
+          "coverage_0.2": 0.8255888819694519,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12867867946624756,
+          "spacing_mean": 0.08513127267360687,
+          "spacing_cv": 0.6696462035179138,
+          "fscore_0.1": 0.3369955121442615,
+          "coverage_0.1": 0.27905556559562683,
+          "fscore_0.2": 0.8831019643626906,
+          "coverage_0.2": 0.8000388741493225,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12652909755706787,
+          "spacing_mean": 0.12045474350452423,
+          "spacing_cv": 0.5350052118301392,
+          "fscore_0.1": 0.31809718918684643,
+          "coverage_0.1": 0.2837222218513489,
+          "fscore_0.2": 0.9106620923721656,
+          "coverage_0.2": 0.8612722158432007,
+          "out_of_range_ratio": 0.00038333333213813603
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.159951807494508e-06,
+        "col_error": 1.3642420526593924e-11,
+        "row_error_mean": 1.0662112970294402e-07,
+        "row_error_max": 1.159951807494508e-06,
+        "col_error_mean": 2.186950707333546e-12,
+        "col_error_max": 1.3642420526593924e-11,
+        "bad_row_ratio": 0.6082000136375427,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1789071559906006,
+        "max_row_probability": 1.0,
+        "entropy": 13.27903938293457,
+        "num_edges": 3311670,
+        "row_relative_error": 0.20879132534901146,
+        "column_relative_error": 2.4556356947869062e-06,
+        "candidate": {
+          "cd": 0.08311375975608826,
+          "spacing_mean": 0.1327049732208252,
+          "spacing_cv": 0.4444608688354492,
+          "fscore_0.1": 0.6734622950382102,
+          "coverage_0.1": 0.6505333185195923,
+          "fscore_0.2": 0.9975523907332636,
+          "coverage_0.2": 0.996927797794342,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5994800329208374,
+        "reason": "accepted",
+        "peak_vram_bytes": 614279168,
+        "runtime_seconds": 0.8248106651008129
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 13,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000013.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000013.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13313570618629456,
+          "spacing_mean": 0.14421412348747253,
+          "spacing_cv": 0.5042474269866943,
+          "fscore_0.1": 0.2779290643682664,
+          "coverage_0.1": 0.257194459438324,
+          "fscore_0.2": 0.8932440287014757,
+          "coverage_0.2": 0.8893555402755737,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12465827167034149,
+          "spacing_mean": 0.11845071613788605,
+          "spacing_cv": 0.5366904735565186,
+          "fscore_0.1": 0.3319676421118364,
+          "coverage_0.1": 0.29500001668930054,
+          "fscore_0.2": 0.9165756464584484,
+          "coverage_0.2": 0.8701778054237366,
+          "out_of_range_ratio": 0.0005666666547767818
+        },
+        "nearest_gt": {
+          "cd": 0.04170913249254227,
+          "spacing_mean": 0.06269282102584839,
+          "spacing_cv": 1.563897967338562,
+          "fscore_0.1": 0.7362967221757712,
+          "coverage_0.1": 0.5826500058174133,
+          "fscore_0.2": 0.9143906770156164,
+          "coverage_0.2": 0.8422833681106567,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.1269809603691101,
+          "spacing_mean": 0.08247710764408112,
+          "spacing_cv": 0.6782653331756592,
+          "fscore_0.1": 0.3498240597811614,
+          "coverage_0.1": 0.2881055474281311,
+          "fscore_0.2": 0.8873472892336163,
+          "coverage_0.2": 0.807116687297821,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12465827167034149,
+          "spacing_mean": 0.11845071613788605,
+          "spacing_cv": 0.5366904735565186,
+          "fscore_0.1": 0.3319676421118364,
+          "coverage_0.1": 0.29500001668930054,
+          "fscore_0.2": 0.9165756464584484,
+          "coverage_0.2": 0.8701778054237366,
+          "out_of_range_ratio": 0.0005666666547767818
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.1725578588084318e-06,
+        "col_error": 1.2732925824820995e-11,
+        "row_error_mean": 1.0472746225786977e-07,
+        "row_error_max": 1.1725578588084318e-06,
+        "col_error_mean": 2.1855410276688803e-12,
+        "col_error_max": 1.2732925824820995e-11,
+        "bad_row_ratio": 0.5970555543899536,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.2101951837539673,
+        "max_row_probability": 1.0,
+        "entropy": 13.31036376953125,
+        "num_edges": 3318123,
+        "row_relative_error": 0.21106041458551772,
+        "column_relative_error": 2.291926648467779e-06,
+        "candidate": {
+          "cd": 0.0822959914803505,
+          "spacing_mean": 0.12883296608924866,
+          "spacing_cv": 0.4512123465538025,
+          "fscore_0.1": 0.6857675837031529,
+          "coverage_0.1": 0.6610833406448364,
+          "fscore_0.2": 0.9978746672169639,
+          "coverage_0.2": 0.9972944259643555,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5895072221755981,
+        "reason": "accepted",
+        "peak_vram_bytes": 615901184,
+        "runtime_seconds": 0.8232118394225836
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 14,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000014.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000014.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.1342335045337677,
+          "spacing_mean": 0.14559924602508545,
+          "spacing_cv": 0.5015245079994202,
+          "fscore_0.1": 0.2698829343633146,
+          "coverage_0.1": 0.25039443373680115,
+          "fscore_0.2": 0.8894894831250773,
+          "coverage_0.2": 0.8851222395896912,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12537378072738647,
+          "spacing_mean": 0.11919393390417099,
+          "spacing_cv": 0.5342763662338257,
+          "fscore_0.1": 0.32712574804980143,
+          "coverage_0.1": 0.29109999537467957,
+          "fscore_0.2": 0.9142704659776335,
+          "coverage_0.2": 0.8670611381530762,
+          "out_of_range_ratio": 0.00039444444701075554
+        },
+        "nearest_gt": {
+          "cd": 0.041941817849874496,
+          "spacing_mean": 0.06360039860010147,
+          "spacing_cv": 1.5570777654647827,
+          "fscore_0.1": 0.7369130324587038,
+          "coverage_0.1": 0.5834222435951233,
+          "fscore_0.2": 0.9111070229382734,
+          "coverage_0.2": 0.8367277979850769,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12780189514160156,
+          "spacing_mean": 0.08300907909870148,
+          "spacing_cv": 0.6770561337471008,
+          "fscore_0.1": 0.346828726055665,
+          "coverage_0.1": 0.28628888726234436,
+          "fscore_0.2": 0.8853411184371279,
+          "coverage_0.2": 0.803600013256073,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12537378072738647,
+          "spacing_mean": 0.11919393390417099,
+          "spacing_cv": 0.5342763662338257,
+          "fscore_0.1": 0.32712574804980143,
+          "coverage_0.1": 0.29109999537467957,
+          "fscore_0.2": 0.9142704659776335,
+          "coverage_0.2": 0.8670611381530762,
+          "out_of_range_ratio": 0.00039444444701075554
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.8603054741106462e-06,
+        "col_error": 1.3642420526593924e-11,
+        "row_error_mean": 1.0630190416804908e-07,
+        "row_error_max": 1.8603054741106462e-06,
+        "col_error_mean": 2.18035181923093e-12,
+        "col_error_max": 1.3642420526593924e-11,
+        "bad_row_ratio": 0.606427788734436,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1988600492477417,
+        "max_row_probability": 1.0,
+        "entropy": 13.298895835876465,
+        "num_edges": 3317575,
+        "row_relative_error": 0.3348549853399163,
+        "column_relative_error": 2.4556356947869062e-06,
+        "candidate": {
+          "cd": 0.0825393944978714,
+          "spacing_mean": 0.13021177053451538,
+          "spacing_cv": 0.45057225227355957,
+          "fscore_0.1": 0.6817506526581285,
+          "coverage_0.1": 0.657872200012207,
+          "fscore_0.2": 0.9978968092963235,
+          "coverage_0.2": 0.9972666501998901,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.6230136752128601,
+        "reason": "accepted",
+        "peak_vram_bytes": 614398464,
+        "runtime_seconds": 0.8250719700008631
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 15,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000015.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000015.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13444559276103973,
+          "spacing_mean": 0.14643463492393494,
+          "spacing_cv": 0.5089715719223022,
+          "fscore_0.1": 0.27052430664350813,
+          "coverage_0.1": 0.25093334913253784,
+          "fscore_0.2": 0.888199647637754,
+          "coverage_0.2": 0.8846555948257446,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12599681317806244,
+          "spacing_mean": 0.11973720043897629,
+          "spacing_cv": 0.5501567125320435,
+          "fscore_0.1": 0.32403442091200735,
+          "coverage_0.1": 0.28849443793296814,
+          "fscore_0.2": 0.9120202979866469,
+          "coverage_0.2": 0.8651222586631775,
+          "out_of_range_ratio": 0.000388888904126361
+        },
+        "nearest_gt": {
+          "cd": 0.04196750745177269,
+          "spacing_mean": 0.06417858600616455,
+          "spacing_cv": 1.5661633014678955,
+          "fscore_0.1": 0.737440148269291,
+          "coverage_0.1": 0.5840833187103271,
+          "fscore_0.2": 0.9100520627455531,
+          "coverage_0.2": 0.8349500298500061,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.1285284459590912,
+          "spacing_mean": 0.08313173055648804,
+          "spacing_cv": 0.6924816966056824,
+          "fscore_0.1": 0.3437218658359033,
+          "coverage_0.1": 0.283311128616333,
+          "fscore_0.2": 0.882623348579424,
+          "coverage_0.2": 0.7997000217437744,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12599681317806244,
+          "spacing_mean": 0.11973720043897629,
+          "spacing_cv": 0.5501567125320435,
+          "fscore_0.1": 0.32403442091200735,
+          "coverage_0.1": 0.28849443793296814,
+          "fscore_0.2": 0.9120202979866469,
+          "coverage_0.2": 0.8651222586631775,
+          "out_of_range_ratio": 0.000388888904126361
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.3381859389482997e-06,
+        "col_error": 1.77351466845721e-11,
+        "row_error_mean": 1.0189404520133394e-07,
+        "row_error_max": 1.3381859389482997e-06,
+        "col_error_mean": 2.1838813309832394e-12,
+        "col_error_max": 1.77351466845721e-11,
+        "bad_row_ratio": 0.5946500301361084,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.1919225454330444,
+        "max_row_probability": 1.0,
+        "entropy": 13.291937828063965,
+        "num_edges": 3318310,
+        "row_relative_error": 0.24087346901069395,
+        "column_relative_error": 3.192326403222978e-06,
+        "candidate": {
+          "cd": 0.08249583840370178,
+          "spacing_mean": 0.13054132461547852,
+          "spacing_cv": 0.4625675082206726,
+          "fscore_0.1": 0.6815023295762935,
+          "coverage_0.1": 0.6576499938964844,
+          "fscore_0.2": 0.9976663835637717,
+          "coverage_0.2": 0.9971166849136353,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5980854034423828,
+        "reason": "accepted",
+        "peak_vram_bytes": 616020480,
+        "runtime_seconds": 0.826019398868084
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 16,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000016.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000016.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13318414986133575,
+          "spacing_mean": 0.14429455995559692,
+          "spacing_cv": 0.511138379573822,
+          "fscore_0.1": 0.2778087433300271,
+          "coverage_0.1": 0.25725001096725464,
+          "fscore_0.2": 0.8920539515303734,
+          "coverage_0.2": 0.8895333409309387,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12480556964874268,
+          "spacing_mean": 0.11850616335868835,
+          "spacing_cv": 0.5453794002532959,
+          "fscore_0.1": 0.33165069270778286,
+          "coverage_0.1": 0.29455000162124634,
+          "fscore_0.2": 0.9146919567116961,
+          "coverage_0.2": 0.8686222434043884,
+          "out_of_range_ratio": 0.0006166666862554848
+        },
+        "nearest_gt": {
+          "cd": 0.04179029539227486,
+          "spacing_mean": 0.06274040788412094,
+          "spacing_cv": 1.5756351947784424,
+          "fscore_0.1": 0.7354844116939014,
+          "coverage_0.1": 0.5816333293914795,
+          "fscore_0.2": 0.9141221620463948,
+          "coverage_0.2": 0.8418278098106384,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.126959890127182,
+          "spacing_mean": 0.08203186839818954,
+          "spacing_cv": 0.6817226409912109,
+          "fscore_0.1": 0.3523294756184208,
+          "coverage_0.1": 0.2898000180721283,
+          "fscore_0.2": 0.8878351431775354,
+          "coverage_0.2": 0.8073611259460449,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12480556964874268,
+          "spacing_mean": 0.11850616335868835,
+          "spacing_cv": 0.5453794002532959,
+          "fscore_0.1": 0.33165069270778286,
+          "coverage_0.1": 0.29455000162124634,
+          "fscore_0.2": 0.9146919567116961,
+          "coverage_0.2": 0.8686222434043884,
+          "out_of_range_ratio": 0.0006166666862554848
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.3845792636857368e-06,
+        "col_error": 1.2732925824820995e-11,
+        "row_error_mean": 1.0392248839252716e-07,
+        "row_error_max": 1.3845792636857368e-06,
+        "col_error_mean": 2.1882315837801203e-12,
+        "col_error_max": 1.2732925824820995e-11,
+        "bad_row_ratio": 0.600683331489563,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.2070351839065552,
+        "max_row_probability": 1.0,
+        "entropy": 13.307079315185547,
+        "num_edges": 3320026,
+        "row_relative_error": 0.24922426746343262,
+        "column_relative_error": 2.291926648467779e-06,
+        "candidate": {
+          "cd": 0.08192116767168045,
+          "spacing_mean": 0.12870512902736664,
+          "spacing_cv": 0.45984822511672974,
+          "fscore_0.1": 0.6899111544885789,
+          "coverage_0.1": 0.6647278070449829,
+          "fscore_0.2": 0.9976857670075306,
+          "coverage_0.2": 0.997094452381134,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.6390298008918762,
+        "reason": "accepted",
+        "peak_vram_bytes": 615838208,
+        "runtime_seconds": 0.8264248538762331
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 17,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000017.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000017.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13238082826137543,
+          "spacing_mean": 0.14290913939476013,
+          "spacing_cv": 0.5102009177207947,
+          "fscore_0.1": 0.2846058576925893,
+          "coverage_0.1": 0.2630611062049866,
+          "fscore_0.2": 0.8945191558674925,
+          "coverage_0.2": 0.8928666710853577,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12398592382669449,
+          "spacing_mean": 0.11708960682153702,
+          "spacing_cv": 0.5468664169311523,
+          "fscore_0.1": 0.3386955170137145,
+          "coverage_0.1": 0.29997777938842773,
+          "fscore_0.2": 0.9170389578571275,
+          "coverage_0.2": 0.8728333711624146,
+          "out_of_range_ratio": 0.0003777777892537415
+        },
+        "nearest_gt": {
+          "cd": 0.04147859290242195,
+          "spacing_mean": 0.061781153082847595,
+          "spacing_cv": 1.5768238306045532,
+          "fscore_0.1": 0.7341371839755163,
+          "coverage_0.1": 0.5799500346183777,
+          "fscore_0.2": 0.9186396549849413,
+          "coverage_0.2": 0.8495222330093384,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12574219703674316,
+          "spacing_mean": 0.08084884285926819,
+          "spacing_cv": 0.687127947807312,
+          "fscore_0.1": 0.35999363942901313,
+          "coverage_0.1": 0.29463890194892883,
+          "fscore_0.2": 0.8910281948694717,
+          "coverage_0.2": 0.8125444650650024,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12398592382669449,
+          "spacing_mean": 0.11708960682153702,
+          "spacing_cv": 0.5468664169311523,
+          "fscore_0.1": 0.3386955170137145,
+          "coverage_0.1": 0.29997777938842773,
+          "fscore_0.2": 0.9170389578571275,
+          "coverage_0.2": 0.8728333711624146,
+          "out_of_range_ratio": 0.0003777777892537415
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.1440579328336753e-06,
+        "col_error": 1.2732925824820995e-11,
+        "row_error_mean": 1.0361063118580205e-07,
+        "row_error_max": 1.1440579328336753e-06,
+        "col_error_mean": 2.181748922150395e-12,
+        "col_error_max": 1.2732925824820995e-11,
+        "bad_row_ratio": 0.5977055430412292,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.226122498512268,
+        "max_row_probability": 1.0,
+        "entropy": 13.326211929321289,
+        "num_edges": 3323091,
+        "row_relative_error": 0.20593042791006155,
+        "column_relative_error": 2.291926648467779e-06,
+        "candidate": {
+          "cd": 0.0817076712846756,
+          "spacing_mean": 0.1267038732767105,
+          "spacing_cv": 0.4613681435585022,
+          "fscore_0.1": 0.6952157878163637,
+          "coverage_0.1": 0.6692166924476624,
+          "fscore_0.2": 0.9979691839242972,
+          "coverage_0.2": 0.9974555373191833,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5502790808677673,
+        "reason": "accepted",
+        "peak_vram_bytes": 614063104,
+        "runtime_seconds": 0.8346202615648508
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 18,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000018.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000018.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13344398140907288,
+          "spacing_mean": 0.1447456330060959,
+          "spacing_cv": 0.5142411589622498,
+          "fscore_0.1": 0.2780563943551614,
+          "coverage_0.1": 0.25741666555404663,
+          "fscore_0.2": 0.8903964059492807,
+          "coverage_0.2": 0.8886055946350098,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.1245248019695282,
+          "spacing_mean": 0.11695075035095215,
+          "spacing_cv": 0.5599812865257263,
+          "fscore_0.1": 0.33505556332726233,
+          "coverage_0.1": 0.29706111550331116,
+          "fscore_0.2": 0.9152051276895152,
+          "coverage_0.2": 0.8693277835845947,
+          "out_of_range_ratio": 0.0003555555595085025
+        },
+        "nearest_gt": {
+          "cd": 0.04159490764141083,
+          "spacing_mean": 0.0629889965057373,
+          "spacing_cv": 1.5747634172439575,
+          "fscore_0.1": 0.7354399966956192,
+          "coverage_0.1": 0.5815777778625488,
+          "fscore_0.2": 0.9162045425218867,
+          "coverage_0.2": 0.8453666567802429,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12712347507476807,
+          "spacing_mean": 0.08073581010103226,
+          "spacing_cv": 0.7019020915031433,
+          "fscore_0.1": 0.35465516089927507,
+          "coverage_0.1": 0.29027223587036133,
+          "fscore_0.2": 0.8856901018896995,
+          "coverage_0.2": 0.8049833178520203,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.1245248019695282,
+          "spacing_mean": 0.11695075035095215,
+          "spacing_cv": 0.5599812865257263,
+          "fscore_0.1": 0.33505556332726233,
+          "coverage_0.1": 0.29706111550331116,
+          "fscore_0.2": 0.9152051276895152,
+          "coverage_0.2": 0.8693277835845947,
+          "out_of_range_ratio": 0.0003555555595085025
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.8518594515626319e-06,
+        "col_error": 1.318767317570746e-11,
+        "row_error_mean": 1.00550039405789e-07,
+        "row_error_max": 1.8518594515626319e-06,
+        "col_error_mean": 2.1847729788498915e-12,
+        "col_error_max": 1.318767317570746e-11,
+        "bad_row_ratio": 0.5893388986587524,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.2151086330413818,
+        "max_row_probability": 1.0,
+        "entropy": 13.315248489379883,
+        "num_edges": 3321081,
+        "row_relative_error": 0.33333470128127374,
+        "column_relative_error": 2.3737811716273427e-06,
+        "candidate": {
+          "cd": 0.08182931691408157,
+          "spacing_mean": 0.1276300847530365,
+          "spacing_cv": 0.46963736414909363,
+          "fscore_0.1": 0.6921968393264044,
+          "coverage_0.1": 0.6664277911186218,
+          "fscore_0.2": 0.9977357552491417,
+          "coverage_0.2": 0.9971277713775635,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.5599413514137268,
+        "reason": "accepted",
+        "peak_vram_bytes": 615300608,
+        "runtime_seconds": 0.8366036638617516
+      }
+    },
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 19,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000019.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000019.ply"
+      },
+      "source_kind": "gt_density",
+      "parameters": {
+        "mode": "sinkhorn_guided_geometry",
+        "k": 16,
+        "epsilon": 0.01,
+        "iterations": 100,
+        "alpha": 1.0,
+        "marginal_relative_tolerance": 0.01,
+        "coverage_drop_tolerance": 0.01,
+        "spacing_min_ratio": 0.8,
+        "spacing_cv_max_ratio": 1.25,
+        "max_displacement": 10.0
+      },
+      "baselines": {
+        "source": {
+          "cd": 0.13321688771247864,
+          "spacing_mean": 0.14387714862823486,
+          "spacing_cv": 0.5161470770835876,
+          "fscore_0.1": 0.2803858925591548,
+          "coverage_0.1": 0.2593555450439453,
+          "fscore_0.2": 0.8904585148570743,
+          "coverage_0.2": 0.8889389038085938,
+          "out_of_range_ratio": 0.0
+        },
+        "teacher": {
+          "cd": 0.12405809760093689,
+          "spacing_mean": 0.11730357259511948,
+          "spacing_cv": 0.5537974238395691,
+          "fscore_0.1": 0.3391333933597561,
+          "coverage_0.1": 0.300638884305954,
+          "fscore_0.2": 0.9164344785191869,
+          "coverage_0.2": 0.8716166615486145,
+          "out_of_range_ratio": 0.000183333337190561
+        },
+        "nearest_gt": {
+          "cd": 0.04141386225819588,
+          "spacing_mean": 0.06210252270102501,
+          "spacing_cv": 1.5848193168640137,
+          "fscore_0.1": 0.7346265840769169,
+          "coverage_0.1": 0.580561101436615,
+          "fscore_0.2": 0.9189416422222954,
+          "coverage_0.2": 0.8500388860702515,
+          "out_of_range_ratio": 0.0
+        },
+        "knn_barycenter": {
+          "cd": 0.12652072310447693,
+          "spacing_mean": 0.08072035759687424,
+          "spacing_cv": 0.7022727727890015,
+          "fscore_0.1": 0.3587355353695637,
+          "coverage_0.1": 0.29358890652656555,
+          "fscore_0.2": 0.8870136927119365,
+          "coverage_0.2": 0.8075166940689087,
+          "out_of_range_ratio": 0.0
+        }
+      },
+      "diagnostics": {
+        "mode": "sinkhorn_guided_geometry",
+        "teacher": {
+          "cd": 0.12405809760093689,
+          "spacing_mean": 0.11730357259511948,
+          "spacing_cv": 0.5537974238395691,
+          "fscore_0.1": 0.3391333933597561,
+          "coverage_0.1": 0.300638884305954,
+          "fscore_0.2": 0.9164344785191869,
+          "coverage_0.2": 0.8716166615486145,
+          "out_of_range_ratio": 0.000183333337190561
+        },
+        "balanced_ot_converged": false,
+        "geometry_refinement_accepted": true,
+        "fallback_used": false,
+        "plan_finite": true,
+        "every_source_target_covered": true,
+        "no_dense_nxn": true,
+        "row_error": 1.1111324056400917e-06,
+        "col_error": 1.2732925824820995e-11,
+        "row_error_mean": 1.0300676933638897e-07,
+        "row_error_max": 1.1111324056400917e-06,
+        "col_error_mean": 2.1747484455630905e-12,
+        "col_error_max": 1.2732925824820995e-11,
+        "bad_row_ratio": 0.5994166731834412,
+        "bad_col_ratio": 0.0,
+        "mean_row_entropy": 1.224574089050293,
+        "max_row_probability": 1.0,
+        "entropy": 13.324636459350586,
+        "num_edges": 3325044,
+        "row_relative_error": 0.20000383301521651,
+        "column_relative_error": 2.291926648467779e-06,
+        "candidate": {
+          "cd": 0.0815410166978836,
+          "spacing_mean": 0.12687356770038605,
+          "spacing_cv": 0.4701072871685028,
+          "fscore_0.1": 0.6951811758425666,
+          "coverage_0.1": 0.6693333387374878,
+          "fscore_0.2": 0.997916557306643,
+          "coverage_0.2": 0.9975833296775818,
+          "out_of_range_ratio": 0.0
+        },
+        "max_refinement_displacement": 0.6497006416320801,
+        "reason": "accepted",
+        "peak_vram_bytes": 614558720,
+        "runtime_seconds": 0.835171427577734
+      }
+    }
+  ]
+}

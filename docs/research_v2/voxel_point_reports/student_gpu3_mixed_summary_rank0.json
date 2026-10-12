@@ -1,0 +1,49 @@
+{
+  "stage": "student",
+  "status": "PASS",
+  "mechanics_smoke_only": true,
+  "source_distribution_validated": false,
+  "config_sha256": "ec4f02508d8ae8fc2a7fa296ebc6fefbc780695435eb0d6160ed1be463ca2579",
+  "parameter_count": 14692739,
+  "successful_updates": 16,
+  "attempts": 16,
+  "seen_frames": 16,
+  "all_gradients_finite": true,
+  "peak_vram_bytes": 5341821952,
+  "seconds": 48.050560073927045,
+  "mean_step_seconds": 3.0031600046204403,
+  "physical_visible": "3",
+  "world_size": 1,
+  "source_counts": {
+    "predicted_density": 14,
+    "gt_density": 2
+  },
+  "steady_step_seconds_excluding_first": 2.1791567613681155,
+  "first_step_details": [
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 0,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000000.ply"
+      },
+      "source_kind": "predicted_density",
+      "velocity_mse": 0.08164970576763153,
+      "refined_target": false
+    }
+  ],
+  "last_step_details": [
+    {
+      "frame": {
+        "sequence": "00",
+        "frame": 0,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000000.ply"
+      },
+      "source_kind": "predicted_density",
+      "velocity_mse": 0.013455097563564777,
+      "refined_target": false
+    }
+  ],
+  "refined_target_count": 2
+}

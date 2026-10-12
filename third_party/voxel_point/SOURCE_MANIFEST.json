@@ -1,0 +1,162 @@
+{
+  "upstream": {
+    "VoxDet": "e10d8280de96d4f03f54b616e57e7c6754044fa4",
+    "PWM": "c6e809486db3d0b6f8503318dfea246c06c7a50e"
+  },
+  "files": [
+    {
+      "upstream_path": "mmdet3d_plugin/models/backbones/lidar_encoder.py",
+      "upstream_sha256": "c0935c59df7fcc86f2a4df586f3a5c63639dee61bbc68ed6a1fed973e36a062c",
+      "adapted_path": "fpsgen/voxel_point/vendor/voxdet/lidar_encoder.py",
+      "adapted_sha256": "c82d33126ce1617d4e9e233528a7128445a710e888a55123a8a96230bf41ce3c"
+    },
+    {
+      "upstream_path": "mmdet3d_plugin/models/backbones/resnet3d.py",
+      "upstream_sha256": "fe57ecccb0d7c85c557061ea3f20ef83e7c0cdcd61d8b5826a37cfdfadf0808d",
+      "adapted_path": "fpsgen/voxel_point/vendor/voxdet/resnet3d.py",
+      "adapted_sha256": "ee78aeba7eba4459d019f4ff8b7a48ed44ff10fad96ed940554e17364633fb93"
+    },
+    {
+      "upstream_path": "mmdet3d_plugin/models/necks/generalizedfpn.py",
+      "upstream_sha256": "1c3fd866526ce4cedffa641c0da03a6227133cbc5f1ae9fb381703f4986a03e3",
+      "adapted_path": "fpsgen/voxel_point/vendor/voxdet/generalizedfpn.py",
+      "adapted_sha256": "23023dd37c5b34bcea96348c9c587ebc274d05506eb22f6d645965492351af83"
+    },
+    {
+      "upstream_path": "mmdet3d_plugin/models/necks/spatial_deocupled_fpn_dense.py",
+      "upstream_sha256": "028324520881687f67487643a4fa92d012c475f748cf6eee1c1da4847ee1c2ea",
+      "adapted_path": "fpsgen/voxel_point/vendor/voxdet/spatial_deocupled_fpn_dense.py",
+      "adapted_sha256": "8c4b97349bc57df6a72b84cb8ef2e8987c4172e127c6cd03dd57068568de1a9e"
+    },
+    {
+      "upstream_path": "mmdet3d_plugin/models/dense_heads/det_head.py",
+      "upstream_sha256": "c7e5eb3274539da8a88511ea43b37754065ec6c74f6a665e0f59d07382315aba",
+      "adapted_path": "fpsgen/voxel_point/vendor/voxdet/det_head.py",
+      "adapted_sha256": "7db66ed455a605a3908da25f4d858c505af62fc2cb19b393a8efa14940e89f98"
+    },
+    {
+      "upstream_path": "mmdet3d_plugin/models/dense_heads/occ_head.py",
+      "upstream_sha256": "8155372ff50264defa5b1e818e2e719b82e509107f29735b48a43671fa6d6773",
+      "adapted_path": "fpsgen/voxel_point/vendor/voxdet/occ_head.py",
+      "adapted_sha256": "566fbc5220e8be9c263f849f0f857303d8d164b19f0c58fa050f9db85fb57d5f"
+    },
+    {
+      "upstream_path": "pointworldmodel/core/point/ptv3_reference_adapter.py",
+      "upstream_sha256": "bea47a7f35a2ef9c412cb220823285ab106c2754f2f1e88341f5a7beeb6e3f14",
+      "adapted_path": "fpsgen/voxel_point/vendor/pwm/ptv3_reference_adapter.py",
+      "adapted_sha256": "e0bdd44d7acda77f349e2d3b275d47cceeafba9ad6fd73bcca0631471579192e"
+    },
+    {
+      "upstream_path": "pointworldmodel/core/point/ptv3_time_conditioning.py",
+      "upstream_sha256": "19140507cc5f58f799b9a47583ae7f4f5a78acb9c51b8741facc8a20e9abb563",
+      "adapted_path": "fpsgen/voxel_point/vendor/pwm/ptv3_time_conditioning.py",
+      "adapted_sha256": "d8f1f233b3b0b6a191c27cc554a4884815444200daa4b65c80a15485358f581f"
+    },
+    {
+      "upstream_path": "pointworldmodel/core/point/ptv3_reference/__init__.py",
+      "upstream_sha256": "17b2eafd16760e223875d7362046a9cb8efb15365e43ae3c3c9d269f64d314b7",
+      "adapted_path": "fpsgen/voxel_point/vendor/pwm/ptv3_reference/__init__.py",
+      "adapted_sha256": "17b2eafd16760e223875d7362046a9cb8efb15365e43ae3c3c9d269f64d314b7"
+    },
+    {
+      "upstream_path": "pointworldmodel/core/point/ptv3_reference/model.py",
+      "upstream_sha256": "d40d32cabea2b6e850ecfa7655de852e0ebd648257de2b3af6eaadb35c8dda1b",
+      "adapted_path": "fpsgen/voxel_point/vendor/pwm/ptv3_reference/model.py",
+      "adapted_sha256": "d40d32cabea2b6e850ecfa7655de852e0ebd648257de2b3af6eaadb35c8dda1b"
+    },
+    {
+      "upstream_path": "pointworldmodel/core/point/ptv3_reference/serialization/__init__.py",
+      "upstream_sha256": "e6461b37ccb5dcb24725943271259c4f74dac89d27b22becb97e48ce04c8a9b1",
+      "adapted_path": "fpsgen/voxel_point/vendor/pwm/ptv3_reference/serialization/__init__.py",
+      "adapted_sha256": "e6461b37ccb5dcb24725943271259c4f74dac89d27b22becb97e48ce04c8a9b1"
+    },
+    {
+      "upstream_path": "pointworldmodel/core/point/ptv3_reference/serialization/default.py",
+      "upstream_sha256": "886b8f3f0bbfaccb96b629fe2021d0bc9a700887c2ff8ec13b347f62ae60d964",
+      "adapted_path": "fpsgen/voxel_point/vendor/pwm/ptv3_reference/serialization/default.py",
+      "adapted_sha256": "886b8f3f0bbfaccb96b629fe2021d0bc9a700887c2ff8ec13b347f62ae60d964"
+    },
+    {
+      "upstream_path": "pointworldmodel/core/point/ptv3_reference/serialization/hilbert.py",
+      "upstream_sha256": "b6c4e6c763d0d1e1583448d0cfe9c1c2ff5600e4535799beed9af80b48179f9e",
+      "adapted_path": "fpsgen/voxel_point/vendor/pwm/ptv3_reference/serialization/hilbert.py",
+      "adapted_sha256": "b6c4e6c763d0d1e1583448d0cfe9c1c2ff5600e4535799beed9af80b48179f9e"
+    },
+    {
+      "upstream_path": "pointworldmodel/core/point/ptv3_reference/serialization/z_order.py",
+      "upstream_sha256": "8a3b1f516c35e03ca15cb53b10c09b8b9cbe75289ac58650b6489212e9252c21",
+      "adapted_path": "fpsgen/voxel_point/vendor/pwm/ptv3_reference/serialization/z_order.py",
+      "adapted_sha256": "8a3b1f516c35e03ca15cb53b10c09b8b9cbe75289ac58650b6489212e9252c21"
+    },
+    {
+      "upstream_path": "VoxDet/LICENSE",
+      "upstream_sha256": "512253f7b27e32cfdd3fc3088fb2ba1fa3f07f1df00b94d503fb3959a11af52d",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "VoxDet/configs/voxdet-semnatickitti-lidar.py",
+      "upstream_sha256": "993176966b2d74b112da8347c6c789648b62e1b19d752b6ea63242c70ddfb1dc",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "VoxDet/mmdet3d_plugin/models/detectors/VoxDetLiDAR.py",
+      "upstream_sha256": "7d9f0d5d3d2b6b5621c9e0be52c5a7d41386e477767e62aa4ffd29009c86366e",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "VoxDet/mmdet3d_plugin/models/tpvbranch/LocalAggregator.py",
+      "upstream_sha256": "b3e599513ad2b870a93676a2653dca5f37492918efade62cc0e92db8a9d3de87",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "VoxDet/mmdet3d_plugin/models/tpvbranch/fuser.py",
+      "upstream_sha256": "3427e3e6bdbb0b75dad7ff89e38b19748547ff711459c19041ca605ca37a2960",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "VoxDet/mmdet3d_plugin/datasets/pipelines/loading_kitti_lidar.py",
+      "upstream_sha256": "da6d20717533e4effd3ac9571110de364191eecea36400dd5a711fc79bc0a177",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "PWM/pointworldmodel/core/point/mapping_teacher.py",
+      "upstream_sha256": "62e5900e6559629a63bd57ce643d67e6235a54ed2f6e51f705f8084b327fd267",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "PWM/pointworldmodel/core/point/point_flow_model.py",
+      "upstream_sha256": "9032d6e076fb85c30a648e08abf32a6940d140b6fb134ae4d93f90b348e777a5",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "PWM/pointworldmodel/core/point/anchor.py",
+      "upstream_sha256": "bdbcba94f81c714fe25de004b475a38ddf0f3d0ff7df3ee89884b639c79c8c48",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "PWM/pointworldmodel/core/voxel/grid.py",
+      "upstream_sha256": "f5f8d0a274fa847635ae5ba455d1345778b66880338ecee21088779cb8ee6dba",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "PWM/pointworldmodel/core/point/endpoint_refinement/sinkhorn.py",
+      "upstream_sha256": "80bbf8e4bd8eaf5b76de3118b7e1093c4def7501872a939cae9759a4a173cdf4",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "PWM/pointworldmodel/core/point/endpoint_refinement/sparse_global_ot.py",
+      "upstream_sha256": "2a83a6254094756c739680c094a921f06876b800e87c58b24ae1f2e69ecb97ba",
+      "reference_only": true
+    },
+    {
+      "upstream_path": "PWM/pointworldmodel/core/point/endpoint_refinement/knn.py",
+      "upstream_sha256": "8a4060e0234c54e4972aa6ed920f0a1c1a3fcd41ce7a77740088f6ea3e0724ab",
+      "reference_only": true
+    }
+  ],
+  "adaptations": [
+    "VoxDet: extract only configured LiDAR classes, remove MMDetection registry decorators and unused semantic loss methods; class init/forward unchanged except documented grid patch.",
+    "VoxDet create_grid: XYZ tensor grid_sample uses Z,Y,X coordinate order; align_corners=False cell-center normalization.",
+    "PWM: import namespace relocated only; official PTv3 trunk/time conditioning/adapter unchanged."
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "stage": "teacher",
+  "geometry": {
+    "x_min": -50.0,
+    "x_max": 50.0,
+    "y_min": -50.0,
+    "y_max": 50.0,
+    "z_min": -4.0,
+    "z_max": 4.4,
+    "nx": 256,
+    "ny": 256,
+    "nz": 32,
+    "xy_radius": 50.0,
+    "circle_mask": true
+  },
+  "config_sha256": "581fc7a6c6325959ac183aff8d3df5466f6f36b0d9a1bc3f84b52e4f57f9a35d",
+  "config": {
+    "geometry": "/data-12/M2024-HWZ/FPSGen/configs/research_v2/voxel_point/geometry_50m_256x256x32.yaml",
+    "seed": 20261013,
+    "data": {
+      "root": "/data-12/M2024-HWZ/KITTI_Odometry",
+      "train_sequences": [
+        "00",
+        "01",
+        "02",
+        "03",
+        "04",
+        "05",
+        "06",
+        "07",
+        "09",
+        "10"
+      ],
+      "test_sequences": [
+        "08"
+      ],
+      "split_manifest": null,
+      "development_block": 5,
+      "block_size": 100,
+      "guard_frames": 20
+    },
+    "runtime": {
+      "physical_gpu_ids": [
+        2,
+        3
+      ],
+      "batch_per_gpu": 1,
+      "amp": true,
+      "activation_checkpointing": true,
+      "knn_backend": "keops"
+    },
+    "stage": "teacher",
+    "network": {
+      "base_channels": 32,
+      "quantization_size": 0.1,
+      "fine_token_size": 0.1,
+      "coarse_token_size": 0.2,
+      "intra_voxel_encoding_bands": 4,
+      "fine_depth": 3,
+      "coarse_depth": 4,
+      "decoder_depth": 2,
+      "fine_heads": 8,
+      "coarse_heads": 8,
+      "fine_window_size": 64,
+      "coarse_window_size": 128,
+      "enable_flash": true,
+      "shuffle_orders": true,
+      "drop_path": 0.3
+    },
+    "anchor": {
+      "points": 180000,
+      "noise_std_ratio": 0.25,
+      "clip_to_voxel": true,
+      "clip_to_circle": true
+    },
+    "train": {
+      "epochs": 10,
+      "warmup_epochs": 1,
+      "predicted_source_fraction": 0.5,
+      "lr": 0.0002,
+      "weight_decay": 0.01,
+      "gradient_accumulation": 1,
+      "smoke_steps": 16
+    },
+    "predicted_counts_cache": null,
+    "stage1_checkpoint": null,
+    "voxel": {
+      "x_min": -50.0,
+      "x_max": 50.0,
+      "y_min": -50.0,
+      "y_max": 50.0,
+      "z_min": -4.0,
+      "z_max": 4.4,
+      "nx": 256,
+      "ny": 256,
+      "nz": 32,
+      "xy_radius": 50.0,
+      "circle_mask": true
+    }
+  },
+  "successful_updates": 16,
+  "seen_frames": 16,
+  "mechanics_smoke_only": true
+}

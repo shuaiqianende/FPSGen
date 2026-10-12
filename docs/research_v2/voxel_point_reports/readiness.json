@@ -1,0 +1,107 @@
+{
+  "stage1": "READY",
+  "teacher": "BLOCKED",
+  "sinkhorn": "BLOCKED",
+  "student": "BLOCKED",
+  "pseudo_targets_reliable": false,
+  "correctness_smokes": {
+    "stage1": "PASS",
+    "teacher_180k": "PASS",
+    "student_180k": "PASS",
+    "student_ddp": "PASS",
+    "end_to_end_20": "PASS"
+  },
+  "formal_training_started": false,
+  "seq08_loaded": false,
+  "blockers": [
+    "Stage1 has only 32 DDP smoke updates; finish supervised density training and evaluate frozen development metrics before making formal predicted-source caches.",
+    "Teacher only 16-update smoke models; warmup/mixed-source 10-epoch quality and source\u2192endpoint improvement gates remain pending.",
+    "GT-source K16 heuristic geometry accepted 20/20, balanced OT converged 0/20; predicted-source K32 geometry accepted 0/2, max displacements 25\u201327m and row relative errors 565\u2013799.",
+    "100-scene quality gate and 100\u2013500 successful-update Student pilot remain pending. Do not start formal Student with current predicted-source pseudo-targets."
+  ],
+  "allocated_peak_memory_note": "All reported peak_vram_bytes are torch.cuda.max_memory_allocated, not NVIDIA reserved/context memory.",
+  "steady_inference_ms_excluding_first": {
+    "stage1": 144.29455750474804,
+    "allocation_and_anchors": 22.97024820980273,
+    "pointflow": 2553.3720438221567,
+    "total": 2720.6368495367074
+  },
+  "mechanics_smoke_point_metrics": {
+    "cd": 0.36690339595079424,
+    "fscore_0.1": 0.1531044985235362,
+    "fscore_0.2": 0.5422415895537752,
+    "coverage_0.1": 0.14039639085531236,
+    "coverage_0.2": 0.4962747260928154,
+    "out_of_range_ratio": 0.00028888889428344553
+  },
+  "formal_config_sha256": {
+    "configs/research_v2/voxel_point/mapping_teacher_180k.yaml": {
+      "file_sha256": "677dc376f1ad99e74b10247fbdcf642c7a923782cc96c4fd68bf4cedc1718673",
+      "effective_config_sha256": "f8c2200522b1d2948d14b22b734e1149fe99c4245b1b7c347ceab6da67e2cc1d"
+    },
+    "configs/research_v2/voxel_point/geometry_50m_256x256x32.yaml": {
+      "file_sha256": "e1bb62aceb059a2d824f352e6d0805d60f01082adba892cfcab8ad595b4b6e58",
+      "effective_config_sha256": "19498fc79db34453b0e02e4086185e36e92a2bd65a8cdf6975262606a3cad0e1"
+    },
+    "configs/research_v2/voxel_point/pointflow_student_180k.yaml": {
+      "file_sha256": "ef45ca289ba18164212b64614be256f0788b9064439f618da4071fd6efb892cb",
+      "effective_config_sha256": "8137547ace43929fbb3e56caee5d77932b24a84f19a66b327b4db2774dea5f76"
+    },
+    "configs/research_v2/voxel_point/voxdet_density_stage1.yaml": {
+      "file_sha256": "e2ee5480b3fbf9f1b78666ce751bdd2d6976d595cf480d8014af60af3246c6aa",
+      "effective_config_sha256": "b4cbdd877a5c33f05da3abcb90068acceafd405cd32f6c67971fb42992d0651f"
+    },
+    "configs/research_v2/voxel_point/evaluate_voxel_point.yaml": {
+      "file_sha256": "5e2c062c8d8c130f3883d7210ca951a7d8bd5cff836593d5c3dad2d481d410ac",
+      "effective_config_sha256": "00db08d8495de22520e3ab3a11476ce10e9763456417fab0f816425df5dffff3"
+    },
+    "configs/research_v2/voxel_point/sinkhorn_gate_180k.yaml": {
+      "file_sha256": "481413f4603d9c3e9213d65b5b150af0d81965c540163c453ff06bb7a1a35d83",
+      "effective_config_sha256": "774b3c2ce9c642c5246df993d93e8c8682e2fc2ae01a36be46ace6e63b706b1c"
+    },
+    "experiments/voxel_point/runtime_configs/stage1_eval.yaml": {
+      "file_sha256": "6e41e761ddbc08f0f179e7b87274e8be28fedf4388cc3359bb177f18835846d2",
+      "effective_config_sha256": "a7225f117faf7a25cec7911aef54f25d062be694b1e23780b60b0a639fc5dc12"
+    },
+    "experiments/voxel_point/runtime_configs/sinkhorn_eval_fp32_smoke.yaml": {
+      "file_sha256": "3b2eebcae81f3dc8a4392b371eed91f703a710c560e4e35ce9f679a70a7eaa89",
+      "effective_config_sha256": "5c388e87e27dca2211a701340eaf1ecb7c0fcfdb747851d1894b13299a82c1ca"
+    },
+    "experiments/voxel_point/runtime_configs/mapping_teacher_180k.yaml": {
+      "file_sha256": "cb1acd28274db44142fcf48be89435fc954063f5d17e938d348a74306b3ba535",
+      "effective_config_sha256": "581fc7a6c6325959ac183aff8d3df5466f6f36b0d9a1bc3f84b52e4f57f9a35d"
+    },
+    "experiments/voxel_point/runtime_configs/pointflow_student_180k.yaml": {
+      "file_sha256": "f8f12389f8b78174814cb2918f14026758aeafb2b5493699ced578206a80926a",
+      "effective_config_sha256": "ec4f02508d8ae8fc2a7fa296ebc6fefbc780695435eb0d6160ed1be463ca2579"
+    },
+    "experiments/voxel_point/runtime_configs/mapping_teacher_mixed_smoke.yaml": {
+      "file_sha256": "bd84dca2eee8f6da186bc38ab1597206538704437fe0eb584f24485a2e18018e",
+      "effective_config_sha256": "066b08a886a9fc5a9c74a5e5c51a889eff0ea3f4e20e22aa9f7eca85c98f908d"
+    },
+    "experiments/voxel_point/runtime_configs/evaluate_voxel_point.yaml": {
+      "file_sha256": "f95d4195e6ba33fdc65db7e3235373bf13b2f0c0b928f4beba5118bdced2761e",
+      "effective_config_sha256": "6c99660c98b38f7f453a0fe33a70cb83bf4b55a0c95812f912bf4aee2a41c698"
+    },
+    "experiments/voxel_point/runtime_configs/pipeline_smoke.yaml": {
+      "file_sha256": "34de41cd36dc5b6b430d6963dddfd202adbe2440d9333161dde73864406b7eb3",
+      "effective_config_sha256": "195d6b89810c75120e599a5908d1ad20535730fb9ea0b9d084f49e7d610ea93e"
+    },
+    "experiments/voxel_point/runtime_configs/sinkhorn_gate_180k.yaml": {
+      "file_sha256": "20131fb454b5f483233aa06a0d21950dc222db64b2117a11fe027f835aec3743",
+      "effective_config_sha256": "b39d8ddc1669d5a6471dc7f323f1e76a20f352b7e2e959dcbaadddf7f8cfd962"
+    },
+    "experiments/voxel_point/runtime_configs/pipeline_final_smoke.yaml": {
+      "file_sha256": "2bfbece758626df05fa890a8ebac7547bd0ea033228ef06baf2b0ce53e53040b",
+      "effective_config_sha256": "31c2d43d0b5dd3a6a8e7e1fbbc0bcb00e31c9335cd32059f344ac6228b16ae43"
+    },
+    "experiments/voxel_point/runtime_configs/sinkhorn_k32_smoke.yaml": {
+      "file_sha256": "4ccb969dae52fc551ced163e15ed9c2cafbd49b65ad27f5925066d5d9ec1fdd6",
+      "effective_config_sha256": "8d4a6e48c000e6f5638abea7f1c26bce4e9d26f681c0c97ec6a78358c2b45d11"
+    },
+    "configs/research_v2/voxel_point/pointflow_teacher_only_180k.yaml": {
+      "file_sha256": "8906e050ccb5bb74ed3ca9c59c22904d0293f3cac7bbd572ec9dc78fd6c2f0f0",
+      "effective_config_sha256": "9577f2c823a17b44418d36bd6a0e7af05afc70c3017156bcc11f6e08db0604ba"
+    }
+  }
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "sequence": "00",
+    "frame": 0,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000000.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000000.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 1,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000001.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000001.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 2,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000002.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000002.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 3,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000003.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000003.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 4,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000004.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000004.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 5,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000005.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000005.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 6,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000006.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000006.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 7,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000007.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000007.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 8,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000008.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000008.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 9,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000009.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000009.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 10,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000010.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000010.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 11,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000011.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000011.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 12,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000012.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000012.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 13,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000013.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000013.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 14,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000014.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000014.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 15,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000015.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000015.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 16,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000016.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000016.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 17,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000017.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000017.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 18,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000018.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000018.ply"
+  },
+  {
+    "sequence": "00",
+    "frame": 19,
+    "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000019.npy",
+    "gt": "/data-12/M2024-HWZ/KITTI_Odometry/00/gt_possion/000019.ply"
+  }
+]

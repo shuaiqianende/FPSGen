@@ -1,0 +1,64 @@
+geometry: geometry_50m_256x256x32.yaml
+seed: 20261013
+data:
+  root: /data-12/M2024-HWZ/KITTI_Odometry
+  train_sequences:
+  - '00'
+  - '01'
+  - '02'
+  - '03'
+  - '04'
+  - '05'
+  - '06'
+  - '07'
+  - 09
+  - '10'
+  test_sequences:
+  - 08
+  split_manifest: null
+  development_block: 5
+  block_size: 100
+  guard_frames: 20
+runtime:
+  physical_gpu_ids:
+  - 2
+  - 3
+  batch_per_gpu: 1
+  amp: true
+  activation_checkpointing: true
+  knn_backend: keops
+  point_sparse_eval_precision: fp32
+  point_attention_precision: fp16_flash
+stage: evaluate
+network:
+  base_channels: 32
+  quantization_size: 0.1
+  fine_token_size: 0.1
+  coarse_token_size: 0.2
+  intra_voxel_encoding_bands: 4
+  fine_depth: 3
+  coarse_depth: 4
+  decoder_depth: 2
+  fine_heads: 8
+  coarse_heads: 8
+  fine_window_size: 64
+  coarse_window_size: 128
+  enable_flash: true
+  shuffle_orders: true
+  drop_path: 0.3
+model:
+  density_bias: -6.0
+stage1_checkpoint: null
+student_checkpoint: null
+evaluation:
+  occupancy_threshold: 1.0
+  threshold_frozen: false
+  threshold_split: development
+  split: development
+  fd_u_protocol: PCA-256 plus sampling stability; external existing Utonia evaluator
+sampling:
+  euler_steps: 8
+  registered_steps:
+  - 4
+  - 8
+  - 16

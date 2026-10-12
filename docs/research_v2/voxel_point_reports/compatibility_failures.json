@@ -1,0 +1,32 @@
+[
+  {
+    "attempt": "Teacher whole-network nonreentrant checkpoint, no FlashAttention",
+    "failure": "OOM on backward: allocated22.15GiB, requested370MiB",
+    "resolution": "FlashAttention + tensor-only per-block reentrant checkpoint"
+  },
+  {
+    "attempt": "Teacher FlashAttention with nonreentrant checkpoint",
+    "failure": "Torch2.0 saved-leaf grad_accumulator assertion",
+    "resolution": "Reentrant block checkpoint"
+  },
+  {
+    "attempt": "Teacher checkpoint captures Point hierarchy parents",
+    "failure": "Memory rose from8.98GiB to19.39GiB over6updates, OOM at7",
+    "resolution": "Exclude unused hierarchy parent references from block replay metadata"
+  },
+  {
+    "attempt": "Checkpoint numerical parity",
+    "failure": "Unpool sparse feature input had been prematurely synced; outputmax error0.247",
+    "resolution": "Preserve independent dense/sparse feature tensors. Final output/gradientmax errors0"
+  },
+  {
+    "attempt": "SpConv2.3.6 eval under AMP",
+    "failure": "ConvTunerSimple cannot find suitable algorithm",
+    "resolution": "Sparse eval FP32; official FlashAttention casts QKV toFP16 internally"
+  },
+  {
+    "attempt": "Student DDP shared single-GPU KeOps cache",
+    "failure": "logicaldevice1 invalid due cached device properties",
+    "resolution": "Cache isolated by CUDA visibility and LOCAL_RANK. Final32 DDP updates pass"
+  }
+]

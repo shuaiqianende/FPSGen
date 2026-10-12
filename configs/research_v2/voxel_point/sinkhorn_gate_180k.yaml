@@ -1,0 +1,79 @@
+geometry: geometry_50m_256x256x32.yaml
+seed: 20261013
+data:
+  root: /data-12/M2024-HWZ/KITTI_Odometry
+  train_sequences:
+  - '00'
+  - '01'
+  - '02'
+  - '03'
+  - '04'
+  - '05'
+  - '06'
+  - '07'
+  - 09
+  - '10'
+  test_sequences:
+  - 08
+  split_manifest: null
+  development_block: 5
+  block_size: 100
+  guard_frames: 20
+runtime:
+  physical_gpu_ids:
+  - 2
+  - 3
+  batch_per_gpu: 1
+  amp: true
+  activation_checkpointing: true
+  knn_backend: keops
+  point_sparse_eval_precision: fp32
+  point_attention_precision: fp16_flash
+stage: sinkhorn
+network:
+  base_channels: 32
+  quantization_size: 0.1
+  fine_token_size: 0.1
+  coarse_token_size: 0.2
+  intra_voxel_encoding_bands: 4
+  fine_depth: 3
+  coarse_depth: 4
+  decoder_depth: 2
+  fine_heads: 8
+  coarse_heads: 8
+  fine_window_size: 64
+  coarse_window_size: 128
+  enable_flash: true
+  shuffle_orders: true
+  drop_path: 0.3
+teacher_checkpoint: null
+predicted_counts_cache: null
+sinkhorn:
+  mode: sinkhorn_guided_geometry
+  k: 16
+  epsilon: 0.01
+  iterations: 100
+  alpha: 1.0
+  marginal_relative_tolerance: 0.01
+  coverage_drop_tolerance: 0.01
+  spacing_min_ratio: 0.8
+  spacing_cv_max_ratio: 1.25
+  max_displacement: 10.0
+diagnostic:
+  scene_counts:
+  - 20
+  - 100
+  split: train
+  k:
+  - 16
+  - 32
+  epsilon:
+  - 0.01
+  - 0.02
+  - 0.05
+  iterations:
+  - 100
+  - 200
+  alpha:
+  - 0.5
+  - 1.0

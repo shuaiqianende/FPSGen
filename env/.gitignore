@@ -1,0 +1,9 @@
+# Only this experiment's isolated environments, source clones and runtime caches.
+/voxdet_density_py39/
+/pwm_ptv3_pointflow/
+/src/VoxDet/
+/src/PWM/
+/src/LiDiff/
+/voxel_point_cache/
+/voxel_point_wheels/
+/voxel_point_tmp/

@@ -1,0 +1,12 @@
+voxel:
+  x_min: -50.0
+  x_max: 50.0
+  y_min: -50.0
+  y_max: 50.0
+  z_min: -4.0
+  z_max: 4.4
+  nx: 256
+  ny: 256
+  nz: 32
+  xy_radius: 50.0
+  circle_mask: true
