@@ -15,7 +15,7 @@ export XDG_CACHE_HOME="$repo_root/env/voxel_point_cache/xdg"
 export TMPDIR="$repo_root/env/voxel_point_tmp"
 mkdir -p "$TMPDIR" "$XDG_CACHE_HOME" "$TORCH_EXTENSIONS_DIR" "$KEOPS_CACHE_FOLDER"
 case "$entry" in
-    train_voxdet_density|eval_voxdet_density|sample_pipeline|audit_voxdet_architecture)
+    train_voxdet_density|eval_voxdet_density|sample_pipeline|sample_voxdet_density|audit_voxdet_architecture)
         python_bin="$repo_root/env/voxdet_density_py39/bin/python" ;;
     train_mapping_teacher|train_pointflow|diagnose_sinkhorn|diagnose_pointflow_sources|evaluate_final_points|check_ptv3_checkpoint)
         python_bin="$repo_root/env/pwm_ptv3_pointflow/bin/python" ;;

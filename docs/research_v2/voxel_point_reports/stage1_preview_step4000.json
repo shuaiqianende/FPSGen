@@ -1,0 +1,513 @@
+{
+  "checkpoint_step": 4000,
+  "config_sha256": "5b6a0357ee32aba104a62514f007bd5f56d666a936c0db767483781b824ec70c",
+  "threshold": 1.0,
+  "threshold_frozen": false,
+  "seq08_used": false,
+  "pointflow_used": false,
+  "means": {
+    "train": {
+      "predicted_density": {
+        "occupancy_iou": 0.45391348004341125,
+        "occupancy_f1": 0.6228462159633636,
+        "occupied_count_mae": 1.4332653284072876,
+        "log_count_mae": 0.05586576275527477,
+        "mass_tv": 0.49727123975753784,
+        "coarse_mass_tv": 0.3595176190137863,
+        "mass_calibration_error": 0.03820702247321606,
+        "density_sum": 186876.75,
+        "occupied_voxel_fraction": 0.04431375116109848
+      },
+      "partial_density": {
+        "occupancy_iou": 0.14551584422588348,
+        "occupancy_f1": 0.2527768313884735,
+        "occupied_count_mae": 2.4247370958328247,
+        "log_count_mae": 0.04501605965197086,
+        "mass_tv": 0.8097801208496094,
+        "coarse_mass_tv": 0.6604576110839844,
+        "mass_calibration_error": 0.8999997079372406,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.006164564751088619
+      },
+      "predicted_anchors": {
+        "cd": 0.3852197166686823,
+        "spacing_mean": 0.18269621647730672,
+        "spacing_cv": 0.6818380558721335,
+        "fscore_0.1": 0.16531697236249202,
+        "coverage_0.1": 0.1593198104804286,
+        "fscore_0.2": 0.5969095693953756,
+        "coverage_0.2": 0.6733071760738176
+      },
+      "oracle_gt_density_anchors": {
+        "cd": 0.13074575462942387,
+        "spacing_mean": 0.13986753877250246,
+        "spacing_cv": 0.5098767829249424,
+        "fscore_0.1": 0.30016635369265354,
+        "coverage_0.1": 0.27787842634619575,
+        "fscore_0.2": 0.8969385056562008,
+        "coverage_0.2": 0.8983496215719717
+      }
+    },
+    "development": {
+      "predicted_density": {
+        "occupancy_iou": 0.4396810332934062,
+        "occupancy_f1": 0.6103431582450867,
+        "occupied_count_mae": 1.3543219566345215,
+        "log_count_mae": 0.058464707185824714,
+        "mass_tv": 0.509390672047933,
+        "coarse_mass_tv": 0.37298500537872314,
+        "mass_calibration_error": 0.016192910882333916,
+        "density_sum": 182914.72395833334,
+        "occupied_voxel_fraction": 0.04576333984732628
+      },
+      "partial_density": {
+        "occupancy_iou": 0.12400164703528087,
+        "occupancy_f1": 0.21991559863090515,
+        "occupied_count_mae": 2.2531611919403076,
+        "log_count_mae": 0.04709967722495397,
+        "mass_tv": 0.8386333386103312,
+        "coarse_mass_tv": 0.6832166910171509,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005709312080095212
+      },
+      "predicted_anchors": {
+        "cd": 0.34622414858000017,
+        "spacing_mean": 0.18985511621019957,
+        "spacing_cv": 0.6486474406307698,
+        "fscore_0.1": 0.14721052428367024,
+        "coverage_0.1": 0.14115,
+        "fscore_0.2": 0.578042670700401,
+        "coverage_0.2": 0.6462037037037037
+      },
+      "oracle_gt_density_anchors": {
+        "cd": 0.13288024159824333,
+        "spacing_mean": 0.14328775741732488,
+        "spacing_cv": 0.5041240073136445,
+        "fscore_0.1": 0.27970679542174454,
+        "coverage_0.1": 0.2586851851851852,
+        "fscore_0.2": 0.8936529244684696,
+        "coverage_0.2": 0.8904722222222222
+      }
+    }
+  },
+  "rows": [
+    {
+      "id": "00_000447",
+      "split": "train",
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 179999,
+        "filtered_roi_points": 1
+      },
+      "predicted_density": {
+        "occupancy_iou": 0.40504080057144165,
+        "occupancy_f1": 0.5765537619590759,
+        "occupied_count_mae": 1.2391268014907837,
+        "log_count_mae": 0.06119067594408989,
+        "mass_tv": 0.5106457471847534,
+        "coarse_mass_tv": 0.3817863464355469,
+        "mass_calibration_error": 0.02787003293633461,
+        "density_sum": 185015.578125,
+        "occupied_voxel_fraction": 0.04396659508347511
+      },
+      "partial_density": {
+        "occupancy_iou": 0.11445207893848419,
+        "occupancy_f1": 0.2053961455821991,
+        "occupied_count_mae": 1.9916367530822754,
+        "log_count_mae": 0.04965225234627724,
+        "mass_tv": 0.8456658124923706,
+        "coarse_mass_tv": 0.6999041438102722,
+        "mass_calibration_error": 0.8999994397163391,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005979856476187706
+      },
+      "predicted_anchors": {
+        "cd": 0.41985080829888854,
+        "spacing_mean": 0.18786187297109322,
+        "spacing_cv": 0.6626211936214633,
+        "fscore_0.1": 0.13895819948126822,
+        "coverage_0.1": 0.13177295429419053,
+        "fscore_0.2": 0.5563362733405289,
+        "coverage_0.2": 0.5833865743698576
+      },
+      "oracle_gt_density_anchors": {
+        "cd": 0.13812446851510204,
+        "spacing_mean": 0.15436625819265648,
+        "spacing_cv": 0.5085070671674841,
+        "fscore_0.1": 0.2503273333649758,
+        "coverage_0.1": 0.2334846304701693,
+        "fscore_0.2": 0.871600138148775,
+        "coverage_0.2": 0.8637659098106101
+      },
+      "image": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/preview_20261013_105510/evaluation/00_000447_comparison.png"
+    },
+    {
+      "id": "05_001000",
+      "split": "train",
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "predicted_density": {
+        "occupancy_iou": 0.5027861595153809,
+        "occupancy_f1": 0.6691386699676514,
+        "occupied_count_mae": 1.6274038553237915,
+        "log_count_mae": 0.050540849566459656,
+        "mass_tv": 0.48389673233032227,
+        "coarse_mass_tv": 0.33724889159202576,
+        "mass_calibration_error": 0.048544012010097504,
+        "density_sum": 188737.921875,
+        "occupied_voxel_fraction": 0.04466090723872185
+      },
+      "partial_density": {
+        "occupancy_iou": 0.17657960951328278,
+        "occupancy_f1": 0.3001575171947479,
+        "occupied_count_mae": 2.857837438583374,
+        "log_count_mae": 0.04037986695766449,
+        "mass_tv": 0.7738944292068481,
+        "coarse_mass_tv": 0.6210110783576965,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.0063492730259895325
+      },
+      "predicted_anchors": {
+        "cd": 0.3505886250384761,
+        "spacing_mean": 0.17753055998352024,
+        "spacing_cv": 0.7010549181228036,
+        "fscore_0.1": 0.1916757452437158,
+        "coverage_0.1": 0.18686666666666665,
+        "fscore_0.2": 0.6374828654502224,
+        "coverage_0.2": 0.7632277777777777
+      },
+      "oracle_gt_density_anchors": {
+        "cd": 0.1233670407437457,
+        "spacing_mean": 0.12536881935234845,
+        "spacing_cv": 0.5112464986824008,
+        "fscore_0.1": 0.3500053740203312,
+        "coverage_0.1": 0.32227222222222224,
+        "fscore_0.2": 0.9222768731636266,
+        "coverage_0.2": 0.9329333333333333
+      },
+      "image": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/preview_20261013_105510/evaluation/05_001000_comparison.png"
+    },
+    {
+      "id": "00_000550",
+      "split": "development",
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "predicted_density": {
+        "occupancy_iou": 0.44992879033088684,
+        "occupancy_f1": 0.620621919631958,
+        "occupied_count_mae": 1.226030945777893,
+        "log_count_mae": 0.05784284695982933,
+        "mass_tv": 0.4964742064476013,
+        "coarse_mass_tv": 0.3558591604232788,
+        "mass_calibration_error": 0.02053472213447094,
+        "density_sum": 183696.25,
+        "occupied_voxel_fraction": 0.047360535711050034
+      },
+      "partial_density": {
+        "occupancy_iou": 0.09343792498111725,
+        "occupancy_f1": 0.1709066927433014,
+        "occupied_count_mae": 2.121870517730713,
+        "log_count_mae": 0.0499788373708725,
+        "mass_tv": 0.8791666626930237,
+        "coarse_mass_tv": 0.7203333377838135,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.004650197457522154
+      },
+      "predicted_anchors": {
+        "cd": 0.3428549164081809,
+        "spacing_mean": 0.1915328109701412,
+        "spacing_cv": 0.6376936420128596,
+        "fscore_0.1": 0.1386956201834455,
+        "coverage_0.1": 0.13277222222222224,
+        "fscore_0.2": 0.5831857447863353,
+        "coverage_0.2": 0.6347388888888889
+      },
+      "oracle_gt_density_anchors": {
+        "cd": 0.13638407636193856,
+        "spacing_mean": 0.14899511271257873,
+        "spacing_cv": 0.4908408057070816,
+        "fscore_0.1": 0.2554744405641032,
+        "coverage_0.1": 0.23768333333333333,
+        "fscore_0.2": 0.8824261994242092,
+        "coverage_0.2": 0.8733166666666666
+      },
+      "image": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/preview_20261013_105510/evaluation/00_000550_comparison.png"
+    },
+    {
+      "id": "05_000550",
+      "split": "development",
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "predicted_density": {
+        "occupancy_iou": 0.4652324914932251,
+        "occupancy_f1": 0.6350288987159729,
+        "occupied_count_mae": 1.3520957231521606,
+        "log_count_mae": 0.055114902555942535,
+        "mass_tv": 0.4854188561439514,
+        "coarse_mass_tv": 0.3546978235244751,
+        "mass_calibration_error": 0.01248090248554945,
+        "density_sum": 182246.5625,
+        "occupied_voxel_fraction": 0.04354062303900719
+      },
+      "partial_density": {
+        "occupancy_iou": 0.1310965120792389,
+        "occupancy_f1": 0.2318042814731598,
+        "occupied_count_mae": 2.3040339946746826,
+        "log_count_mae": 0.046238042414188385,
+        "mass_tv": 0.8279055953025818,
+        "coarse_mass_tv": 0.6714389324188232,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005932325962930918
+      },
+      "predicted_anchors": {
+        "cd": 0.35268007642457383,
+        "spacing_mean": 0.1850483840050508,
+        "spacing_cv": 0.6780147172641738,
+        "fscore_0.1": 0.1595046732219172,
+        "coverage_0.1": 0.152,
+        "fscore_0.2": 0.6081593149763793,
+        "coverage_0.2": 0.6689055555555555
+      },
+      "oracle_gt_density_anchors": {
+        "cd": 0.1316263596509376,
+        "spacing_mean": 0.14051850505118008,
+        "spacing_cv": 0.49842281314727177,
+        "fscore_0.1": 0.28400792551658943,
+        "coverage_0.1": 0.26203333333333334,
+        "fscore_0.2": 0.9005164144646762,
+        "coverage_0.2": 0.8977444444444445
+      },
+      "image": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/preview_20261013_105510/evaluation/05_000550_comparison.png"
+    },
+    {
+      "id": "07_000550",
+      "split": "development",
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "predicted_density": {
+        "occupancy_iou": 0.40388181805610657,
+        "occupancy_f1": 0.5753786563873291,
+        "occupied_count_mae": 1.4848392009735107,
+        "log_count_mae": 0.06243637204170227,
+        "mass_tv": 0.5462789535522461,
+        "coarse_mass_tv": 0.4083980321884155,
+        "mass_calibration_error": 0.015563108026981354,
+        "density_sum": 182801.359375,
+        "occupied_voxel_fraction": 0.046388860791921616
+      },
+      "partial_density": {
+        "occupancy_iou": 0.14747050404548645,
+        "occupancy_f1": 0.2570358216762543,
+        "occupied_count_mae": 2.3335790634155273,
+        "log_count_mae": 0.045082151889801025,
+        "mass_tv": 0.8088277578353882,
+        "coarse_mass_tv": 0.6578778028488159,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.006545412819832563
+      },
+      "predicted_anchors": {
+        "cd": 0.34313745290724573,
+        "spacing_mean": 0.19298415365540672,
+        "spacing_cv": 0.6302339626152762,
+        "fscore_0.1": 0.14343127944564807,
+        "coverage_0.1": 0.1386777777777778,
+        "fscore_0.2": 0.5427829523384885,
+        "coverage_0.2": 0.6349666666666667
+      },
+      "oracle_gt_density_anchors": {
+        "cd": 0.1306302887818538,
+        "spacing_mean": 0.14034965448821576,
+        "spacing_cv": 0.52310840308658,
+        "fscore_0.1": 0.2996380201845409,
+        "coverage_0.1": 0.2763388888888889,
+        "fscore_0.2": 0.8980161595165232,
+        "coverage_0.2": 0.9003555555555556
+      },
+      "image": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/preview_20261013_105510/evaluation/07_000550_comparison.png"
+    }
+  ],
+  "inference": {
+    "frames": [
+      {
+        "id": "00_000447",
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000447.npy",
+        "seed": 20261013,
+        "checkpoint_sha256": "692b2a698a2aac2014972a30ff721f289899cce4743eb0dc6da88ded75be6845",
+        "config_sha256": "5b6a0357ee32aba104a62514f007bd5f56d666a936c0db767483781b824ec70c",
+        "geometry": {
+          "x_min": -50.0,
+          "x_max": 50.0,
+          "y_min": -50.0,
+          "y_max": 50.0,
+          "z_min": -4.0,
+          "z_max": 4.4,
+          "nx": 256,
+          "ny": 256,
+          "nz": 32,
+          "xy_radius": 50.0,
+          "circle_mask": true
+        },
+        "allocated_points": 180000,
+        "gt_used": false,
+        "teacher_used": false,
+        "sinkhorn_used": false,
+        "pointflow_used": false,
+        "stage1_network_evaluations": 1,
+        "device": "cpu",
+        "precision": "fp32",
+        "density_sum": 185015.5625,
+        "stage1_inference_ms": 25698.219798505306
+      },
+      {
+        "id": "05_001000",
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/05/input_/001000.npy",
+        "seed": 20261014,
+        "checkpoint_sha256": "692b2a698a2aac2014972a30ff721f289899cce4743eb0dc6da88ded75be6845",
+        "config_sha256": "5b6a0357ee32aba104a62514f007bd5f56d666a936c0db767483781b824ec70c",
+        "geometry": {
+          "x_min": -50.0,
+          "x_max": 50.0,
+          "y_min": -50.0,
+          "y_max": 50.0,
+          "z_min": -4.0,
+          "z_max": 4.4,
+          "nx": 256,
+          "ny": 256,
+          "nz": 32,
+          "xy_radius": 50.0,
+          "circle_mask": true
+        },
+        "allocated_points": 180000,
+        "gt_used": false,
+        "teacher_used": false,
+        "sinkhorn_used": false,
+        "pointflow_used": false,
+        "stage1_network_evaluations": 1,
+        "device": "cpu",
+        "precision": "fp32",
+        "density_sum": 188737.90625,
+        "stage1_inference_ms": 22355.290649458766
+      },
+      {
+        "id": "00_000550",
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000550.npy",
+        "seed": 20261015,
+        "checkpoint_sha256": "692b2a698a2aac2014972a30ff721f289899cce4743eb0dc6da88ded75be6845",
+        "config_sha256": "5b6a0357ee32aba104a62514f007bd5f56d666a936c0db767483781b824ec70c",
+        "geometry": {
+          "x_min": -50.0,
+          "x_max": 50.0,
+          "y_min": -50.0,
+          "y_max": 50.0,
+          "z_min": -4.0,
+          "z_max": 4.4,
+          "nx": 256,
+          "ny": 256,
+          "nz": 32,
+          "xy_radius": 50.0,
+          "circle_mask": true
+        },
+        "allocated_points": 180000,
+        "gt_used": false,
+        "teacher_used": false,
+        "sinkhorn_used": false,
+        "pointflow_used": false,
+        "stage1_network_evaluations": 1,
+        "device": "cpu",
+        "precision": "fp32",
+        "density_sum": 183696.234375,
+        "stage1_inference_ms": 23013.441188260913
+      },
+      {
+        "id": "05_000550",
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/05/input_/000550.npy",
+        "seed": 20261016,
+        "checkpoint_sha256": "692b2a698a2aac2014972a30ff721f289899cce4743eb0dc6da88ded75be6845",
+        "config_sha256": "5b6a0357ee32aba104a62514f007bd5f56d666a936c0db767483781b824ec70c",
+        "geometry": {
+          "x_min": -50.0,
+          "x_max": 50.0,
+          "y_min": -50.0,
+          "y_max": 50.0,
+          "z_min": -4.0,
+          "z_max": 4.4,
+          "nx": 256,
+          "ny": 256,
+          "nz": 32,
+          "xy_radius": 50.0,
+          "circle_mask": true
+        },
+        "allocated_points": 180000,
+        "gt_used": false,
+        "teacher_used": false,
+        "sinkhorn_used": false,
+        "pointflow_used": false,
+        "stage1_network_evaluations": 1,
+        "device": "cpu",
+        "precision": "fp32",
+        "density_sum": 182246.5625,
+        "stage1_inference_ms": 23226.039297878742
+      },
+      {
+        "id": "07_000550",
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/07/input_/000550.npy",
+        "seed": 20261017,
+        "checkpoint_sha256": "692b2a698a2aac2014972a30ff721f289899cce4743eb0dc6da88ded75be6845",
+        "config_sha256": "5b6a0357ee32aba104a62514f007bd5f56d666a936c0db767483781b824ec70c",
+        "geometry": {
+          "x_min": -50.0,
+          "x_max": 50.0,
+          "y_min": -50.0,
+          "y_max": 50.0,
+          "z_min": -4.0,
+          "z_max": 4.4,
+          "nx": 256,
+          "ny": 256,
+          "nz": 32,
+          "xy_radius": 50.0,
+          "circle_mask": true
+        },
+        "allocated_points": 180000,
+        "gt_used": false,
+        "teacher_used": false,
+        "sinkhorn_used": false,
+        "pointflow_used": false,
+        "stage1_network_evaluations": 1,
+        "device": "cpu",
+        "precision": "fp32",
+        "density_sum": 182801.359375,
+        "stage1_inference_ms": 22868.77054721117
+      }
+    ],
+    "physical_visible": "3",
+    "peak_allocated_gib": 0,
+    "allocator_limit_gib": 0,
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/checkpoint_004000.pt",
+    "gt_used": false
+  },
+  "cpu_tokenizer_compatibility": "Same official forward body; get_device() integer replaced by tensor.device for CPU support; no parameters/layers changed.",
+  "gpu_probe": "Allocator-limited 1.05GiB GPU3 probe did not fit; process exited; all previews generated on CPU FP32.",
+  "interpretation": "Density-only anchor preview at 4000 updates; untrained PointFlow excluded. Three development scenes, fixed diagnostic threshold1.0, not full development evaluation."
+}
