@@ -1,0 +1,363 @@
+{
+  "completed_local": "2026-10-13T18:02:10.587505+08:00",
+  "test_split": "08",
+  "frame_stride": 100,
+  "evaluated_frames_per_checkpoint": 41,
+  "physical_gpus": [
+    2,
+    3
+  ],
+  "threshold": 1.0,
+  "threshold_frozen": true,
+  "network_precision": "FP32, TF32 disabled",
+  "point_knn_precision": "FP32 KeOps, no dense NxN",
+  "source_points": 180000,
+  "pointflow_used": false,
+  "teacher_used": false,
+  "sinkhorn_used": false,
+  "artifact_root": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/seq08_stride100_final25000_gpu23_20261013_175804",
+  "checkpoints": {
+    "11000": {
+      "checkpoint_sha256": "c3a4f33a60bf11d24143e6f507dd376cebe1957ce99fe8c15179898ae7a23d26",
+      "config_sha256": "9ad336812ebaf01775d1fb564a0fa8e41f3ac45425e972e933c00eea67196b19",
+      "macro_means": {
+        "predicted": {
+          "occupancy_iou": 0.44350269364147654,
+          "occupancy_f1": 0.6128309630766148,
+          "occupied_count_mae": 1.251726144697608,
+          "log_count_mae": 0.05735045880442712,
+          "mass_tv": 0.4924000661547591,
+          "coarse_mass_tv": 0.3496955422366538,
+          "mass_calibration_error": 0.052890406634726723,
+          "density_sum": 189268.90891768291,
+          "occupied_voxel_fraction": 0.048321982527651436
+        },
+        "gt_density": {
+          "occupancy_iou": 1.0,
+          "occupancy_f1": 1.0,
+          "occupied_count_mae": 0.0,
+          "log_count_mae": 0.0,
+          "mass_tv": 0.0,
+          "coarse_mass_tv": 0.0,
+          "mass_calibration_error": 0.0,
+          "density_sum": 180000.0,
+          "occupied_voxel_fraction": 0.05071871450579748
+        },
+        "partial_density": {
+          "occupancy_iou": 0.12361028799560012,
+          "occupancy_f1": 0.2191706855849522,
+          "occupied_count_mae": 2.13777941610755,
+          "log_count_mae": 0.0493507279855449,
+          "mass_tv": 0.8439421537445813,
+          "coarse_mass_tv": 0.6825593520955342,
+          "mass_calibration_error": 0.8999999761581421,
+          "density_sum": 18000.0,
+          "occupied_voxel_fraction": 0.006447401806348708
+        }
+      },
+      "micro_occupancy": {
+        "predicted": {
+          "tp": 2056198,
+          "fp": 1236717,
+          "fn": 1400043,
+          "occupancy_iou": 0.4381454085035494,
+          "occupancy_f1": 0.6093200394241888
+        },
+        "partial_density": {
+          "tp": 411415,
+          "fp": 27945,
+          "fn": 3044826,
+          "occupancy_iou": 0.11808066503912248,
+          "occupancy_f1": 0.21122029694519537
+        }
+      },
+      "point_voxel_macro_means": {
+        "predicted_anchors": {
+          "iou": 0.47323211873949206,
+          "f1": 0.6412768840921045
+        },
+        "partial_input": {
+          "iou": 0.176939711530895,
+          "f1": 0.2998062041451544
+        },
+        "fine_grid_anchors": {
+          "iou": 0.40924790898906577,
+          "f1": 0.579758847391385
+        }
+      },
+      "point_voxel_micro": {
+        "predicted_anchors": {
+          "tp": 1326864,
+          "fp": 1021256,
+          "fn": 448162,
+          "iou": 0.4745100816012119,
+          "f1": 0.6436172767105506
+        },
+        "partial_input": {
+          "tp": 307077,
+          "fp": 5047,
+          "fn": 1467949,
+          "iou": 0.17250809376918813,
+          "f1": 0.29425484512373334
+        },
+        "fine_grid_anchors": {
+          "tp": 2357473,
+          "fp": 2329021,
+          "fn": 1098768,
+          "iou": 0.4074963242805598,
+          "f1": 0.5790371416974763
+        }
+      },
+      "point_geometry_macro_means": {
+        "cd": 0.29540291028778726,
+        "spacing_mean": 0.1866323446355215,
+        "spacing_cv": 0.5549668444365989,
+        "fscore_0.1": 0.14331934152031361,
+        "coverage_0.1": 0.13856775259099355,
+        "fscore_0.2": 0.5812720037726119,
+        "coverage_0.2": 0.6303899804266487,
+        "out_of_range_ratio": 0.0
+      },
+      "point_geometry_per_scene_spread": {
+        "cd": {
+          "min": 0.20545166730880737,
+          "max": 0.4235209822654724,
+          "std": 0.04526783329928816
+        },
+        "spacing_mean": {
+          "min": 0.15508557856082916,
+          "max": 0.2075432687997818,
+          "std": 0.015437534844853424
+        },
+        "spacing_cv": {
+          "min": 0.44519558548927307,
+          "max": 0.7479421496391296,
+          "std": 0.08207048962584995
+        },
+        "fscore_0.1": {
+          "min": 0.09013394337862353,
+          "max": 0.23370753431396932,
+          "std": 0.038961087966723804
+        },
+        "coverage_0.1": {
+          "min": 0.08740000426769257,
+          "max": 0.23079444468021393,
+          "std": 0.03813680845134802
+        },
+        "fscore_0.2": {
+          "min": 0.48966758150163553,
+          "max": 0.723602479277491,
+          "std": 0.052009909676904525
+        },
+        "coverage_0.2": {
+          "min": 0.47450000047683716,
+          "max": 0.8284888863563538,
+          "std": 0.09520034234832747
+        },
+        "out_of_range_ratio": {
+          "min": 0.0,
+          "max": 0.0,
+          "std": 0.0
+        }
+      },
+      "runtime_macro_means_excluding_first_per_shard": {
+        "stage1_network_ms": 391.4839454377309,
+        "stage1_network_evaluations": 1,
+        "count_allocation_and_anchor_cpu_ms": 177.20076346244568,
+        "point_geometry_evaluation_ms": 268.7417594477152
+      },
+      "shard_execution": [
+        {
+          "shard_index": 0,
+          "physical_visible": "2",
+          "peak_allocated_gib": 1.8077917098999023
+        },
+        {
+          "shard_index": 1,
+          "physical_visible": "3",
+          "peak_allocated_gib": 1.8077917098999023
+        }
+      ],
+      "checkpoint_parameters_finite": true,
+      "filtered_gt_points": 0
+    },
+    "25000": {
+      "checkpoint_sha256": "0af3007573297c2f963b3302e35f59d6f2d28c3163a8b8a826509b82462474d6",
+      "config_sha256": "9ad4b8df0485677a69d3452b35225123472bc33f99d51c27672d22f30c342755",
+      "macro_means": {
+        "predicted": {
+          "occupancy_iou": 0.4503544692586108,
+          "occupancy_f1": 0.6191661895775213,
+          "occupied_count_mae": 1.2518912873617032,
+          "log_count_mae": 0.053597524126128455,
+          "mass_tv": 0.4748371214401431,
+          "coarse_mass_tv": 0.33777483425489285,
+          "mass_calibration_error": 0.01700688928661005,
+          "density_sum": 181706.49466463414,
+          "occupied_voxel_fraction": 0.04655375967665416
+        },
+        "gt_density": {
+          "occupancy_iou": 1.0,
+          "occupancy_f1": 1.0,
+          "occupied_count_mae": 0.0,
+          "log_count_mae": 0.0,
+          "mass_tv": 0.0,
+          "coarse_mass_tv": 0.0,
+          "mass_calibration_error": 0.0,
+          "density_sum": 180000.0,
+          "occupied_voxel_fraction": 0.05071871450579748
+        },
+        "partial_density": {
+          "occupancy_iou": 0.12361028799560012,
+          "occupancy_f1": 0.2191706855849522,
+          "occupied_count_mae": 2.13777941610755,
+          "log_count_mae": 0.0493507279855449,
+          "mass_tv": 0.8439421537445813,
+          "coarse_mass_tv": 0.6825593520955342,
+          "mass_calibration_error": 0.8999999761581421,
+          "density_sum": 18000.0,
+          "occupied_voxel_fraction": 0.006447401806348708
+        }
+      },
+      "micro_occupancy": {
+        "predicted": {
+          "tp": 2037013,
+          "fp": 1135406,
+          "fn": 1419228,
+          "occupancy_iou": 0.4436344954217953,
+          "occupancy_f1": 0.6146077789477813
+        },
+        "partial_density": {
+          "tp": 411415,
+          "fp": 27945,
+          "fn": 3044826,
+          "occupancy_iou": 0.11808066503912248,
+          "occupancy_f1": 0.21122029694519537
+        }
+      },
+      "point_voxel_macro_means": {
+        "predicted_anchors": {
+          "iou": 0.4900942354117466,
+          "f1": 0.6567002061814172
+        },
+        "partial_input": {
+          "iou": 0.176939711530895,
+          "f1": 0.2998062041451544
+        },
+        "fine_grid_anchors": {
+          "iou": 0.42525916623062265,
+          "f1": 0.5955915682898385
+        }
+      },
+      "point_voxel_micro": {
+        "predicted_anchors": {
+          "tp": 1315709,
+          "fp": 911959,
+          "fn": 459317,
+          "iou": 0.489659972050458,
+          "f1": 0.6574117331976913
+        },
+        "partial_input": {
+          "tp": 307077,
+          "fp": 5047,
+          "fn": 1467949,
+          "iou": 0.17250809376918813,
+          "f1": 0.29425484512373334
+        },
+        "fine_grid_anchors": {
+          "tp": 2346648,
+          "fp": 2102522,
+          "fn": 1109593,
+          "iou": 0.4221529142364947,
+          "f1": 0.5936814670356797
+        }
+      },
+      "point_geometry_macro_means": {
+        "cd": 0.2872765038798495,
+        "spacing_mean": 0.17918196647632412,
+        "spacing_cv": 0.556718845192979,
+        "fscore_0.1": 0.15175174523899473,
+        "coverage_0.1": 0.14602967587912954,
+        "fscore_0.2": 0.6017735857923622,
+        "coverage_0.2": 0.6395142347347446,
+        "out_of_range_ratio": 0.0
+      },
+      "point_geometry_per_scene_spread": {
+        "cd": {
+          "min": 0.19651836156845093,
+          "max": 0.43339475989341736,
+          "std": 0.05050739073862636
+        },
+        "spacing_mean": {
+          "min": 0.14560498297214508,
+          "max": 0.2035434991121292,
+          "std": 0.016772801538428545
+        },
+        "spacing_cv": {
+          "min": 0.4502982199192047,
+          "max": 0.8844771981239319,
+          "std": 0.10034897699209376
+        },
+        "fscore_0.1": {
+          "min": 0.0923899537225308,
+          "max": 0.2505352202160386,
+          "std": 0.04262050140086358
+        },
+        "coverage_0.1": {
+          "min": 0.08912777900695801,
+          "max": 0.24788333475589752,
+          "std": 0.04135085852480004
+        },
+        "fscore_0.2": {
+          "min": 0.4981468639600775,
+          "max": 0.7396381966148596,
+          "std": 0.056134461632844954
+        },
+        "coverage_0.2": {
+          "min": 0.4716666638851166,
+          "max": 0.835277795791626,
+          "std": 0.0966697293763409
+        },
+        "out_of_range_ratio": {
+          "min": 0.0,
+          "max": 0.0,
+          "std": 0.0
+        }
+      },
+      "runtime_macro_means_excluding_first_per_shard": {
+        "stage1_network_ms": 391.4849171653772,
+        "stage1_network_evaluations": 1,
+        "count_allocation_and_anchor_cpu_ms": 173.65418412746527,
+        "point_geometry_evaluation_ms": 269.3417398020243
+      },
+      "shard_execution": [
+        {
+          "shard_index": 0,
+          "physical_visible": "2",
+          "peak_allocated_gib": 1.8077917098999023
+        },
+        {
+          "shard_index": 1,
+          "physical_visible": "3",
+          "peak_allocated_gib": 1.8077917098999023
+        }
+      ],
+      "checkpoint_parameters_finite": true,
+      "filtered_gt_points": 0
+    }
+  },
+  "delta_final_minus_interim": {
+    "point_geometry_macro_means": {
+      "cd": -0.00812640640793777,
+      "spacing_mean": -0.007450378159197385,
+      "spacing_cv": 0.0017520007563800455,
+      "fscore_0.1": 0.00843240371868112,
+      "coverage_0.1": 0.0074619232881359965,
+      "fscore_0.2": 0.020501582019750275,
+      "coverage_0.2": 0.009124254308095825,
+      "out_of_range_ratio": 0.0
+    }
+  },
+  "density_iou_change_percentage_points": 0.6851775617134237,
+  "voxel05_point_iou_change_percentage_points": 1.6862116672254568
+}

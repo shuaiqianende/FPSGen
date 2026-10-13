@@ -1,5 +1,7 @@
 # VoxDet-Density + PointFlow 最新进展
 
+**后续更新：Stage 1 已于2026-10-13 16:45完成25,000次成功更新。GPU2/3最终评测：density IoU45.04%，0.5m anchors IoU49.01%，CD0.28728m。完整最新结果见 [最终预算checkpoint评测](VOXDET_DENSITY_FINAL25000_EVALUATION.md)。下文保留14:22运行中快照。**
+
 快照时间：**2026-10-13 14:22，Asia/Shanghai**。本报告对应正在运行的训练；进度与 ETA 会继续变化。机器可读记录：[progress_20261013_1422.json](voxel_point_reports/progress_20261013_1422.json)。
 
 ## Stage 1 正式训练

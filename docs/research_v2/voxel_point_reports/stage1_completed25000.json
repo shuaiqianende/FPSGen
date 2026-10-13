@@ -1,0 +1,67 @@
+{
+  "stage": "stage1",
+  "status": "COMPLETED_WITH_AMP_SKIPPED_ATTEMPTS",
+  "successful_updates": 25000,
+  "target_seen_frames": 100000,
+  "physical_gpus": [
+    2,
+    3
+  ],
+  "finished_local": "2026-10-13T16:45:23.157429",
+  "raw_summary_status": "FAIL_NONFINITE_GRADIENT",
+  "raw_summary_interpretation": "Original summary requires all attempted gradients finite;11 AMP-overflow attempts were skipped. All25000 successful updates have finite gradients on both ranks. Raw summaries preserved.",
+  "ranks": [
+    {
+      "rank": 0,
+      "successful_updates": 25000,
+      "successful_gradients_finite": true,
+      "amp_skipped_attempts": 11,
+      "skipped_attempt_ids": [
+        2122,
+        4226,
+        6622,
+        10626,
+        12633,
+        14666,
+        16696,
+        18752,
+        20771,
+        22868,
+        24926
+      ],
+      "seen_frames": 100000,
+      "seconds": 25271.75460708514,
+      "peak_allocated_gib": 19.060224056243896,
+      "filtered_roi_point_exposures": 417
+    },
+    {
+      "rank": 1,
+      "successful_updates": 25000,
+      "successful_gradients_finite": true,
+      "amp_skipped_attempts": 11,
+      "skipped_attempt_ids": [
+        2122,
+        4226,
+        6622,
+        10626,
+        12633,
+        14666,
+        16696,
+        18752,
+        20771,
+        22868,
+        24926
+      ],
+      "seen_frames": 100000,
+      "seconds": 25271.207543887198,
+      "peak_allocated_gib": 19.060058116912842,
+      "filtered_roi_point_exposures": 409
+    }
+  ],
+  "loss_windows": {
+    "first100": 0.8333389773964882,
+    "last100": 0.2667668572068214,
+    "last500": 0.26587359529733656,
+    "last1000": 0.2664310867264867
+  }
+}

@@ -16,6 +16,9 @@ def merge_reports(reports, expected_frames):
     for key in ('point_voxel_size_m','point_voxel_iou_policy','anchor_points'):
         if key in reference:
             shared += (key,)
+    for key in ('point_geometry_enabled','point_geometry_backend','point_geometry_contract','allow_tf32','checkpoint_parameters_finite'):
+        if key in reference:
+            shared += (key,)
     if len(reports) != reference['num_shards']:
         raise ValueError('Incomplete shard set')
     if {report['shard_index'] for report in reports} != set(range(reference['num_shards'])):
@@ -65,6 +68,17 @@ def merge_reports(reports, expected_frames):
             point_micro[group] = {**counts,'iou':tp/max(tp+fp+fn,1),'f1':2*tp/max(2*tp+fp+fn,1)}
         result['point_voxel_macro_means'] = point_means
         result['point_voxel_micro'] = point_micro
+    if reference.get('point_geometry_enabled',False):
+        keys = rows[0]['point_geometry'].keys()
+        result['point_geometry_macro_means'] = {key:statistics.mean(row['point_geometry'][key] for row in rows) for key in keys}
+        result['point_geometry_per_scene_spread'] = {key:{'min':min(row['point_geometry'][key] for row in rows),
+            'max':max(row['point_geometry'][key] for row in rows),'std':statistics.pstdev(row['point_geometry'][key] for row in rows)} for key in keys}
+    if 'runtime' in rows[0]:
+        result['runtime_macro_means'] = {key:statistics.mean(row['runtime'][key] for row in rows) for key in rows[0]['runtime']}
+        warmed_rows = [row for report in reports for row in report['rows'][1:]]
+        if warmed_rows:
+            result['runtime_macro_means_excluding_first_per_shard'] = {key:statistics.mean(row['runtime'][key] for row in warmed_rows) for key in warmed_rows[0]['runtime']}
+    result['shard_execution'] = [{key:report.get(key) for key in ('shard_index','physical_visible','peak_allocated_gib')} for report in reports]
     return result
 
 

@@ -50,6 +50,24 @@ def test_point_voxel_and_density_metrics_remain_separate():
     assert result['macro_means']['predicted']['occupancy_iou'] != .5
 
 
+def test_point_geometry_merges_all_scenes_and_excludes_shard_cold_start():
+    reports,frames = fixture_reports()
+    for report in reports:
+        report.update(point_geometry_enabled=True,point_geometry_backend='keops',
+            point_geometry_contract={'cd':'mean nearest euclidean'},allow_tf32=False,checkpoint_parameters_finite=True)
+        for row in report['rows']:
+            index = row['frame']['frame']//100
+            row['point_geometry'] = {'cd':index/10,'coverage_0.2':1-index/10}
+            row['runtime'] = {'stage1_network_ms':index+1}
+    result = module.merge_reports(reports,frames)
+    assert result['point_geometry_macro_means']['cd'] == pytest.approx(.2)
+    assert result['point_geometry_per_scene_spread']['cd']['max'] == pytest.approx(.4)
+    assert result['runtime_macro_means_excluding_first_per_shard']['stage1_network_ms'] == pytest.approx(10/3)
+    reports[1]['point_geometry_backend'] = 'different backend'
+    with pytest.raises(ValueError):
+        module.merge_reports(reports,frames)
+
+
 @pytest.mark.parametrize('failure',['missing','duplicate','checkpoint','pairing'])
 def test_merge_rejects_incomplete_or_inconsistent_test_reports(failure):
     reports,frames = fixture_reports()

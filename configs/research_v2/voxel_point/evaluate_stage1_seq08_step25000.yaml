@@ -1,0 +1,69 @@
+geometry: geometry_50m_256x256x32.yaml
+seed: 20261013
+data:
+  root: /data-12/M2024-HWZ/KITTI_Odometry
+  gt_roi_policy: filter
+  train_sequences:
+  - '00'
+  - '01'
+  - '02'
+  - '03'
+  - '04'
+  - '05'
+  - '06'
+  - '07'
+  - 09
+  - '10'
+  test_sequences:
+  - 08
+  split_manifest: /data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/split_manifest.json
+  development_block: 5
+  block_size: 100
+  guard_frames: 20
+runtime:
+  physical_gpu_ids:
+  - 2
+  - 3
+  batch_per_gpu: 2
+  data_workers: 2
+  amp: false
+  activation_checkpointing: false
+  knn_backend: keops
+  point_sparse_eval_precision: fp32
+  point_attention_precision: fp16_flash
+  allow_tf32: false
+stage: stage1
+loss_weights:
+  pos: 1.0
+  bg: 0.1
+  coarse: 0.5
+  dist: 0.1
+  mass: 0.1
+  direction: 0.1
+  auxiliary: 0.3
+model:
+  density_bias: -6.0
+train:
+  target_seen_frames: 100000
+  optimizer: AdamW
+  lr: 0.0003
+  weight_decay: 0.01
+  scheduler: OneCycleLR
+  pct_start: 0.05
+  gradient_accumulation: 1
+  shuffle: true
+  checkpoint_fractions:
+  - 0.25
+  - 0.5
+  - 0.75
+  - 1.0
+  smoke_steps: 16
+  checkpoint_every_steps: 1000
+  checkpoint_initial_steps: 100
+evaluation:
+  occupancy_threshold: 1.0
+  threshold_frozen: true
+  threshold_split: development
+  protocol: Frozen seq08 frame-ID stride100; threshold1.0; GPU FP32 no TF32;180k Gaussian
+    anchors; sparse Euclidean point metrics
+stage1_checkpoint: /data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/checkpoint_025000.pt
