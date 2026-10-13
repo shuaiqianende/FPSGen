@@ -28,9 +28,16 @@ use the same spec. `voxel_position_grid_coarse()` exposes the original
 preprocessing positional grid for audits; the official LiDAR trunk does not
 consume this camera-related positional tensor.
 
-GT is only `gt_possion/<frame>.ply`, exactly180000 finite in-ROI XYZ. Fourth
-columns/PLY label properties are ignored. Invalid targets raise a scene-specific
-error; no clipping, point cap, replacement, resampling or repetition occurs.
+GT is only `gt_possion/<frame>.ply`, exactly180000 finite XYZ before any ROI
+filtering. Fourth columns/PLY label properties are ignored. The dataset default
+`gt_roi_policy: strict` rejects out-of-ROI targets. Following explicit user
+authorization on2026-10-13, the Stage1 configuration uses `gt_roi_policy: filter`:
+remove out-of-ROI rows and rasterize the retained XYZ without replacement.
+Each sample/step records original, retained and filtered counts. Density mass
+supervision/evaluation uses the actual retained count, potentially below180000.
+Nonfinite data, wrong original cardinality and empty retained clouds still
+raise a scene-specific error. Generation always allocates180000 anchors; no
+clipping, point cap, resampling or repetition of GT occurs.
 Numeric sequence/frame pairing uses explicit `input_` sibling lookup. Height
 bounds are verified against the existing Poisson generator and training
 contract, not inferred from LiDiff. See the source audit.
@@ -50,13 +57,19 @@ parameters: the6→64→128→256→128 Point MLP and scatter-max tokenizer;
 local `CustomResNet3D [3,3,3]`; the spatially decoupled neck including adaptive
 pooling and2D deformable convolutions; six-direction offset prediction; four
 `VoxelAttentionAggregation` refinements. Parameterless registry wrappers are
-flattened, not replaced by another network. Local batch is1, as in upstream.
+flattened, not replaced by another network. The official tokenizer remains B1:
+the adapter tokenizes each variable-size scene separately, concatenates the
+dense coarse-grid tensors, and runs the unmodified 3D trunk/heads in batch.
+The formal restart uses B2/GPU, FP16 AMP and no activation recomputation, with
+two CPU data workers per rank and pinned prefetch. This changes training batch
+statistics but adds no learned parameters or trunk layers. Throughput and
+memory measurements accompany the restart report.
 
 Input feature adaptation: relative coarse-cell XYZ, absolute XY,
 `norm(XYZ)/50`. The input_ semantic column is never used as intensity. No
 camera/depth/calibration/semantic layout is loaded. Main and auxiliary heads
 are1-channel, with negative trainable final biases. Eval exposes only
-`pred_density [1,1,256,256,32]`. FP32 softplus makes counts nonnegative and
+`pred_density [B,1,256,256,32]`. FP32 softplus makes counts nonnegative and
 masks invalid cells. There is one network evaluation, no diffusion/FM sampler.
 
 Loss weights are YAML controlled: positive log-count SmoothL1=1,

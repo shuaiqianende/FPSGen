@@ -1,0 +1,140 @@
+{
+  "date": "2026-10-13",
+  "user_authorized_roi_filter": true,
+  "original_gt_points": 180000,
+  "density_supervision_mass": "actual retained ROI points",
+  "generated_points": 180000,
+  "physical_gpu_ids": [
+    2,
+    3
+  ],
+  "full_network_parameters": 22082470,
+  "cpu_tests_passed": 20,
+  "selected": "b2_cp0_workers2_ddp",
+  "results": [
+    {
+      "name": "b2_cp1",
+      "batch_per_gpu": 2,
+      "activation_checkpointing": true,
+      "data_workers": 0,
+      "config_sha256": "cfd9f4c28df6221402a7337a594e8e837a7afe7df1f86a0c1c652ee8cc808a5f",
+      "ranks": [
+        {
+          "rank": "training_rank0",
+          "updates": 6,
+          "status": "PASS",
+          "warm_step_seconds": 1.4013161212205887,
+          "frames_per_second_per_rank": 1.427229709066602,
+          "peak_allocated_gib": 9.22974967956543,
+          "peak_reserved_gib": 10.09765625,
+          "filtered_roi_points": 12
+        }
+      ]
+    },
+    {
+      "name": "b4_cp1",
+      "batch_per_gpu": 4,
+      "activation_checkpointing": true,
+      "data_workers": 0,
+      "config_sha256": "54fa01e5b75883944c7c6c4738c003333618992615ee16a6e6ff4cb4e57f403b",
+      "ranks": [
+        {
+          "rank": "training_rank0",
+          "updates": 6,
+          "status": "PASS",
+          "warm_step_seconds": 2.4957718528807162,
+          "frames_per_second_per_rank": 1.6027105984800034,
+          "peak_allocated_gib": 18.188692092895508,
+          "peak_reserved_gib": 19.4453125,
+          "filtered_roi_points": 24
+        }
+      ]
+    },
+    {
+      "name": "b1_cp0",
+      "batch_per_gpu": 1,
+      "activation_checkpointing": false,
+      "data_workers": 0,
+      "config_sha256": "f9ca1768792c8138d1b2c0f43a06c6b11135bb253c5aac732a8ca62f63324f05",
+      "ranks": [
+        {
+          "rank": "training_rank0",
+          "updates": 6,
+          "status": "PASS",
+          "warm_step_seconds": 0.6301809933036566,
+          "frames_per_second_per_rank": 1.5868457008796897,
+          "peak_allocated_gib": 9.637898921966553,
+          "peak_reserved_gib": 10.103515625,
+          "filtered_roi_points": 6
+        }
+      ]
+    },
+    {
+      "name": "b2_cp0",
+      "batch_per_gpu": 2,
+      "activation_checkpointing": false,
+      "data_workers": 0,
+      "config_sha256": "c18142113b627a6829904a928df4e833aeb37cc0defb4dfa376a6263af9f5b1a",
+      "ranks": [
+        {
+          "rank": "training_rank0",
+          "updates": 6,
+          "status": "PASS",
+          "warm_step_seconds": 1.0874717719852924,
+          "frames_per_second_per_rank": 1.8391281976439653,
+          "peak_allocated_gib": 18.965404987335205,
+          "peak_reserved_gib": 19.96875,
+          "filtered_roi_points": 12
+        }
+      ]
+    },
+    {
+      "name": "b2_cp0_workers2",
+      "batch_per_gpu": 2,
+      "activation_checkpointing": false,
+      "data_workers": 2,
+      "config_sha256": "fdbd1a2308ce9e0e5ab831d2ea882aec374d8ea4653b35e3c4349d2b168d5b53",
+      "ranks": [
+        {
+          "rank": "training_rank0",
+          "updates": 12,
+          "status": "PASS",
+          "warm_step_seconds": 0.9679274577647448,
+          "frames_per_second_per_rank": 2.0662705494672524,
+          "peak_allocated_gib": 18.965404987335205,
+          "peak_reserved_gib": 19.96875,
+          "filtered_roi_points": 24
+        }
+      ]
+    },
+    {
+      "name": "b2_cp0_workers2_ddp",
+      "batch_per_gpu": 2,
+      "activation_checkpointing": false,
+      "data_workers": 2,
+      "config_sha256": "fdbd1a2308ce9e0e5ab831d2ea882aec374d8ea4653b35e3c4349d2b168d5b53",
+      "ranks": [
+        {
+          "rank": "training_rank0",
+          "updates": 32,
+          "status": "PASS",
+          "warm_step_seconds": 1.0142691599866074,
+          "frames_per_second_per_rank": 1.9718631689702646,
+          "peak_allocated_gib": 19.04895257949829,
+          "peak_reserved_gib": 20.060546875,
+          "filtered_roi_points": 64
+        },
+        {
+          "rank": "training_rank1",
+          "updates": 32,
+          "status": "PASS",
+          "warm_step_seconds": 1.015459271868871,
+          "frames_per_second_per_rank": 1.9695521577336734,
+          "peak_allocated_gib": 19.04895257949829,
+          "peak_reserved_gib": 20.060546875,
+          "filtered_roi_points": 64
+        }
+      ]
+    }
+  ]
+}

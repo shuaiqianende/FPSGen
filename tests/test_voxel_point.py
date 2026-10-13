@@ -12,7 +12,8 @@ from fpsgen.voxel_point.count_allocator import allocate_counts, InvalidDensityEr
 from fpsgen.voxel_point.anchor_sampler import sample_gaussian_anchors
 from fpsgen.voxel_point.density_loss import density_terms, count_sum_pool, occupied_run_lengths
 from fpsgen.voxel_point.point_flow import flow_matching_pair, euler_rollout
-from fpsgen.voxel_point.dataset import development_split, load_xyz, paired_frames
+from fpsgen.voxel_point.dataset import (development_split, load_xyz, paired_frames,
+                                      VoxelPointDataset, DistributedSceneBatchSampler)
 from fpsgen.voxel_point import pipeline
 
 
@@ -83,6 +84,54 @@ def test_180k_gt_mass_and_strict_bad_count():
     assert counts.max() == 180000  # No invented count cap.
     with pytest.raises(ValueError,match="exactly"):
         spec.counts(xyz[:-1])
+
+
+def test_gt_roi_filter_records_actual_mass_and_keeps_strict_default(tmp_path):
+    import numpy as np
+    points = np.zeros((180000, 3), dtype=np.float32)
+    # Real failed frame 00/000447: the stored float32 point is just outside.
+    points[0] = [49.28866958618164, 8.40399169921875, .021183490753173828]
+    points[1] = [0., 0., 4.4]
+    np.save(tmp_path/'gt.npy',points)
+    np.save(tmp_path/'input.npy',points[2:5])
+    frames = [{'sequence':'00','frame':447,'gt':str(tmp_path/'gt.npy'),
+               'input':str(tmp_path/'input.npy')}]
+    with pytest.raises(ValueError,match='Rejected scene'):
+        VoxelPointDataset(frames,small_spec())[0]
+    sample = VoxelPointDataset(frames,small_spec(),gt_roi_policy='filter')[0]
+    assert sample['gt_xyz'].shape == (179998,3)
+    assert sample['gt_counts'].sum() == 179998
+    assert sample['gt_validation'] == {'roi_policy':'filter','original_points':180000,
+                                      'retained_points':179998,'filtered_roi_points':2}
+    counts = sample['gt_counts'][None,None].float()
+    terms = density_terms(counts,counts,small_spec().valid_circle_mask()[None,None])
+    assert all(value == 0 for value in terms.values())
+    allocated = allocate_counts(sample['gt_counts'].float(),small_spec(),
+                                generator=torch.Generator().manual_seed(7))
+    assert allocated.sum() == 180000
+    points[0,0] = np.nan
+    np.save(tmp_path/'gt.npy',points)
+    with pytest.raises(ValueError,match='Nonfinite'):
+        VoxelPointDataset(frames,small_spec(),gt_roi_policy='filter')[0]
+    np.save(tmp_path/'gt.npy',points[2:])
+    with pytest.raises(ValueError,match='exactly 180000'):
+        VoxelPointDataset(frames,small_spec(),gt_roi_policy='filter')[0]
+
+
+def test_distributed_scene_batches_cover_epochs_without_rank_overlap():
+    def stream(rank):
+        return list(DistributedSceneBatchSampler(16,2,rank,2,8,shuffle=True,seed=42))
+    first, second = stream(0), stream(1)
+    assert first == stream(0) and second == stream(1)
+    epochs = []
+    for start in (0,4):
+        epoch = []
+        for batch in range(start,start+4):
+            assert set(first[batch]).isdisjoint(second[batch])
+            epoch.extend(first[batch]+second[batch])
+        assert sorted(epoch) == list(range(16))
+        epochs.append(epoch)
+    assert epochs[0] != epochs[1]
 
 
 def test_allocation_determinism_and_invalid_density():

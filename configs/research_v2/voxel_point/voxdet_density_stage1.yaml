@@ -2,6 +2,7 @@ geometry: geometry_50m_256x256x32.yaml
 seed: 20261013
 data:
   root: /data-12/M2024-HWZ/KITTI_Odometry
+  gt_roi_policy: filter
   train_sequences:
   - '00'
   - '01'
@@ -23,9 +24,10 @@ runtime:
   physical_gpu_ids:
   - 2
   - 3
-  batch_per_gpu: 1
+  batch_per_gpu: 2
+  data_workers: 2
   amp: true
-  activation_checkpointing: true
+  activation_checkpointing: false
   knn_backend: keops
   point_sparse_eval_precision: fp32
   point_attention_precision: fp16_flash
@@ -48,12 +50,15 @@ train:
   scheduler: OneCycleLR
   pct_start: 0.05
   gradient_accumulation: 1
+  shuffle: true
   checkpoint_fractions:
   - 0.25
   - 0.5
   - 0.75
   - 1.0
   smoke_steps: 16
+  checkpoint_every_steps: 1000
+  checkpoint_initial_steps: 100
 evaluation:
   occupancy_threshold: 1.0
   threshold_frozen: false

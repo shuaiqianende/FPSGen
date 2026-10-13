@@ -13,7 +13,7 @@ from torch.nn.parallel import DistributedDataParallel
 
 from common import (parser, read_config, frames_for, configure_runtime, save_json,
                     load_checkpoint, require_formal_gate, manifest_sha)
-from fpsgen.voxel_point.dataset import VoxelPointDataset
+from fpsgen.voxel_point.dataset import VoxelPointDataset, DistributedSceneBatchSampler, collate_scenes
 from fpsgen.voxel_point.anchor_sampler import sample_gaussian_anchors
 from fpsgen.voxel_point.density_loss import density_loss
 
@@ -61,7 +61,7 @@ def main(expected_stage):
     torch.manual_seed(cfg["seed"] + rank)
     torch.set_num_threads(4)
     frames = frames_for(cfg, "train", args.max_frames or (1 if args.smoke else 0))
-    dataset = VoxelPointDataset(frames, spec)
+    dataset = VoxelPointDataset(frames, spec, gt_roi_policy=cfg["data"].get("gt_roi_policy", "strict"))
     if not frames:
         raise ValueError("Empty training manifest")
     if expected_stage == "stage1":
@@ -89,12 +89,25 @@ def main(expected_stage):
     if world > 1:
         model = DistributedDataParallel(model, device_ids=[device.index])
     train = cfg["train"]
+    batch_per_gpu = cfg["runtime"].get("batch_per_gpu", 1)
+    if batch_per_gpu < 1 or (expected_stage != "stage1" and batch_per_gpu != 1):
+        raise ValueError("Batch must be positive; point stages retain B1 and 180k points")
     accumulation = train["gradient_accumulation"]
     if accumulation < 1:
         raise ValueError("gradient_accumulation must be positive")
-    global_batch = world * accumulation
+    global_batch = world * batch_per_gpu * accumulation
     budget = math.ceil(train["target_seen_frames"] / global_batch) if expected_stage == "stage1" else math.ceil(train["epochs"] * len(frames) / global_batch)
     steps = args.max_steps or (train["smoke_steps"] if args.smoke else budget)
+    num_workers = cfg["runtime"].get("data_workers", 0) if expected_stage == "stage1" else 0
+    if num_workers < 0:
+        raise ValueError("data_workers cannot be negative")
+    sampler = DistributedSceneBatchSampler(len(dataset), batch_per_gpu, rank, world,
+        (max(64, steps*4)+1)*accumulation, shuffle=train.get("shuffle", False), seed=cfg["seed"])
+    loader_options = {"num_workers":num_workers,"pin_memory":num_workers > 0}
+    if num_workers:
+        loader_options.update(prefetch_factor=2, persistent_workers=True)
+    loader = torch.utils.data.DataLoader(dataset,batch_sampler=sampler,collate_fn=collate_scenes,**loader_options)
+    scene_batches = iter(loader)
     optimizer = torch.optim.AdamW(model.parameters(), lr=train["lr"], weight_decay=train["weight_decay"])
     scheduler = None
     if expected_stage == "stage1":
@@ -105,8 +118,10 @@ def main(expected_stage):
     source_generator = torch.Generator().manual_seed(cfg["seed"] + 10000 + rank)
     source_schedule = []
     args.output.mkdir(parents=True, exist_ok=True)
-    save_json(args.output / f"preflight_rank{rank}.json", {"nvidia_smi":smi,"physical_visible":os.environ["CUDA_VISIBLE_DEVICES"],"config_sha256":sha,"parameter_count":parameters,"amp":amp,"world_size":world,"frames_sha256":manifest_sha(frames)})
-    milestones = {max(1,math.ceil(f*steps)) for f in (.25,.5,.75,1.)}
+    save_json(args.output / f"preflight_rank{rank}.json", {"nvidia_smi":smi,"physical_visible":os.environ["CUDA_VISIBLE_DEVICES"],"config_sha256":sha,"parameter_count":parameters,"amp":amp,"world_size":world,"batch_per_gpu":batch_per_gpu,"global_batch":global_batch,"frames_sha256":manifest_sha(frames),"gt_roi_policy":dataset.gt_roi_policy})
+    milestones = {max(1,math.ceil(f*steps)) for f in train.get("checkpoint_fractions", (.25,.5,.75,1.))}
+    checkpoint_every = train.get("checkpoint_every_steps", 0)
+    checkpoint_initial = train.get("checkpoint_initial_steps", 0)
     successful, attempts, exposed = 0, 0, 0
     rows = []
     torch.cuda.reset_peak_memory_stats(device)
@@ -116,11 +131,12 @@ def main(expected_stage):
         step_start = time.perf_counter()
         detail = []
         for micro in range(accumulation):
-            index = ((attempts * accumulation + micro) * world + rank) % len(dataset)
-            sample = dataset[index]
-            epoch = ((attempts * accumulation + micro) * world + rank) / len(dataset)
-            gt = sample["gt_xyz"].to(device)
-            exposed += 1
+            first_index = ((attempts * accumulation + micro) * world + rank) * batch_per_gpu
+            samples = next(scene_batches)
+            sample = samples[0]
+            epoch = first_index / len(dataset)
+            gt = sample["gt_xyz"].to(device) if expected_stage != "stage1" else None
+            exposed += len(samples)
             source_kind = "supervised_density"
             if expected_stage != "stage1":
                 warmup = expected_stage == "teacher" and epoch < train.get("warmup_epochs",0)
@@ -140,8 +156,10 @@ def main(expected_stage):
             with sync_context:
                 with torch.autocast("cuda",dtype=torch.float16,enabled=amp):
                     if expected_stage == "stage1":
-                        outputs = model(sample["input_xyz"].to(device))
-                        terms = density_loss(outputs, sample["gt_counts"][None,None].to(device), spec, cfg["loss_weights"])
+                        inputs = [s["input_xyz"].to(device,non_blocking=True) for s in samples]
+                        outputs = model(inputs)
+                        batched_counts = torch.stack([s["gt_counts"].to(device,non_blocking=True) for s in samples])[:,None]
+                        terms = density_loss(outputs, batched_counts, spec, cfg["loss_weights"])
                         loss = terms["total"]
                         values = {k:float(v.detach()) for k,v in terms.items()}
                     elif expected_stage == "teacher":
@@ -166,7 +184,9 @@ def main(expected_stage):
                 if not torch.isfinite(loss):
                     raise FloatingPointError("Nonfinite training loss")
                 scaler.scale(loss / accumulation).backward()
-            detail.append({"frame":sample["frame"],"source_kind":source_kind,**values})
+            for scene in samples:
+                detail.append({"frame":scene["frame"],"gt_validation":scene["gt_validation"],
+                               "source_kind":source_kind,"loss_scope":"batch",**values})
         scaler.unscale_(optimizer)
         gradients_finite = all(p.grad is None or bool(torch.isfinite(p.grad).all()) for p in model.parameters())
         if not gradients_finite and not amp:
@@ -184,7 +204,7 @@ def main(expected_stage):
             raise FloatingPointError("Too many failed AMP updates")
         last_loss = float(loss.detach())
         if expected_stage == "stage1":
-            del outputs, terms, loss, gt
+            del outputs, terms, loss, gt, inputs, batched_counts
         elif expected_stage == "teacher":
             del endpoint, loss, anchors, ids, gt
         else:
@@ -196,17 +216,23 @@ def main(expected_stage):
         torch.cuda.synchronize(device)
         row = {"successful_updates":successful,"attempts":attempts,"gradients_finite":gradients_finite,
             "step_seconds":time.perf_counter()-step_start,"peak_vram_bytes":torch.cuda.max_memory_allocated(device),
-            "peak_reserved_bytes":torch.cuda.max_memory_reserved(device),"details":detail}
+            "peak_reserved_bytes":torch.cuda.max_memory_reserved(device),"details":detail,
+            "global_batch":global_batch,"learning_rate":optimizer.param_groups[0]["lr"]}
         rows.append(row)
         with (args.output/f"training_rank{rank}.jsonl").open("a") as handle:
             handle.write(json.dumps(row,allow_nan=False)+"\n")
         print(f"rank={rank} update={successful}/{steps} loss={last_loss:.5f} sec={row['step_seconds']:.2f}",flush=True)
-        if stepped and successful in milestones and rank == 0:
+        periodic_checkpoint = checkpoint_every > 0 and successful % checkpoint_every == 0
+        initial_checkpoint = checkpoint_initial > 0 and successful == checkpoint_initial
+        if stepped and (successful in milestones or periodic_checkpoint or initial_checkpoint) and rank == 0:
+            checkpoint_path = args.output/f"checkpoint_{successful:06d}.pt"
+            temporary_path = checkpoint_path.with_suffix(".pt.tmp")
             torch.save({"stage":expected_stage,"geometry":spec.to_dict(),"config_sha256":sha,"config":cfg,
                 "model":raw_model.state_dict(),"optimizer":optimizer.state_dict(),"scaler":scaler.state_dict(),
                 "scheduler":scheduler.state_dict() if scheduler else None,"successful_updates":successful,
                 "seen_frames":successful*global_batch,"attempted_frame_exposures":exposed*world,
-                "mechanics_smoke_only":args.smoke},args.output/f"checkpoint_{successful:06d}.pt")
+                "mechanics_smoke_only":args.smoke},temporary_path)
+            temporary_path.replace(checkpoint_path)
     elapsed = time.perf_counter()-start
     source_counts = {}
     refined_count = 0
@@ -224,7 +250,10 @@ def main(expected_stage):
         "source_counts":source_counts,"refined_target_count":refined_count,
         "peak_vram_bytes":max(row["peak_vram_bytes"] for row in rows),
         "peak_reserved_bytes":max(row["peak_reserved_bytes"] for row in rows),"seconds":elapsed,"mean_step_seconds":elapsed/attempts,
-        "physical_visible":os.environ["CUDA_VISIBLE_DEVICES"],"world_size":world}
+        "physical_visible":os.environ["CUDA_VISIBLE_DEVICES"],"world_size":world,
+        "batch_per_gpu":batch_per_gpu,"global_batch":global_batch,
+        "gt_roi_policy":dataset.gt_roi_policy,
+        "filtered_roi_points":sum(v["gt_validation"]["filtered_roi_points"] for row in rows for v in row["details"])}
     save_json(args.output/f"summary_rank{rank}.json",summary)
     if world > 1:
         torch.distributed.barrier()

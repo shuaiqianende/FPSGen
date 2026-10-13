@@ -83,9 +83,12 @@ def manifest_sha(frames):
 
 
 class VoxelPointDataset(Dataset):
-    def __init__(self, frames, spec=None):
+    def __init__(self, frames, spec=None, *, gt_roi_policy="strict"):
         self.frames = list(frames)
         self.spec = spec or VoxelGridSpec()
+        if gt_roi_policy not in {"strict", "filter"}:
+            raise ValueError("gt_roi_policy must be strict or filter")
+        self.gt_roi_policy = gt_roi_policy
 
     def __len__(self):
         return len(self.frames)
@@ -94,10 +97,51 @@ class VoxelPointDataset(Dataset):
         item = self.frames[index]
         try:
             partial, gt = load_xyz(item["input"]), load_xyz(item["gt"])
-            counts = self.spec.counts(gt)
+            if gt.shape != (180000, 3):
+                raise ValueError(f"GT must contain exactly 180000 XYZ before ROI filtering, got {tuple(gt.shape)}")
+            valid = self.spec.valid_points(gt)
+            filtered = int((~valid).sum())
+            if self.gt_roi_policy == "filter":
+                gt = gt[valid]
+                if not len(gt):
+                    raise ValueError("No GT points remain inside ROI")
+            counts = self.spec.counts(gt, expected_points=len(gt))
         except (ValueError, OSError) as exc:
             raise ValueError(f"Rejected scene {item['sequence']}/{item['frame']:06d}: {exc}") from exc
-        return {"input_xyz": partial, "gt_xyz": gt, "gt_counts": counts, "frame": item}
+        return {"input_xyz": partial, "gt_xyz": gt, "gt_counts": counts, "frame": item,
+                "gt_validation": {"roi_policy": self.gt_roi_policy, "original_points": 180000,
+                                  "retained_points": len(gt), "filtered_roi_points": filtered}}
+
+
+def collate_scenes(samples):
+    """Keep variable-size LiDAR/filtered GT as a list; never pad or repeat points."""
+    return samples
+
+
+class DistributedSceneBatchSampler:
+    """Reproducible global scene stream partitioned into contiguous rank batches."""
+    def __init__(self, length, batch_size, rank, world, batches, *, shuffle=False, seed=0):
+        if min(length, batch_size, world, batches) < 1 or not 0 <= rank < world:
+            raise ValueError("Invalid scene batch sampler")
+        self.length, self.batch_size, self.rank, self.world, self.batches = length, batch_size, rank, world, batches
+        self.shuffle, self.seed = shuffle, seed
+
+    def __len__(self):
+        return self.batches
+
+    def __iter__(self):
+        cached_epoch, order = None, None
+        for batch in range(self.batches):
+            first = (batch * self.world + self.rank) * self.batch_size
+            indices = []
+            for i in range(self.batch_size):
+                epoch, offset = divmod(first + i, self.length)
+                if cached_epoch != epoch:
+                    generator = torch.Generator().manual_seed(self.seed + epoch)
+                    order = torch.randperm(self.length, generator=generator).tolist() if self.shuffle else range(self.length)
+                    cached_epoch = epoch
+                indices.append(order[offset])
+            yield indices
 
 
 def density_statistics(counts, spec):

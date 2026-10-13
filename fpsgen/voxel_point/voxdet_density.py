@@ -73,15 +73,23 @@ class VoxDetDensity(nn.Module):
         return module(*args)
 
     def forward(self, input_xyz):
-        features, indices, _ = lidar_input_features(input_xyz, self.spec)
-        token = self.lidar_tokenizer(features, indices)
+        # The pinned official tokenizer asserts B=1. Preserve it verbatim and
+        # tokenize ragged scenes separately, then batch the dense 3D trunk.
+        scenes = [input_xyz] if isinstance(input_xyz, torch.Tensor) else list(input_xyz)
+        if not scenes:
+            raise ValueError("Empty LiDAR batch")
+        tokens = []
+        for xyz in scenes:
+            features, indices, _ = lidar_input_features(xyz, self.spec)
+            tokens.append(self.lidar_tokenizer(features, indices))
+        token = torch.cat(tokens, dim=0) if len(tokens) > 1 else tokens[0]
         pyramid = self._run(self.voxel_backbone, token)
         voxel = self._run(self.voxel_neck, pyramid)[0]
         encoded = self._run(self.local_backbone, voxel)
         cls, geometry = self._run(self.local_neck, encoded)
         output = self._run(self.main_head, [[cls[0]], [geometry[0]]])
         density = nonnegative_density(output["output_voxels"], self.valid)
-        if density.shape != (1, 1, *self.spec.shape):
+        if density.shape != (len(scenes), 1, *self.spec.shape):
             raise ValueError("Official density output shape mismatch")
         if not self.training:
             return {"pred_density": density}

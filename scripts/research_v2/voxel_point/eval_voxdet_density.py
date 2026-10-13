@@ -25,7 +25,7 @@ def main():
     if checkpoint['mechanics_smoke_only'] and not args.smoke:
         raise ValueError('Smoke checkpoint cannot produce formal density results/caches')
     frames = frames_for(cfg,args.split,args.max_frames)
-    dataset = VoxelPointDataset(frames,spec)
+    dataset = VoxelPointDataset(frames,spec,gt_roi_policy=cfg['data'].get('gt_roi_policy','strict'))
     threshold = cfg['evaluation']['occupancy_threshold']
     rows = []
     args.output.mkdir(parents=True,exist_ok=True)
@@ -39,7 +39,8 @@ def main():
             gt = sample['gt_counts'].to(device)
             partial_ids,_ = spec.voxelize_points(xyz,strict=False)
             partial = spec.flat_to_dense(torch.bincount(partial_ids,minlength=spec.num_voxels))
-            rows.append({'frame':sample['frame'], 'predicted':density_metrics(density,gt,spec,threshold=threshold),
+            rows.append({'frame':sample['frame'], 'gt_validation':sample['gt_validation'],
+                'predicted':density_metrics(density,gt,spec,threshold=threshold),
                 'gt_density':density_metrics(gt,gt,spec,threshold=threshold),
                 'partial_density':density_metrics(partial,gt,spec,threshold=threshold)})
             if args.cache_counts:

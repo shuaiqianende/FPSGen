@@ -18,13 +18,14 @@ def main():
     if args.max_frames:
         import numpy as np
         selected = [frames[i] for i in np.linspace(0, len(frames)-1, min(args.max_frames,len(frames)), dtype=int)]
-    dataset = VoxelPointDataset(selected, spec)
+    dataset = VoxelPointDataset(selected, spec, gt_roi_policy=data.get("gt_roi_policy", "strict"))
     rows, anomalies = [], []
     for index, frame in enumerate(selected):
         try:
             sample = dataset[index]
             rows.append({"sequence": frame["sequence"], "frame": frame["frame"],
                          "input_points": len(sample["input_xyz"]),
+                         "gt_validation": sample["gt_validation"],
                          **density_statistics(sample["gt_counts"], spec)})
         except ValueError as exc:
             anomalies.append({"frame": frame, "reason": str(exc)})
