@@ -1,0 +1,16 @@
+{
+  "environment_path": "/data-12/M2024-HWZ/FPSGen/env/voxdet_voxel_shortcut",
+  "python": "3.9.19",
+  "torch": "2.0.1+cu117",
+  "torch_cuda_build": "11.7",
+  "mmcv": "1.7.2",
+  "mmdet_installed": false,
+  "mmdet3d_installed": false,
+  "spconv_installed": true,
+  "system_environment_modified": false,
+  "physical_gpus_allowed": [
+    2,
+    3
+  ],
+  "caches": "FPSGen/env/voxel_shortcut_cache"
+}

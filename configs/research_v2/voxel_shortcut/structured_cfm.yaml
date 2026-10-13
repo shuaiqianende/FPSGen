@@ -1,0 +1,111 @@
+geometry: geometry.yaml
+seed: 20261013
+data:
+  root: /data-12/M2024-HWZ/KITTI_Odometry
+  split_manifest: /data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/split_manifest.json
+  gt_validation:
+    policy: filter_audited
+    max_filter_distance_m: 0.001
+    max_filter_points: 32
+runtime:
+  physical_gpu_ids:
+  - 2
+  - 3
+  precision: fp16
+  batch_per_gpu: 1
+  activation_checkpointing: true
+  knn_backend: keops
+  initial_amp_scale: 4096.0
+initialize_density_checkpoint: /data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/checkpoint_025000.pt
+base_checkpoint: null
+flow_checkpoint: null
+mapping:
+  n_ref: 24.0
+  max_decode_count: 1000000.0
+mapping_provenance: Full17870-frame audited sphere crop; actual retained point counts;
+  maximum GT count24; no upper target clipping
+network:
+  widths:
+  - 8
+  - 16
+  - 32
+  - 64
+  condition_channels: 128
+  embed_width: 128
+  activation_checkpointing: true
+source:
+  mode: fixed_gaussian
+  sigma_observed: 0.01
+  sigma_unobserved: 0.05
+  sigma_floor: 0.01
+  sigma_fixed: 0.05
+  support_threshold: 0.5
+  count_threshold: 0.0
+source_calibration:
+  support_threshold_candidates:
+  - 0.3
+  - 0.5
+  - 0.7
+  noise_unobserved_candidates:
+  - 0.02
+  - 0.05
+  - 0.1
+  freeze_split: development
+  frozen: false
+base_loss:
+  occupancy_weight: 1.0
+  positive_count_weight: 0.3
+  density_weights:
+    pos: 1.0
+    bg: 0.1
+    coarse: 0.5
+    dist: 0.1
+    mass: 0.1
+    direction: 0.1
+    auxiliary: 0.3
+loss:
+  fm_weight: 1.0
+  shortcut_weight: 0.5
+  endpoint_weight: 0.2
+  surface_weight: 0.1
+  small_step_anchor_weight: 0.25
+surface:
+  multiscale_weight: 1.0
+  occupancy_temperature: 0.1
+  occupancy_weight: 1.0
+  multiscale_weights:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+train:
+  updates: 100000
+  lr: 0.0001
+  weight_decay: 0.01
+  gradient_clip: 1.0
+  ema_decay: 0.999
+  shortcut_after: 1000
+  surface_after: 2000
+  off_path_after: 2000
+  off_path_fraction: 0.1
+  small_step_anchor: 0.0625
+  bootstrap_half_steps:
+  - 0.0625
+  - 0.125
+  - 0.25
+  - 0.5
+evaluation:
+  protocol_frozen: false
+  occupancy_threshold: 1.0
+  nfe:
+  - 1
+  - 2
+  - 4
+  - 8
+  - 16
+  trajectory_nfe: 16
+  source_seed: 20261013
+  point_metrics: true
+  development_frames: 12
+  minimum_euler_steps: 1
+stage: cfm

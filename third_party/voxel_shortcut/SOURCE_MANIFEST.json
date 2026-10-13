@@ -1,0 +1,56 @@
+{
+  "upstream": {
+    "ShortcutModels": "601004348667094e1b71f30942199759412d4432",
+    "PWM": "c6e809486db3d0b6f8503318dfea246c06c7a50e",
+    "VoxDet": "e10d8280de96d4f03f54b616e57e7c6754044fa4"
+  },
+  "files": [
+    {
+      "upstream": "ShortcutModels",
+      "path": "model.py",
+      "sha256": "1aca06648b7b1eab9ac159a535680f163494ba31ff73fc77575dc6156a81868a"
+    },
+    {
+      "upstream": "ShortcutModels",
+      "path": "LICENSE",
+      "sha256": "b6949a2ed08b0515d08c9d17dde04854db54390aab3a78f146a7c572232f377d"
+    },
+    {
+      "upstream": "ShortcutModels",
+      "path": "README.md",
+      "sha256": "44c1e78a3f823c9fb14c03f55f5b8a5289e3d74c282647d13924d3522020af6f"
+    },
+    {
+      "upstream": "ShortcutModels",
+      "path": "targets_shortcut.py",
+      "sha256": "adb2ac83febc1de012a7cdb713b9117d53616473ccd38f1104fd2475d8b1abc3"
+    },
+    {
+      "upstream": "PWM",
+      "path": "flow_paths/geometry_aux.py",
+      "sha256": "b452de4b61949eb405d7fb7cfc7980236a819435fac7d3d1ead8b5444b8350f4"
+    },
+    {
+      "upstream": "PWM",
+      "path": "flow_paths/base.py",
+      "sha256": "ddc47492e5476bc20e7f548df5327ab98476a5812a7982fb13dc7833be74a892"
+    },
+    {
+      "upstream": "PWM",
+      "path": "flow_paths/linear.py",
+      "sha256": "17bfda26d1bd29d49de98e0c7b40d7c6bc34634bc96bdefeb85a0826f3d17044"
+    },
+    {
+      "upstream": "PWM",
+      "path": "voxel/grid.py",
+      "sha256": "f5f8d0a274fa847635ae5ba455d1345778b66880338ecee21088779cb8ee6dba"
+    },
+    {
+      "upstream": "PWM",
+      "path": "voxel/density_flow.py",
+      "sha256": "ae28f39d3d1cdcddafca2267008d06a783e5da186431b76cb9e9292e543559bc"
+    }
+  ],
+  "license": "ShortcutModels MIT;private PWM snapshot contains no license file;reference retained only in owner private repository",
+  "mapping_adaptation": "PWM encode clamp_max and inverse clamp(-1,1) removed;target counts never saturated"
+}

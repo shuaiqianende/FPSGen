@@ -7,3 +7,6 @@
 /voxel_point_cache/
 /voxel_point_wheels/
 /voxel_point_tmp/
+/voxdet_voxel_shortcut/
+/voxel_shortcut_cache/
+/src/ShortcutModels/

@@ -1,0 +1,19 @@
+{
+  "mechanics": "PASS",
+  "cpu_tests": {
+    "status": "PASS",
+    "passed": 40,
+    "command": "OMP_NUM_THREADS=4 env/voxdet_voxel_shortcut/bin/python -m pytest -q tests/test_voxel_shortcut.py tests/test_voxel_point.py"
+  },
+  "gt_free_inference_5_frames": "PASS",
+  "structured_source_helps": "INCONCLUSIVE",
+  "shortcut_low_nfe_improves": "INCONCLUSIVE",
+  "surface_helps": "INCONCLUSIVE",
+  "formal_training_ready": false,
+  "quality_gate": "FAIL",
+  "reason": "All correction pilots worsen density Mass-TV and180k anchor CD vs frozen base; small F1 gain is insufficient",
+  "base_sha256": "b066dbf1df84931ba110bb593a2bc5f8f2e566716d298e4583a2c2e6dfd5931a",
+  "formal_long_training_started": false,
+  "stage2_modified": false,
+  "pilot_comparability": "Equal64-update CFM/residual pilots; Shortcut64 additional; surface/control32 additional; not fully converged matched-budget research evidence"
+}

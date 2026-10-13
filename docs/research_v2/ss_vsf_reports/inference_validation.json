@@ -1,0 +1,101 @@
+{
+  "status": "PASS",
+  "real_frames": 5,
+  "rows": [
+    {
+      "id": "00_000000",
+      "density_shape": [
+        32,
+        256,
+        256
+      ],
+      "allocated_points": 180000,
+      "source_shape": [
+        180000,
+        3
+      ],
+      "voxel_and_sphere_bounds": "PASS",
+      "gt_free": "PASS",
+      "actual_nfe": 1,
+      "config_sha256": "38f376fbdf7f8ba806ecb59b4d1ef2b7740cd4d96fa6f3a16985988350eae40b",
+      "base_sha256": "b066dbf1df84931ba110bb593a2bc5f8f2e566716d298e4583a2c2e6dfd5931a",
+      "flow_sha256": "c70f80c4e1a12bdeb4aa03aed1e94a9771e6611bebd0a2cc567bbb8316a607f9"
+    },
+    {
+      "id": "00_000180",
+      "density_shape": [
+        32,
+        256,
+        256
+      ],
+      "allocated_points": 180000,
+      "source_shape": [
+        180000,
+        3
+      ],
+      "voxel_and_sphere_bounds": "PASS",
+      "gt_free": "PASS",
+      "actual_nfe": 1,
+      "config_sha256": "38f376fbdf7f8ba806ecb59b4d1ef2b7740cd4d96fa6f3a16985988350eae40b",
+      "base_sha256": "b066dbf1df84931ba110bb593a2bc5f8f2e566716d298e4583a2c2e6dfd5931a",
+      "flow_sha256": "c70f80c4e1a12bdeb4aa03aed1e94a9771e6611bebd0a2cc567bbb8316a607f9"
+    },
+    {
+      "id": "00_000360",
+      "density_shape": [
+        32,
+        256,
+        256
+      ],
+      "allocated_points": 180000,
+      "source_shape": [
+        180000,
+        3
+      ],
+      "voxel_and_sphere_bounds": "PASS",
+      "gt_free": "PASS",
+      "actual_nfe": 1,
+      "config_sha256": "38f376fbdf7f8ba806ecb59b4d1ef2b7740cd4d96fa6f3a16985988350eae40b",
+      "base_sha256": "b066dbf1df84931ba110bb593a2bc5f8f2e566716d298e4583a2c2e6dfd5931a",
+      "flow_sha256": "c70f80c4e1a12bdeb4aa03aed1e94a9771e6611bebd0a2cc567bbb8316a607f9"
+    },
+    {
+      "id": "00_000681",
+      "density_shape": [
+        32,
+        256,
+        256
+      ],
+      "allocated_points": 180000,
+      "source_shape": [
+        180000,
+        3
+      ],
+      "voxel_and_sphere_bounds": "PASS",
+      "gt_free": "PASS",
+      "actual_nfe": 1,
+      "config_sha256": "38f376fbdf7f8ba806ecb59b4d1ef2b7740cd4d96fa6f3a16985988350eae40b",
+      "base_sha256": "b066dbf1df84931ba110bb593a2bc5f8f2e566716d298e4583a2c2e6dfd5931a",
+      "flow_sha256": "c70f80c4e1a12bdeb4aa03aed1e94a9771e6611bebd0a2cc567bbb8316a607f9"
+    },
+    {
+      "id": "00_000861",
+      "density_shape": [
+        32,
+        256,
+        256
+      ],
+      "allocated_points": 180000,
+      "source_shape": [
+        180000,
+        3
+      ],
+      "voxel_and_sphere_bounds": "PASS",
+      "gt_free": "PASS",
+      "actual_nfe": 1,
+      "config_sha256": "38f376fbdf7f8ba806ecb59b4d1ef2b7740cd4d96fa6f3a16985988350eae40b",
+      "base_sha256": "b066dbf1df84931ba110bb593a2bc5f8f2e566716d298e4583a2c2e6dfd5931a",
+      "flow_sha256": "c70f80c4e1a12bdeb4aa03aed1e94a9771e6611bebd0a2cc567bbb8316a607f9"
+    }
+  ]
+}

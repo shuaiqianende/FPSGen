@@ -1,0 +1,5 @@
+{
+  "status": "PASS",
+  "passed": 40,
+  "command": "OMP_NUM_THREADS=4 env/voxdet_voxel_shortcut/bin/python -m pytest -q tests/test_voxel_shortcut.py tests/test_voxel_point.py"
+}

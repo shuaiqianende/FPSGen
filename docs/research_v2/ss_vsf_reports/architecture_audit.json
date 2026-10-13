@@ -1,0 +1,31 @@
+{
+  "official_commit": "e10d8280de96d4f03f54b616e57e7c6754044fa4",
+  "config_sha256": "1342ffb35503de4303a034937bb7f47c7031361888e1e4fa84d7dbc4a99a49b3",
+  "parameters": 22082535,
+  "old_density_parameters": 22082470,
+  "added_occupancy_head_parameters": 65,
+  "occupancy_design": "independent64-to-1 occupancy head on shared official refined features; positive count retains original1channel classifier",
+  "preserved": [
+    "LidarEncoder6->128",
+    "CustomResNet3D[2,2,2]128",
+    "GeneralizedLSSFPN128",
+    "localResNet[3,3,3]128",
+    "SpatiallyDecoupledFPN",
+    "six-direction prediction",
+    "fourVoxelAttentionAggregation"
+  ],
+  "official_config_use_gt_refine": true,
+  "official_gt_refine_role": "training target masking/car semantic run filters in detector; not used by new encoder/base forward",
+  "new_inference_gt_arguments": false,
+  "semantic_feature_used": false,
+  "condition_layout": "threeZYX grids16x128x128,8x64x64,4x32x32;128channels",
+  "legacy_voxdet_abi": "official trunk/head keepXYZinternally; one geometry adapter converts all public fields/conditions toZYX; new velocityConv3d usesZYX",
+  "condition_role": "withinStage1 only; noStage2 export",
+  "checkpoint_compatibility": "new encoder isolates BN buffers during nonreentrant recomputation; one running-stat update per forward; upstream module files unchanged",
+  "density_warmstart": {
+    "upstream_checkpoint_updates": 25000,
+    "new_occupancy_head_initialized": true,
+    "new_gt_sphere_protocol": true
+  },
+  "upstream_detector_sha256": "7d9f0d5d3d2b6b5621c9e0be52c5a7d41386e477767e62aa4ffd29009c86366e"
+}

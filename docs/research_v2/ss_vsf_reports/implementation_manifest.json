@@ -1,0 +1,283 @@
+{
+  "branch": "research/fpsgen-v2",
+  "head_before": "1ddadc66be437220589eca21710a0b46a37283e3",
+  "existing_changes_preserved": true,
+  "commit_status": "Prepared for user-requested publication",
+  "push_status": "Verify private branch; upload outcome is reported separately",
+  "approval_blocker": "Historical credit failure left additional single-card GPU checks unexecuted; publication requested separately",
+  "source_files": [
+    {
+      "path": "configs/research_v2/voxel_shortcut/base_density.yaml",
+      "bytes": 2308,
+      "sha256": "1b9e1924ab9cd4cddc2f00e96fec4cf095b5bc21a0465012d90f8ced525ce3dc"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/formal_eval.yaml",
+      "bytes": 2324,
+      "sha256": "17622f2c50d6a000c3eea5716239ab9f20f2d5f64375ea8bc173d28015f16e98"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/gaussian_cfm.yaml",
+      "bytes": 2302,
+      "sha256": "177ed132baa5b93e9675993bcf998fdb65ffd1e519744d92c0755d1b933eb0f7"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/geometry.yaml",
+      "bytes": 204,
+      "sha256": "c3f9f4d6e86fc0e1c9d6a3d4772f39ad7b300cb1cfecc7cf84fbd7390de01e6d"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/observation_cfm.yaml",
+      "bytes": 2319,
+      "sha256": "6614ee0bcb31bab6b74b31e72a96d91adad8eb3dcb5ce2abf911adb3d458f9a5"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/observation_shortcut.yaml",
+      "bytes": 2324,
+      "sha256": "0e50a3112ff03c6eefda490bb57f4f38cf3b671ae137d042ad932e158bc406ce"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/residual.yaml",
+      "bytes": 2312,
+      "sha256": "b208956152138aefeb9d94cbb54fe0c0874628d0fb9498111d03d4494b5065bc"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/shortcut_surface.yaml",
+      "bytes": 2323,
+      "sha256": "afe9391a7489fd8e032dbe92307323279139b9bdb83000d8cba7d7436adf8dd0"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/structured_cfm.yaml",
+      "bytes": 2308,
+      "sha256": "64d8c19d0517cdf478ad8e2903655d2af053df5b48c1a22e907d22fae72bd009"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/structured_shortcut.yaml",
+      "bytes": 2313,
+      "sha256": "27f46439af85f2dfc1e8d159f1fab6ae27bbaddd9d318f473529be5bbc07bf1a"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/surface_multiscale.yaml",
+      "bytes": 2323,
+      "sha256": "e8c472618db38cc39b00382979f58127e61ac980094700131fc468b8af29e5fc"
+    },
+    {
+      "path": "configs/research_v2/voxel_shortcut/surface_occupancy.yaml",
+      "bytes": 2323,
+      "sha256": "a141df49fe872e304afb507f9232f47e37994e5c1edcaa0318aab5fc32bfe9bd"
+    },
+    {
+      "path": "docs/research_v2/SS_VSF_DESIGN.md",
+      "bytes": 5997,
+      "sha256": "ae23371a729fcafb76fdcf742a15666ebe173e023d318b6b707f2702acf59be4"
+    },
+    {
+      "path": "docs/research_v2/SS_VSF_GPU_PREFLIGHT.md",
+      "bytes": 2601,
+      "sha256": "012c04c30e43e63afa32cccc188663bb9e460dc885525381d9a055774c4f7508"
+    },
+    {
+      "path": "docs/research_v2/SS_VSF_RESULTS.md",
+      "bytes": 11162,
+      "sha256": "07e488d74f10bbba7b7f0b3ba1b7c45fdd6e1eba7b30a571ce203ac9482bf069"
+    },
+    {
+      "path": "docs/research_v2/SS_VSF_SOURCE_AUDIT.md",
+      "bytes": 2578,
+      "sha256": "63c7c27549bf0dcf0548e70582d6a4fa00a248b250a7b5ebca458d3c8634630d"
+    },
+    {
+      "path": "env/.gitignore",
+      "bytes": 288,
+      "sha256": "061d85577444dcbb2f511b8a9ef2a203e8bef593f3c18841aa2f1e4ef9f4f7ee"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/__init__.py",
+      "bytes": 204,
+      "sha256": "f333d55449cb984e0b4164743a3b30010dd6802f10ab2d775c62cc9c7ac07d75"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/anchor_sampler.py",
+      "bytes": 2534,
+      "sha256": "4e2ed59fc164d657cd68be5ab2a414067e0c4d301587826a55863824faf6fd9e"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/base_density.py",
+      "bytes": 4246,
+      "sha256": "27f57307b66e95ddc9525322c7b3e973cd0bd89f9b1d79dd6c9018c8c785c1e4"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/checkpointing.py",
+      "bytes": 1290,
+      "sha256": "92983b14c7f031dd0e20217fdaa4086f7e4eb1971503351ab6de11fa60f12e83"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/count_allocator.py",
+      "bytes": 1167,
+      "sha256": "4ec50f289a1ff01ad5cc48e8ea65c0a320873fffd91a61aac1bf6f40d9bd9114"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/count_mapping.py",
+      "bytes": 1943,
+      "sha256": "178e92542f58cc0dda8e725b4534ab8bd8384a3267de572385d8fa41727947ca"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/dataset.py",
+      "bytes": 2983,
+      "sha256": "67148e1e65ca5b267038851409f53ba6f0f4b51052ba4c8077ac2eb232a11c08"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/evaluator.py",
+      "bytes": 2012,
+      "sha256": "a63c2bff59207fa13d4cf095bc9573a20447e9217433bdee0a0de2437ba501ee"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/geometry.py",
+      "bytes": 3000,
+      "sha256": "50d11438cb694d76b25c06471244352261b4b4bc77264081683329d421424baf"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/shortcut_flow.py",
+      "bytes": 2767,
+      "sha256": "4adefb1d6d75656e4b08c7d499c6ea8dbc26c98eef8fa8abe64d3f2c2ce73b2e"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/shortcut_losses.py",
+      "bytes": 2319,
+      "sha256": "8fec4aee9666e1e49f3c2a6ec87846a9caba3bdbd5b504c529eaea6a63d96fa8"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/shortcut_unet.py",
+      "bytes": 4375,
+      "sha256": "18842377adbac085bbff1aaa2284a6be35fec993f47444d3849dd151d6cfabf0"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/source_builder.py",
+      "bytes": 2314,
+      "sha256": "a421187c12cba6ff8e628df10deef18a4d34afa844bf11ccf144a57c5d258a0d"
+    },
+    {
+      "path": "fpsgen/voxel_shortcut/voxdet_encoder.py",
+      "bytes": 1098,
+      "sha256": "5768ef6dfa7d551ab8de1c7bc9d5ba8c77d02c18db73dbd945c63bd80cde0dbb"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/audit_dataset.py",
+      "bytes": 3647,
+      "sha256": "6051e9daccb7e59f84a7deb684a9076e31e284370ee37bbd548dda3e788a565e"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/audit_voxdet_adaptation.py",
+      "bytes": 2333,
+      "sha256": "fd21fdb21b89086ef2617ad0db1a76f2e2691ca57617a767c80bf382c618590d"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/common.py",
+      "bytes": 4513,
+      "sha256": "e4d95d211db61fa88a4ed479041b70f35ce9e50bfe633c0f6aa7dbafc7f35ad2"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/eval_density.py",
+      "bytes": 4798,
+      "sha256": "6c93e09cc46b71b3fe00a5c41d7d67806551e98b967da6fb9b47dc40a04621e6"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/eval_nfe_curve.py",
+      "bytes": 8570,
+      "sha256": "523b63ca3f6f39c6451a4b02c292ec131b0e3b31218855e60fe22d8e7a65ef55"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/export_density.py",
+      "bytes": 4206,
+      "sha256": "3e295763381f2261bc08543eef22481cbdee19c202ba64233937d6c7e70da912"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/summarize_pilot.py",
+      "bytes": 5949,
+      "sha256": "fb59e81098104873f66d71e56f372db1932242730bb47f9b4540be1e8229c208"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/train_base_density.py",
+      "bytes": 65,
+      "sha256": "c5625660bca47d2f160f1429586aef37533fbe1506abf8daa7b1115ec676a82e"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/train_core.py",
+      "bytes": 12590,
+      "sha256": "a7f723678b9b2e2aef52719044cb2585d53e65a3f612f599e35a42d851ffb2fc"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/train_residual.py",
+      "bytes": 69,
+      "sha256": "99e03daf0f96cd67d28f1ac17437a5be8937fba35934eb7b26a381d3d6303c78"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/train_shortcut.py",
+      "bytes": 203,
+      "sha256": "cf1003460ea926ed29b7920c626d469abc33f35173431abfbcb3e272b2e9afa3"
+    },
+    {
+      "path": "scripts/research_v2/voxel_shortcut/train_structured_cfm.py",
+      "bytes": 64,
+      "sha256": "e22c54cfe30a81a4f72557a53ee7d1e00dd13c59b62cab594110f2c4ae31c64b"
+    },
+    {
+      "path": "tests/test_voxel_shortcut.py",
+      "bytes": 9571,
+      "sha256": "eca2e9cc8edd0c9c902330155fcf74023d2e6e2a2360ae824a1d3a0d3ea4c954"
+    },
+    {
+      "path": "third_party/voxel_shortcut/PWM/flow_paths/base.py",
+      "bytes": 1672,
+      "sha256": "ddc47492e5476bc20e7f548df5327ab98476a5812a7982fb13dc7833be74a892"
+    },
+    {
+      "path": "third_party/voxel_shortcut/PWM/flow_paths/geometry_aux.py",
+      "bytes": 2282,
+      "sha256": "b452de4b61949eb405d7fb7cfc7980236a819435fac7d3d1ead8b5444b8350f4"
+    },
+    {
+      "path": "third_party/voxel_shortcut/PWM/flow_paths/linear.py",
+      "bytes": 723,
+      "sha256": "17bfda26d1bd29d49de98e0c7b40d7c6bc34634bc96bdefeb85a0826f3d17044"
+    },
+    {
+      "path": "third_party/voxel_shortcut/PWM/voxel/density_flow.py",
+      "bytes": 38163,
+      "sha256": "ae28f39d3d1cdcddafca2267008d06a783e5da186431b76cb9e9292e543559bc"
+    },
+    {
+      "path": "third_party/voxel_shortcut/PWM/voxel/grid.py",
+      "bytes": 6237,
+      "sha256": "f5f8d0a274fa847635ae5ba455d1345778b66880338ecee21088779cb8ee6dba"
+    },
+    {
+      "path": "third_party/voxel_shortcut/SOURCE_MANIFEST.json",
+      "bytes": 1898,
+      "sha256": "64a2b00552d9ef52ee4256badb9b5b53a7d2f8df47f9f6081245a505f3cfd62b"
+    },
+    {
+      "path": "third_party/voxel_shortcut/ShortcutModels/LICENSE",
+      "bytes": 1068,
+      "sha256": "b6949a2ed08b0515d08c9d17dde04854db54390aab3a78f146a7c572232f377d"
+    },
+    {
+      "path": "third_party/voxel_shortcut/ShortcutModels/README.md",
+      "bytes": 4398,
+      "sha256": "44c1e78a3f823c9fb14c03f55f5b8a5289e3d74c282647d13924d3522020af6f"
+    },
+    {
+      "path": "third_party/voxel_shortcut/ShortcutModels/model.py",
+      "bytes": 11823,
+      "sha256": "1aca06648b7b1eab9ac159a535680f163494ba31ff73fc77575dc6156a81868a"
+    },
+    {
+      "path": "third_party/voxel_shortcut/ShortcutModels/targets_shortcut.py",
+      "bytes": 6029,
+      "sha256": "adb2ac83febc1de012a7cdb713b9117d53616473ccd38f1104fd2475d8b1abc3"
+    }
+  ],
+  "small_report_directory": "docs/research_v2/ss_vsf_reports",
+  "datasets_or_weights_in_delivery": false,
+  "implementation_revision": "Commit containing this report on private research/fpsgen-v2"
+}
