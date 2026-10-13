@@ -1,0 +1,128 @@
+{
+  "snapshot_local": "2026-10-13T14:22:39.721183+08:00",
+  "training_status": "RUNNING_PROCESS_CONFIRMED",
+  "run": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356",
+  "training_pid": 712594,
+  "physical_gpus": [
+    2,
+    3
+  ],
+  "successful_updates": 16455,
+  "target_updates": 25000,
+  "progress_percent": 65.82000000000001,
+  "seen_frames": 65820,
+  "target_seen_frames": 100000,
+  "batch_per_gpu": 2,
+  "seconds_per_update_recent500": 0.9919821120619415,
+  "remaining_hours_estimate": 2.354579763213692,
+  "eta_local_estimate": "2026-10-13T16:43:56.208331+08:00",
+  "peak_allocated_gib": [
+    19.060224056243896,
+    19.060058116912842
+  ],
+  "nvidia_smi_memory_mib": [
+    21983,
+    21975
+  ],
+  "amp_skipped_attempts_per_rank": [
+    6,
+    6
+  ],
+  "recent_500_gradients_finite": true,
+  "latest_checkpoint": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/checkpoint_016000.pt",
+  "launch_git_head": "ba6aa0a05d6ddff2f2f4f30929857e7745d2b964",
+  "config_file_sha256": "a24d25fc7c32e56fdd4b3201ba823a8c3b2e181805aebdf756c55a90df496a77",
+  "split_manifest_sha256": "c8916b2958c383d465f2979cde64adf9a48f14dd146efcf8f8d8c8b807360807",
+  "loss_windows": {
+    "first_100": {
+      "step_start": 1,
+      "step_end": 100,
+      "total": 0.8333389773964882,
+      "pos": 0.4656233669817448,
+      "bg": 0.00859082145628065,
+      "coarse": 0.1091479817032814,
+      "dist": 0.6970366847515106,
+      "mass": 0.3964290054887533,
+      "direction": 0.28947798527777197,
+      "auxiliary": 0.5799605126678944
+    },
+    "latest_100": {
+      "step_start": 16356,
+      "step_end": 16455,
+      "total": 0.2793196403235197,
+      "pos": 0.13875544808804988,
+      "bg": 0.00961363252485171,
+      "coarse": 0.05096172282472253,
+      "dist": 0.419120028167963,
+      "mass": 0.028005309902364387,
+      "direction": 0.00934433124260977,
+      "auxiliary": 0.22824998281896114
+    },
+    "latest_500": {
+      "step_start": 15956,
+      "step_end": 16455,
+      "total": 0.2807528420239687,
+      "pos": 0.13827294995635747,
+      "bg": 0.009781539142597467,
+      "coarse": 0.051797631803900006,
+      "dist": 0.4229083376824856,
+      "mass": 0.03291904471523594,
+      "direction": 0.009416775099933147,
+      "auxiliary": 0.2302616732865572
+    },
+    "latest_1000": {
+      "step_start": 15456,
+      "step_end": 16455,
+      "total": 0.2823345318734646,
+      "pos": 0.13917252873256802,
+      "bg": 0.009831964062526823,
+      "coarse": 0.05213753641117364,
+      "dist": 0.42434227372705935,
+      "mass": 0.033114912600489335,
+      "direction": 0.00941091018379666,
+      "auxiliary": 0.23141074829548597
+    },
+    "updates_1_1000": {
+      "total": 0.49204143247008325
+    },
+    "updates_1001_2000": {
+      "total": 0.3823438088148832
+    },
+    "updates_2001_4000": {
+      "total": 0.35822219364345076
+    },
+    "updates_4001_6000": {
+      "total": 0.3376725873462856
+    },
+    "updates_6001_8000": {
+      "total": 0.32618470321968196
+    },
+    "updates_8001_10000": {
+      "total": 0.3139041649363935
+    },
+    "updates_10001_12000": {
+      "total": 0.30379267813265326
+    },
+    "updates_12001_14000": {
+      "total": 0.2934258731417358
+    },
+    "updates_14001_16000": {
+      "total": 0.2860359206497669
+    },
+    "updates_16001_16455": {
+      "total": 0.280882243009714
+    }
+  },
+  "teacher_status": "smoke only; formal training not started",
+  "sinkhorn_status": "formal mixed-source quality gate pending",
+  "pointflow_status": "smoke only; formal training not started",
+  "stage2_gt_filter_contract_alignment_pending": true,
+  "quality_evaluation_checkpoint_updates": 11000,
+  "seq08_stride100_scenes": 41,
+  "seq08_density_iou_macro": 0.4435025155544281,
+  "seq08_density_iou_micro": 0.4381451954183268,
+  "seq08_point_voxel05_iou_macro": 0.4732620720752137,
+  "seq08_point_voxel05_iou_micro": 0.4745354184318984,
+  "seq08_fine_grid_anchor_iou_macro": 0.4092699319906833,
+  "seq08_used_for_training_or_hyperparameter_selection": false
+}

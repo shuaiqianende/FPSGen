@@ -1,5 +1,10 @@
 # First implementation results — 2026-10-13
 
+This is the initial implementation archive. Subsequent user-authorized formal
+Stage 1 training and seq08 interim evaluation are documented in
+[the latest progress report](VOXDET_DENSITY_LATEST_PROGRESS.md); the statements
+below describe the original smoke run, before that formal training began.
+
 All model checkpoints in this report are **mechanics smoke checkpoints**, not
 formally trained research results. Seq08 was not read. No long training queue
 was started. Existing FPSGen experiments/checkpoints/evaluation code remain
