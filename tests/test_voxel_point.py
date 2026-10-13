@@ -181,6 +181,24 @@ def test_fp32_loss_mask_and_count_sum_pool():
     assert all(v.dtype == torch.float32 for v in terms.values())
 
 
+def test_cubic_point_voxel_iou_matches_histogram_and_handles_negative_coordinates():
+    import numpy as np
+    from fpsgen.voxel_point.metrics import point_voxel_occupancy_metrics
+    rng = np.random.default_rng(42)
+    p,g = rng.uniform(-2,2,(200,3)),rng.uniform(-2,2,(200,3))
+    metric = point_voxel_occupancy_metrics(torch.from_numpy(p),torch.from_numpy(g),voxel_size=.5)
+    hp = np.histogramdd(p,bins=(8,8,8),range=((-2,2),)*3)[0] > 0
+    hg = np.histogramdd(g,bins=(8,8,8),range=((-2,2),)*3)[0] > 0
+    assert metric['iou'] == pytest.approx((hp & hg).sum()/(hp | hg).sum())
+    negative = point_voxel_occupancy_metrics(torch.tensor([[-.1,0.,0.]]),torch.tensor([[.1,0.,0.]]))
+    assert negative['iou'] == 0  # Floor across zero; never round to nearest.
+    repeated = point_voxel_occupancy_metrics(torch.zeros(180000,3),torch.zeros(3,3))
+    assert repeated['iou'] == 1 and repeated['predicted_occupied_voxels'] == 1
+    for size in (0.,float('nan'),float('inf')):
+        with pytest.raises(ValueError,match='Positive'):
+            point_voxel_occupancy_metrics(torch.zeros(1,3),torch.zeros(1,3),voxel_size=size)
+
+
 def test_density_runs_ignore_empty_and_roi():
     counts = torch.zeros(1,8,4,4)
     counts[0,2:6,2,2] = 1

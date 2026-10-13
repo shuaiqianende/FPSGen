@@ -1,9 +1,32 @@
 """Independent 3D density and point geometry diagnostics; no dense pair cost."""
 
+import math
 import torch
 
 from fpsgen.ops.endpoint_refinement.knn import knn
 from .density_loss import count_sum_pool
+
+
+@torch.no_grad()
+def point_voxel_occupancy_metrics(predicted, target, *, voxel_size=.5):
+    """FPSGen floor(XYZ/size), binary point occupancy; no morphology closing."""
+    if not isinstance(voxel_size, (int,float)) or not math.isfinite(voxel_size) or voxel_size <= 0:
+        raise ValueError("Positive scalar metric voxel size required")
+    sets = []
+    for points in (predicted,target):
+        if points.ndim != 2 or points.shape[-1] != 3 or not torch.isfinite(points).all():
+            raise ValueError("Finite XYZ points required")
+        indices = torch.floor(points.double()/voxel_size).long()
+        if bool(((indices < -2000) | (indices >= (1<<20)-2000)).any()):
+            raise ValueError("Metric voxel coordinates outside packed ID range")
+        ids = ((indices[:,0]+2000)<<40) | ((indices[:,1]+2000)<<20) | (indices[:,2]+2000)
+        sets.append(torch.unique(ids))
+    predicted_ids, target_ids = sets
+    tp = int(torch.isin(predicted_ids,target_ids,assume_unique=True).sum())
+    fp,fn = len(predicted_ids)-tp,len(target_ids)-tp
+    return {"voxel_size_m":float(voxel_size),"tp":tp,"fp":fp,"fn":fn,
+            "iou":tp/max(tp+fp+fn,1),"f1":2*tp/max(2*tp+fp+fn,1),
+            "predicted_occupied_voxels":len(predicted_ids),"target_occupied_voxels":len(target_ids)}
 
 
 def chamfer_sqrt(predicted, target, *, backend="keops"):

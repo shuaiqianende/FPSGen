@@ -1,0 +1,4250 @@
+{
+  "split": "test",
+  "threshold": 1.0,
+  "threshold_frozen": true,
+  "config_sha256": "28e3089256c18b814692feeb6ac102492f619297be06c1668368387943cb0a6f",
+  "checkpoint_sha256": "c3a4f33a60bf11d24143e6f507dd376cebe1957ce99fe8c15179898ae7a23d26",
+  "checkpoint_updates": 11000,
+  "device": "cpu",
+  "precision": "fp32",
+  "frame_stride": 100,
+  "num_shards": 2,
+  "selected_frame_count": 41,
+  "point_voxel_size_m": 0.5,
+  "point_voxel_iou_policy": "floor(XYZ/size), binary occupied if any point, no morphological closing",
+  "anchor_points": 180000,
+  "status": "COMPLETE",
+  "evaluated_frames": 41,
+  "macro_means": {
+    "predicted": {
+      "occupancy_iou": 0.4435025155544281,
+      "occupancy_f1": 0.6128307697249622,
+      "occupied_count_mae": 1.2517261476051518,
+      "log_count_mae": 0.05735045725979456,
+      "mass_tv": 0.4924000588859,
+      "coarse_mass_tv": 0.3496955436904256,
+      "mass_calibration_error": 0.052890373152544405,
+      "density_sum": 189268.90205792684,
+      "occupied_voxel_fraction": 0.04832196780821172
+    },
+    "gt_density": {
+      "occupancy_iou": 1.0,
+      "occupancy_f1": 1.0,
+      "occupied_count_mae": 0.0,
+      "log_count_mae": 0.0,
+      "mass_tv": 0.0,
+      "coarse_mass_tv": 0.0,
+      "mass_calibration_error": 0.0,
+      "density_sum": 180000.0,
+      "occupied_voxel_fraction": 0.05071871450579748
+    },
+    "partial_density": {
+      "occupancy_iou": 0.12361028799560012,
+      "occupancy_f1": 0.2191706855849522,
+      "occupied_count_mae": 2.137779407384919,
+      "log_count_mae": 0.049350727712962686,
+      "mass_tv": 0.8439421624672122,
+      "coarse_mass_tv": 0.6825593404653596,
+      "mass_calibration_error": 0.8999999761581421,
+      "density_sum": 18000.0,
+      "occupied_voxel_fraction": 0.006447401806348708
+    }
+  },
+  "per_scene_spread": {
+    "predicted": {
+      "occupancy_iou": {
+        "min": 0.3583267629146576,
+        "max": 0.5652173757553101,
+        "std": 0.04989720591853431
+      },
+      "occupancy_f1": {
+        "min": 0.5276002287864685,
+        "max": 0.7222222089767456,
+        "std": 0.047784808514257815
+      },
+      "occupied_count_mae": {
+        "min": 0.7720715403556824,
+        "max": 2.2889769077301025,
+        "std": 0.3559887519805776
+      },
+      "log_count_mae": {
+        "min": 0.03864685446023941,
+        "max": 0.07213050872087479,
+        "std": 0.007032345852594472
+      },
+      "mass_tv": {
+        "min": 0.40609413385391235,
+        "max": 0.5744932889938354,
+        "std": 0.0341764613968001
+      },
+      "coarse_mass_tv": {
+        "min": 0.269002765417099,
+        "max": 0.44143879413604736,
+        "std": 0.03747219648665641
+      },
+      "mass_calibration_error": {
+        "min": 0.0014776041498407722,
+        "max": 0.10717065632343292,
+        "std": 0.02318151698141278
+      },
+      "density_sum": {
+        "min": 177354.421875,
+        "max": 199290.71875,
+        "std": 4704.6935914754495
+      },
+      "occupied_voxel_fraction": {
+        "min": 0.041810862720012665,
+        "max": 0.0533265545964241,
+        "std": 0.0026652592861738577
+      }
+    },
+    "gt_density": {
+      "occupancy_iou": {
+        "min": 1.0,
+        "max": 1.0,
+        "std": 0.0
+      },
+      "occupancy_f1": {
+        "min": 1.0,
+        "max": 1.0,
+        "std": 0.0
+      },
+      "occupied_count_mae": {
+        "min": 0.0,
+        "max": 0.0,
+        "std": 0.0
+      },
+      "log_count_mae": {
+        "min": 0.0,
+        "max": 0.0,
+        "std": 0.0
+      },
+      "mass_tv": {
+        "min": 0.0,
+        "max": 0.0,
+        "std": 0.0
+      },
+      "coarse_mass_tv": {
+        "min": 0.0,
+        "max": 0.0,
+        "std": 0.0
+      },
+      "mass_calibration_error": {
+        "min": 0.0,
+        "max": 0.0,
+        "std": 0.0
+      },
+      "density_sum": {
+        "min": 180000.0,
+        "max": 180000.0,
+        "std": 0.0
+      },
+      "occupied_voxel_fraction": {
+        "min": 0.02667260356247425,
+        "max": 0.07944924384355545,
+        "std": 0.014269726811930955
+      }
+    },
+    "partial_density": {
+      "occupancy_iou": {
+        "min": 0.06157423183321953,
+        "max": 0.1645238697528839,
+        "std": 0.024456322549142387
+      },
+      "occupancy_f1": {
+        "min": 0.11600551009178162,
+        "max": 0.28255990147590637,
+        "std": 0.03919111276220058
+      },
+      "occupied_count_mae": {
+        "min": 1.2852351665496826,
+        "max": 3.7358791828155518,
+        "std": 0.6035741583574079
+      },
+      "log_count_mae": {
+        "min": 0.03561142459511757,
+        "max": 0.06416647136211395,
+        "std": 0.007299537223739684
+      },
+      "mass_tv": {
+        "min": 0.7767333388328552,
+        "max": 0.9304389357566833,
+        "std": 0.03627723565898988
+      },
+      "coarse_mass_tv": {
+        "min": 0.5785277485847473,
+        "max": 0.759922206401825,
+        "std": 0.034468240466384956
+      },
+      "mass_calibration_error": {
+        "min": 0.8999999761581421,
+        "max": 0.8999999761581421,
+        "std": 0.0
+      },
+      "density_sum": {
+        "min": 18000.0,
+        "max": 18000.0,
+        "std": 0.0
+      },
+      "occupied_voxel_fraction": {
+        "min": 0.0038776714354753494,
+        "max": 0.008579610846936703,
+        "std": 0.0013011157214799856
+      }
+    }
+  },
+  "micro_occupancy": {
+    "predicted": {
+      "tp": 2056197,
+      "fp": 1236717,
+      "fn": 1400044,
+      "occupancy_iou": 0.4381451954183268,
+      "occupancy_f1": 0.6093198333717332
+    },
+    "partial_density": {
+      "tp": 411415,
+      "fp": 27945,
+      "fn": 3044826,
+      "occupancy_iou": 0.11808066503912248,
+      "occupancy_f1": 0.21122029694519537
+    }
+  },
+  "filtered_gt_points": 0,
+  "rows": [
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 0,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/000000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/000000.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 49118,
+          "fp": 28737,
+          "fn": 59221
+        },
+        "partial_density": {
+          "tp": 13017,
+          "fp": 1008,
+          "fn": 95322
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.3583267629146576,
+        "occupancy_f1": 0.5276002287864685,
+        "occupied_count_mae": 0.9806548953056335,
+        "log_count_mae": 0.06936725974082947,
+        "mass_tv": 0.5399149656295776,
+        "coarse_mass_tv": 0.40945377945899963,
+        "mass_calibration_error": 0.011034375056624413,
+        "density_sum": 181986.1875,
+        "occupied_voxel_fraction": 0.04684190824627876
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.06518278270959854
+      },
+      "partial_density": {
+        "occupancy_iou": 0.11904304474592209,
+        "occupancy_f1": 0.21275866031646729,
+        "occupied_count_mae": 1.5317567586898804,
+        "log_count_mae": 0.055933330208063126,
+        "mass_tv": 0.8625278472900391,
+        "coarse_mass_tv": 0.66599440574646,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.008438222110271454
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 38796,
+          "fp": 30419,
+          "fn": 19716,
+          "iou": 0.4362483273549156,
+          "f1": 0.6074831476508491,
+          "predicted_occupied_voxels": 69215,
+          "target_occupied_voxels": 58512
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 10846,
+          "fp": 278,
+          "fn": 47666,
+          "iou": 0.18448715767987753,
+          "f1": 0.3115055431098857,
+          "predicted_occupied_voxels": 11124,
+          "target_occupied_voxels": 58512
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 62722,
+          "fp": 66845,
+          "fn": 45617,
+          "iou": 0.3580349803635035,
+          "f1": 0.5272838852319823
+        },
+        "seed": 28261013,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 100,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/000100.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/000100.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 57395,
+          "fp": 23565,
+          "fn": 68764
+        },
+        "partial_density": {
+          "tp": 12208,
+          "fp": 1875,
+          "fn": 113951
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.38333868980407715,
+        "occupancy_f1": 0.5542224645614624,
+        "occupied_count_mae": 0.8266690969467163,
+        "log_count_mae": 0.0623360201716423,
+        "mass_tv": 0.4826864004135132,
+        "coarse_mass_tv": 0.3419967591762543,
+        "mass_calibration_error": 0.0014776041498407722,
+        "density_sum": 179734.03125,
+        "occupied_voxel_fraction": 0.04871004819869995
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.07590428739786148
+      },
+      "partial_density": {
+        "occupancy_iou": 0.09534966945648193,
+        "occupancy_f1": 0.17409905791282654,
+        "occupied_count_mae": 1.3326120376586914,
+        "log_count_mae": 0.060959164053201675,
+        "mass_tv": 0.8925945162773132,
+        "coarse_mass_tv": 0.6871556043624878,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.008473117835819721
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 45778,
+          "fp": 21442,
+          "fn": 22211,
+          "iou": 0.5118806677773926,
+          "f1": 0.6771442729404108,
+          "predicted_occupied_voxels": 67220,
+          "target_occupied_voxels": 67989
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 10950,
+          "fp": 279,
+          "fn": 57039,
+          "iou": 0.1603972578660573,
+          "f1": 0.27645232144209647,
+          "predicted_occupied_voxels": 11229,
+          "target_occupied_voxels": 67989
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 72860,
+          "fp": 52784,
+          "fn": 53299,
+          "iou": 0.4071687632374555,
+          "f1": 0.5787063696619976
+        },
+        "seed": 28261113,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 200,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/000200.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/000200.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 56963,
+          "fp": 23894,
+          "fn": 75088
+        },
+        "partial_density": {
+          "tp": 8210,
+          "fp": 1284,
+          "fn": 123841
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.3652762174606323,
+        "occupancy_f1": 0.5350949764251709,
+        "occupied_count_mae": 0.8222373127937317,
+        "log_count_mae": 0.0633019357919693,
+        "mass_tv": 0.48672181367874146,
+        "coarse_mass_tv": 0.35208362340927124,
+        "mass_calibration_error": 0.021983332931995392,
+        "density_sum": 183957.0,
+        "occupied_voxel_fraction": 0.04864807799458504
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.07944924384355545
+      },
+      "partial_density": {
+        "occupancy_iou": 0.06157423183321953,
+        "occupancy_f1": 0.11600551009178162,
+        "occupied_count_mae": 1.3252228498458862,
+        "log_count_mae": 0.06416647136211395,
+        "mass_tv": 0.9304389357566833,
+        "coarse_mass_tv": 0.759922206401825,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005712119862437248
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 45747,
+          "fp": 18863,
+          "fn": 23860,
+          "iou": 0.5170905391658189,
+          "f1": 0.6816871186213371,
+          "predicted_occupied_voxels": 64610,
+          "target_occupied_voxels": 69607
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 7686,
+          "fp": 124,
+          "fn": 61921,
+          "iou": 0.11022357344653023,
+          "f1": 0.19856103956495344,
+          "predicted_occupied_voxels": 7810,
+          "target_occupied_voxels": 69607
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 72730,
+          "fp": 49767,
+          "fn": 59321,
+          "iou": 0.40001540001540004,
+          "f1": 0.5714442855571444
+        },
+        "seed": 28261213,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 300,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/000300.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/000300.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 59385,
+          "fp": 24923,
+          "fn": 37821
+        },
+        "partial_density": {
+          "tp": 12598,
+          "fp": 819,
+          "fn": 84608
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4862481355667114,
+        "occupancy_f1": 0.6543297171592712,
+        "occupied_count_mae": 0.9328110218048096,
+        "log_count_mae": 0.05929166078567505,
+        "mass_tv": 0.47338587045669556,
+        "coarse_mass_tv": 0.30626097321510315,
+        "mass_calibration_error": 0.05865399166941643,
+        "density_sum": 190557.71875,
+        "occupied_voxel_fraction": 0.050724394619464874
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.058484550565481186
+      },
+      "partial_density": {
+        "occupancy_iou": 0.1285182386636734,
+        "occupancy_f1": 0.2277645766735077,
+        "occupied_count_mae": 1.7014381885528564,
+        "log_count_mae": 0.052997887134552,
+        "mass_tv": 0.8411111831665039,
+        "coarse_mass_tv": 0.6420722007751465,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.008072415366768837
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 39635,
+          "fp": 27815,
+          "fn": 11221,
+          "iou": 0.5038069936825513,
+          "f1": 0.6700420942302165,
+          "predicted_occupied_voxels": 67450,
+          "target_occupied_voxels": 50856
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 9873,
+          "fp": 180,
+          "fn": 40983,
+          "iou": 0.1934516811662356,
+          "f1": 0.3241885435649904,
+          "predicted_occupied_voxels": 10053,
+          "target_occupied_voxels": 50856
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 69066,
+          "fp": 60226,
+          "fn": 28140,
+          "iou": 0.4387036942934092,
+          "f1": 0.6098596897102844
+        },
+        "seed": 28261313,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 400,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/000400.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/000400.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 50680,
+          "fp": 22822,
+          "fn": 48771
+        },
+        "partial_density": {
+          "tp": 12657,
+          "fp": 1030,
+          "fn": 86794
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.41448235511779785,
+        "occupancy_f1": 0.5860551595687866,
+        "occupied_count_mae": 1.0018360614776611,
+        "log_count_mae": 0.06382008641958237,
+        "mass_tv": 0.5091080069541931,
+        "coarse_mass_tv": 0.34316933155059814,
+        "mass_calibration_error": 0.012452430091798306,
+        "density_sum": 177758.5625,
+        "occupied_voxel_fraction": 0.04422290250658989
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.05983526632189751
+      },
+      "partial_density": {
+        "occupancy_iou": 0.12596412003040314,
+        "occupancy_f1": 0.2237444519996643,
+        "occupied_count_mae": 1.6656845808029175,
+        "log_count_mae": 0.05370991304516792,
+        "mass_tv": 0.8454833626747131,
+        "coarse_mass_tv": 0.6447166204452515,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.008234862238168716
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 39990,
+          "fp": 30372,
+          "fn": 14731,
+          "iou": 0.4699564006440013,
+          "f1": 0.6394154281557046,
+          "predicted_occupied_voxels": 70362,
+          "target_occupied_voxels": 54721
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 10453,
+          "fp": 283,
+          "fn": 44268,
+          "iou": 0.1900407243109592,
+          "f1": 0.31938524527552437,
+          "predicted_occupied_voxels": 10736,
+          "target_occupied_voxels": 54721
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 64469,
+          "fp": 65723,
+          "fn": 34982,
+          "iou": 0.3903096128930703,
+          "f1": 0.5614715014174174
+        },
+        "seed": 28261413,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 500,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/000500.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/000500.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 50954,
+          "fp": 30122,
+          "fn": 38191
+        },
+        "partial_density": {
+          "tp": 11633,
+          "fp": 888,
+          "fn": 77512
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.42722630500793457,
+        "occupancy_f1": 0.5986805558204651,
+        "occupied_count_mae": 1.1164692640304565,
+        "log_count_mae": 0.06324131041765213,
+        "mass_tv": 0.5145251750946045,
+        "coarse_mass_tv": 0.36532366275787354,
+        "mass_calibration_error": 0.04828723892569542,
+        "density_sum": 188691.703125,
+        "occupied_voxel_fraction": 0.048779841512441635
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.05363460257649422
+      },
+      "partial_density": {
+        "occupancy_iou": 0.12920817732810974,
+        "occupancy_f1": 0.22884739935398102,
+        "occupied_count_mae": 1.8571428060531616,
+        "log_count_mae": 0.051143959164619446,
+        "mass_tv": 0.8410111665725708,
+        "coarse_mass_tv": 0.6787110567092896,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.0075333318673074245
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 34696,
+          "fp": 29669,
+          "fn": 12253,
+          "iou": 0.45284397922159286,
+          "f1": 0.6233896904252835,
+          "predicted_occupied_voxels": 64365,
+          "target_occupied_voxels": 46949
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 8656,
+          "fp": 131,
+          "fn": 38293,
+          "iou": 0.183857264231096,
+          "f1": 0.3106071479833501,
+          "predicted_occupied_voxels": 8787,
+          "target_occupied_voxels": 46949
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 59605,
+          "fp": 64495,
+          "fn": 29540,
+          "iou": 0.3879523561572507,
+          "f1": 0.5590283476752093
+        },
+        "seed": 28261513,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 600,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/000600.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/000600.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 46229,
+          "fp": 28131,
+          "fn": 11566
+        },
+        "partial_density": {
+          "tp": 8524,
+          "fp": 275,
+          "fn": 49271
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.5380094647407532,
+        "occupancy_f1": 0.699617862701416,
+        "occupied_count_mae": 1.521474838256836,
+        "log_count_mae": 0.04286394268274307,
+        "mass_tv": 0.4351081848144531,
+        "coarse_mass_tv": 0.28488367795944214,
+        "mass_calibration_error": 0.0494665801525116,
+        "density_sum": 188903.984375,
+        "occupied_voxel_fraction": 0.044739123433828354
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.03477269411087036
+      },
+      "partial_density": {
+        "occupancy_iou": 0.1467883586883545,
+        "occupancy_f1": 0.25599902868270874,
+        "occupied_count_mae": 2.8539319038391113,
+        "log_count_mae": 0.04097222909331322,
+        "mass_tv": 0.8070389032363892,
+        "coarse_mass_tv": 0.6753666996955872,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005293969064950943
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 24417,
+          "fp": 18162,
+          "fn": 3317,
+          "iou": 0.5320071465922956,
+          "f1": 0.6945230611693428,
+          "predicted_occupied_voxels": 42579,
+          "target_occupied_voxels": 27734
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 5375,
+          "fp": 63,
+          "fn": 22359,
+          "iou": 0.1933661905961075,
+          "f1": 0.32406849149885447,
+          "predicted_occupied_voxels": 5438,
+          "target_occupied_voxels": 27734
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 48939,
+          "fp": 44385,
+          "fn": 8856,
+          "iou": 0.4789489136817381,
+          "f1": 0.6476882456871736
+        },
+        "seed": 28261613,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 700,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/000700.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/000700.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 53493,
+          "fp": 27918,
+          "fn": 47397
+        },
+        "partial_density": {
+          "tp": 11368,
+          "fp": 756,
+          "fn": 89522
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.41529253125190735,
+        "occupancy_f1": 0.5868645906448364,
+        "occupied_count_mae": 1.041994571685791,
+        "log_count_mae": 0.06102635711431503,
+        "mass_tv": 0.49170926213264465,
+        "coarse_mass_tv": 0.3731439709663391,
+        "mass_calibration_error": 0.055210504680871964,
+        "density_sum": 189937.890625,
+        "occupied_voxel_fraction": 0.04898139834403992
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.060701049864292145
+      },
+      "partial_density": {
+        "occupancy_iou": 0.11183913052082062,
+        "occupancy_f1": 0.20117861032485962,
+        "occupied_count_mae": 1.656933307647705,
+        "log_count_mae": 0.054689787328243256,
+        "mass_tv": 0.8651944994926453,
+        "coarse_mass_tv": 0.6975167393684387,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.007294474169611931
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 34619,
+          "fp": 23009,
+          "fn": 15669,
+          "iou": 0.47231128149856066,
+          "f1": 0.6415916082879276,
+          "predicted_occupied_voxels": 57628,
+          "target_occupied_voxels": 50288
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 8301,
+          "fp": 178,
+          "fn": 41987,
+          "iou": 0.1644869813339674,
+          "f1": 0.28250548777375056,
+          "predicted_occupied_voxels": 8479,
+          "target_occupied_voxels": 50288
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 61648,
+          "fp": 53418,
+          "fn": 39242,
+          "iou": 0.39951266298571686,
+          "f1": 0.5709311155976218
+        },
+        "seed": 28261713,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 800,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/000800.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/000800.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 57698,
+          "fp": 25646,
+          "fn": 39794
+        },
+        "partial_density": {
+          "tp": 11544,
+          "fp": 894,
+          "fn": 85948
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4685637354850769,
+        "occupancy_f1": 0.6381251811981201,
+        "occupied_count_mae": 0.9652349948883057,
+        "log_count_mae": 0.05899234861135483,
+        "mass_tv": 0.4703903794288635,
+        "coarse_mass_tv": 0.3285452127456665,
+        "mass_calibration_error": 0.07826440781354904,
+        "density_sum": 194087.59375,
+        "occupied_voxel_fraction": 0.05014439672231674
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.05865662172436714
+      },
+      "partial_density": {
+        "occupancy_iou": 0.11733376979827881,
+        "occupancy_f1": 0.21002456545829773,
+        "occupied_count_mae": 1.7086838483810425,
+        "log_count_mae": 0.05376278981566429,
+        "mass_tv": 0.8600500822067261,
+        "coarse_mass_tv": 0.6754555702209473,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.007483394350856543
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 36336,
+          "fp": 25830,
+          "fn": 11385,
+          "iou": 0.4940245543908309,
+          "f1": 0.6613339157498157,
+          "predicted_occupied_voxels": 62166,
+          "target_occupied_voxels": 47721
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 8936,
+          "fp": 172,
+          "fn": 38785,
+          "iou": 0.1865825903576723,
+          "f1": 0.3144873216139647,
+          "predicted_occupied_voxels": 9108,
+          "target_occupied_voxels": 47721
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 66425,
+          "fp": 56094,
+          "fn": 31067,
+          "iou": 0.43249384709543837,
+          "f1": 0.6038334446914018
+        },
+        "seed": 28261813,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 900,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/000900.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/000900.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 42601,
+          "fp": 30023,
+          "fn": 10605
+        },
+        "partial_density": {
+          "tp": 8373,
+          "fp": 247,
+          "fn": 44833
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.5118528604507446,
+        "occupancy_f1": 0.6771199107170105,
+        "occupied_count_mae": 1.6852836608886719,
+        "log_count_mae": 0.04247482493519783,
+        "mass_tv": 0.4456271231174469,
+        "coarse_mass_tv": 0.30187681317329407,
+        "mass_calibration_error": 0.08222074806690216,
+        "density_sum": 194799.734375,
+        "occupied_voxel_fraction": 0.04369464889168739
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.032011695206165314
+      },
+      "partial_density": {
+        "occupancy_iou": 0.15664228796958923,
+        "occupancy_f1": 0.27085691690444946,
+        "occupied_count_mae": 3.092564821243286,
+        "log_count_mae": 0.03909402713179588,
+        "mass_tv": 0.7962444424629211,
+        "coarse_mass_tv": 0.6624500155448914,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005186272785067558
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 22020,
+          "fp": 17416,
+          "fn": 3099,
+          "iou": 0.517691313036323,
+          "f1": 0.6822089690961196,
+          "predicted_occupied_voxels": 39436,
+          "target_occupied_voxels": 25119
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 5286,
+          "fp": 42,
+          "fn": 19833,
+          "iou": 0.21008703946583998,
+          "f1": 0.34722632771701645,
+          "predicted_occupied_voxels": 5328,
+          "target_occupied_voxels": 25119
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 44499,
+          "fp": 42017,
+          "fn": 8707,
+          "iou": 0.4673135692007183,
+          "f1": 0.6369648301627517
+        },
+        "seed": 28261913,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 1000,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/001000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/001000.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 55079,
+          "fp": 29896,
+          "fn": 38526
+        },
+        "partial_density": {
+          "tp": 12231,
+          "fp": 951,
+          "fn": 81374
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4459801912307739,
+        "occupancy_f1": 0.6168552041053772,
+        "occupied_count_mae": 1.0326259136199951,
+        "log_count_mae": 0.06378236413002014,
+        "mass_tv": 0.505398154258728,
+        "coarse_mass_tv": 0.3579164743423462,
+        "mass_calibration_error": 0.07431250065565109,
+        "density_sum": 193376.25,
+        "occupied_voxel_fraction": 0.051125697791576385
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.05631798878312111
+      },
+      "partial_density": {
+        "occupancy_iou": 0.1293519139289856,
+        "occupancy_f1": 0.22907282412052155,
+        "occupied_count_mae": 1.7689759731292725,
+        "log_count_mae": 0.05222707614302635,
+        "mass_tv": 0.840761125087738,
+        "coarse_mass_tv": 0.6464667320251465,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.007931026630103588
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 36701,
+          "fp": 29813,
+          "fn": 13753,
+          "iou": 0.45723647327045985,
+          "f1": 0.627539156008481,
+          "predicted_occupied_voxels": 66514,
+          "target_occupied_voxels": 50454
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 9799,
+          "fp": 136,
+          "fn": 40655,
+          "iou": 0.1936944060090927,
+          "f1": 0.3245293016940171,
+          "predicted_occupied_voxels": 9935,
+          "target_occupied_voxels": 50454
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 62574,
+          "fp": 64266,
+          "fn": 31031,
+          "iou": 0.39636158635848256,
+          "f1": 0.567706230579056
+        },
+        "seed": 28262013,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 1100,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/001100.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/001100.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 47914,
+          "fp": 39117,
+          "fn": 18713
+        },
+        "partial_density": {
+          "tp": 10824,
+          "fp": 488,
+          "fn": 55803
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4531131684780121,
+        "occupancy_f1": 0.6236447095870972,
+        "occupied_count_mae": 1.4954131841659546,
+        "log_count_mae": 0.062177568674087524,
+        "mass_tv": 0.5447303652763367,
+        "coarse_mass_tv": 0.3834800720214844,
+        "mass_calibration_error": 0.08683264255523682,
+        "density_sum": 195629.875,
+        "occupied_voxel_fraction": 0.052362702786922455
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.040086518973112106
+      },
+      "partial_density": {
+        "occupancy_iou": 0.16127541661262512,
+        "occupancy_f1": 0.2777556777000427,
+        "occupied_count_mae": 2.464346170425415,
+        "log_count_mae": 0.04362735152244568,
+        "mass_tv": 0.7925333380699158,
+        "coarse_mass_tv": 0.6199055314064026,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.006805929820984602
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 27873,
+          "fp": 31433,
+          "fn": 5478,
+          "iou": 0.430245122252408,
+          "f1": 0.601638300398243,
+          "predicted_occupied_voxels": 59306,
+          "target_occupied_voxels": 33351
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 7889,
+          "fp": 98,
+          "fn": 25462,
+          "iou": 0.2358515949654698,
+          "f1": 0.38168271324205333,
+          "predicted_occupied_voxels": 7987,
+          "target_occupied_voxels": 33351
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 52057,
+          "fp": 69942,
+          "fn": 14570,
+          "iou": 0.38117728034912757,
+          "f1": 0.5519599631015872
+        },
+        "seed": 28262113,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 1200,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/001200.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/001200.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 45916,
+          "fp": 26378,
+          "fn": 8942
+        },
+        "partial_density": {
+          "tp": 8616,
+          "fp": 219,
+          "fn": 46242
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.5652173757553101,
+        "occupancy_f1": 0.7222222089767456,
+        "occupied_count_mae": 1.51642644405365,
+        "log_count_mae": 0.03864685446023941,
+        "mass_tv": 0.40609413385391235,
+        "coarse_mass_tv": 0.269002765417099,
+        "mass_calibration_error": 0.06308133900165558,
+        "density_sum": 191354.640625,
+        "occupied_voxel_fraction": 0.04349610209465027
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.03300563246011734
+      },
+      "partial_density": {
+        "occupancy_iou": 0.1564355343580246,
+        "occupancy_f1": 0.2705477774143219,
+        "occupied_count_mae": 2.993929862976074,
+        "log_count_mae": 0.039683014154434204,
+        "mass_tv": 0.7933333516120911,
+        "coarse_mass_tv": 0.6560999751091003,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005315628834068775
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 23093,
+          "fp": 16259,
+          "fn": 2749,
+          "iou": 0.548514287071566,
+          "f1": 0.7084394269411296,
+          "predicted_occupied_voxels": 39352,
+          "target_occupied_voxels": 25842
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 5315,
+          "fp": 68,
+          "fn": 20527,
+          "iou": 0.20513315322269393,
+          "f1": 0.34043234587670135,
+          "predicted_occupied_voxels": 5383,
+          "target_occupied_voxels": 25842
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 47871,
+          "fp": 39489,
+          "fn": 6987,
+          "iou": 0.5073929218735095,
+          "f1": 0.6732059233008479
+        },
+        "seed": 28262213,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 1300,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/001300.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/001300.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 48783,
+          "fp": 31961,
+          "fn": 28183
+        },
+        "partial_density": {
+          "tp": 10953,
+          "fp": 566,
+          "fn": 66013
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.44785040616989136,
+        "occupancy_f1": 0.6186417937278748,
+        "occupied_count_mae": 1.2663925886154175,
+        "log_count_mae": 0.05737411230802536,
+        "mass_tv": 0.49875950813293457,
+        "coarse_mass_tv": 0.36844080686569214,
+        "mass_calibration_error": 0.04988333210349083,
+        "density_sum": 188979.0,
+        "occupied_voxel_fraction": 0.04858009144663811
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.0463070385158062
+      },
+      "partial_density": {
+        "occupancy_iou": 0.1412706971168518,
+        "occupancy_f1": 0.24756738543510437,
+        "occupied_count_mae": 2.144557237625122,
+        "log_count_mae": 0.04744688794016838,
+        "mass_tv": 0.8230555653572083,
+        "coarse_mass_tv": 0.6533999443054199,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.006930472794920206
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 30959,
+          "fp": 26675,
+          "fn": 7874,
+          "iou": 0.47259876656286254,
+          "f1": 0.6418568007712482,
+          "predicted_occupied_voxels": 57634,
+          "target_occupied_voxels": 38833
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 7874,
+          "fp": 83,
+          "fn": 30959,
+          "iou": 0.20233323054784663,
+          "f1": 0.33656764265868777,
+          "predicted_occupied_voxels": 7957,
+          "target_occupied_voxels": 38833
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 55356,
+          "fp": 59107,
+          "fn": 21610,
+          "iou": 0.40681104995112916,
+          "f1": 0.5783449738545361
+        },
+        "seed": 28262313,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 1400,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/001400.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/001400.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 55394,
+          "fp": 28280,
+          "fn": 34162
+        },
+        "partial_density": {
+          "tp": 10709,
+          "fp": 689,
+          "fn": 78847
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4700940251350403,
+        "occupancy_f1": 0.639542818069458,
+        "occupied_count_mae": 1.0637646913528442,
+        "log_count_mae": 0.055488910526037216,
+        "mass_tv": 0.4646710157394409,
+        "coarse_mass_tv": 0.33320924639701843,
+        "mass_calibration_error": 0.06804713606834412,
+        "density_sum": 192248.484375,
+        "occupied_voxel_fraction": 0.05034294351935387
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.05388188362121582
+      },
+      "partial_density": {
+        "occupancy_iou": 0.11866585165262222,
+        "occupancy_f1": 0.2121560275554657,
+        "occupied_count_mae": 1.8621309995651245,
+        "log_count_mae": 0.05173398181796074,
+        "mass_tv": 0.8542777299880981,
+        "coarse_mass_tv": 0.6864444613456726,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.006857672240585089
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 32494,
+          "fp": 24026,
+          "fn": 9836,
+          "iou": 0.4896919645548255,
+          "f1": 0.6574405665149216,
+          "predicted_occupied_voxels": 56520,
+          "target_occupied_voxels": 42330
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 7722,
+          "fp": 65,
+          "fn": 34608,
+          "iou": 0.1821441207689586,
+          "f1": 0.3081589081549175,
+          "predicted_occupied_voxels": 7787,
+          "target_occupied_voxels": 42330
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 62344,
+          "fp": 52346,
+          "fn": 27212,
+          "iou": 0.4393454637707714,
+          "f1": 0.6104795197947573
+        },
+        "seed": 28262413,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 1500,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/001500.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/001500.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 60569,
+          "fp": 24900,
+          "fn": 40368
+        },
+        "partial_density": {
+          "tp": 8549,
+          "fp": 675,
+          "fn": 92388
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4813290238380432,
+        "occupancy_f1": 0.6498610377311707,
+        "occupied_count_mae": 0.9388315677642822,
+        "log_count_mae": 0.054594628512859344,
+        "mass_tv": 0.4438222050666809,
+        "coarse_mass_tv": 0.3078567683696747,
+        "mass_calibration_error": 0.07559392601251602,
+        "density_sum": 193606.90625,
+        "occupied_voxel_fraction": 0.05142291635274887
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.06072932854294777
+      },
+      "partial_density": {
+        "occupancy_iou": 0.08413376659154892,
+        "occupancy_f1": 0.15520919859409332,
+        "occupied_count_mae": 1.6957310438156128,
+        "log_count_mae": 0.0560544915497303,
+        "mass_tv": 0.8982666730880737,
+        "coarse_mass_tv": 0.7015555500984192,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.0055496725253760815
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 37168,
+          "fp": 21434,
+          "fn": 12367,
+          "iou": 0.5237216249348307,
+          "f1": 0.687424285859604,
+          "predicted_occupied_voxels": 58602,
+          "target_occupied_voxels": 49535
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 7230,
+          "fp": 125,
+          "fn": 42305,
+          "iou": 0.1455900120821587,
+          "f1": 0.2541747231499385,
+          "predicted_occupied_voxels": 7355,
+          "target_occupied_voxels": 49535
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 68728,
+          "fp": 48374,
+          "fn": 32209,
+          "iou": 0.46030098251300977,
+          "f1": 0.6304193286522136
+        },
+        "seed": 28262513,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 1600,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/001600.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/001600.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 57766,
+          "fp": 27122,
+          "fn": 69766
+        },
+        "partial_density": {
+          "tp": 11530,
+          "fp": 1596,
+          "fn": 116002
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.3735176622867584,
+        "occupancy_f1": 0.5438847541809082,
+        "occupied_count_mae": 0.8247857689857483,
+        "log_count_mae": 0.064727783203125,
+        "mass_tv": 0.4918484091758728,
+        "coarse_mass_tv": 0.347822904586792,
+        "mass_calibration_error": 0.044960763305425644,
+        "density_sum": 188092.9375,
+        "occupied_voxel_fraction": 0.0510733537375927
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.07673036307096481
+      },
+      "partial_density": {
+        "occupancy_iou": 0.08929124474525452,
+        "occupancy_f1": 0.16394375264644623,
+        "occupied_count_mae": 1.3264906406402588,
+        "log_count_mae": 0.06151259317994118,
+        "mass_tv": 0.8988500237464905,
+        "coarse_mass_tv": 0.7070276737213135,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.00789733324199915
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 45156,
+          "fp": 21088,
+          "fn": 21616,
+          "iou": 0.5139540177555202,
+          "f1": 0.6789559150778853,
+          "predicted_occupied_voxels": 66244,
+          "target_occupied_voxels": 66772
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 9941,
+          "fp": 127,
+          "fn": 56831,
+          "iou": 0.14859713897068716,
+          "f1": 0.25874544508068714,
+          "predicted_occupied_voxels": 10068,
+          "target_occupied_voxels": 66772
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 72214,
+          "fp": 54789,
+          "fn": 55318,
+          "iou": 0.39608163623499215,
+          "f1": 0.567419018995423
+        },
+        "seed": 28262613,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 1700,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/001700.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/001700.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 58108,
+          "fp": 22354,
+          "fn": 73082
+        },
+        "partial_density": {
+          "tp": 12086,
+          "fp": 1856,
+          "fn": 119104
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.37844526767730713,
+        "occupancy_f1": 0.5490900278091431,
+        "occupied_count_mae": 0.7734458446502686,
+        "log_count_mae": 0.06262107938528061,
+        "mass_tv": 0.4741262197494507,
+        "coarse_mass_tv": 0.32036441564559937,
+        "mass_calibration_error": 0.024439062923192978,
+        "density_sum": 184399.03125,
+        "occupied_voxel_fraction": 0.04841042682528496
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.07893121987581253
+      },
+      "partial_density": {
+        "occupancy_iou": 0.09084076434373856,
+        "occupancy_f1": 0.16655182838439941,
+        "occupied_count_mae": 1.2852351665496826,
+        "log_count_mae": 0.0621267631649971,
+        "mass_tv": 0.8975167274475098,
+        "coarse_mass_tv": 0.6829944252967834,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.008388284593820572
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 47800,
+          "fp": 20150,
+          "fn": 21348,
+          "iou": 0.5352863445989832,
+          "f1": 0.6973114122744314,
+          "predicted_occupied_voxels": 67950,
+          "target_occupied_voxels": 69148
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 10572,
+          "fp": 163,
+          "fn": 58576,
+          "iou": 0.15252990145864292,
+          "f1": 0.26468710489090297,
+          "predicted_occupied_voxels": 10735,
+          "target_occupied_voxels": 69148
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 75805,
+          "fp": 53035,
+          "fn": 55385,
+          "iou": 0.41148052653005834,
+          "f1": 0.5830481098334808
+        },
+        "seed": 28262713,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 1800,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/001800.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/001800.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 57944,
+          "fp": 20405,
+          "fn": 71020
+        },
+        "partial_density": {
+          "tp": 12507,
+          "fp": 1753,
+          "fn": 116457
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.3879252076148987,
+        "occupancy_f1": 0.5590001344680786,
+        "occupied_count_mae": 0.7720715403556824,
+        "log_count_mae": 0.06024597957730293,
+        "mass_tv": 0.46428021788597107,
+        "coarse_mass_tv": 0.31634220480918884,
+        "mass_calibration_error": 0.014697656035423279,
+        "density_sum": 177354.421875,
+        "occupied_voxel_fraction": 0.04713912680745125
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.07759193331003189
+      },
+      "partial_density": {
+        "occupancy_iou": 0.09567998349666595,
+        "occupancy_f1": 0.17464950680732727,
+        "occupied_count_mae": 1.3020533323287964,
+        "log_count_mae": 0.061394669115543365,
+        "mass_tv": 0.891427755355835,
+        "coarse_mass_tv": 0.6843444108963013,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.008579610846936703
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 48672,
+          "fp": 20903,
+          "fn": 22031,
+          "iou": 0.5313189092417527,
+          "f1": 0.6939363264375027,
+          "predicted_occupied_voxels": 69575,
+          "target_occupied_voxels": 70703
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 11313,
+          "fp": 224,
+          "fn": 59390,
+          "iou": 0.15950202320695928,
+          "f1": 0.2751215953307393,
+          "predicted_occupied_voxels": 11537,
+          "target_occupied_voxels": 70703
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 76834,
+          "fp": 52307,
+          "fn": 52130,
+          "iou": 0.4238626145384535,
+          "f1": 0.5953701013153562
+        },
+        "seed": 28262813,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 1900,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/001900.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/001900.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 54852,
+          "fp": 29710,
+          "fn": 39712
+        },
+        "partial_density": {
+          "tp": 11332,
+          "fp": 827,
+          "fn": 83232
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4413795471191406,
+        "occupancy_f1": 0.6124404072761536,
+        "occupied_count_mae": 1.029759407043457,
+        "log_count_mae": 0.058267585933208466,
+        "mass_tv": 0.4781452715396881,
+        "coarse_mass_tv": 0.3512275218963623,
+        "mass_calibration_error": 0.05104392394423485,
+        "density_sum": 189187.90625,
+        "occupied_voxel_fraction": 0.05087721347808838
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.056894976645708084
+      },
+      "partial_density": {
+        "occupancy_iou": 0.11879527568817139,
+        "occupancy_f1": 0.2123628407716751,
+        "occupied_count_mae": 1.7619284391403198,
+        "log_count_mae": 0.05299071967601776,
+        "mass_tv": 0.8573389053344727,
+        "coarse_mass_tv": 0.6852999925613403,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.007315532304346561
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 35391,
+          "fp": 24870,
+          "fn": 13158,
+          "iou": 0.4820414334164181,
+          "f1": 0.6505100634132892,
+          "predicted_occupied_voxels": 60261,
+          "target_occupied_voxels": 48549
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 8570,
+          "fp": 192,
+          "fn": 39979,
+          "iou": 0.17582733222543648,
+          "f1": 0.2990699865645339,
+          "predicted_occupied_voxels": 8762,
+          "target_occupied_voxels": 48549
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 62720,
+          "fp": 55104,
+          "fn": 31844,
+          "iou": 0.41906085469171767,
+          "f1": 0.5906171723449536
+        },
+        "seed": 28262913,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 2000,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/002000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/002000.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 42746,
+          "fp": 34439,
+          "fn": 17207
+        },
+        "partial_density": {
+          "tp": 8648,
+          "fp": 271,
+          "fn": 51305
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.452856183052063,
+        "occupancy_f1": 0.6234012246131897,
+        "occupied_count_mae": 1.621545672416687,
+        "log_count_mae": 0.0521395243704319,
+        "mass_tv": 0.4982996881008148,
+        "coarse_mass_tv": 0.3574756383895874,
+        "mass_calibration_error": 0.04221006855368614,
+        "density_sum": 187597.8125,
+        "occupied_voxel_fraction": 0.0464387983083725
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.036071065813302994
+      },
+      "partial_density": {
+        "occupancy_iou": 0.14359723031520844,
+        "occupancy_f1": 0.2511325478553772,
+        "occupied_count_mae": 2.750170946121216,
+        "log_count_mae": 0.04171256721019745,
+        "mass_tv": 0.8068444728851318,
+        "coarse_mass_tv": 0.6746277809143066,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005366167519241571
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 23873,
+          "fp": 23629,
+          "fn": 5173,
+          "iou": 0.45321309919316566,
+          "f1": 0.6237393530856457,
+          "predicted_occupied_voxels": 47502,
+          "target_occupied_voxels": 29046
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 5552,
+          "fp": 52,
+          "fn": 23494,
+          "iou": 0.19080349164891058,
+          "f1": 0.32046176046176045,
+          "predicted_occupied_voxels": 5604,
+          "target_occupied_voxels": 29046
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 46123,
+          "fp": 55462,
+          "fn": 13830,
+          "iou": 0.39962743144305335,
+          "f1": 0.571048298233233
+        },
+        "seed": 28263013,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 2100,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/002100.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/002100.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 39352,
+          "fp": 34077,
+          "fn": 18732
+        },
+        "partial_density": {
+          "tp": 8346,
+          "fp": 214,
+          "fn": 49738
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.42699187994003296,
+        "occupancy_f1": 0.5984503626823425,
+        "occupied_count_mae": 1.7125475406646729,
+        "log_count_mae": 0.0532076433300972,
+        "mass_tv": 0.5095895528793335,
+        "coarse_mass_tv": 0.3795914053916931,
+        "mass_calibration_error": 0.04780885577201843,
+        "density_sum": 188605.59375,
+        "occupied_voxel_fraction": 0.044178981333971024
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.03494657203555107
+      },
+      "partial_density": {
+        "occupancy_iou": 0.14316099882125854,
+        "occupancy_f1": 0.25046515464782715,
+        "occupied_count_mae": 2.8343088626861572,
+        "log_count_mae": 0.04071132838726044,
+        "mass_tv": 0.8067222833633423,
+        "coarse_mass_tv": 0.679099977016449,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.0051501733250916
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 22129,
+          "fp": 24177,
+          "fn": 6049,
+          "iou": 0.42267214210677106,
+          "f1": 0.5941947263841899,
+          "predicted_occupied_voxels": 46306,
+          "target_occupied_voxels": 28178
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 5179,
+          "fp": 48,
+          "fn": 22999,
+          "iou": 0.1834833132572805,
+          "f1": 0.31007334231402484,
+          "predicted_occupied_voxels": 5227,
+          "target_occupied_voxels": 28178
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 42828,
+          "fp": 55830,
+          "fn": 15256,
+          "iou": 0.3759678353845884,
+          "f1": 0.5464776511719897
+        },
+        "seed": 28263113,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 2200,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/002200.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/002200.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 34097,
+          "fp": 44132,
+          "fn": 12753
+        },
+        "partial_density": {
+          "tp": 7742,
+          "fp": 207,
+          "fn": 39108
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.37476643919944763,
+        "occupancy_f1": 0.5452074408531189,
+        "occupied_count_mae": 2.2889769077301025,
+        "log_count_mae": 0.056295812129974365,
+        "mass_tv": 0.5744932889938354,
+        "coarse_mass_tv": 0.44143879413604736,
+        "mass_calibration_error": 0.07851814478635788,
+        "density_sum": 194133.265625,
+        "occupied_voxel_fraction": 0.04706692695617676
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.028187572956085205
+      },
+      "partial_density": {
+        "occupancy_iou": 0.1645238697528839,
+        "occupancy_f1": 0.28255990147590637,
+        "occupied_count_mae": 3.4999358654022217,
+        "log_count_mae": 0.03588251397013664,
+        "mass_tv": 0.7767333388328552,
+        "coarse_mass_tv": 0.6640832424163818,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.004782561678439379
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 17997,
+          "fp": 25899,
+          "fn": 4572,
+          "iou": 0.371317157712305,
+          "f1": 0.5415481832543444,
+          "predicted_occupied_voxels": 43896,
+          "target_occupied_voxels": 22569
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 4732,
+          "fp": 28,
+          "fn": 17837,
+          "iou": 0.20940832853918662,
+          "f1": 0.3462988034688426,
+          "predicted_occupied_voxels": 4760,
+          "target_occupied_voxels": 22569
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 36064,
+          "fp": 61423,
+          "fn": 10786,
+          "iou": 0.33308396368439036,
+          "f1": 0.49971940666634335
+        },
+        "seed": 28263213,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 2300,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/002300.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/002300.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 34338,
+          "fp": 35155,
+          "fn": 9994
+        },
+        "partial_density": {
+          "tp": 6325,
+          "fp": 120,
+          "fn": 38007
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4319951832294464,
+        "occupancy_f1": 0.6033472418785095,
+        "occupied_count_mae": 2.1677417755126953,
+        "log_count_mae": 0.046844180673360825,
+        "mass_tv": 0.501676619052887,
+        "coarse_mass_tv": 0.36987829208374023,
+        "mass_calibration_error": 0.04983081668615341,
+        "density_sum": 188969.546875,
+        "occupied_voxel_fraction": 0.041810862720012665
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.02667260356247425
+      },
+      "partial_density": {
+        "occupancy_iou": 0.14228831231594086,
+        "occupancy_f1": 0.2491285353899002,
+        "occupied_count_mae": 3.7358791828155518,
+        "log_count_mae": 0.03561142459511757,
+        "mass_tv": 0.803066611289978,
+        "coarse_mass_tv": 0.6510999798774719,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.0038776714354753494
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 18300,
+          "fp": 21808,
+          "fn": 3185,
+          "iou": 0.42270112951285427,
+          "f1": 0.5942233695387463,
+          "predicted_occupied_voxels": 40108,
+          "target_occupied_voxels": 21485
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 4116,
+          "fp": 43,
+          "fn": 17369,
+          "iou": 0.19119286510590858,
+          "f1": 0.32101076275152085,
+          "predicted_occupied_voxels": 4159,
+          "target_occupied_voxels": 21485
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 36254,
+          "fp": 50747,
+          "fn": 8078,
+          "iou": 0.3813039682790101,
+          "f1": 0.5520927718090655
+        },
+        "seed": 28263313,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 2400,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/002400.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/002400.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 37423,
+          "fp": 39970,
+          "fn": 21799
+        },
+        "partial_density": {
+          "tp": 7513,
+          "fp": 289,
+          "fn": 51709
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.3772784173488617,
+        "occupancy_f1": 0.5478608012199402,
+        "occupied_count_mae": 1.8398669958114624,
+        "log_count_mae": 0.061491597443819046,
+        "mass_tv": 0.5724236369132996,
+        "coarse_mass_tv": 0.4411027133464813,
+        "mass_calibration_error": 0.03550703078508377,
+        "density_sum": 186391.265625,
+        "occupied_voxel_fraction": 0.04656394571065903
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.03563125804066658
+      },
+      "partial_density": {
+        "occupancy_iou": 0.12624557316303253,
+        "occupancy_f1": 0.22418835759162903,
+        "occupied_count_mae": 2.8048360347747803,
+        "log_count_mae": 0.04167249798774719,
+        "mass_tv": 0.834161102771759,
+        "coarse_mass_tv": 0.7316944599151611,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.0046941181644797325
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 22759,
+          "fp": 30216,
+          "fn": 6840,
+          "iou": 0.38048984368469446,
+          "f1": 0.5512388887543295,
+          "predicted_occupied_voxels": 52975,
+          "target_occupied_voxels": 29599
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 4735,
+          "fp": 54,
+          "fn": 24864,
+          "iou": 0.15968030216166998,
+          "f1": 0.275386762824241,
+          "predicted_occupied_voxels": 4789,
+          "target_occupied_voxels": 29599
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 41571,
+          "fp": 66875,
+          "fn": 17651,
+          "iou": 0.3296747741817807,
+          "f1": 0.49587279624018893
+        },
+        "seed": 28263413,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 2500,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/002500.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/002500.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 58364,
+          "fp": 30269,
+          "fn": 40838
+        },
+        "partial_density": {
+          "tp": 11782,
+          "fp": 783,
+          "fn": 87420
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4507881999015808,
+        "occupancy_f1": 0.6214390397071838,
+        "occupied_count_mae": 0.980924665927887,
+        "log_count_mae": 0.05929403379559517,
+        "mass_tv": 0.4765857458114624,
+        "coarse_mass_tv": 0.329843133687973,
+        "mass_calibration_error": 0.07531709969043732,
+        "density_sum": 193557.078125,
+        "occupied_voxel_fraction": 0.0533265545964241
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.05968545377254486
+      },
+      "partial_density": {
+        "occupancy_iou": 0.11783767491579056,
+        "occupancy_f1": 0.21083146333694458,
+        "occupied_count_mae": 1.6770226955413818,
+        "log_count_mae": 0.05396027863025665,
+        "mass_tv": 0.855411171913147,
+        "coarse_mass_tv": 0.675238847732544,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.0075598047114908695
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 36054,
+          "fp": 23396,
+          "fn": 14350,
+          "iou": 0.48853658536585365,
+          "f1": 0.6563984925446502,
+          "predicted_occupied_voxels": 59450,
+          "target_occupied_voxels": 50404
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 8849,
+          "fp": 160,
+          "fn": 41555,
+          "iou": 0.17500593307491497,
+          "f1": 0.29788093514887315,
+          "predicted_occupied_voxels": 9009,
+          "target_occupied_voxels": 50404
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 65342,
+          "fp": 55005,
+          "fn": 33860,
+          "iou": 0.423729143294403,
+          "f1": 0.5952384205803716
+        },
+        "seed": 28263513,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 2600,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/002600.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/002600.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 43776,
+          "fp": 35458,
+          "fn": 17898
+        },
+        "partial_density": {
+          "tp": 8866,
+          "fp": 356,
+          "fn": 52808
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.45068565011024475,
+        "occupancy_f1": 0.6213415861129761,
+        "occupied_count_mae": 1.5526329278945923,
+        "log_count_mae": 0.05265261232852936,
+        "mass_tv": 0.4940442442893982,
+        "coarse_mass_tv": 0.35562214255332947,
+        "mass_calibration_error": 0.07517065852880478,
+        "density_sum": 193530.71875,
+        "occupied_voxel_fraction": 0.047671593725681305
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.03710651770234108
+      },
+      "partial_density": {
+        "occupancy_iou": 0.14293083548545837,
+        "occupancy_f1": 0.2501128315925598,
+        "occupied_count_mae": 2.6763627529144287,
+        "log_count_mae": 0.042363375425338745,
+        "mass_tv": 0.8109833002090454,
+        "coarse_mass_tv": 0.6754277348518372,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005548469256609678
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 23335,
+          "fp": 23625,
+          "fn": 6683,
+          "iou": 0.4350054993195757,
+          "f1": 0.6062771181376497,
+          "predicted_occupied_voxels": 46960,
+          "target_occupied_voxels": 30018
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 5802,
+          "fp": 95,
+          "fn": 24216,
+          "iou": 0.19267426028625512,
+          "f1": 0.32309619935959905,
+          "predicted_occupied_voxels": 5897,
+          "target_occupied_voxels": 30018
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 46278,
+          "fp": 54554,
+          "fn": 15396,
+          "iou": 0.39816567436418077,
+          "f1": 0.5695543549161262
+        },
+        "seed": 28263613,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 2700,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/002700.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/002700.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 53550,
+          "fp": 30143,
+          "fn": 31248
+        },
+        "partial_density": {
+          "tp": 8236,
+          "fp": 437,
+          "fn": 76562
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.46589118242263794,
+        "occupancy_f1": 0.6356422305107117,
+        "occupied_count_mae": 1.134078025817871,
+        "log_count_mae": 0.060939542949199677,
+        "mass_tv": 0.5049606561660767,
+        "coarse_mass_tv": 0.3460061252117157,
+        "mass_calibration_error": 0.04728585109114647,
+        "density_sum": 188511.453125,
+        "occupied_voxel_fraction": 0.050354376435279846
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.05101920664310455
+      },
+      "partial_density": {
+        "occupancy_iou": 0.09662697464227676,
+        "occupancy_f1": 0.17622578144073486,
+        "occupied_count_mae": 2.0011439323425293,
+        "log_count_mae": 0.05117512121796608,
+        "mass_tv": 0.8807277679443359,
+        "coarse_mass_tv": 0.7121888995170593,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005218160338699818
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 34868,
+          "fp": 29768,
+          "fn": 10056,
+          "iou": 0.4668237562255663,
+          "f1": 0.6365096750638919,
+          "predicted_occupied_voxels": 64636,
+          "target_occupied_voxels": 44924
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 6571,
+          "fp": 122,
+          "fn": 38353,
+          "iou": 0.14587310749012122,
+          "f1": 0.2546060406455238,
+          "predicted_occupied_voxels": 6693,
+          "target_occupied_voxels": 44924
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 60813,
+          "fp": 64408,
+          "fn": 23985,
+          "iou": 0.4075774432663566,
+          "f1": 0.579119032087573
+        },
+        "seed": 28263713,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 2800,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/002800.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/002800.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 51369,
+          "fp": 31231,
+          "fn": 29203
+        },
+        "partial_density": {
+          "tp": 10630,
+          "fp": 641,
+          "fn": 69942
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.45945993065834045,
+        "occupancy_f1": 0.6296300888061523,
+        "occupied_count_mae": 1.2032681703567505,
+        "log_count_mae": 0.05988168343901634,
+        "mass_tv": 0.50868821144104,
+        "coarse_mass_tv": 0.3501889109611511,
+        "mass_calibration_error": 0.03546545282006264,
+        "density_sum": 186383.78125,
+        "occupied_voxel_fraction": 0.04969676584005356
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.048476606607437134
+      },
+      "partial_density": {
+        "occupancy_iou": 0.1308903694152832,
+        "occupancy_f1": 0.23148198425769806,
+        "occupied_count_mae": 2.055875539779663,
+        "log_count_mae": 0.04869009181857109,
+        "mass_tv": 0.834338903427124,
+        "coarse_mass_tv": 0.6855722665786743,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.006781261879950762
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 33467,
+          "fp": 29934,
+          "fn": 8941,
+          "iou": 0.4626219899919825,
+          "f1": 0.6325926906028788,
+          "predicted_occupied_voxels": 63401,
+          "target_occupied_voxels": 42408
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 7526,
+          "fp": 133,
+          "fn": 34882,
+          "iou": 0.17691168519780917,
+          "f1": 0.30063714622405974,
+          "predicted_occupied_voxels": 7659,
+          "target_occupied_voxels": 42408
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 58702,
+          "fp": 64198,
+          "fn": 21870,
+          "iou": 0.4054845617185881,
+          "f1": 0.5770032240308249
+        },
+        "seed": 28263813,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 2900,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/002900.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/002900.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 53598,
+          "fp": 30803,
+          "fn": 20587
+        },
+        "partial_density": {
+          "tp": 10890,
+          "fp": 576,
+          "fn": 63295
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.5105155110359192,
+        "occupancy_f1": 0.6759486794471741,
+        "occupied_count_mae": 1.2405972480773926,
+        "log_count_mae": 0.05209971219301224,
+        "mass_tv": 0.4682573080062866,
+        "coarse_mass_tv": 0.32425665855407715,
+        "mass_calibration_error": 0.043509114533662796,
+        "density_sum": 187831.640625,
+        "occupied_voxel_fraction": 0.05078034847974777
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.044633831828832626
+      },
+      "partial_density": {
+        "occupancy_iou": 0.14566418528556824,
+        "occupancy_f1": 0.2542877495288849,
+        "occupied_count_mae": 2.2238996028900146,
+        "log_count_mae": 0.04649136960506439,
+        "mass_tv": 0.8154111504554749,
+        "coarse_mass_tv": 0.6490444540977478,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.006898584775626659
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 32836,
+          "fp": 27085,
+          "fn": 7100,
+          "iou": 0.4899359902120231,
+          "f1": 0.6576604544498633,
+          "predicted_occupied_voxels": 59921,
+          "target_occupied_voxels": 39936
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 8203,
+          "fp": 118,
+          "fn": 31733,
+          "iou": 0.20479852199530635,
+          "f1": 0.3399714031125018,
+          "predicted_occupied_voxels": 8321,
+          "target_occupied_voxels": 39936
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 58312,
+          "fp": 54786,
+          "fn": 15873,
+          "iou": 0.4521326499755759,
+          "f1": 0.6227153559052343
+        },
+        "seed": 28263913,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 3000,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/003000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/003000.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 54870,
+          "fp": 26021,
+          "fn": 34015
+        },
+        "partial_density": {
+          "tp": 11175,
+          "fp": 909,
+          "fn": 77710
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.47752076387405396,
+        "occupancy_f1": 0.646381139755249,
+        "occupied_count_mae": 1.0644826889038086,
+        "log_count_mae": 0.05839543044567108,
+        "mass_tv": 0.48327428102493286,
+        "coarse_mass_tv": 0.32120615243911743,
+        "mass_calibration_error": 0.015349392779171467,
+        "density_sum": 182762.890625,
+        "occupied_voxel_fraction": 0.04866853728890419
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.053478170186281204
+      },
+      "partial_density": {
+        "occupancy_iou": 0.12445152550935745,
+        "occupancy_f1": 0.22135506570339203,
+        "occupied_count_mae": 1.8713393211364746,
+        "log_count_mae": 0.05140483006834984,
+        "mass_tv": 0.8513555526733398,
+        "coarse_mass_tv": 0.6948056221008301,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.00727040832862258
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 37457,
+          "fp": 29624,
+          "fn": 11302,
+          "iou": 0.4778714772335838,
+          "f1": 0.6467023480662983,
+          "predicted_occupied_voxels": 67081,
+          "target_occupied_voxels": 48759
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 8497,
+          "fp": 227,
+          "fn": 40262,
+          "iou": 0.17345772261462458,
+          "f1": 0.29563523128577146,
+          "predicted_occupied_voxels": 8724,
+          "target_occupied_voxels": 48759
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 63354,
+          "fp": 60808,
+          "fn": 25531,
+          "iou": 0.42322620296206237,
+          "f1": 0.5947420052852187
+        },
+        "seed": 28264013,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 3100,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/003100.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/003100.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 52728,
+          "fp": 28150,
+          "fn": 34453
+        },
+        "partial_density": {
+          "tp": 10933,
+          "fp": 546,
+          "fn": 76248
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4571884274482727,
+        "occupancy_f1": 0.6274939179420471,
+        "occupied_count_mae": 1.086745023727417,
+        "log_count_mae": 0.05923514440655708,
+        "mass_tv": 0.4880705177783966,
+        "coarse_mass_tv": 0.3432692885398865,
+        "mass_calibration_error": 0.056147828698158264,
+        "density_sum": 190106.609375,
+        "occupied_voxel_fraction": 0.04866071417927742
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.05245295166969299
+      },
+      "partial_density": {
+        "occupancy_iou": 0.12462525814771652,
+        "occupancy_f1": 0.22162984311580658,
+        "occupied_count_mae": 1.9021919965744019,
+        "log_count_mae": 0.05056086555123329,
+        "mass_tv": 0.8434889316558838,
+        "coarse_mass_tv": 0.6889944672584534,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.0069064064882695675
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 33904,
+          "fp": 26764,
+          "fn": 10612,
+          "iou": 0.475645342312009,
+          "f1": 0.6446607849102525,
+          "predicted_occupied_voxels": 60668,
+          "target_occupied_voxels": 44516
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 7506,
+          "fp": 150,
+          "fn": 37010,
+          "iou": 0.1680472842878252,
+          "f1": 0.2877405504868512,
+          "predicted_occupied_voxels": 7656,
+          "target_occupied_voxels": 44516
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 60869,
+          "fp": 60384,
+          "fn": 26312,
+          "iou": 0.41248941144580353,
+          "f1": 0.5840601821199997
+        },
+        "seed": 28264113,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 3200,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/003200.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/003200.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 53408,
+          "fp": 29935,
+          "fn": 26830
+        },
+        "partial_density": {
+          "tp": 9878,
+          "fp": 513,
+          "fn": 70360
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.48476487398147583,
+        "occupancy_f1": 0.6529853940010071,
+        "occupied_count_mae": 1.1412241458892822,
+        "log_count_mae": 0.05672568455338478,
+        "mass_tv": 0.4808167517185211,
+        "coarse_mass_tv": 0.3310990631580353,
+        "mass_calibration_error": 0.08463619649410248,
+        "density_sum": 195234.515625,
+        "occupied_voxel_fraction": 0.05014379695057869
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.0482756532728672
+      },
+      "partial_density": {
+        "occupancy_iou": 0.12232665717601776,
+        "occupancy_f1": 0.21798762679100037,
+        "occupied_count_mae": 2.0732696056365967,
+        "log_count_mae": 0.048668500036001205,
+        "mass_tv": 0.8427610993385315,
+        "coarse_mass_tv": 0.6994667053222656,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.006251804996281862
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 32206,
+          "fp": 25303,
+          "fn": 8662,
+          "iou": 0.48670867902857745,
+          "f1": 0.6547465362838875,
+          "predicted_occupied_voxels": 57509,
+          "target_occupied_voxels": 40868
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 6874,
+          "fp": 98,
+          "fn": 33994,
+          "iou": 0.16779768588585656,
+          "f1": 0.2873745819397993,
+          "predicted_occupied_voxels": 6972,
+          "target_occupied_voxels": 40868
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 59788,
+          "fp": 59093,
+          "fn": 20450,
+          "iou": 0.42910766448241955,
+          "f1": 0.6005253140082062
+        },
+        "seed": 28264213,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 3300,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/003300.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/003300.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 50042,
+          "fp": 31854,
+          "fn": 37332
+        },
+        "partial_density": {
+          "tp": 7880,
+          "fp": 435,
+          "fn": 79494
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.41971683502197266,
+        "occupancy_f1": 0.5912683606147766,
+        "occupied_count_mae": 1.1396375894546509,
+        "log_count_mae": 0.06499530375003815,
+        "mass_tv": 0.5260552167892456,
+        "coarse_mass_tv": 0.3823024332523346,
+        "mass_calibration_error": 0.07033055275678635,
+        "density_sum": 192659.5,
+        "occupied_voxel_fraction": 0.04927320033311844
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.05256906896829605
+      },
+      "partial_density": {
+        "occupancy_iou": 0.08974023163318634,
+        "occupancy_f1": 0.1647002249956131,
+        "occupied_count_mae": 1.9439994096755981,
+        "log_count_mae": 0.0516757071018219,
+        "mass_tv": 0.8818777799606323,
+        "coarse_mass_tv": 0.7319833040237427,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005002767778933048
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 32504,
+          "fp": 29393,
+          "fn": 13474,
+          "iou": 0.43125339984874816,
+          "f1": 0.6026234067207416,
+          "predicted_occupied_voxels": 61897,
+          "target_occupied_voxels": 45978
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 6131,
+          "fp": 94,
+          "fn": 39847,
+          "iou": 0.13307431845806564,
+          "f1": 0.23489071509300233,
+          "predicted_occupied_voxels": 6225,
+          "target_occupied_voxels": 45978
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 57576,
+          "fp": 66665,
+          "fn": 29798,
+          "iou": 0.3737754724452898,
+          "f1": 0.544158022824469
+        },
+        "seed": 28264313,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 3400,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/003400.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/003400.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 51996,
+          "fp": 34550,
+          "fn": 56775
+        },
+        "partial_density": {
+          "tp": 8343,
+          "fp": 686,
+          "fn": 100428
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.36279401183128357,
+        "occupancy_f1": 0.5324267745018005,
+        "occupied_count_mae": 0.9890033602714539,
+        "log_count_mae": 0.07213050872087479,
+        "mass_tv": 0.539448082447052,
+        "coarse_mass_tv": 0.4066272974014282,
+        "mass_calibration_error": 0.10717065632343292,
+        "density_sum": 199290.71875,
+        "occupied_voxel_fraction": 0.05207090079784393
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.06544269621372223
+      },
+      "partial_density": {
+        "occupancy_iou": 0.07622171193361282,
+        "occupancy_f1": 0.1416468620300293,
+        "occupied_count_mae": 1.581322193145752,
+        "log_count_mae": 0.05792200565338135,
+        "mass_tv": 0.9041333198547363,
+        "coarse_mass_tv": 0.7353554964065552,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005432349629700184
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 34325,
+          "fp": 28212,
+          "fn": 23303,
+          "iou": 0.39987185461323393,
+          "f1": 0.571297798859901,
+          "predicted_occupied_voxels": 62537,
+          "target_occupied_voxels": 57628
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 6934,
+          "fp": 130,
+          "fn": 50694,
+          "iou": 0.12005263340143357,
+          "f1": 0.21436962839300067,
+          "predicted_occupied_voxels": 7064,
+          "target_occupied_voxels": 57628
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 59817,
+          "fp": 65770,
+          "fn": 48954,
+          "iou": 0.3427103087526713,
+          "f1": 0.5104754264842677
+        },
+        "seed": 28264413,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 3500,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/003500.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/003500.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 43279,
+          "fp": 32815,
+          "fn": 27586
+        },
+        "partial_density": {
+          "tp": 7493,
+          "fp": 242,
+          "fn": 63372
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4174286127090454,
+        "occupancy_f1": 0.5889942049980164,
+        "occupied_count_mae": 1.4412840604782104,
+        "log_count_mae": 0.05652657523751259,
+        "mass_tv": 0.5104644894599915,
+        "coarse_mass_tv": 0.3823724389076233,
+        "mass_calibration_error": 0.04665425419807434,
+        "density_sum": 188397.765625,
+        "occupied_voxel_fraction": 0.04578239470720291
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.042636334896087646
+      },
+      "partial_density": {
+        "occupancy_iou": 0.10537640750408173,
+        "occupancy_f1": 0.19066157937049866,
+        "occupied_count_mae": 2.3718338012695312,
+        "log_count_mae": 0.04632830619812012,
+        "mass_tv": 0.8595612049102783,
+        "coarse_mass_tv": 0.7490388751029968,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.0046538072638213634
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 25626,
+          "fp": 23435,
+          "fn": 8447,
+          "iou": 0.44560756764276277,
+          "f1": 0.6164986648062165,
+          "predicted_occupied_voxels": 49061,
+          "target_occupied_voxels": 34073
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 4912,
+          "fp": 69,
+          "fn": 29161,
+          "iou": 0.1438697205787593,
+          "f1": 0.25154913709223126,
+          "predicted_occupied_voxels": 4981,
+          "target_occupied_voxels": 34073
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 48686,
+          "fp": 55946,
+          "fn": 22179,
+          "iou": 0.3839256846803511,
+          "f1": 0.5548356951970689
+        },
+        "seed": 28264513,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 3600,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/003600.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/003600.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 43860,
+          "fp": 33197,
+          "fn": 23325
+        },
+        "partial_density": {
+          "tp": 8893,
+          "fp": 303,
+          "fn": 58292
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.43693092465400696,
+        "occupancy_f1": 0.6081446409225464,
+        "occupied_count_mae": 1.4869781732559204,
+        "log_count_mae": 0.05563552305102348,
+        "mass_tv": 0.5069980621337891,
+        "coarse_mass_tv": 0.37080439925193787,
+        "mass_calibration_error": 0.05016718804836273,
+        "density_sum": 189030.09375,
+        "occupied_voxel_fraction": 0.04636178910732269
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.040422242134809494
+      },
+      "partial_density": {
+        "occupancy_iou": 0.13177157938480377,
+        "occupancy_f1": 0.23285895586013794,
+        "occupied_count_mae": 2.4659671783447266,
+        "log_count_mae": 0.044305216521024704,
+        "mass_tv": 0.8272166848182678,
+        "coarse_mass_tv": 0.6943055391311646,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005532826296985149
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 26070,
+          "fp": 24644,
+          "fn": 7209,
+          "iou": 0.45008027899107433,
+          "f1": 0.620766016215637,
+          "predicted_occupied_voxels": 50714,
+          "target_occupied_voxels": 33279
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 5799,
+          "fp": 61,
+          "fn": 27480,
+          "iou": 0.17393521295740852,
+          "f1": 0.296328470323718,
+          "predicted_occupied_voxels": 5860,
+          "target_occupied_voxels": 33279
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 48301,
+          "fp": 57198,
+          "fn": 18884,
+          "iou": 0.3883247710700015,
+          "f1": 0.5594148849922401
+        },
+        "seed": 28264613,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 3700,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/003700.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/003700.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 40345,
+          "fp": 35135,
+          "fn": 23358
+        },
+        "partial_density": {
+          "tp": 8970,
+          "fp": 260,
+          "fn": 54733
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4081932008266449,
+        "occupancy_f1": 0.5797403454780579,
+        "occupied_count_mae": 1.5803146362304688,
+        "log_count_mae": 0.05553063750267029,
+        "mass_tv": 0.5141845941543579,
+        "coarse_mass_tv": 0.381371408700943,
+        "mass_calibration_error": 0.06234435737133026,
+        "density_sum": 191221.984375,
+        "occupied_voxel_fraction": 0.045412976294755936
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.03832727670669556
+      },
+      "partial_density": {
+        "occupancy_iou": 0.14023733139038086,
+        "occupancy_f1": 0.2459791898727417,
+        "occupied_count_mae": 2.5853257179260254,
+        "log_count_mae": 0.04273877292871475,
+        "mass_tv": 0.809077799320221,
+        "coarse_mass_tv": 0.6846278309822083,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005553282797336578
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 23655,
+          "fp": 23795,
+          "fn": 7974,
+          "iou": 0.4268006639722864,
+          "f1": 0.5982624969966742,
+          "predicted_occupied_voxels": 47450,
+          "target_occupied_voxels": 31629
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 5756,
+          "fp": 56,
+          "fn": 25873,
+          "iou": 0.1816632475934985,
+          "f1": 0.3074704201276675,
+          "predicted_occupied_voxels": 5812,
+          "target_occupied_voxels": 31629
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 44148,
+          "fp": 56066,
+          "fn": 19555,
+          "iou": 0.36860957342885053,
+          "f1": 0.5386628598620034
+        },
+        "seed": 28264713,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 3800,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/003800.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/003800.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 48644,
+          "fp": 30715,
+          "fn": 13907
+        },
+        "partial_density": {
+          "tp": 9152,
+          "fp": 449,
+          "fn": 53399
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.5215619802474976,
+        "occupancy_f1": 0.6855612993240356,
+        "occupied_count_mae": 1.418204426765442,
+        "log_count_mae": 0.04515012726187706,
+        "mass_tv": 0.4439244568347931,
+        "coarse_mass_tv": 0.2894248068332672,
+        "mass_calibration_error": 0.062372829765081406,
+        "density_sum": 191227.109375,
+        "occupied_voxel_fraction": 0.047746799886226654
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.037634167820215225
+      },
+      "partial_density": {
+        "occupancy_iou": 0.14526984095573425,
+        "occupancy_f1": 0.25368666648864746,
+        "occupied_count_mae": 2.6433629989624023,
+        "log_count_mae": 0.04295869544148445,
+        "mass_tv": 0.8163777589797974,
+        "coarse_mass_tv": 0.6731777191162109,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.005776497069746256
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 26507,
+          "fp": 19164,
+          "fn": 3917,
+          "iou": 0.5345446478986852,
+          "f1": 0.696681779354754,
+          "predicted_occupied_voxels": 45671,
+          "target_occupied_voxels": 30424
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 5909,
+          "fp": 50,
+          "fn": 24515,
+          "iou": 0.1939029992780731,
+          "f1": 0.32482203226781736,
+          "predicted_occupied_voxels": 5959,
+          "target_occupied_voxels": 30424
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 51688,
+          "fp": 46129,
+          "fn": 10863,
+          "iou": 0.4755980861244019,
+          "f1": 0.6446173800259404
+        },
+        "seed": 28264813,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 3900,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/003900.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/003900.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 48890,
+          "fp": 30429,
+          "fn": 18780
+        },
+        "partial_density": {
+          "tp": 7822,
+          "fp": 299,
+          "fn": 59848
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4983741044998169,
+        "occupancy_f1": 0.6652198433876038,
+        "occupied_count_mae": 1.3677945137023926,
+        "log_count_mae": 0.047888461500406265,
+        "mass_tv": 0.4541940689086914,
+        "coarse_mass_tv": 0.3140353858470917,
+        "mass_calibration_error": 0.06589435786008835,
+        "density_sum": 191860.984375,
+        "occupied_voxel_fraction": 0.04772273451089859
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.040714044123888016
+      },
+      "partial_density": {
+        "occupancy_iou": 0.11508187651634216,
+        "occupancy_f1": 0.2064097374677658,
+        "occupied_count_mae": 2.470695972442627,
+        "log_count_mae": 0.045359570533037186,
+        "mass_tv": 0.8544111251831055,
+        "coarse_mass_tv": 0.7436721920967102,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.004886046517640352
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 27311,
+          "fp": 19418,
+          "fn": 5382,
+          "iou": 0.5240928019036288,
+          "f1": 0.687743950039032,
+          "predicted_occupied_voxels": 46729,
+          "target_occupied_voxels": 32693
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 5147,
+          "fp": 61,
+          "fn": 27546,
+          "iou": 0.15714111253587348,
+          "f1": 0.27160233239228515,
+          "predicted_occupied_voxels": 5208,
+          "target_occupied_voxels": 32693
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 52879,
+          "fp": 47057,
+          "fn": 14791,
+          "iou": 0.4609115552572629,
+          "f1": 0.6309917306063029
+        },
+        "seed": 28264913,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    },
+    {
+      "frame": {
+        "sequence": "08",
+        "frame": 4000,
+        "input": "/data-12/M2024-HWZ/KITTI_Odometry/08/input_/004000.npy",
+        "gt": "/data-12/M2024-HWZ/KITTI_Odometry/08/gt_possion/004000.ply"
+      },
+      "gt_validation": {
+        "roi_policy": "filter",
+        "original_points": 180000,
+        "retained_points": 180000,
+        "filtered_roi_points": 0
+      },
+      "occupancy_confusion": {
+        "predicted": {
+          "tp": 52681,
+          "fp": 32335,
+          "fn": 23732
+        },
+        "partial_density": {
+          "tp": 12429,
+          "fp": 713,
+          "fn": 63984
+        }
+      },
+      "predicted": {
+        "occupancy_iou": 0.4844318926334381,
+        "occupancy_f1": 0.6526831984519958,
+        "occupied_count_mae": 1.254740834236145,
+        "log_count_mae": 0.05966639518737793,
+        "mass_tv": 0.5109002590179443,
+        "coarse_mass_tv": 0.3571998178958893,
+        "mass_calibration_error": 0.044871095567941666,
+        "density_sum": 188076.796875,
+        "occupied_voxel_fraction": 0.0511503666639328
+      },
+      "gt_density": {
+        "occupancy_iou": 1.0,
+        "occupancy_f1": 1.0,
+        "occupied_count_mae": 0.0,
+        "log_count_mae": 0.0,
+        "mass_tv": 0.0,
+        "coarse_mass_tv": 0.0,
+        "mass_calibration_error": 0.0,
+        "density_sum": 180000.0,
+        "occupied_voxel_fraction": 0.04597432166337967
+      },
+      "partial_density": {
+        "occupancy_iou": 0.16115188598632812,
+        "occupancy_f1": 0.2775724530220032,
+        "occupied_count_mae": 2.14886212348938,
+        "log_count_mae": 0.04695969074964523,
+        "mass_tv": 0.7979111671447754,
+        "coarse_mass_tv": 0.5785277485847473,
+        "mass_calibration_error": 0.8999999761581421,
+        "density_sum": 18000.0,
+        "occupied_voxel_fraction": 0.00790696032345295
+      },
+      "point_voxel": {
+        "predicted_anchors": {
+          "voxel_size_m": 0.5,
+          "tp": 34231,
+          "fp": 31940,
+          "fn": 7368,
+          "iou": 0.4654809012904717,
+          "f1": 0.6352602765148,
+          "predicted_occupied_voxels": 66171,
+          "target_occupied_voxels": 41599
+        },
+        "partial_input": {
+          "voxel_size_m": 0.5,
+          "tp": 9760,
+          "fp": 187,
+          "fn": 31839,
+          "iou": 0.2335710525056239,
+          "f1": 0.3786908780506732,
+          "predicted_occupied_voxels": 9947,
+          "target_occupied_voxels": 41599
+        },
+        "fine_grid_anchors": {
+          "voxel_size_xyz_m": [
+            0.390625,
+            0.390625,
+            0.2625
+          ],
+          "tp": 58684,
+          "fp": 65916,
+          "fn": 17729,
+          "iou": 0.41231231864201956,
+          "f1": 0.5838826344564779
+        },
+        "seed": 28265013,
+        "source_points": 180000,
+        "gt_used_for_source": false,
+        "pointflow_used": false
+      }
+    }
+  ],
+  "point_voxel_macro_means": {
+    "predicted_anchors": {
+      "iou": 0.4732620720752137,
+      "f1": 0.6413048431855641
+    },
+    "partial_input": {
+      "iou": 0.176939711530895,
+      "f1": 0.2998062041451544
+    },
+    "fine_grid_anchors": {
+      "iou": 0.4092699319906833,
+      "f1": 0.5797802318211791
+    }
+  },
+  "point_voxel_micro": {
+    "predicted_anchors": {
+      "tp": 1326755,
+      "fp": 1020877,
+      "fn": 448271,
+      "iou": 0.4745354184318984,
+      "f1": 0.6436405833324035
+    },
+    "partial_input": {
+      "tp": 307077,
+      "fp": 5047,
+      "fn": 1467949,
+      "iou": 0.17250809376918813,
+      "f1": 0.29425484512373334
+    },
+    "fine_grid_anchors": {
+      "tp": 2357543,
+      "fp": 2328833,
+      "fn": 1098698,
+      "iou": 0.4075216669657121,
+      "f1": 0.579062726393738
+    }
+  },
+  "protocol": {
+    "frozen_utc": "2026-10-13T05:22:50.836953+00:00",
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/checkpoint_011000.pt",
+    "threshold": 1.0,
+    "threshold_frozen": true,
+    "frame_stride": 100,
+    "all_seq08_frames": 4071,
+    "selected_frames": 41,
+    "first": 0,
+    "last": 4000,
+    "test_manifest_sha256": "81e1215b7cea67b9866a6d1ab9879a7f2ed0abde25a47fd187d3409d457e23e7",
+    "device": "cpu",
+    "precision": "fp32",
+    "purpose": "interim test evaluation; seq08 is never used for training or hyperparameter selection",
+    "point_voxel_size_m": 0.5,
+    "point_voxel_policy": "floor(XYZ/0.5), any point occupied, no morphology (r=0)",
+    "source_points": 180000,
+    "source": "predicted density -> integer counts -> Gaussian anchors; PointFlow absent",
+    "same_checkpoint_as_density_test": true,
+    "density_reference": "/data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/seq08_stride100_20261013_125853/merged/density_evaluation.json"
+  }
+}
