@@ -1,0 +1,141 @@
+{
+  "PTv3": {
+    "BCE_time_modulation": "not instantiated",
+    "FM_time_injection": "all PTv3 blocks, 32D scene context",
+    "checkpointing": "tensor-only reentrant replay; no BatchNorm in checkpointed blocks",
+    "dec_depths": [
+      2
+    ],
+    "enc_channels": [
+      64,
+      128
+    ],
+    "enc_depths": [
+      2,
+      2
+    ],
+    "flash_attention": true,
+    "grid_coord": "absolute parent XYZ indices, no scene-min origin",
+    "one_token_per_parent": true,
+    "patch_sizes": [
+      64,
+      128
+    ],
+    "point_norm": "instance",
+    "pooling_stride": 2,
+    "serialization": [
+      "z",
+      "z-trans",
+      "hilbert",
+      "hilbert-trans"
+    ],
+    "shuffle_orders": false
+  },
+  "models": [
+    {
+      "K": 18,
+      "all_trainable": true,
+      "backbone": "ptv3",
+      "cpu_constructor_passed": true,
+      "external_weights_loaded": false,
+      "gpu_forward_passed": false,
+      "objective": "bce",
+      "parameters": 2559010,
+      "parent_resolution": [
+        256,
+        256,
+        32
+      ]
+    },
+    {
+      "K": 18,
+      "all_trainable": true,
+      "backbone": "local",
+      "cpu_constructor_passed": true,
+      "external_weights_loaded": false,
+      "gpu_forward_passed": false,
+      "objective": "fm",
+      "parameters": 86566,
+      "parent_resolution": [
+        256,
+        256,
+        32
+      ]
+    },
+    {
+      "K": 18,
+      "all_trainable": true,
+      "backbone": "ptv3",
+      "cpu_constructor_passed": true,
+      "external_weights_loaded": false,
+      "gpu_forward_passed": false,
+      "objective": "fm",
+      "parameters": 2679398,
+      "parent_resolution": [
+        256,
+        256,
+        32
+      ]
+    },
+    {
+      "K": 8,
+      "all_trainable": true,
+      "backbone": "ptv3",
+      "cpu_constructor_passed": true,
+      "external_weights_loaded": false,
+      "gpu_forward_passed": false,
+      "objective": "bce",
+      "parameters": 2558040,
+      "parent_resolution": [
+        352,
+        352,
+        32
+      ]
+    },
+    {
+      "K": 8,
+      "all_trainable": true,
+      "backbone": "local",
+      "cpu_constructor_passed": true,
+      "external_weights_loaded": false,
+      "gpu_forward_passed": false,
+      "objective": "fm",
+      "parameters": 84296,
+      "parent_resolution": [
+        352,
+        352,
+        32
+      ]
+    },
+    {
+      "K": 8,
+      "all_trainable": true,
+      "backbone": "ptv3",
+      "cpu_constructor_passed": true,
+      "external_weights_loaded": false,
+      "gpu_forward_passed": false,
+      "objective": "fm",
+      "parameters": 2677128,
+      "parent_resolution": [
+        352,
+        352,
+        32
+      ]
+    }
+  ],
+  "packages": {
+    "flash-attn": "2.5.9.post1",
+    "mmcv-full": "not found under this distribution name",
+    "numpy": "1.23.5",
+    "spconv-cu117": "2.3.6",
+    "torch": "2.0.1+cu117"
+  },
+  "ptv3_permutation_gpu_status": "NOT_EXECUTED",
+  "scope": "CPU construction and exact state_dict loading only",
+  "stage1_all_frozen": true,
+  "stage1_checkpoint_sha256": "0af3007573297c2f963b3302e35f59d6f2d28c3163a8b8a826509b82462474d6",
+  "stage1_load_strict": true,
+  "stage1_shape_forward_status": "BLOCKED_PENDING_GPU_ADMISSION",
+  "stage1_total_density_parameters": 22082470,
+  "stage1_trunk_including_both_local_neck_branches": 21151780
+}

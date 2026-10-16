@@ -1,0 +1,917 @@
+{
+  "candidate_policy": {
+    "mode": "oracle",
+    "negative_fraction": 0.25,
+    "selection": {
+      "budget": 200000,
+      "expansion": 0,
+      "strategy": "threshold",
+      "threshold": 0.1
+    }
+  },
+  "geometry_sha256": "82161827d954685d643f62c00ac7158c1aad81f92ac5fca955e0be1a3a298d2d",
+  "gt_is_model_condition": false,
+  "nfe_results": {
+    "1": {
+      "rows": [
+        {
+          "actual_network_calls": 1,
+          "candidate": {
+            "active_parent_count": 92717,
+            "f1": 0.888891551971047,
+            "false_negative_rate": 0.0,
+            "fine_occupancy_recall_ceiling": 1.0,
+            "iou": 0.8000043142034363,
+            "precision": 0.8000043142034363,
+            "recall": 1.0
+          },
+          "candidate_source": {
+            "mode": "oracle_not_deployable",
+            "nearby_negatives": 18543,
+            "negative_fraction_relative_to_gt_parents": 0.25,
+            "score_policy": "constant_1_for_all_candidates"
+          },
+          "common_015m_center_grid": {
+            "f1": 0.4634164174697886,
+            "fn": 149323,
+            "fp": 430440,
+            "iou": 0.30158881217948796,
+            "precision": 0.3677382585627958,
+            "recall": 0.6263908105795429,
+            "tp": 250354
+          },
+          "condition_seconds": 0.8975376151502132,
+          "distance_bins": {
+            "0-10": {
+              "f1": 0.4452100588082796,
+              "fn": 32758,
+              "fp": 48562,
+              "iou": 0.2863474010302855,
+              "precision": 0.40187951866586197,
+              "recall": 0.49901356538761527,
+              "tp": 32629
+            },
+            "10-20": {
+              "f1": 0.391113902391351,
+              "fn": 61394,
+              "fp": 128629,
+              "iou": 0.24309607931392974,
+              "precision": 0.3217880511866033,
+              "recall": 0.4985133633927988,
+              "tp": 61030
+            },
+            "20-35": {
+              "f1": 0.38089087246122555,
+              "fn": 79095,
+              "fp": 177813,
+              "iou": 0.23524718994094113,
+              "precision": 0.3076923076923077,
+              "recall": 0.499788139612833,
+              "tp": 79028
+            },
+            "35-50": {
+              "f1": 0.3666448128375636,
+              "fn": 88300,
+              "fp": 216005,
+              "iou": 0.22447341259222447,
+              "precision": 0.2896558528043146,
+              "recall": 0.49937634652454926,
+              "tp": 88080
+            }
+          },
+          "exact_child_pattern_accuracy": 2.1571017181315185e-05,
+          "fine": {
+            "f1": 0.38515460567613674,
+            "fn": 261547,
+            "fp": 571009,
+            "iou": 0.23850865663669382,
+            "precision": 0.3135062805370677,
+            "recall": 0.49925332271392303,
+            "tp": 260767
+          },
+          "frame": 500,
+          "missed_parent_fine_false_negatives": 0,
+          "not_directly_hit": {
+            "f1": 0.3803929234678917,
+            "fn": 253538,
+            "fp": 570558,
+            "iou": 0.2348674125840364,
+            "precision": 0.30717585987067786,
+            "recall": 0.4994363333037186,
+            "tp": 252967
+          },
+          "observed_hit": {
+            "f1": 0.6483790523690773,
+            "fn": 8009,
+            "fp": 451,
+            "iou": 0.4797047970479705,
+            "precision": 0.9453399587928736,
+            "recall": 0.49338984122967927,
+            "tp": 7800
+          },
+          "observed_policy": "Input surface hits only; unknown does not mean free space",
+          "occupied_child_count_mae": 5.65622269918138,
+          "parent_empty_suppression_accuracy": 0.00010785741250067412,
+          "sequence": "00",
+          "stage2_seconds": 0.06268692202866077
+        },
+        {
+          "actual_network_calls": 1,
+          "candidate": {
+            "active_parent_count": 116318,
+            "f1": 0.8888920729989063,
+            "false_negative_rate": 0.0,
+            "fine_occupancy_recall_ceiling": 1.0,
+            "iou": 0.8000051582730102,
+            "precision": 0.8000051582730102,
+            "recall": 1.0
+          },
+          "candidate_source": {
+            "mode": "oracle_not_deployable",
+            "nearby_negatives": 23263,
+            "negative_fraction_relative_to_gt_parents": 0.25,
+            "score_policy": "constant_1_for_all_candidates"
+          },
+          "common_015m_center_grid": {
+            "f1": 0.48711669714673195,
+            "fn": 195940,
+            "fp": 510507,
+            "iou": 0.3219790292007582,
+            "precision": 0.396553130374652,
+            "recall": 0.6312883643384304,
+            "tp": 335478
+          },
+          "condition_seconds": 1.023037688806653,
+          "distance_bins": {
+            "0-10": {
+              "f1": 0.43985232431190024,
+              "fn": 30587,
+              "fp": 47399,
+              "iou": 0.28192992956125407,
+              "precision": 0.39246071419416034,
+              "recall": 0.5002614122798419,
+              "tp": 30619
+            },
+            "10-20": {
+              "f1": 0.4113073281787476,
+              "fn": 66349,
+              "fp": 122931,
+              "iou": 0.2588967240008927,
+              "precision": 0.34975721222507855,
+              "recall": 0.4991469895525092,
+              "tp": 66123
+            },
+            "20-35": {
+              "f1": 0.40055876304729704,
+              "fn": 134050,
+              "fp": 265890,
+              "iou": 0.2504366861332474,
+              "precision": 0.33446637664762685,
+              "recall": 0.4992042559232499,
+              "tp": 133624
+            },
+            "35-50": {
+              "f1": 0.3939541184912971,
+              "fn": 122825,
+              "fp": 253841,
+              "iou": 0.2452944358732894,
+              "precision": 0.3253664305741964,
+              "recall": 0.49918246353705825,
+              "tp": 122424
+            }
+          },
+          "exact_child_pattern_accuracy": 6.017985178562217e-05,
+          "fine": {
+            "f1": 0.4033148665982262,
+            "fn": 353811,
+            "fp": 690061,
+            "iou": 0.2525951160696002,
+            "precision": 0.3382937735112686,
+            "recall": 0.4992775272041789,
+            "tp": 352790
+          },
+          "frame": 550,
+          "missed_parent_fine_false_negatives": 0,
+          "not_directly_hit": {
+            "f1": 0.4010084940998135,
+            "fn": 348638,
+            "fp": 689818,
+            "iou": 0.250788382940194,
+            "precision": 0.3350683951738291,
+            "recall": 0.4992610381086023,
+            "tp": 347609
+          },
+          "observed_hit": {
+            "f1": 0.6567372290531119,
+            "fn": 5173,
+            "fp": 243,
+            "iou": 0.48891195621402284,
+            "precision": 0.9551991150442478,
+            "recall": 0.5003863241259416,
+            "tp": 5181
+          },
+          "observed_policy": "Input surface hits only; unknown does not mean free space",
+          "occupied_child_count_mae": 5.470572052476831,
+          "parent_empty_suppression_accuracy": 0.00017194686841765893,
+          "sequence": "00",
+          "stage2_seconds": 0.0815187431871891
+        }
+      ],
+      "summary": {
+        "frames": 2,
+        "macro": {
+          "f1": 0.39423473613718146,
+          "iou": 0.245551886353147,
+          "precision": 0.32590002702416815,
+          "recall": 0.49926542495905096
+        },
+        "micro": {
+          "f1": 0.39539145917793284,
+          "fn": 615358,
+          "fp": 1261070,
+          "iou": 0.24640991813203694,
+          "precision": 0.3272955099867867,
+          "recall": 0.49926723980096266,
+          "tp": 613557
+        }
+      }
+    },
+    "2": {
+      "rows": [
+        {
+          "actual_network_calls": 2,
+          "candidate": {
+            "active_parent_count": 92717,
+            "f1": 0.888891551971047,
+            "false_negative_rate": 0.0,
+            "fine_occupancy_recall_ceiling": 1.0,
+            "iou": 0.8000043142034363,
+            "precision": 0.8000043142034363,
+            "recall": 1.0
+          },
+          "candidate_source": {
+            "mode": "oracle_not_deployable",
+            "nearby_negatives": 18543,
+            "negative_fraction_relative_to_gt_parents": 0.25,
+            "score_policy": "constant_1_for_all_candidates"
+          },
+          "common_015m_center_grid": {
+            "f1": 0.46341783961083677,
+            "fn": 149322,
+            "fp": 430440,
+            "iou": 0.30159001682895303,
+            "precision": 0.3677391872737021,
+            "recall": 0.6263933125999245,
+            "tp": 250355
+          },
+          "condition_seconds": 0.8975376151502132,
+          "distance_bins": {
+            "0-10": {
+              "f1": 0.4452100588082796,
+              "fn": 32758,
+              "fp": 48562,
+              "iou": 0.2863474010302855,
+              "precision": 0.40187951866586197,
+              "recall": 0.49901356538761527,
+              "tp": 32629
+            },
+            "10-20": {
+              "f1": 0.39111264915855987,
+              "fn": 61394,
+              "fp": 128630,
+              "iou": 0.2430951110119735,
+              "precision": 0.32178635452915744,
+              "recall": 0.4985133633927988,
+              "tp": 61030
+            },
+            "20-35": {
+              "f1": 0.38089087246122555,
+              "fn": 79095,
+              "fp": 177813,
+              "iou": 0.23524718994094113,
+              "precision": 0.3076923076923077,
+              "recall": 0.499788139612833,
+              "tp": 79028
+            },
+            "35-50": {
+              "f1": 0.3666440497350489,
+              "fn": 88300,
+              "fp": 216006,
+              "iou": 0.2244728405192846,
+              "precision": 0.2896549002584795,
+              "recall": 0.49937634652454926,
+              "tp": 88080
+            }
+          },
+          "exact_child_pattern_accuracy": 2.1571017181315185e-05,
+          "fine": {
+            "f1": 0.38515403680104454,
+            "fn": 261547,
+            "fp": 571011,
+            "iou": 0.23850822033704525,
+            "precision": 0.313505526715061,
+            "recall": 0.49925332271392303,
+            "tp": 260767
+          },
+          "frame": 500,
+          "missed_parent_fine_false_negatives": 0,
+          "not_directly_hit": {
+            "f1": 0.38039235146222045,
+            "fn": 253538,
+            "fp": 570560,
+            "iou": 0.23486697645917376,
+            "precision": 0.3071751138699763,
+            "recall": 0.4994363333037186,
+            "tp": 252967
+          },
+          "observed_hit": {
+            "f1": 0.6483790523690773,
+            "fn": 8009,
+            "fp": 451,
+            "iou": 0.4797047970479705,
+            "precision": 0.9453399587928736,
+            "recall": 0.49338984122967927,
+            "tp": 7800
+          },
+          "observed_policy": "Input surface hits only; unknown does not mean free space",
+          "occupied_child_count_mae": 5.656265841215743,
+          "parent_empty_suppression_accuracy": 0.00010785741250067412,
+          "sequence": "00",
+          "stage2_seconds": 0.15302755869925022
+        },
+        {
+          "actual_network_calls": 2,
+          "candidate": {
+            "active_parent_count": 116318,
+            "f1": 0.8888920729989063,
+            "false_negative_rate": 0.0,
+            "fine_occupancy_recall_ceiling": 1.0,
+            "iou": 0.8000051582730102,
+            "precision": 0.8000051582730102,
+            "recall": 1.0
+          },
+          "candidate_source": {
+            "mode": "oracle_not_deployable",
+            "nearby_negatives": 23263,
+            "negative_fraction_relative_to_gt_parents": 0.25,
+            "score_policy": "constant_1_for_all_candidates"
+          },
+          "common_015m_center_grid": {
+            "f1": 0.4871170133832051,
+            "fn": 195941,
+            "fp": 510503,
+            "iou": 0.3219793055327611,
+            "precision": 0.3965542920636422,
+            "recall": 0.6312864825805674,
+            "tp": 335477
+          },
+          "condition_seconds": 1.023037688806653,
+          "distance_bins": {
+            "0-10": {
+              "f1": 0.43985232431190024,
+              "fn": 30587,
+              "fp": 47399,
+              "iou": 0.28192992956125407,
+              "precision": 0.39246071419416034,
+              "recall": 0.5002614122798419,
+              "tp": 30619
+            },
+            "10-20": {
+              "f1": 0.4113073281787476,
+              "fn": 66349,
+              "fp": 122931,
+              "iou": 0.2588967240008927,
+              "precision": 0.34975721222507855,
+              "recall": 0.4991469895525092,
+              "tp": 66123
+            },
+            "20-35": {
+              "f1": 0.40056056416136454,
+              "fn": 134050,
+              "fp": 265887,
+              "iou": 0.2504380942385219,
+              "precision": 0.33446888821584386,
+              "recall": 0.4992042559232499,
+              "tp": 133624
+            },
+            "35-50": {
+              "f1": 0.3939553862194133,
+              "fn": 122825,
+              "fp": 253839,
+              "iou": 0.2452954188439714,
+              "precision": 0.3253681600369954,
+              "recall": 0.49918246353705825,
+              "tp": 122424
+            }
+          },
+          "exact_child_pattern_accuracy": 6.017985178562217e-05,
+          "fine": {
+            "f1": 0.4033160192906673,
+            "fn": 353811,
+            "fp": 690056,
+            "iou": 0.2525960203543175,
+            "precision": 0.33829539548504767,
+            "recall": 0.4992775272041789,
+            "tp": 352790
+          },
+          "frame": 550,
+          "missed_parent_fine_false_negatives": 0,
+          "not_directly_hit": {
+            "f1": 0.40100965063111815,
+            "fn": 348638,
+            "fp": 689813,
+            "iou": 0.2507892876210265,
+            "precision": 0.3350700100826857,
+            "recall": 0.4992610381086023,
+            "tp": 347609
+          },
+          "observed_hit": {
+            "f1": 0.6567372290531119,
+            "fn": 5173,
+            "fp": 243,
+            "iou": 0.48891195621402284,
+            "precision": 0.9551991150442478,
+            "recall": 0.5003863241259416,
+            "tp": 5181
+          },
+          "observed_policy": "Input surface hits only; unknown does not mean free space",
+          "occupied_child_count_mae": 5.47054626111178,
+          "parent_empty_suppression_accuracy": 0.00017194686841765893,
+          "sequence": "00",
+          "stage2_seconds": 0.22402068600058556
+        }
+      ],
+      "summary": {
+        "frames": 2,
+        "macro": {
+          "f1": 0.3942350280458559,
+          "iou": 0.24555212034568136,
+          "precision": 0.32590046110005433,
+          "recall": 0.49926542495905096
+        },
+        "micro": {
+          "f1": 0.3953918413785037,
+          "fn": 615358,
+          "fp": 1261067,
+          "iou": 0.2464102150136025,
+          "precision": 0.3272960337646376,
+          "recall": 0.49926723980096266,
+          "tp": 613557
+        }
+      }
+    },
+    "4": {
+      "rows": [
+        {
+          "actual_network_calls": 4,
+          "candidate": {
+            "active_parent_count": 92717,
+            "f1": 0.888891551971047,
+            "false_negative_rate": 0.0,
+            "fine_occupancy_recall_ceiling": 1.0,
+            "iou": 0.8000043142034363,
+            "precision": 0.8000043142034363,
+            "recall": 1.0
+          },
+          "candidate_source": {
+            "mode": "oracle_not_deployable",
+            "nearby_negatives": 18543,
+            "negative_fraction_relative_to_gt_parents": 0.25,
+            "score_policy": "constant_1_for_all_candidates"
+          },
+          "common_015m_center_grid": {
+            "f1": 0.463417410708088,
+            "fn": 149322,
+            "fp": 430441,
+            "iou": 0.30158965351913825,
+            "precision": 0.3677386471130853,
+            "recall": 0.6263933125999245,
+            "tp": 250355
+          },
+          "condition_seconds": 0.8975376151502132,
+          "distance_bins": {
+            "0-10": {
+              "f1": 0.4452100588082796,
+              "fn": 32758,
+              "fp": 48562,
+              "iou": 0.2863474010302855,
+              "precision": 0.40187951866586197,
+              "recall": 0.49901356538761527,
+              "tp": 32629
+            },
+            "10-20": {
+              "f1": 0.39111264915855987,
+              "fn": 61394,
+              "fp": 128630,
+              "iou": 0.2430951110119735,
+              "precision": 0.32178635452915744,
+              "recall": 0.4985133633927988,
+              "tp": 61030
+            },
+            "20-35": {
+              "f1": 0.38088903669216273,
+              "fn": 79095,
+              "fp": 177815,
+              "iou": 0.23524578940161578,
+              "precision": 0.3076899117359632,
+              "recall": 0.499788139612833,
+              "tp": 79028
+            },
+            "35-50": {
+              "f1": 0.3666448128375636,
+              "fn": 88300,
+              "fp": 216005,
+              "iou": 0.22447341259222447,
+              "precision": 0.2896558528043146,
+              "recall": 0.49937634652454926,
+              "tp": 88080
+            }
+          },
+          "exact_child_pattern_accuracy": 2.1571017181315185e-05,
+          "fine": {
+            "f1": 0.38515375236412863,
+            "fn": 261547,
+            "fp": 571012,
+            "iou": 0.23850800218781956,
+            "precision": 0.31350514980541705,
+            "recall": 0.49925332271392303,
+            "tp": 260767
+          },
+          "frame": 500,
+          "missed_parent_fine_false_negatives": 0,
+          "not_directly_hit": {
+            "f1": 0.38039206546002996,
+            "fn": 253538,
+            "fp": 570561,
+            "iou": 0.23486675839734983,
+            "precision": 0.30717474087098434,
+            "recall": 0.4994363333037186,
+            "tp": 252967
+          },
+          "observed_hit": {
+            "f1": 0.6483790523690773,
+            "fn": 8009,
+            "fp": 451,
+            "iou": 0.4797047970479705,
+            "precision": 0.9453399587928736,
+            "recall": 0.49338984122967927,
+            "tp": 7800
+          },
+          "observed_policy": "Input surface hits only; unknown does not mean free space",
+          "occupied_child_count_mae": 5.656276626724333,
+          "parent_empty_suppression_accuracy": 0.00010785741250067412,
+          "sequence": "00",
+          "stage2_seconds": 0.1823271196335554
+        },
+        {
+          "actual_network_calls": 4,
+          "candidate": {
+            "active_parent_count": 116318,
+            "f1": 0.8888920729989063,
+            "false_negative_rate": 0.0,
+            "fine_occupancy_recall_ceiling": 1.0,
+            "iou": 0.8000051582730102,
+            "precision": 0.8000051582730102,
+            "recall": 1.0
+          },
+          "candidate_source": {
+            "mode": "oracle_not_deployable",
+            "nearby_negatives": 23263,
+            "negative_fraction_relative_to_gt_parents": 0.25,
+            "score_policy": "constant_1_for_all_candidates"
+          },
+          "common_015m_center_grid": {
+            "f1": 0.4871166223196686,
+            "fn": 195942,
+            "fp": 510501,
+            "iou": 0.32197896381580526,
+            "precision": 0.3965545162575342,
+            "recall": 0.6312846008227045,
+            "tp": 335476
+          },
+          "condition_seconds": 1.023037688806653,
+          "distance_bins": {
+            "0-10": {
+              "f1": 0.43985232431190024,
+              "fn": 30587,
+              "fp": 47399,
+              "iou": 0.28192992956125407,
+              "precision": 0.39246071419416034,
+              "recall": 0.5002614122798419,
+              "tp": 30619
+            },
+            "10-20": {
+              "f1": 0.4113023870616593,
+              "fn": 66350,
+              "fp": 122931,
+              "iou": 0.25889280862010233,
+              "precision": 0.34975377275155645,
+              "recall": 0.4991394407874872,
+              "tp": 66122
+            },
+            "20-35": {
+              "f1": 0.40056056416136454,
+              "fn": 134050,
+              "fp": 265887,
+              "iou": 0.2504380942385219,
+              "precision": 0.33446888821584386,
+              "recall": 0.4992042559232499,
+              "tp": 133624
+            },
+            "35-50": {
+              "f1": 0.3939566539556886,
+              "fn": 122825,
+              "fp": 253837,
+              "iou": 0.2452964018225316,
+              "precision": 0.3253698895181802,
+              "recall": 0.49918246353705825,
+              "tp": 122424
+            }
+          },
+          "exact_child_pattern_accuracy": 6.017985178562217e-05,
+          "fine": {
+            "f1": 0.40331556768893434,
+            "fn": 353812,
+            "fp": 690054,
+            "iou": 0.25259566607358297,
+            "precision": 0.3382954097596666,
+            "recall": 0.49927611197833005,
+            "tp": 352789
+          },
+          "frame": 550,
+          "missed_parent_fine_false_negatives": 0,
+          "not_directly_hit": {
+            "f1": 0.40100919092835646,
+            "fn": 348639,
+            "fp": 689811,
+            "iou": 0.25078892802465697,
+            "precision": 0.33507001510479373,
+            "recall": 0.4992596018367045,
+            "tp": 347608
+          },
+          "observed_hit": {
+            "f1": 0.6567372290531119,
+            "fn": 5173,
+            "fp": 243,
+            "iou": 0.48891195621402284,
+            "precision": 0.9551991150442478,
+            "recall": 0.5003863241259416,
+            "tp": 5181
+          },
+          "observed_policy": "Input surface hits only; unknown does not mean free space",
+          "occupied_child_count_mae": 5.470537663990096,
+          "parent_empty_suppression_accuracy": 0.00017194686841765893,
+          "sequence": "00",
+          "stage2_seconds": 0.37403177469968796
+        }
+      ],
+      "summary": {
+        "frames": 2,
+        "macro": {
+          "f1": 0.3942346600265315,
+          "iou": 0.24555183413070125,
+          "precision": 0.3259002797825418,
+          "recall": 0.49926471734612654
+        },
+        "micro": {
+          "f1": 0.3953914517532738,
+          "fn": 615359,
+          "fp": 1261066,
+          "iou": 0.24640991236479315,
+          "precision": 0.32729584950992785,
+          "recall": 0.4992664260750337,
+          "tp": 613556
+        }
+      }
+    },
+    "8": {
+      "rows": [
+        {
+          "actual_network_calls": 8,
+          "candidate": {
+            "active_parent_count": 92717,
+            "f1": 0.888891551971047,
+            "false_negative_rate": 0.0,
+            "fine_occupancy_recall_ceiling": 1.0,
+            "iou": 0.8000043142034363,
+            "precision": 0.8000043142034363,
+            "recall": 1.0
+          },
+          "candidate_source": {
+            "mode": "oracle_not_deployable",
+            "nearby_negatives": 18543,
+            "negative_fraction_relative_to_gt_parents": 0.25,
+            "score_policy": "constant_1_for_all_candidates"
+          },
+          "common_015m_center_grid": {
+            "f1": 0.46342068388503566,
+            "fn": 149320,
+            "fp": 430440,
+            "iou": 0.3015924261278832,
+            "precision": 0.3677410446873297,
+            "recall": 0.6263983166406873,
+            "tp": 250357
+          },
+          "condition_seconds": 0.8975376151502132,
+          "distance_bins": {
+            "0-10": {
+              "f1": 0.4452100588082796,
+              "fn": 32758,
+              "fp": 48562,
+              "iou": 0.2863474010302855,
+              "precision": 0.40187951866586197,
+              "recall": 0.49901356538761527,
+              "tp": 32629
+            },
+            "10-20": {
+              "f1": 0.39111264915855987,
+              "fn": 61394,
+              "fp": 128630,
+              "iou": 0.2430951110119735,
+              "precision": 0.32178635452915744,
+              "recall": 0.4985133633927988,
+              "tp": 61030
+            },
+            "20-35": {
+              "f1": 0.38088903669216273,
+              "fn": 79095,
+              "fp": 177815,
+              "iou": 0.23524578940161578,
+              "precision": 0.3076899117359632,
+              "recall": 0.499788139612833,
+              "tp": 79028
+            },
+            "35-50": {
+              "f1": 0.36664897547167846,
+              "fn": 88299,
+              "fp": 216004,
+              "iou": 0.22447653319197522,
+              "precision": 0.28965914135850174,
+              "recall": 0.4993820161015988,
+              "tp": 88081
+            }
+          },
+          "exact_child_pattern_accuracy": 2.1571017181315185e-05,
+          "fine": {
+            "f1": 0.38515522936755453,
+            "fn": 261546,
+            "fp": 571011,
+            "iou": 0.23850913497816295,
+            "precision": 0.3135063520478396,
+            "recall": 0.49925523727106685,
+            "tp": 260768
+          },
+          "frame": 500,
+          "missed_parent_fine_false_negatives": 0,
+          "not_directly_hit": {
+            "f1": 0.38039356918211803,
+            "fn": 253537,
+            "fp": 570560,
+            "iou": 0.23486790490824602,
+            "precision": 0.30717595515878027,
+            "recall": 0.4994383076178912,
+            "tp": 252968
+          },
+          "observed_hit": {
+            "f1": 0.6483790523690773,
+            "fn": 8009,
+            "fp": 451,
+            "iou": 0.4797047970479705,
+            "precision": 0.9453399587928736,
+            "recall": 0.49338984122967927,
+            "tp": 7800
+          },
+          "observed_policy": "Input surface hits only; unknown does not mean free space",
+          "occupied_child_count_mae": 5.656255055707152,
+          "parent_empty_suppression_accuracy": 0.00010785741250067412,
+          "sequence": "00",
+          "stage2_seconds": 0.3292873650789261
+        },
+        {
+          "actual_network_calls": 8,
+          "candidate": {
+            "active_parent_count": 116318,
+            "f1": 0.8888920729989063,
+            "false_negative_rate": 0.0,
+            "fine_occupancy_recall_ceiling": 1.0,
+            "iou": 0.8000051582730102,
+            "precision": 0.8000051582730102,
+            "recall": 1.0
+          },
+          "candidate_source": {
+            "mode": "oracle_not_deployable",
+            "nearby_negatives": 23263,
+            "negative_fraction_relative_to_gt_parents": 0.25,
+            "score_policy": "constant_1_for_all_candidates"
+          },
+          "common_015m_center_grid": {
+            "f1": 0.4871166223196686,
+            "fn": 195942,
+            "fp": 510501,
+            "iou": 0.32197896381580526,
+            "precision": 0.3965545162575342,
+            "recall": 0.6312846008227045,
+            "tp": 335476
+          },
+          "condition_seconds": 1.023037688806653,
+          "distance_bins": {
+            "0-10": {
+              "f1": 0.43985232431190024,
+              "fn": 30587,
+              "fp": 47399,
+              "iou": 0.28192992956125407,
+              "precision": 0.39246071419416034,
+              "recall": 0.5002614122798419,
+              "tp": 30619
+            },
+            "10-20": {
+              "f1": 0.4113023870616593,
+              "fn": 66350,
+              "fp": 122931,
+              "iou": 0.25889280862010233,
+              "precision": 0.34975377275155645,
+              "recall": 0.4991394407874872,
+              "tp": 66122
+            },
+            "20-35": {
+              "f1": 0.40055816686251466,
+              "fn": 134051,
+              "fp": 265887,
+              "iou": 0.250436220038571,
+              "precision": 0.3344672223473755,
+              "recall": 0.49920052003556564,
+              "tp": 133623
+            },
+            "35-50": {
+              "f1": 0.3939566539556886,
+              "fn": 122825,
+              "fp": 253837,
+              "iou": 0.2452964018225316,
+              "precision": 0.3253698895181802,
+              "recall": 0.49918246353705825,
+              "tp": 122424
+            }
+          },
+          "exact_child_pattern_accuracy": 6.017985178562217e-05,
+          "fine": {
+            "f1": 0.4033146550073366,
+            "fn": 353813,
+            "fp": 690054,
+            "iou": 0.2525949500771486,
+            "precision": 0.3382947752392021,
+            "recall": 0.49927469675248126,
+            "tp": 352788
+          },
+          "frame": 550,
+          "missed_parent_fine_false_negatives": 0,
+          "not_directly_hit": {
+            "f1": 0.40100826861014094,
+            "fn": 348640,
+            "fp": 689811,
+            "iou": 0.25078820655412687,
+            "precision": 0.3350693741577648,
+            "recall": 0.49925816556480673,
+            "tp": 347607
+          },
+          "observed_hit": {
+            "f1": 0.6567372290531119,
+            "fn": 5173,
+            "fp": 243,
+            "iou": 0.48891195621402284,
+            "precision": 0.9551991150442478,
+            "recall": 0.5003863241259416,
+            "tp": 5181
+          },
+          "observed_policy": "Input surface hits only; unknown does not mean free space",
+          "occupied_child_count_mae": 5.470529066868412,
+          "parent_empty_suppression_accuracy": 0.00017194686841765893,
+          "sequence": "00",
+          "stage2_seconds": 0.4326656963676214
+        }
+      ],
+      "summary": {
+        "frames": 2,
+        "macro": {
+          "f1": 0.3942349421874456,
+          "iou": 0.24555204252765578,
+          "precision": 0.3259005636435208,
+          "recall": 0.49926496701177403
+        },
+        "micro": {
+          "f1": 0.3953915791535848,
+          "fn": 615359,
+          "fp": 1261065,
+          "iou": 0.24641001132539217,
+          "precision": 0.32729602410300535,
+          "recall": 0.4992664260750337,
+          "tp": 613556
+        }
+      }
+    }
+  },
+  "objective": "fm",
+  "oracle_support_used": true,
+  "scope": "CPU_FULL_SCENE_LOCAL_FM_MECHANICS_ONLY_NOT_PROPOSED_MODEL_PILOT",
+  "threshold": 0.0,
+  "threshold_selected_on": "development"
+}

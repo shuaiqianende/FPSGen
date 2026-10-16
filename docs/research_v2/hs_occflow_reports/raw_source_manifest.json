@@ -1,0 +1,92 @@
+{
+  "definition": "Surface-hit occupancy before voxel/Poisson/fixed-count sampling",
+  "map_pose_calibration": {
+    "00": {
+      "calib.txt": {
+        "bytes": 1171,
+        "sha256": "1bb615b4535ac73053be176ac1650fcfe7678ae8225d8999e5a822aa71655682"
+      },
+      "map_clean.npy": {
+        "bytes": 523061120,
+        "sha256": "7fd6919febcfe59abe44ff82be3f4fb2e710444159fd21b6deb50056de3b9a57"
+      },
+      "poses.txt": {
+        "bytes": 521018,
+        "sha256": "dd005d8fbd9eef6fa02ae332602d7e51eb44c227fa6710e301c24706e4851c71"
+      }
+    },
+    "05": {
+      "calib.txt": {
+        "bytes": 1172,
+        "sha256": "5e7b3136edf2799be47e472ca9c5362fcacbee5d21c6ab8038506b8691b8b9ec"
+      },
+      "map_clean.npy": {
+        "bytes": 341813024,
+        "sha256": "63fd688d2ac70645f791ba5cad2c28852b45b3ef73b143f4e81ac91da507a1d9"
+      },
+      "poses.txt": {
+        "bytes": 317404,
+        "sha256": "6db9dcf03a39fe04573d20feb12bdbbada90568ce92ab577db4c44cf8bd24794"
+      }
+    },
+    "09": {
+      "calib.txt": {
+        "bytes": 1172,
+        "sha256": "5e7b3136edf2799be47e472ca9c5362fcacbee5d21c6ab8038506b8691b8b9ec"
+      },
+      "map_clean.npy": {
+        "bytes": 307976608,
+        "sha256": "ff2739d679090df76a3998068223fe54a7de65bdee1dffbcb974ff915ec0e42f"
+      },
+      "poses.txt": {
+        "bytes": 180045,
+        "sha256": "9ae5f75267928f12efe0f116d312ef01b0fe216f9a7238cbb2e1cc598d23e230"
+      }
+    },
+    "10": {
+      "calib.txt": {
+        "bytes": 1172,
+        "sha256": "5e7b3136edf2799be47e472ca9c5362fcacbee5d21c6ab8038506b8691b8b9ec"
+      },
+      "map_clean.npy": {
+        "bytes": 158888672,
+        "sha256": "854984719f64cbfcfd20a2e0adfa410b195d8eeef1bbc6dc152cf9b92edaa844"
+      },
+      "poses.txt": {
+        "bytes": 137616,
+        "sha256": "cb0d086ee903195e48acb8254d72c8a51fb2ccb8bfb837a3bbdaeaa6faeb4eba"
+      }
+    }
+  },
+  "policy": {
+    "local_sphere_radius": 50.0,
+    "open_z": [
+      -4.0,
+      4.4
+    ],
+    "viewpoint_voxel_size": 10.0,
+    "world_sphere_radius": 50.0
+  },
+  "source_code_sha256": {
+    "generate_semantickitti_poisson_gt.py": "98d8891c745b6bfa1c3679f3f8ea729365c5c9b53c4b24e0975964580644e22d",
+    "prepare_semantickitti.py": "4f6aecc0d11a1b8078064a4a4323bd494b31052f2f485914c38f800bc19cd0d7"
+  },
+  "viewpoint_scan_sha256": {
+    "00_000000": "bf272996d5b6d25cc5589e1089137cb20a98b63bd4823a7fea5631b359f6d68c",
+    "00_000200": "51def08dde5261c75a040b908cb162250f99dc920f82060844c6d6baff7c8a6e",
+    "00_000500": "f8622be33c2a24d7760590455c0b217d61fde6d41fb67e9d1e6d6504db7be1a1",
+    "00_000550": "c1b71841470eddd43b3fd07716a096c14ff86c6debad958115bedc814000073e",
+    "05_000000": "39ac662ca7b95b38dee992872de15a798561108a77afae18fe1edcfed475a4ab",
+    "05_000200": "633c76d62dd917d700cdb9bac20f3cc17c59d757ec4073448178432a22ac4c08",
+    "05_000500": "fcaee269fd21b4e995220b87115a8aa093ca3f0d81e613d58009387892793643",
+    "05_000550": "28572ae4192aee2e68f39c98062ebef096259c985fc2d1ed6d2974d8362ccead",
+    "09_000000": "b769b195f83723f1ff86c3dd29486fb4d7eb3ed21fe90d92c0afee75f94ab58a",
+    "09_000200": "768c4672d45e9205bd9f88874e306e80008eaa93d8cbc06176d04ff2fa0d1896",
+    "09_000500": "3b5fba9172f62bded1bcdfaad9ae37fdfd2ba2f857e2462fe6e6d12fdca19124",
+    "09_000550": "654394b87d52ab6ed37f54971a89ea450399bc019ccc53afbac2287afc6db8b7",
+    "10_000000": "f004fe51b01ed05bf1049ffa417f8acc1b0aa84405c49d6b83e50d2338c2ec08",
+    "10_000200": "790f3d2af2d6b4fb72c0c3072c8aa280cc3d6a28be6999fd55e489d82f114b20",
+    "10_000500": "e4f16975f5b39c021e57862fceceb32fed444290cf730ccc101d9d2205c11125",
+    "10_000550": "3c1f93351f8aea8ffa0601f49fdb6e610b21f9d297d9baa6b78411de44b44d6e"
+  }
+}

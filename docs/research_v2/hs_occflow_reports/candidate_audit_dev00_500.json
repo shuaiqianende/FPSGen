@@ -1,0 +1,140 @@
+{
+  "density_sha256": "380bf23654793dae070dd8d3653d9eed1f9e7effe8b163609c97b6e0214d63a8",
+  "geometry_sha256": "82161827d954685d643f62c00ac7158c1aad81f92ac5fca955e0be1a3a298d2d",
+  "raw_occupancy_label_sha256": "7f7fd545f91735e95c5c0783d3ffd5d49ccc4496e010c5f8abb70b6526aaf965",
+  "rows": [
+    {
+      "active_parent_count": 176660,
+      "f1": 0.527097602398399,
+      "false_negative_rate": 0.10875778574702726,
+      "fine_occupancy_recall_ceiling": 0.9450024314875726,
+      "iou": 0.3578632251917695,
+      "precision": 0.3742046869693196,
+      "recall": 0.8912422142529728,
+      "selection": {
+        "strategy": "threshold",
+        "threshold": 0.01
+      }
+    },
+    {
+      "active_parent_count": 147845,
+      "f1": 0.5776622721478792,
+      "false_negative_rate": 0.13546525736781082,
+      "fine_occupancy_recall_ceiling": 0.9306987750663394,
+      "iou": 0.40613580082714246,
+      "precision": 0.43373803645710035,
+      "recall": 0.8645347426321892,
+      "selection": {
+        "strategy": "threshold",
+        "threshold": 0.05
+      }
+    },
+    {
+      "active_parent_count": 134385,
+      "f1": 0.6023715111790908,
+      "false_negative_rate": 0.1531399142556691,
+      "fine_occupancy_recall_ceiling": 0.920676068418614,
+      "iou": 0.430995444066308,
+      "precision": 0.4674256799493991,
+      "recall": 0.8468600857443309,
+      "selection": {
+        "strategy": "threshold",
+        "threshold": 0.1
+      }
+    },
+    {
+      "active_parent_count": 114788,
+      "f1": 0.6408166721351383,
+      "false_negative_rate": 0.18374362984334133,
+      "fine_occupancy_recall_ceiling": 0.9042912883820844,
+      "iou": 0.47147184562791533,
+      "precision": 0.5274506045928146,
+      "recall": 0.8162563701566586,
+      "selection": {
+        "strategy": "threshold",
+        "threshold": 0.25
+      }
+    },
+    {
+      "active_parent_count": 97645,
+      "f1": 0.6715206118066105,
+      "false_negative_rate": 0.22223420605603042,
+      "fine_occupancy_recall_ceiling": 0.8825189445429378,
+      "iou": 0.5054806403280498,
+      "precision": 0.5908136617338318,
+      "recall": 0.7777657939439696,
+      "selection": {
+        "strategy": "threshold",
+        "threshold": 0.5
+      }
+    },
+    {
+      "active_parent_count": 74581,
+      "f1": 0.6963396188363417,
+      "false_negative_rate": 0.30174993933184135,
+      "fine_occupancy_recall_ceiling": 0.8349536868626918,
+      "iou": 0.5341418891742211,
+      "precision": 0.6944396025797455,
+      "recall": 0.6982500606681586,
+      "selection": {
+        "strategy": "threshold",
+        "threshold": 1.0
+      }
+    },
+    {
+      "active_parent_count": 49999,
+      "f1": 0.656906090696045,
+      "false_negative_rate": 0.4501442553994661,
+      "fine_occupancy_recall_ceiling": 0.7291361135255804,
+      "iou": 0.4890991509569722,
+      "precision": 0.8157163143262866,
+      "recall": 0.5498557446005339,
+      "selection": {
+        "strategy": "topk",
+        "top_k": 50000
+      }
+    },
+    {
+      "active_parent_count": 99995,
+      "f1": 0.6682360236322192,
+      "false_negative_rate": 0.21545285409981935,
+      "fine_occupancy_recall_ceiling": 0.8861776632447149,
+      "iou": 0.5017676070911223,
+      "precision": 0.5819590979548978,
+      "recall": 0.7845471459001807,
+      "selection": {
+        "strategy": "topk",
+        "top_k": 100000
+      }
+    },
+    {
+      "active_parent_count": 199982,
+      "f1": 0.49053093858970803,
+      "false_negative_rate": 0.09346940976622536,
+      "fine_occupancy_recall_ceiling": 0.9532790620201641,
+      "iou": 0.32496919024720294,
+      "precision": 0.3362352611735056,
+      "recall": 0.9065305902337747,
+      "selection": {
+        "strategy": "topk",
+        "top_k": 200000
+      }
+    },
+    {
+      "active_parent_count": 181510,
+      "f1": 0.5052330220115455,
+      "false_negative_rate": 0.12920969611993421,
+      "fine_occupancy_recall_ceiling": 0.9334308481105236,
+      "iou": 0.3380011931300826,
+      "precision": 0.35584816263566743,
+      "recall": 0.8707903038800658,
+      "selection": {
+        "budget": 200000,
+        "expansion": 1,
+        "strategy": "threshold",
+        "threshold": 0.5
+      }
+    }
+  ],
+  "scope": "single development frame diagnostic, not frozen candidate policy"
+}

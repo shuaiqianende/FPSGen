@@ -1,0 +1,9 @@
+{
+  "formal_ready": false,
+  "geometry_locked": false,
+  "geometry_sha256": "82161827d954685d643f62c00ac7158c1aad81f92ac5fca955e0be1a3a298d2d",
+  "provisional_ablation": "352_8",
+  "provisional_main": "256_18",
+  "reason": "Similar/finer quantization with 38.5% fewer median parent tokens vs 352+8 and reuse of existing 256 Stage1; GPU quality/memory/latency and matched BCE/FM pilots remain unmeasured",
+  "scope": "CPU representation preflight, not final network selection"
+}

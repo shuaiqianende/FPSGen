@@ -1,0 +1,35 @@
+{
+  "AMP_enabled": false,
+  "all_gradients_finite": true,
+  "all_gradients_nonzero": true,
+  "checks": {
+    "attempts": true,
+    "ema": true,
+    "frame_order_equal": true,
+    "identity": true,
+    "loss_sequence_equal": true,
+    "model": true,
+    "optimizer": true,
+    "rank_rng": true,
+    "sampler": true,
+    "scaler": true,
+    "scheduler": true,
+    "successful_updates": true
+  },
+  "continuous_successful_updates": 32,
+  "cpu_step_seconds_median": 1.4825052861124277,
+  "ema_tensor_sha256": "4bee1d706bc1798d788e9246976441eecb42da855a691887301c7c4987fe1131",
+  "first_loss": 1.9999008178710938,
+  "last_loss": 1.9837206602096558,
+  "max_parent_tokens": 159628,
+  "mean_first4": 1.9991717636585236,
+  "mean_last4": 1.9850266575813293,
+  "min_parent_tokens": 50452,
+  "model_tensor_sha256": "177008a6ec8185aa081175c9a845a4bb1156c0af927446137619dee8f119ac75",
+  "scope": "real 8-train-frame full-parent Local-FM observed-only CPU mechanics; not proposed-model pilot",
+  "split_successful_updates": [
+    20,
+    12
+  ],
+  "status": "PASS"
+}

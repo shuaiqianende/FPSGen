@@ -1,0 +1,19 @@
+{
+  "cpu_geometry_data_tests": "PASS",
+  "development_frames_processed": 8,
+  "formal_ready": false,
+  "full_dataset_preprocessed": false,
+  "full_scene_cpu_local_fm_successful_updates": 32,
+  "geometry_locked": false,
+  "geometry_sha256": "82161827d954685d643f62c00ac7158c1aad81f92ac5fca955e0be1a3a298d2d",
+  "gpu_admission": "BLOCKED_BY_EXISTING_STUDENT_RUN",
+  "gpu_cpu_voxelization_consistency": "NOT_EXECUTED",
+  "matched_1000_update_pilots": false,
+  "processed_frames": 16,
+  "ptv3_bce_overfit_updates": 0,
+  "ptv3_fm_overfit_updates": 0,
+  "ptv3_gpu_forward_backward": "NOT_EXECUTED",
+  "raw_source_reference_exact": true,
+  "real_cpu_resume": "PASS",
+  "train_frames_processed": 8
+}
