@@ -1,0 +1,56 @@
+scope: pilot_only_initial_16_frame_representation_cohort
+geometry: geometry_256_18way.yaml
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+stage1_checkpoint: /data-12/M2024-HWZ/FPSGen/experiments/voxel_point/voxdet_density_formal_gpu23_b2_roi_20261013_094356/checkpoint_025000.pt
+train_dataset: experiments/hier_occ_flow/resolution_audit16/256_18/train
+development_dataset: experiments/hier_occ_flow/resolution_audit16/256_18/development
+candidates:
+  mode: oracle
+  negative_fraction: 0.25
+  selection:
+    strategy: threshold
+    threshold: 0.1
+    expansion: 0
+    budget: 200000
+model:
+  objective: fm
+  backbone: ptv3
+  width: 64
+  lidar_channels: 384
+  condition_mode: pyramid_observed
+  checkpointing: true
+  patch_sizes:
+  - 64
+  - 128
+training:
+  successful_updates: 1000
+  seed: 20261016
+  lr: 0.0002
+  weight_decay: 0.01
+  grad_clip: 1.0
+  precision: fp16
+  warmup_updates: 100
+  checkpoint_every: 100
+  milestone_every: 1000
+  max_parent_tokens: 400000
+  ema_decay: 0.999
+  cpu_threads: 4
+validation:
+  every_updates: 100
+  max_frames: 8
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  threshold: 0.0
+  seed: 20261017
+  structural_metrics: true
+  common_raw_gt: true
+engineering_gate: null
+loss:
+  fm: 1.0
+flow:
+  source: gaussian
+  sigma: 1.0
+  target_mapping: binary_symmetric

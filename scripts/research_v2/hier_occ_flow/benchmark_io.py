@@ -2,8 +2,8 @@
 from common import geometry
 import argparse
 import importlib.util
+import os
 from pathlib import Path
-import resource
 import time
 import numpy as np
 import torch
@@ -26,9 +26,17 @@ def collate_payload(batch):
     return [(torch.from_numpy(ids),torch.from_numpy(masks)) for ids,masks in batch]
 
 
-def cpu_seconds():
-    usages=[resource.getrusage(w) for w in (resource.RUSAGE_SELF,resource.RUSAGE_CHILDREN)]
-    return sum(x.ru_utime+x.ru_stime for x in usages)
+def cpu_snapshot(loader):
+    pids=[os.getpid()]
+    iterator=getattr(loader,'_iterator',None)
+    if iterator is not None: pids.extend(w.pid for w in iterator._workers)
+    result={}
+    for pid in pids:
+        try:
+            text=Path(f'/proc/{pid}/stat').read_text(); fields=text[text.rfind(')')+2:].split()
+            result[pid]=(int(fields[11])+int(fields[12]))/os.sysconf('SC_CLK_TCK')
+        except FileNotFoundError: pass
+    return result
 
 
 def main():
@@ -43,20 +51,22 @@ def main():
             loader=torch.utils.data.DataLoader(dataset,batch_size=4,num_workers=workers,persistent_workers=workers>0,
                 pin_memory=False,collate_fn=collate_payload,**({'prefetch_factor':2,'timeout':30} if workers else {}))
             for iteration in range(2):
-                start=time.perf_counter(); cpu=cpu_seconds(); data_bytes=0; batches=0
+                start=time.perf_counter(); before=cpu_snapshot(loader); data_bytes=0; batches=0
                 for batch in loader:
                     data_bytes+=sum(ids.numel()*ids.element_size()+masks.numel()*masks.element_size() for ids,masks in batch); batches+=1
                 elapsed=time.perf_counter()-start
-                rows.append({'format':kind,'workers':workers,'pass':iteration,'cache_state':'uncontrolled first pass' if iteration==0 else 'warm repeated reads',
+                after=cpu_snapshot(loader)
+                rows.append({'format':kind,'workers':workers,'pass':iteration,'cache_state':'checksum-verification-warmed; includes worker startup' if iteration==0 else 'warm repeated reads',
                     'frames_per_second':len(order)/elapsed,'useful_GB_per_second':data_bytes/elapsed/1e9,'batches_per_second':batches/elapsed,
-                    'wall_seconds':elapsed,'process_cpu_core_equivalents':(cpu_seconds()-cpu)/elapsed,'bytes':data_bytes})
+                    'wall_seconds':elapsed,'main_and_workers_cpu_core_equivalents':sum(value-before.get(pid,0) for pid,value in after.items())/elapsed,'bytes':data_bytes})
             del loader
     actual=sum(p.stat().st_size for p in args.dataset.glob('*') if p.is_file())
     npz_bytes=sum(p.stat().st_size for p in args.npz.glob('*.npz'))
+    matching_npz_bytes=sum((args.npz/f"{row['sequence'].decode()}_{int(row['frame']):06d}.npz").stat().st_size for row in ds.index)
     atomic_json(args.output,{'status':'CPU_IO_BENCHMARK','frame_count':len(ds),'reads':len(order),'rows':rows,
-        'mmap_bytes':actual,'npz_bytes_all_frames':npz_bytes,'compression_support':{x:bool(importlib.util.find_spec(x)) for x in ('zstandard','lz4')},
+        'mmap_bytes':actual,'npz_bytes_all_frames':npz_bytes,'npz_bytes_matching_index_frames':matching_npz_bytes,'compression_support':{x:bool(importlib.util.find_spec(x)) for x in ('zstandard','lz4')},
         'payload':'Actual variable-length parent IDs and packed masks converted to int64 tensors and transferred to main process; useful GB/s counts that expanded training payload',
-        'limits':'No privileged/global cache eviction; first pass is NOT a verified cold-cache benchmark. CPU resource counter excludes live worker CPU time. CPU only; GPU input stall, pinned memory and concurrent-rank throughput are unmeasured.'})
+        'limits':'No privileged/global cache eviction; first pass is NOT a cold-cache benchmark. CPU time sampled from /proc for main and live persistent workers. CPU only; GPU input stall, pinned memory and concurrent-rank throughput are unmeasured.'})
     print(args.output)
 
 if __name__=='__main__': main()

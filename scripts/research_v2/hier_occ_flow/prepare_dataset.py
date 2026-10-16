@@ -18,9 +18,13 @@ def main():
     p.add_argument('--full',action='store_true'); p.add_argument('--geometry-decision',type=Path)
     p.add_argument('--shard-frames',type=int,default=256)
     args=p.parse_args(); g=geometry(args.geometry); split=json.loads(args.manifest.read_text())
-    if args.split=='test': raise ValueError('Test labels are deferred until geometry/model selection is frozen')
+    if args.split=='test':
+        decision=json.loads(args.geometry_decision.read_text()) if args.geometry_decision else {}
+        if not decision.get('geometry_locked') or not decision.get('method_checkpoint_frozen') or decision.get('geometry_sha256')!=g.sha256:
+            raise ValueError('Test preprocessing requires frozen geometry and method/checkpoint selection')
     frames=split[args.split]
-    if any(f['sequence']=='08' for f in frames): raise ValueError('seq08 leakage')
+    if args.split!='test' and any(f['sequence']=='08' for f in frames): raise ValueError('seq08 leakage')
+    if args.split=='test' and any(f['sequence']!='08' for f in frames): raise ValueError('Test manifest must use seq08 only')
     if args.full:
         decision=json.loads(args.geometry_decision.read_text()) if args.geometry_decision else {}
         if not decision.get('geometry_locked') or decision.get('geometry_sha256')!=g.sha256:
