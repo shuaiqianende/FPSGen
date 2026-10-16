@@ -30,3 +30,12 @@ rows of00/000000, match the original exactly in coordinates and order. Raw
 candidate time fell from4.45s to1.48s on that frame, excluding map-index setup.
 Initial slow-worker committed shards were preserved on restart; implementation
 history and source hashes are recorded. See[lookup proof](hs_occ384_stage1_reports/viewpoint_lookup_audit.json).
+
+Full audit PASS:17,870 train /900 development,360 guard excluded.
+Unique-inode footprint13,780,675,765 bytes =13.78GB =12.83GiB.
+Logical size27.54GB counts hardlinked shards twice and is not actual disk use.
+Parent-count P50/P90/P99/max:138,061.5 /206,521 /257,997.13 /319,738.
+Hot-cache128-frame benchmark including IDs, masks and XYZ: workers0/2/4/8
+=861.9/331.5/335.9/297.1 frames/s. No claim about cold cache or concurrent GPU
+waiting is made. The registered runner uses direct mmap access, without worker
+IPC; actual host preparation time is logged during training.
