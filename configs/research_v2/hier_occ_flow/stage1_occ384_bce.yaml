@@ -1,34 +1,54 @@
-# Matched deterministic occupancy baseline; train using the same raw GT masks.
 experiment: stage1_occ384_bce
+scope: formal
 geometry: geometry_384_8way.yaml
 data_root: /data-12/M2024-HWZ/KITTI_Odometry
-train_dataset: experiments/hier_occ_flow/occ384_full/train
-development_dataset: experiments/hier_occ_flow/occ384_full/development
+train_dataset: experiments/hier_occ_flow/occ384_full_parallel/train
+development_dataset: experiments/hier_occ_flow/occ384_full_parallel/development
 model:
   objective: bce
-  widths: [8, 16, 32, 64]
+  initialization: scratch
+  pretrained_encoder: null
+  widths:
+  - 8
+  - 16
+  - 32
+  - 64
   activation_checkpointing: true
+loss:
+  bce: 1.0
 training:
   successful_updates: 100000
-  seed: 20261016
+  seed: 20261017
   batch_per_gpu: 1
-  physical_gpus: [2, 3]
+  physical_gpus:
+  - 2
+  - 3
   lr_encoder: 0.0001
   lr_flow: 0.0002
   precision: fp16
+  weight_decay: 0.01
+  grad_clip: 1.0
   warmup_updates: 2000
   checkpoint_every: 1000
-  validation_every: 1000
+  milestone_every: 5000
+  ema_decay: 0.999
+  gradient_audit_every: 50
+  amp_initial_scale: 16384.0
 validation:
-  primary_metric: parent_occupancy_f1
-  selection_split: development
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  light_every: 1000
+  full_every: 5000
+  light_frames: 12
+  seed: 20261018
+  threshold: 0.5
+  threshold_sweep:
+  - 0.25
+  - 0.5
+  - 0.75
   target_definition: raw_pre_poisson_surface_hit
   no_seq08_tuning: true
-  threshold: 0.5
-gates:
-  full_preprocessing: required
-  gpu_memory_and_ddp_smoke: required
-  overfit_small_frames: required
-  1000_update_pilot: required
-  gpu_student_non_interference: required
-  formal_ready: false
+engineering_gate: experiments/hier_occ_flow/stage1_occ384_engineering_gate.json

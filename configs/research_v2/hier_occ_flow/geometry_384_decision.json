@@ -1,0 +1,17 @@
+{
+  "child_split": [
+    2,
+    2,
+    2
+  ],
+  "formal_ready": false,
+  "geometry_locked": true,
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "method_checkpoint_frozen": false,
+  "parent_resolution": [
+    384,
+    384,
+    32
+  ],
+  "selection_authority": "explicit_user_decision_2026-10-17"
+}

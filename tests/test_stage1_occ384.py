@@ -14,7 +14,7 @@ def test_384_8_geometry_and_flat_field():
     ids = np.array([0,1,383,384,384*384,384*384*32-1],dtype=np.uint32)
     f = ids_to_dense_occupancy(ids,g)
     assert f.shape == (1,1,32,384,384)
-    assert torch.equal(f.view(-1)[torch.tensor(ids,dtype=torch.long)], torch.ones(len(ids)))
+    assert torch.equal(f.view(-1)[torch.tensor(ids.astype(np.int64),dtype=torch.long)], torch.ones(len(ids)))
     assert f.sum().item() == len(ids)
 
 

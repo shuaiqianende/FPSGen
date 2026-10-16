@@ -4,6 +4,8 @@ import argparse
 from pathlib import Path
 import hashlib
 import json
+import signal
+import time
 from fpsgen.hier_occ_flow.raw_gt import RawMapSource
 from fpsgen.hier_occ_flow.voxelization import voxelize_surface
 from fpsgen.hier_occ_flow.storage import SparseShardWriter,atomic_json,file_sha
@@ -35,14 +37,32 @@ def main():
     source={'paired_split_sha256':file_sha(args.manifest),'raw_sources':snapshot,
         'sampling':'NONE; raw pre-Poisson map surface hits','selected_frames':[(f['sequence'],f['frame']) for f in frames]}
     sha=hashlib.sha256(json.dumps(source,sort_keys=True).encode()).hexdigest()
-    args.output.mkdir(parents=True,exist_ok=True); atomic_json(args.output/'source_manifest.json',source)
+    args.output.mkdir(parents=True,exist_ok=True)
     writer=SparseShardWriter(args.output/args.split,g,sha,resume=args.resume,shard_frames=args.shard_frames)
+    atomic_json(args.output/args.split/'source_manifest.json',source)
+    stop=[False]
+    def request_stop(signum,frame): stop[0]=True
+    signal.signal(signal.SIGINT,request_stop); signal.signal(signal.SIGTERM,request_stop)
+    begin=time.perf_counter(); new_frames=0
     raw=RawMapSource(args.data_root)
     for f in frames:
         if (f['sequence'],f['frame']) in writer.done: continue
         xyz=raw.load(f['sequence'],f['frame']); ids,masks,audit=voxelize_surface(xyz,g)
         writer.add(f['sequence'],f['frame'],ids,masks)
-        print(f"{f['sequence']}/{f['frame']:06d}: {audit}",flush=True)
+        new_frames+=1
+        row={'sequence':f['sequence'],'frame':f['frame'],'audit':audit}
+        with (args.output/args.split/'frame_audit.jsonl').open('a') as log: log.write(json.dumps(row)+'\n')
+        progress={'status':'RUNNING','frames_voxelized':len(writer.done),'committed_frames':writer.meta['records'],
+            'requested_frames':len(frames),'new_frames':new_frames,'seconds':time.perf_counter()-begin,
+            'source_manifest_sha256':sha,'geometry_sha256':g.sha256}
+        atomic_json(args.output/args.split/'preprocessing_progress.json',progress)
+        print(f"{args.split} {len(writer.done)}/{len(frames)} {f['sequence']}/{f['frame']:06d}: {audit}",flush=True)
+        if stop[0]: break
     writer.flush()
+    progress={'status':'COMPLETE' if len(writer.done)==len(frames) else 'PAUSED','committed_frames':writer.meta['records'],
+        'requested_frames':len(frames),'seconds':time.perf_counter()-begin,'geometry_sha256':g.sha256,
+        'source_manifest_sha256':sha,'raw_surface_hit':True}
+    atomic_json(args.output/args.split/'preprocessing_progress.json',progress)
+    if stop[0]: raise SystemExit(130)
 
 if __name__=='__main__': main()

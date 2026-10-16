@@ -4,12 +4,15 @@ This is a *new* occupancy objective. It must never load historical count-mapping
 weights as an occupancy head or interpret Poisson counts as raw-map hits.
 """
 import torch
+import numpy as np
 from torch import nn
 from torch.nn import functional as F
 
 
 def ids_to_dense_occupancy(parent_ids, geometry, *, device=None):
     """Convert sorted sparse X-fastest parent IDs to [1,1,Z,Y,X] binary targets."""
+    # PyTorch2.0 cannot ingest NumPy uint32, even with dtype=torch.long.
+    if isinstance(parent_ids,np.ndarray): parent_ids=parent_ids.astype(np.int64)
     ids = torch.as_tensor(parent_ids, device=device, dtype=torch.long)
     if ids.ndim != 1 or not ids.numel():
         raise ValueError("Expected nonempty one-dimensional parent IDs")
@@ -73,23 +76,23 @@ class Stage1DirectOccupancy(nn.Module):
         super().__init__()
         if objective not in {"fm", "bce"}:
             raise ValueError("objective must be fm or bce")
-        from fpsgen.voxel_shortcut.e2e_voxel_flow import EndToEndVoxelFlow
-        from fpsgen.voxel_shortcut.geometry import ShortcutGeometry
+        from .stage1_network import OccupancyGridSpec,OccupancyConditionEncoder,OccupancyUNet
         self.objective = objective
         self.hierarchy_geometry = geometry
         nx, ny, nz = geometry.parent_resolution
-        self.geometry = ShortcutGeometry(
+        if tuple(geometry.parent_resolution)!=(384,384,32) or tuple(geometry.child_split)!=(2,2,2):
+            raise ValueError('This independent Stage1 is fixed to384+8way')
+        self.geometry = OccupancyGridSpec(
             x_min=geometry.origin[0], y_min=geometry.origin[1], z_min=geometry.origin[2],
             x_max=geometry.maximum[0], y_max=geometry.maximum[1], z_max=geometry.maximum[2],
             nx=nx, ny=ny, nz=nz, xy_radius=geometry.sphere_radius,
             sphere_radius=geometry.sphere_radius)
-        self.net = EndToEndVoxelFlow(
-            self.geometry, {"widths": list(widths), "condition_channels": 128,
-                       "embed_width": 128,
-                       "activation_checkpointing": activation_checkpointing})
+        self.encoder=OccupancyConditionEncoder(self.geometry,activation_checkpointing)
+        self.flow=OccupancyUNet(objective,widths,activation_checkpointing)
+        self.register_buffer('valid',self.geometry.field_mask(),persistent=False)
 
     def encode_condition(self, lidar_xyz):
-        return self.net.encode_condition(lidar_xyz)
+        return self.encoder(lidar_xyz)
 
     def forward(self, lidar_xyz, *, state=None, time=None, condition=None):
         if condition is None:
@@ -98,16 +101,12 @@ class Stage1DirectOccupancy(nn.Module):
         if self.objective == "fm":
             if state is None or time is None:
                 raise ValueError("FM requires state and time")
-            prediction = self.net.velocity(
-                state, time, 0.0, condition, observed, instantaneous=True)
+            prediction = self.flow(state,observed,condition,time)
         else:
             if state is not None or time is not None:
                 raise ValueError("BCE is deterministic and does not accept x_t/t")
-            observed_float = observed.float()
-            prediction = self.net.flow(
-                observed_float, 0.0, 0.0, condition, observed, instantaneous=True)
-            prediction = prediction * self.net.valid
-        return prediction
+            prediction = self.flow(torch.zeros_like(observed,dtype=torch.float32),observed,condition)
+        return prediction*self.valid
 
     @torch.no_grad()
     def sample(self, lidar_xyz, *, generator=None, nfe=1, condition=None):
@@ -115,18 +114,17 @@ class Stage1DirectOccupancy(nn.Module):
             condition = self.encode_condition(lidar_xyz)
         if self.objective == "bce":
             logits = self(lidar_xyz, condition=condition)
-            return logits.sigmoid() * self.net.valid, logits
+            return logits.sigmoid() * self.valid, logits
         if nfe not in (1, 2, 4, 8, 16) or generator is None:
             raise ValueError("FM sampling requires allowed NFE and seeded generator")
         source = torch.randn(
             (1, 1, *self.geometry.field_shape), device=lidar_xyz.device,
-            dtype=torch.float32, generator=generator) * self.net.valid
+            dtype=torch.float32, generator=generator) * self.valid
         observed = self.geometry.observed_mask(lidar_xyz)
         current = source
         for step in range(nfe):
-            v = self.net.velocity(
-                current, float(step) / nfe, 0.0, condition, observed, instantaneous=True)
+            v=self.flow(current,observed,condition,current.new_tensor(float(step)/nfe))*self.valid
             current = current + v.float() / nfe
         # Uncalibrated occupancy score. Final threshold must be chosen on development.
-        score = ((current.float() + 1) * 0.5).clamp(0, 1) * self.net.valid
+        score = ((current.float() + 1) * 0.5).clamp(0, 1) * self.valid
         return score, current
