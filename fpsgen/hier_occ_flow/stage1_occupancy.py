@@ -74,10 +74,17 @@ class Stage1DirectOccupancy(nn.Module):
         if objective not in {"fm", "bce"}:
             raise ValueError("objective must be fm or bce")
         from fpsgen.voxel_shortcut.e2e_voxel_flow import EndToEndVoxelFlow
+        from fpsgen.voxel_shortcut.geometry import ShortcutGeometry
         self.objective = objective
-        self.geometry = geometry
+        self.hierarchy_geometry = geometry
+        nx, ny, nz = geometry.parent_resolution
+        self.geometry = ShortcutGeometry(
+            x_min=geometry.origin[0], y_min=geometry.origin[1], z_min=geometry.origin[2],
+            x_max=geometry.maximum[0], y_max=geometry.maximum[1], z_max=geometry.maximum[2],
+            nx=nx, ny=ny, nz=nz, xy_radius=geometry.sphere_radius,
+            sphere_radius=geometry.sphere_radius)
         self.net = EndToEndVoxelFlow(
-            geometry, {"widths": list(widths), "condition_channels": 128,
+            self.geometry, {"widths": list(widths), "condition_channels": 128,
                        "embed_width": 128,
                        "activation_checkpointing": activation_checkpointing})
 
