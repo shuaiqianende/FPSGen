@@ -1,0 +1,34 @@
+# Matched deterministic occupancy baseline; train using the same raw GT masks.
+experiment: stage1_occ384_bce
+geometry: geometry_384_8way.yaml
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: experiments/hier_occ_flow/occ384_full/train
+development_dataset: experiments/hier_occ_flow/occ384_full/development
+model:
+  objective: bce
+  widths: [8, 16, 32, 64]
+  activation_checkpointing: true
+training:
+  successful_updates: 100000
+  seed: 20261016
+  batch_per_gpu: 1
+  physical_gpus: [2, 3]
+  lr_encoder: 0.0001
+  lr_flow: 0.0002
+  precision: fp16
+  warmup_updates: 2000
+  checkpoint_every: 1000
+  validation_every: 1000
+validation:
+  primary_metric: parent_occupancy_f1
+  selection_split: development
+  target_definition: raw_pre_poisson_surface_hit
+  no_seq08_tuning: true
+  threshold: 0.5
+gates:
+  full_preprocessing: required
+  gpu_memory_and_ddp_smoke: required
+  overfit_small_frames: required
+  1000_update_pilot: required
+  gpu_student_non_interference: required
+  formal_ready: false

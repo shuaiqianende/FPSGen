@@ -1,0 +1,125 @@
+"""384-grid direct surface-hit occupancy objectives over the existing VoxDet+3D UNet.
+
+This is a *new* occupancy objective. It must never load historical count-mapping
+weights as an occupancy head or interpret Poisson counts as raw-map hits.
+"""
+import torch
+from torch import nn
+from torch.nn import functional as F
+
+
+def ids_to_dense_occupancy(parent_ids, geometry, *, device=None):
+    """Convert sorted sparse X-fastest parent IDs to [1,1,Z,Y,X] binary targets."""
+    ids = torch.as_tensor(parent_ids, device=device, dtype=torch.long)
+    if ids.ndim != 1 or not ids.numel():
+        raise ValueError("Expected nonempty one-dimensional parent IDs")
+    if bool(((ids < 0) | (ids >= geometry.num_parents)).any()):
+        raise ValueError("Parent ID outside configured coarse grid")
+    if len(ids) > 1 and bool((ids[1:] <= ids[:-1]).any()):
+        raise ValueError("Parent IDs must be strictly increasing and unique")
+    nx, ny, nz = geometry.parent_resolution
+    field = torch.zeros((1, 1, nz, ny, nx), device=ids.device, dtype=torch.float32)
+    field.view(-1)[ids] = 1.0
+    return field
+
+
+def occupancy_flow_pair(occupied, valid_mask, *, generator, time=None):
+    """Gaussian -> symmetric binary occupation; uniform scene-shared t."""
+    if generator is None:
+        raise ValueError("Explicit RNG is required")
+    if occupied.ndim != 5 or occupied.shape != valid_mask.shape:
+        raise ValueError("Dense occupancy and ROI mask shape mismatch")
+    if bool(((occupied != 0) & (occupied != 1)).any()):
+        raise ValueError("Occupancy must be binary")
+    valid = valid_mask.bool()
+    if not bool(valid.any()):
+        raise ValueError("No valid voxels")
+    if bool((occupied.bool() & ~valid).any()):
+        raise ValueError("GT contains occupied voxels outside representation ROI")
+    x1 = (2.0 * occupied.float() - 1.0) * valid
+    x0 = torch.randn(x1.shape, device=x1.device, dtype=x1.dtype, generator=generator) * valid
+    if time is None:
+        time = torch.rand((1,), device=x1.device, generator=generator)
+    if time.numel() != 1 or not bool(((time >= 0) & (time <= 1)).all()):
+        raise ValueError("A single time in [0,1] is required")
+    time = time.reshape(1)
+    return {"state": (1 - time) * x0 + time * x1,
+            "velocity": x1 - x0, "source": x0, "target": x1, "time": time}
+
+
+def masked_occ_loss(prediction, target, valid_mask, *, objective):
+    if prediction.shape != target.shape or target.shape != valid_mask.shape:
+        raise ValueError("Prediction/target/ROI mask mismatch")
+    valid = valid_mask.bool()
+    if objective == "fm":
+        per_voxel = (prediction.float() - target.float()).square()
+    elif objective == "bce":
+        per_voxel = F.binary_cross_entropy_with_logits(
+            prediction.float(), target.float(), reduction="none")
+    else:
+        raise ValueError("Expected fm or bce objective")
+    return (per_voxel * valid).sum() / valid.sum().clamp_min(1)
+
+
+class Stage1DirectOccupancy(nn.Module):
+    """Trainable LiDAR encoder plus full-resolution occupancy FM or BCE.
+
+    No GT ever reaches encode_condition or the model's forward velocity.
+    The Gaussian bridge is used ONLY for the FM objective, not for direct BCE.
+    """
+
+    def __init__(self, geometry, *, objective="fm", widths=(8, 16, 32, 64),
+                 activation_checkpointing=True):
+        super().__init__()
+        if objective not in {"fm", "bce"}:
+            raise ValueError("objective must be fm or bce")
+        from fpsgen.voxel_shortcut.e2e_voxel_flow import EndToEndVoxelFlow
+        self.objective = objective
+        self.geometry = geometry
+        self.net = EndToEndVoxelFlow(
+            geometry, {"widths": list(widths), "condition_channels": 128,
+                       "embed_width": 128,
+                       "activation_checkpointing": activation_checkpointing})
+
+    def encode_condition(self, lidar_xyz):
+        return self.net.encode_condition(lidar_xyz)
+
+    def forward(self, lidar_xyz, *, state=None, time=None, condition=None):
+        if condition is None:
+            condition = self.encode_condition(lidar_xyz)
+        observed = self.geometry.observed_mask(lidar_xyz)
+        if self.objective == "fm":
+            if state is None or time is None:
+                raise ValueError("FM requires state and time")
+            prediction = self.net.velocity(
+                state, time, 0.0, condition, observed, instantaneous=True)
+        else:
+            if state is not None or time is not None:
+                raise ValueError("BCE is deterministic and does not accept x_t/t")
+            observed_float = observed.float()
+            prediction = self.net.flow(
+                observed_float, 0.0, 0.0, condition, observed, instantaneous=True)
+            prediction = prediction * self.net.valid
+        return prediction
+
+    @torch.no_grad()
+    def sample(self, lidar_xyz, *, generator=None, nfe=1, condition=None):
+        if condition is None:
+            condition = self.encode_condition(lidar_xyz)
+        if self.objective == "bce":
+            logits = self(lidar_xyz, condition=condition)
+            return logits.sigmoid() * self.net.valid, logits
+        if nfe not in (1, 2, 4, 8, 16) or generator is None:
+            raise ValueError("FM sampling requires allowed NFE and seeded generator")
+        source = torch.randn(
+            (1, 1, *self.geometry.field_shape), device=lidar_xyz.device,
+            dtype=torch.float32, generator=generator) * self.net.valid
+        observed = self.geometry.observed_mask(lidar_xyz)
+        current = source
+        for step in range(nfe):
+            v = self.net.velocity(
+                current, float(step) / nfe, 0.0, condition, observed, instantaneous=True)
+            current = current + v.float() / nfe
+        # Uncalibrated occupancy score. Final threshold must be chosen on development.
+        score = ((current.float() + 1) * 0.5).clamp(0, 1) * self.net.valid
+        return score, current
