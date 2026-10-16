@@ -81,8 +81,12 @@ def assemble(root,split,g,source_sha,expected):
 def main():
     p=argparse.ArgumentParser(__doc__);p.add_argument('--output',type=Path,required=True);p.add_argument('--manifest',type=Path,required=True)
     p.add_argument('--train-source',type=Path,required=True);p.add_argument('--workers',type=int,default=8)
+    p.add_argument('--lookup-audit',type=Path,default=Path('experiments/hier_occ_flow/viewpoint_lookup_audit.json'))
     p.add_argument('--data-root',type=Path,default=Path('/data-12/M2024-HWZ/KITTI_Odometry'));args=p.parse_args()
     if not 1<=args.workers<=8:raise ValueError('CPU worker budget1–8')
+    lookup=json.loads(args.lookup_audit.read_text())
+    if lookup.get('status')!='PASS' or len(lookup.get('rows',[]))<4 or lookup['lookup_code_sha256']!=file_sha(ROOT/'fpsgen/hier_occ_flow/viewpoint_lookup.py'):
+        raise ValueError('Exact real-frame lookup equivalence must pass before acceleration')
     splits=json.loads(args.manifest.read_text());root=args.output;root.mkdir(parents=True,exist_ok=True)
     source_path=root/'source_manifest.json'
     if source_path.exists():source=json.loads(source_path.read_text())
@@ -93,6 +97,10 @@ def main():
         atomic_json(source_path,source)
     if source['split_sha256']!=file_sha(args.manifest) or source['train_source']!=json.loads(args.train_source.read_text()):raise ValueError('Source snapshot changed')
     source_sha=file_sha(source_path);jobs={};keys=[]
+    with (root/'implementation_history.jsonl').open('a') as log:
+        log.write(json.dumps({'epoch_time':time.time(),'source_manifest_sha256':source_sha,
+            'lookup_equivalence_audit_sha256':file_sha(args.lookup_audit),
+            'preparation_code_sha256':file_sha(Path(__file__)),'lookup_code_sha256':lookup['lookup_code_sha256']})+'\n')
     for split,expected in (('train',17870),('development',900)):
         if len(splits[split])!=expected:raise ValueError('Wrong frozen split')
         keys.append({(r['sequence'],r['frame']) for r in splits[split]})

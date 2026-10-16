@@ -35,6 +35,7 @@ def validate_config(cfg):
     if g.parent_resolution!=(384,384,32) or g.child_split!=(2,2,2): raise ValueError('384+8way is locked')
     if cfg['model'].get('initialization')!='scratch' or cfg['model'].get('pretrained_encoder') is not None:
         raise ValueError('Scratch only; historical model weights prohibited')
+    if cfg['model'].get('input_feature_version')!='coarse_f64_v1':raise ValueError('Require geometry-audited float64 coarse indexing')
     objective=cfg['model']['objective']
     if objective not in ('fm','bce') or cfg.get('loss')!={objective:1.0}: raise ValueError('Only pure FM or direct BCE loss allowed')
     if objective=='fm' and cfg.get('flow')!={'source':'gaussian','sigma':1.0,'target':'binary_symmetric'}:
@@ -208,9 +209,15 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                 from .stage1_evaluation import evaluate_stage1
                 frames=None if successful%val['full_every']==0 else val['light_frames']
                 use_ema=ema is not None and val.get('use_ema',True)
-                result=evaluate_stage1(ema if use_ema else raw,cfg,g,device,max_frames=frames)
+                sample_dir=output/'validation'/f'update_{successful:06d}_sample' if val.get('save_sample') else None
+                result=evaluate_stage1(ema if use_ema else raw,cfg,g,device,max_frames=frames,sample_output=sample_dir)
                 result.update(successful_updates=successful,ema_used=use_ema)
                 atomic_json(output/'validation'/f'update_{successful:06d}.json',result)
+                if successful==steps and val.get('train_eval_at_end'):
+                    diagnostic=copy.deepcopy(cfg);diagnostic['development_dataset']=cfg['train_dataset']
+                    train_metrics=evaluate_stage1(ema if use_ema else raw,diagnostic,g,device)
+                    train_metrics.update(scope='training_set_overfit_diagnostic',successful_updates=successful,ema_used=use_ema)
+                    atomic_json(output/'validation'/f'train_update_{successful:06d}.json',train_metrics)
             if world>1: torch.distributed.barrier()
             restore_rng(state,generator,device)
         if stopped[0]: break

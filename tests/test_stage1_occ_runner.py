@@ -15,7 +15,7 @@ from fpsgen.hier_occ_flow.stage1_occupancy import masked_occ_loss
 
 def config():
     return {'geometry':{'parent_resolution':[384,384,32],'child_split':[2,2,2]},
-        'model':{'objective':'fm','initialization':'scratch','pretrained_encoder':None},
+        'model':{'objective':'fm','initialization':'scratch','pretrained_encoder':None,'input_feature_version':'coarse_f64_v1'},
         'loss':{'fm':1.},'flow':{'source':'gaussian','sigma':1.,'target':'binary_symmetric'},
         'training':{'physical_gpus':[2,3],'batch_per_gpu':1,'precision':'fp16','successful_updates':100000}}
 
@@ -63,6 +63,16 @@ def test_new_roi_agrees_with_open_sphere_and_height():
     spec=OccupancyGridSpec(nx=384,ny=384,nz=32)
     xyz=torch.tensor([[0.,0.,-4.],[0.,0.,4.4],[50.,0.,0.],[0.,0.,0.],[49.9,0.,4.]])
     assert spec.valid_points(xyz).tolist()==[False,False,False,True,False]
+
+
+def test_tokenizer_coarse_indices_use_configured_precision():
+    from fpsgen.hier_occ_flow.stage1_network import occupancy_lidar_features
+    spec=OccupancyGridSpec(nx=384,ny=384,nz=32)
+    xyz=torch.tensor([[.5208333,0.,0.],[.5208334,0.,0.],[0.,.5208333,-3.9]],dtype=torch.float32)
+    features,indices=occupancy_lidar_features(xyz,spec)
+    expected=torch.floor((xyz.double()-xyz.new_tensor(spec.origin,dtype=torch.float64))/(xyz.new_tensor(spec.size,dtype=torch.float64)*2)).int()
+    assert torch.equal(indices[0][0],expected)
+    assert features.shape==(1,1,3,6)
 
 
 def test_cpu_state_roundtrip_rejects_historical_resume(tmp_path):

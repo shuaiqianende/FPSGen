@@ -25,8 +25,11 @@ def read_rows(path):
 
 
 def live_processes(output):
-    process=subprocess.check_output(['ps','-eo','pid,args'],text=True)
-    return [line.strip() for line in process.splitlines() if 'train_stage1_occ.py' in line and str(output) in line]
+    process=subprocess.check_output(['ps','-eo','pid,comm,args'],text=True)
+    paths=(str(output),os.path.relpath(output.resolve(),ROOT))
+    return [line.strip() for line in process.splitlines() if len(line.split(None,2))==3
+        and line.split(None,2)[1].startswith('python') and 'train_stage1_occ.py' in line
+        and any(path in line for path in paths)]
 
 
 def snapshot(output):
@@ -49,20 +52,22 @@ def snapshot(output):
 def main():
     p=argparse.ArgumentParser(__doc__);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--report',type=Path,required=True);p.add_argument('--observe',action='store_true');p.add_argument('--minutes',type=float,default=30)
-    args=p.parse_args();events=[];begin=None
+    p.add_argument('--wait-for-start',action='store_true');p.add_argument('--start-timeout',type=float,default=300)
+    args=p.parse_args();events=[];begin=None;waiting_since=time.monotonic()
     if args.observe and args.minutes<30:raise ValueError('Formal observation gate requires at least30 minutes')
     while True:
         row=snapshot(args.output);events.append(row)
         if begin is None and row['actual_training_observed']:begin=time.monotonic()
         duration=0 if begin is None else time.monotonic()-begin
         status='NOT_STARTED' if begin is None else 'OBSERVING'
-        if args.observe and (begin is None or not row['processes']):status='BLOCKED_NO_LIVE_FORMAL_TRAINING'
+        if args.observe and (begin is None or not row['processes']):
+            status='WAITING_FOR_FIRST_SUCCESSFUL_UPDATE' if begin is None and args.wait_for_start and time.monotonic()-waiting_since<args.start_timeout else 'BLOCKED_NO_LIVE_FORMAL_TRAINING'
         if duration>=args.minutes*60:status='OBSERVED_REQUESTED_DURATION'
         atomic_json(args.report,{'status':status,'actual_observed_seconds':duration,'events':events,
             'formal_training_started':row['actual_training_observed'],'process_alive':bool(row['processes']),
             'first30min_complete':args.observe and duration>=1800 and bool(row['processes'])})
         print(f"status={status} observed_seconds={duration:.1f} update={row['successful_updates']}",flush=True)
         if not args.observe or status.startswith('BLOCKED') or status=='OBSERVED_REQUESTED_DURATION':break
-        time.sleep(60)
+        time.sleep(1 if begin is None else 60)
 
 if __name__=='__main__':main()

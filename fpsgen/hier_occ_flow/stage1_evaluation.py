@@ -32,7 +32,7 @@ def summarize(rows):
 
 
 @torch.no_grad()
-def evaluate_stage1(model,cfg,geometry,device,*,max_frames=None):
+def evaluate_stage1(model,cfg,geometry,device,*,max_frames=None,sample_output=None):
     was_training=model.training; model.eval()
     try:
         ds=SparseShardDataset(cfg['development_dataset'],geometry,verify=False)
@@ -59,6 +59,15 @@ def evaluate_stage1(model,cfg,geometry,device,*,max_frames=None):
                 sampling_seconds=time.perf_counter()-tick;metric_start=time.perf_counter();score_cpu=score.float().cpu().numpy()
                 metrics=parent_metrics(score_cpu,record,geometry,valid_cpu,val['threshold'])
                 sweep={str(t):parent_metrics(score_cpu,record,geometry,valid_cpu,t) for t in thresholds}
+                if sample_output is not None and index==indices[0] and nfe==val.get('sample_nfe',4):
+                    dest=Path(sample_output);dest.mkdir(parents=True,exist_ok=True)
+                    np.savez_compressed(dest/'fixed_sample_occupancy_score.npz',score=score_cpu[0,0])
+                    np.save(dest/'fixed_sample_parent_ids.npy',np.flatnonzero((score_cpu.ravel()>val['threshold'])&valid_cpu.ravel()).astype(np.uint32),allow_pickle=False)
+                    from .storage import atomic_json
+                    atomic_json(dest/'fixed_sample_manifest.json',{'sequence':record['sequence'],'frame':record['frame'],
+                        'input':str(path),'geometry_sha256':geometry.sha256,'velocity_nfe':nfe,
+                        'prediction_condition':'LiDAR XYZ and seeded Gaussian only','gt_used_for_generation':False,
+                        'threshold':val['threshold'],'target_definition':'raw_pre_poisson_surface_hit'})
                 rows[str(nfe)].append({'sequence':record['sequence'],'frame':record['frame'],**metrics,
                     'encoder_seconds':encoder_seconds,'sampling_seconds':sampling_seconds,
                     'metrics_seconds':time.perf_counter()-metric_start,

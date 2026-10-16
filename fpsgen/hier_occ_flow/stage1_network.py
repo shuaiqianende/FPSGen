@@ -7,7 +7,7 @@ experiment's missing module. Construction only initializes random parameters.
 import torch
 from torch import nn
 import torch.nn.functional as F
-from fpsgen.voxel_point.voxdet_density import VoxDetDensity, lidar_input_features
+from fpsgen.voxel_point.voxdet_density import VoxDetDensity
 from fpsgen.voxel_shortcut.geometry import ShortcutGeometry
 from fpsgen.voxel_shortcut.checkpointing import checkpoint_once_batchnorm
 from fpsgen.voxel_shortcut.shortcut_unet import FilmBlock, batch_scalar
@@ -18,6 +18,19 @@ class OccupancyGridSpec(ShortcutGeometry):
         p=xyz.double()
         return (torch.isfinite(p).all(-1) & (p>p.new_tensor(self.origin)).all(-1)
                 & (p<p.new_tensor(self.maximum)).all(-1) & (p.square().sum(-1)<self.sphere_radius**2))
+
+
+def occupancy_lidar_features(xyz,spec):
+    """Same six features, with exact configured float64 coarse-cell indexing."""
+    if xyz.ndim!=2 or xyz.shape[1]!=3 or not bool(torch.isfinite(xyz).all()):raise ValueError('Finite XYZ only')
+    points=xyz[spec.valid_points(xyz)].float()
+    if len(points)<2:raise ValueError('Too few valid partial LiDAR points')
+    origin=points.new_tensor(spec.origin,dtype=torch.float64)
+    size=points.new_tensor(spec.size,dtype=torch.float64)*2
+    indices=torch.floor((points.double()-origin)/size).int()
+    centers=((indices.double()+.5)*size+origin).float()
+    features=torch.cat((points-centers,points[:,:2],points.norm(dim=-1,keepdim=True)/spec.xy_radius),-1)
+    return features[None,None],[indices[None]]
 
 
 class OccupancyConditionEncoder(VoxDetDensity):
@@ -42,7 +55,7 @@ class OccupancyConditionEncoder(VoxDetDensity):
 
     def forward(self,lidar_xyz):
         scenes=[lidar_xyz] if isinstance(lidar_xyz,torch.Tensor) else list(lidar_xyz)
-        token=torch.cat([self.lidar_tokenizer(*lidar_input_features(x,self.spec)[:2]) for x in scenes],0)
+        token=torch.cat([self.lidar_tokenizer(*occupancy_lidar_features(x,self.spec)) for x in scenes],0)
         pyramid=self._run(self.voxel_backbone,token)
         voxel=self._run(self.voxel_neck,pyramid)[0]
         local=self._run(self.local_backbone,voxel)
