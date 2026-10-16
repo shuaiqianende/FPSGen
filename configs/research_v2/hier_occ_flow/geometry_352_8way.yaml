@@ -1,0 +1,5 @@
+parent_resolution: [352, 352, 32]
+child_split: [2, 2, 2]
+origin: [-50.0, -50.0, -4.0]
+maximum: [50.0, 50.0, 4.4]
+sphere_radius: 50.0
