@@ -41,7 +41,7 @@ def evaluate_stage1(model,cfg,geometry,device,*,max_frames=None,sample_output=No
         indices=np.linspace(0,len(ds)-1,budget,dtype=int)
         nfes=val['nfes'] if model.objective=='fm' else [1]
         rows={str(n):[] for n in nfes}; thresholds=val.get('threshold_sweep',[val['threshold']]);valid_cpu=model.valid.cpu().numpy()
-        for index in indices:
+        for position,index in enumerate(indices):
             record=ds[int(index)]; path=Path(cfg['data_root'])/record['sequence']/'input_'/f"{record['frame']:06d}.npy"
             xyz=torch.from_numpy(input_xyz(path)).to(device)
             start=time.perf_counter()
@@ -74,6 +74,8 @@ def evaluate_stage1(model,cfg,geometry,device,*,max_frames=None,sample_output=No
                     'actual_velocity_nfe':nfe if model.objective=='fm' else 0,
                     'classifier_forwards':1 if model.objective=='bce' else 0,
                     'thresholds':sweep})
+            if position==0 or (position+1)%10==0 or position+1==len(indices):
+                print(f'validation_scenes={position+1}/{len(indices)} objective={model.objective}',flush=True)
         return {'objective':model.objective,'threshold':val['threshold'],'threshold_status':'uncalibrated_development_diagnostic',
             'target':'raw_pre_poisson_surface_hit','geometry_sha256':geometry.sha256,
             'nfe_results':{k:{'summary':summarize(v),'rows':v} for k,v in rows.items()}}

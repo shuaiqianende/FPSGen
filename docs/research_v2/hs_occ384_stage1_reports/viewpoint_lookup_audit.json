@@ -1,0 +1,39 @@
+{
+  "lookup_code_sha256": "b992a0bb388214cd29fc498cd48e7d3504c32f7f5be8bfa7a365fbf17fd56e8b",
+  "rows": [
+    {
+      "exact_array_equal": true,
+      "frame": 0,
+      "lookup_seconds": 1.4797848109155893,
+      "reference_seconds": 4.452418824657798,
+      "rows": 1322038,
+      "sequence": "00"
+    },
+    {
+      "exact_array_equal": true,
+      "frame": 75,
+      "lookup_seconds": 0.7984274234622717,
+      "reference_seconds": 2.261883784085512,
+      "rows": 1076136,
+      "sequence": "00"
+    },
+    {
+      "exact_array_equal": true,
+      "frame": 200,
+      "lookup_seconds": 0.9284246005117893,
+      "reference_seconds": 2.825827896595001,
+      "rows": 1575580,
+      "sequence": "09"
+    },
+    {
+      "exact_array_equal": true,
+      "frame": 550,
+      "lookup_seconds": 0.4307144805788994,
+      "reference_seconds": 0.8227949198335409,
+      "rows": 613364,
+      "sequence": "10"
+    }
+  ],
+  "scope": "raw candidate arrays including row order and float32 coordinates",
+  "status": "PASS"
+}

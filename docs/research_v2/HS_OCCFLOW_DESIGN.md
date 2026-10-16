@@ -1,5 +1,10 @@
 # Hierarchical Sparse Occupancy Flow — implementation and execution state
 
+> On `research/hs-occflow-384-stage1occ`, the explicit user-selected main geometry
+> is now384+8-way and Stage1 learns direct raw-map occupancy. The256+18 preference
+> below is historical initial-preflight evidence. See the
+> [384 implementation status](HS_OCCFLOW_384_STAGE1_GPU_PREFLIGHT.md).
+
 This is an independent research branch, `research/hs-occflow`, based on
 `612cc976cc7f632eb1e1e1e3a765ff546fcf1acc`. Its worktree is
 `/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow`. Historical code, data, experiments,

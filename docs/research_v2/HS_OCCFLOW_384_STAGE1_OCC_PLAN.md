@@ -1,5 +1,10 @@
 # 384-grid Stage1 direct occupancy: implementation status and execution gates
 
+> Historical prototype status at `03ad22d`. Current implemented runner and
+> measured progress are in [GPU preflight](HS_OCCFLOW_384_STAGE1_GPU_PREFLIGHT.md),
+> [data](HS_OCCFLOW_384_STAGE1_DATA.md), and [pilots](HS_OCCFLOW_384_STAGE1_PILOT.md).
+> The original limitations below are retained as the prototype audit trail.
+
 Research branch: `research/hs-occflow-384-stage1occ` (based on `research/hs-occflow`). This is a **prototype only**, not a running training job and not a validated 100K model.
 
 ## Frozen geometry proposal

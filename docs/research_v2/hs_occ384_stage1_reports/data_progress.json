@@ -1,0 +1,18 @@
+{
+  "committed_frames": 7898,
+  "fine_grid": [
+    768,
+    768,
+    64
+  ],
+  "full_dataset_ready": false,
+  "guard": 360,
+  "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel",
+  "preprocessing_tmux": "fpsgen_occ384_rawmap_parallel",
+  "requested_development": 900,
+  "requested_train": 17870,
+  "seq08_excluded": true,
+  "split_manifest_sha256": "967e259acc48842d1c68159b358a2fdc187a09bc0339b1758a9257a21ee25a49",
+  "voxelized_frames": 8017,
+  "workers": 8
+}

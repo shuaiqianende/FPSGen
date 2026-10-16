@@ -1,0 +1,38 @@
+[
+  {
+    "last_update": 200,
+    "model": "fm",
+    "scope": "overfit8_pre_f64",
+    "summary": {
+      "attempts": 201,
+      "formal_training_complete": false,
+      "seconds": 257.0749540440738,
+      "status": "COMPLETE_REQUESTED_BUDGET",
+      "successful_updates": 200
+    }
+  },
+  {
+    "last_update": 700,
+    "model": "fm",
+    "scope": "pilot_f64_dev8",
+    "summary": null
+  },
+  {
+    "last_update": 200,
+    "model": "bce",
+    "scope": "overfit8_pre_f64",
+    "summary": {
+      "attempts": 200,
+      "formal_training_complete": false,
+      "seconds": 246.0367848984897,
+      "status": "COMPLETE_REQUESTED_BUDGET",
+      "successful_updates": 200
+    }
+  },
+  {
+    "last_update": 704,
+    "model": "bce",
+    "scope": "pilot_f64_dev8",
+    "summary": null
+  }
+]

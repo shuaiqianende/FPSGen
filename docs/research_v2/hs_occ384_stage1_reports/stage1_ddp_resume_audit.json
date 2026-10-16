@@ -1,0 +1,96 @@
+{
+  "atol": 0.001,
+  "bit_identical_claim": false,
+  "continuous_updates": 32,
+  "resumed_updates": 32,
+  "rows": {
+    "attempts": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "ema": {
+      "failed_paths": [
+        "/encoder.local_backbone.layers.1.0.conv1.bn.running_mean"
+      ],
+      "maximum_float_abs_difference": 0.012308120727539062,
+      "pass": false
+    },
+    "frame_order": {
+      "pass": true
+    },
+    "initialization": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "model": {
+      "failed_paths": [
+        "/encoder.voxel_backbone.layers.0.0.conv2.bn.running_mean",
+        "/encoder.voxel_backbone.layers.0.0.conv2.bn.running_var",
+        "/encoder.voxel_backbone.layers.0.0.downsample.bn.running_mean",
+        "/encoder.voxel_backbone.layers.0.1.conv1.bn.running_mean",
+        "/encoder.voxel_backbone.layers.0.1.conv1.bn.running_var",
+        "/encoder.voxel_backbone.layers.0.1.conv2.bn.running_mean",
+        "/encoder.voxel_backbone.layers.0.1.conv2.bn.running_var",
+        "/encoder.voxel_backbone.layers.1.0.conv1.bn.running_mean",
+        "/encoder.voxel_backbone.layers.1.0.conv1.bn.running_var",
+        "/encoder.voxel_backbone.layers.1.0.conv2.bn.running_mean",
+        "/encoder.voxel_backbone.layers.1.0.conv2.bn.running_var",
+        "/encoder.voxel_backbone.layers.1.0.downsample.bn.running_mean",
+        "/encoder.voxel_backbone.layers.1.0.downsample.bn.running_var",
+        "/encoder.voxel_backbone.layers.1.1.conv1.bn.running_mean",
+        "/encoder.voxel_backbone.layers.1.1.conv1.bn.running_var",
+        "/encoder.voxel_backbone.layers.1.1.conv2.bn.running_mean",
+        "/encoder.voxel_backbone.layers.1.1.conv2.bn.running_var",
+        "/encoder.voxel_backbone.layers.2.0.conv1.bn.running_mean",
+        "/encoder.voxel_backbone.layers.2.0.conv1.bn.running_var",
+        "/encoder.voxel_backbone.layers.2.0.conv2.bn.running_mean",
+        "/encoder.voxel_backbone.layers.2.0.conv2.bn.running_var",
+        "/encoder.voxel_backbone.layers.2.0.downsample.bn.running_mean",
+        "/encoder.voxel_backbone.layers.2.0.downsample.bn.running_var",
+        "/encoder.voxel_backbone.layers.2.1.conv1.bn.running_mean",
+        "/encoder.voxel_backbone.layers.2.1.conv1.bn.running_var",
+        "/encoder.voxel_backbone.layers.2.1.conv2.bn.running_mean",
+        "/encoder.voxel_backbone.layers.2.1.conv2.bn.running_var",
+        "/encoder.local_backbone.layers.0.0.conv1.bn.running_mean",
+        "/encoder.local_backbone.layers.0.0.conv1.bn.running_var",
+        "/encoder.local_backbone.layers.0.0.conv2.bn.running_mean"
+      ],
+      "maximum_float_abs_difference": 1.0297183990478516,
+      "pass": false
+    },
+    "optimizer": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.000134345144033432,
+      "pass": true
+    },
+    "rank_rng": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "sampler": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "scaler": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "scheduler": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "successful_updates": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    }
+  },
+  "rtol": 0.01,
+  "status": "FAIL"
+}

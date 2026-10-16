@@ -35,16 +35,24 @@ def live_processes(output):
 def snapshot(output):
     rows=read_rows(output/'train_rank0.jsonl');successful=[r for r in rows if r.get('finite') and r['successful_updates']>0]
     recent=successful[-100:];losses=[r['loss'] for r in recent if r.get('loss') is not None]
+    loss_ema=None
+    for r in successful:
+        if r.get('loss') is not None:loss_ema=r['loss'] if loss_ema is None else .95*loss_ema+.05*r['loss']
     gpu=subprocess.run(['nvidia-smi','--id=2,3','--query-gpu=index,memory.used,memory.free,utilization.gpu','--format=csv,noheader'],capture_output=True,text=True)
     result={'epoch_time':time.time(),'processes':live_processes(output),'gpu':gpu.stdout.strip(),'gpu_error':gpu.stderr.strip(),
         'disk_free_bytes':shutil.disk_usage(output if output.exists() else ROOT).free,
         'successful_updates':successful[-1]['successful_updates'] if successful else 0,
         'latest':successful[-1] if successful else None,'actual_training_observed':bool(successful),
         'last100_loss_mean':float(np.mean(losses)) if losses else None,
+        'loss_ema_alpha005':loss_ema,
         'last50_loss_mean':float(np.mean(losses[-50:])) if losses else None,
         'loss_p50':float(np.percentile(losses,50)) if losses else None,'loss_p95':float(np.percentile(losses,95)) if losses else None,
         'mean_step_seconds':float(np.mean([r['seconds'] for r in recent])) if recent else None,
         'attempts':rows[-1]['attempts'] if rows else 0,'gradient_audits':[r for r in recent if r.get('gradient_details')],
+        'invalid_gradient_attempts':sum(not r.get('finite',False) for r in rows),
+        'nonfinite_loss_incidents':sum(r.get('loss') is None for r in rows),
+        'updates_per_second_including_intervals':(recent[-1]['successful_updates']-recent[0]['successful_updates'])/(recent[-1]['epoch_time']-recent[0]['epoch_time']) if len(recent)>1 else None,
+        'mean_data_seconds':float(np.mean([r['data_seconds'] for r in recent])) if recent else None,
         'checkpoint_exists':(output/'checkpoints/resume_latest.pt').exists()}
     return result
 

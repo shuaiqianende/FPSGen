@@ -1,0 +1,102 @@
+{
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "rows": [
+    {
+      "all_online_parameters_trainable": true,
+      "condition_shapes_measured": false,
+      "ema_sha256": "b9e65c1732cdfb7f990e8b028455166c9c7810b4c665fd925c1942651202d4b2",
+      "encoder_parameters": 19056568,
+      "expected_condition_zyx": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "flow_parameters": 524073,
+      "full_network_forward_executed": false,
+      "mask_shape": [
+        1,
+        1,
+        32,
+        384,
+        384
+      ],
+      "model_sha256": "b9e65c1732cdfb7f990e8b028455166c9c7810b4c665fd925c1942651202d4b2",
+      "objective": "fm",
+      "optimizer_state_entries": 0,
+      "pretrained_parameters_loaded": 0,
+      "tokenizer_grid": [
+        192,
+        192,
+        16
+      ],
+      "valid_parent_cells": 3722136
+    },
+    {
+      "all_online_parameters_trainable": true,
+      "condition_shapes_measured": false,
+      "ema_sha256": "5e90eeb3f2246e642d6b4e1395696ee8036ec8998823ab4a0e896ae29f6d4b14",
+      "encoder_parameters": 19056568,
+      "expected_condition_zyx": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "flow_parameters": 503465,
+      "full_network_forward_executed": false,
+      "mask_shape": [
+        1,
+        1,
+        32,
+        384,
+        384
+      ],
+      "model_sha256": "5e90eeb3f2246e642d6b4e1395696ee8036ec8998823ab4a0e896ae29f6d4b14",
+      "objective": "bce",
+      "optimizer_state_entries": 0,
+      "pretrained_parameters_loaded": 0,
+      "tokenizer_grid": [
+        192,
+        192,
+        16
+      ],
+      "valid_parent_cells": 3722136
+    }
+  ],
+  "status": "PASS_CPU_CONSTRUCTION_ONLY"
+}

@@ -33,6 +33,8 @@ def state_sha(model):
 def validate_config(cfg):
     g=SparseHierarchyGeometry(**cfg['geometry'])
     if g.parent_resolution!=(384,384,32) or g.child_split!=(2,2,2): raise ValueError('384+8way is locked')
+    if g.origin!=(-50.,-50.,-4.) or g.maximum!=(50.,50.,4.4) or g.sphere_radius!=50.:
+        raise ValueError('World bounds and50m sphere are fixed for this protocol')
     if cfg['model'].get('initialization')!='scratch' or cfg['model'].get('pretrained_encoder') is not None:
         raise ValueError('Scratch only; historical model weights prohibited')
     if cfg['model'].get('input_feature_version')!='coarse_f64_v1':raise ValueError('Require geometry-audited float64 coarse indexing')
@@ -50,6 +52,7 @@ def validate_config(cfg):
 def verify_stage1_resume(value,identity):
     if value.get('identity')!=identity or value.get('initialization_mode')!='scratch':
         raise ValueError('Checkpoint experiment/config/data/geometry/world-size identity mismatch')
+    if value.get('parameter_sync_pass') is False:raise ValueError('Cannot resume a checkpoint with detected parameter desynchronization')
     return value
 
 
@@ -59,11 +62,16 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     train=cfg['training']; steps=train['successful_updates'] if max_updates is None else max_updates
     if not 0<steps<=train['successful_updates']: raise ValueError('max-updates may only shorten registered budget')
     if smoke and steps>32: raise ValueError('Smoke is limited to32 successful updates')
-    if steps>1000:
+    if steps>1000 or cfg['scope']=='formal':
         gate=json.loads(Path(cfg['engineering_gate']).read_text()) if cfg.get('engineering_gate') else {}
         required=('formal_ready','full_preprocessing','gpu_shapes','ddp_resume','fm_bce_overfit','pilot1000')
         if not all(gate.get(k) is True for k in required) or gate.get('geometry_sha256')!=g.sha256:
             raise ValueError('Formal Stage1 requires independently measured data/GPU/overfit/pilot gates')
+        config_sha=hashlib.sha256(json.dumps(cfg,sort_keys=True).encode()).hexdigest()
+        if gate.get('registered_config_sha256')!=config_sha:raise ValueError('Formal config changed after engineering gate freeze')
+        for key,split in (('train_dataset','train'),('development_dataset','development')):
+            if gate.get(split+'_manifest_sha256')!=file_sha(Path(cfg[key])/'manifest.json'):
+                raise ValueError('Formal dataset manifest changed after gate freeze')
     visible=os.environ.get('CUDA_VISIBLE_DEVICES','')
     if visible not in ('2','3','2,3'): raise ValueError('Only physical GPU2/3 allowed')
     rank=int(os.environ.get('RANK',0)); world=int(os.environ.get('WORLD_SIZE',1)); local=int(os.environ.get('LOCAL_RANK',0))
@@ -81,6 +89,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         if gate['status']!='AVAILABLE': raise RuntimeError('Allowed GPUs busy; existing training preserved')
     torch.cuda.set_device(local); device=torch.device('cuda',local)
     if world>1: torch.distributed.init_process_group('nccl')
+    if rank==0:print('phase=data_verify: checking sparse dataset versions and checksums',flush=True)
     ds=SparseShardDataset(cfg['train_dataset'],g,verify=True)
     dev=SparseShardDataset(cfg['development_dataset'],g,verify=True)
     train_keys={(r['sequence'].decode(),int(r['frame'])) for r in ds.index}
@@ -88,6 +97,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if (train_keys&dev_keys and cfg['scope']!='overfit') or any(s=='08' for s,f in train_keys|dev_keys):
         raise ValueError('Train/development leakage; only labeled overfit scope may evaluate training frames')
     if cfg['scope']=='formal' and (len(ds)!=17870 or len(dev)!=900): raise ValueError('Formal full split incomplete')
+    if rank==0:print(f'phase=data_verified train={len(ds)} development={len(dev)} target_updates={steps}',flush=True)
     identity={'experiment':'hs-occflow-stage1-occ384-v1','objective':cfg['model']['objective'],'geometry_sha256':g.sha256,
         'config_sha256':hashlib.sha256(json.dumps(cfg,sort_keys=True).encode()).hexdigest(),
         'train_manifest_sha256':file_sha(Path(cfg['train_dataset'])/'manifest.json'),
@@ -128,6 +138,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if rank==0:
         atomic_json(output/'config.json',cfg); atomic_json(output/'initialization_audit.json',initialization)
         atomic_json(output/'source_code_sha256.json',code_sha)
+        print(f'phase=model_ready initialization=scratch encoder_params={sum(p.numel() for p in raw.encoder.parameters())} flow_params={sum(p.numel() for p in raw.flow.parameters())}',flush=True)
     stopped=[False]
     def request_stop(signum,frame): stopped[0]=True
     old={s:signal.signal(s,request_stop) for s in (signal.SIGINT,signal.SIGTERM)}
@@ -135,13 +146,21 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         states=[None]*world; state=rng_state(generator,device)
         if world>1: torch.distributed.all_gather_object(states,state)
         else: states=[state]
+        local_hash={'online':state_sha(raw),'ema':state_sha(ema) if ema is not None else None}
+        hashes=[None]*world
+        if world>1:torch.distributed.all_gather_object(hashes,local_hash)
+        else:hashes=[local_hash]
+        sync_pass=len({h['online'] for h in hashes})==1 and len({h['ema'] for h in hashes})==1
+        if not sync_pass:stopped[0]=True
         if rank==0:
             atomic_checkpoint(output/'checkpoints'/name,{'identity':identity,'initialization_mode':'scratch',
                 'initialization':initialization,'model':raw.state_dict(),'ema':ema.state_dict() if ema is not None else None,
                 'optimizer':optimizer.state_dict(),'scheduler':scheduler.state_dict(),'scaler':scaler.state_dict(),
                 'successful_updates':successful,'attempts':attempts,'rank_rng':states,
                 'sampler':{'attempts':attempts,'world_size':world,'seed':train['seed']},'source_code_sha256':code_sha,
-                'git_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()})
+                'git_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+                'rank_model_hashes':hashes,'parameter_sync_pass':sync_pass})
+            print(f'checkpoint={output / "checkpoints" / name} update={successful} ranks_synchronized={sync_pass}',flush=True)
     if not resume: save('step000000.pt')
     modules={'encoder':raw.encoder,'flow':raw.flow,'velocity_head':raw.flow.output}
     if raw.objective=='fm': modules['time_embedding']=raw.flow.embedding
@@ -208,11 +227,13 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             if rank==0:
                 from .stage1_evaluation import evaluate_stage1
                 frames=None if successful%val['full_every']==0 else val['light_frames']
+                print(f'phase=validation update={successful} frames={frames if frames is not None else len(dev)}',flush=True)
                 use_ema=ema is not None and val.get('use_ema',True)
                 sample_dir=output/'validation'/f'update_{successful:06d}_sample' if val.get('save_sample') else None
                 result=evaluate_stage1(ema if use_ema else raw,cfg,g,device,max_frames=frames,sample_output=sample_dir)
                 result.update(successful_updates=successful,ema_used=use_ema)
                 atomic_json(output/'validation'/f'update_{successful:06d}.json',result)
+                print(f'validation update={successful} ema={use_ema} metrics='+str({k:v['summary']['macro'] for k,v in result['nfe_results'].items()}),flush=True)
                 if successful==steps and val.get('train_eval_at_end'):
                     diagnostic=copy.deepcopy(cfg);diagnostic['development_dataset']=cfg['train_dataset']
                     train_metrics=evaluate_stage1(ema if use_ema else raw,diagnostic,g,device)
