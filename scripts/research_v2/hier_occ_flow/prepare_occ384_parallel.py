@@ -55,7 +55,8 @@ def assemble(root,split,g,source_sha,expected):
     dest=root/split
     if (dest/'manifest.json').exists():
         ds=SparseShardDataset(dest,g,verify=True)
-        if len(ds)!=expected:raise ValueError('Existing assembled dataset is incomplete')
+        if len(ds)!=expected or ds.meta['source_manifest_sha256']!=source_sha:
+            raise ValueError('Existing assembled dataset is incomplete or from another source version')
         return
     dest.mkdir(exist_ok=True);shards=[];indices=[]
     for part in sorted((root/'parts').glob('*/'+split)):

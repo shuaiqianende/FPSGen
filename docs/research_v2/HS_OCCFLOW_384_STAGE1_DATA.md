@@ -10,9 +10,9 @@ are preserved; no seq08 is accessed. GT comes from `_full_candidate()` map pose,
 local crop, height and viewpoint support before Poisson/fixed-point processing.
 This is surface-hit occupancy, not verified solid occupancy or free space.
 
-Current snapshot: **8017 voxelized frames,
-7898 transactionally committed frames** out of18,770.
-Full data audit ready: **False**. Progress is a snapshot,
+Current snapshot: **18770 voxelized frames,
+18770 transactionally committed frames** out of18,770.
+Full data audit ready: **True**. Progress is a snapshot,
 not an assertion that the full train split is usable. Full Stage1 requires the
 assembled train/development manifests and successful full audit.
 

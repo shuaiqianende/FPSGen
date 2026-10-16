@@ -12,10 +12,16 @@
     }
   },
   {
-    "last_update": 700,
+    "last_update": 1000,
     "model": "fm",
     "scope": "pilot_f64_dev8",
-    "summary": null
+    "summary": {
+      "attempts": 1001,
+      "formal_training_complete": false,
+      "seconds": 1186.0655172020197,
+      "status": "COMPLETE_REQUESTED_BUDGET",
+      "successful_updates": 1000
+    }
   },
   {
     "last_update": 200,
@@ -30,9 +36,15 @@
     }
   },
   {
-    "last_update": 704,
+    "last_update": 1000,
     "model": "bce",
     "scope": "pilot_f64_dev8",
-    "summary": null
+    "summary": {
+      "attempts": 1000,
+      "formal_training_complete": false,
+      "seconds": 1157.9423560239375,
+      "status": "COMPLETE_REQUESTED_BUDGET",
+      "successful_updates": 1000
+    }
   }
 ]

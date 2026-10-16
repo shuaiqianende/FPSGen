@@ -35,6 +35,8 @@ training:
   ema_decay: 0.999
   gradient_audit_every: 50
   amp_initial_scale: 16384.0
+  optimizer: AdamW
+  scheduler: warmup_cosine
 validation:
   nfes:
   - 1
@@ -54,6 +56,8 @@ validation:
   no_seq08_tuning: true
   save_sample: true
   sample_nfe: 4
+  use_ema: false
+  compare_ema: true
 engineering_gate: experiments/hier_occ_flow/stage1_occ384_engineering_gate.json
 flow:
   source: gaussian

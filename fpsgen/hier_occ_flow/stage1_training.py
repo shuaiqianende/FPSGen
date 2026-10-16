@@ -37,6 +37,8 @@ def validate_config(cfg):
         raise ValueError('World bounds and50m sphere are fixed for this protocol')
     if cfg['model'].get('initialization')!='scratch' or cfg['model'].get('pretrained_encoder') is not None:
         raise ValueError('Scratch only; historical model weights prohibited')
+    allowed={'objective','initialization','pretrained_encoder','widths','activation_checkpointing','input_feature_version'}
+    if set(cfg['model'])-allowed:raise ValueError('Unsupported model options; init_cfg/load_from/pretrained adapters are prohibited')
     if cfg['model'].get('input_feature_version')!='coarse_f64_v1':raise ValueError('Require geometry-audited float64 coarse indexing')
     objective=cfg['model']['objective']
     if objective not in ('fm','bce') or cfg.get('loss')!={objective:1.0}: raise ValueError('Only pure FM or direct BCE loss allowed')
@@ -45,6 +47,8 @@ def validate_config(cfg):
     if cfg['training']['physical_gpus']!=[2,3] or cfg['training']['batch_per_gpu']!=1:
         raise ValueError('Validated starting configuration is GPU2/3 B1/rank')
     if cfg['training']['precision'] not in ('fp16','fp32'): raise ValueError('Unsupported precision')
+    if cfg['training'].get('optimizer','AdamW')!='AdamW' or cfg['training'].get('scheduler','warmup_cosine')!='warmup_cosine':
+        raise ValueError('This runner supports explicitly registered AdamW and warmup_cosine only')
     if cfg['training']['successful_updates']>100000: raise ValueError('Budget exceeds registration')
     return g
 
@@ -61,6 +65,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if not resume and any((output/'checkpoints').glob('*.pt')): raise FileExistsError('Fresh output already contains checkpoints')
     train=cfg['training']; steps=train['successful_updates'] if max_updates is None else max_updates
     if not 0<steps<=train['successful_updates']: raise ValueError('max-updates may only shorten registered budget')
+    if cfg['scope']=='formal' and (steps!=100000 or train['successful_updates']!=100000):
+        raise ValueError('Formal scope is the full100K budget; use a separately labeled smoke/pilot config for short runs')
     if smoke and steps>32: raise ValueError('Smoke is limited to32 successful updates')
     if steps>1000 or cfg['scope']=='formal':
         gate=json.loads(Path(cfg['engineering_gate']).read_text()) if cfg.get('engineering_gate') else {}
@@ -118,7 +124,9 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     scheduler=torch.optim.lr_scheduler.LambdaLR(optimizer,multiplier)
     scaler=torch.cuda.amp.GradScaler(enabled=train['precision']=='fp16',init_scale=train.get('amp_initial_scale',16384.))
     generator=torch.Generator(device=device).manual_seed(train['seed']+1000+rank)
-    successful=attempts=0; initialization={'initialization_mode':'scratch','pretrained_loaded':False,
+    successful=attempts=failures=0
+    counters={'clipping_events':0,'overflow_attempts':0,'invalid_attempts':0}
+    initialization={'initialization_mode':'scratch','pretrained_loaded':False,
         'loaded_pretrained_parameter_count':0,'optimizer_initial_state_entries':len(optimizer.state),
         'successful_updates':0,'initial_model_sha256':state_sha(raw),'ema_initialized_from':'current_random_online',
         'initial_ema_sha256':state_sha(ema) if ema is not None else None}
@@ -132,12 +140,18 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         scheduler.load_state_dict(value['scheduler']); scaler.load_state_dict(value['scaler'])
         if ema is not None: ema.load_state_dict(value['ema'],strict=True)
         successful=value['successful_updates']; attempts=value['attempts']; initialization=value['initialization']
+        failures=value.get('consecutive_failures',0);counters=value.get('monitor_counters',counters)
         restore_rng(value['rank_rng'][rank],generator,device)
     output.mkdir(parents=True,exist_ok=True)
     code_sha={p.name:file_sha(p) for p in Path(__file__).parent.glob('stage1*.py')}
+    launch_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     if rank==0:
         atomic_json(output/'config.json',cfg); atomic_json(output/'initialization_audit.json',initialization)
         atomic_json(output/'source_code_sha256.json',code_sha)
+        atomic_json(output/'launch_parameters.json',{'rank0_pid':os.getpid(),'parent_pid':os.getppid(),
+            'physical_gpus':list(map(int,visible.split(','))),'world_size':world,'scope':cfg['scope'],
+            'actual_update_budget':steps,'starting_successful_updates':successful,'resume':str(resume) if resume else None,
+            'epoch_time':time.time(),'identity':identity,'git_commit':launch_commit})
         print(f'phase=model_ready initialization=scratch encoder_params={sum(p.numel() for p in raw.encoder.parameters())} flow_params={sum(p.numel() for p in raw.flow.parameters())}',flush=True)
     stopped=[False]
     def request_stop(signum,frame): stopped[0]=True
@@ -157,8 +171,9 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                 'initialization':initialization,'model':raw.state_dict(),'ema':ema.state_dict() if ema is not None else None,
                 'optimizer':optimizer.state_dict(),'scheduler':scheduler.state_dict(),'scaler':scaler.state_dict(),
                 'successful_updates':successful,'attempts':attempts,'rank_rng':states,
+                'monitor_counters':counters,'consecutive_failures':failures,
                 'sampler':{'attempts':attempts,'world_size':world,'seed':train['seed']},'source_code_sha256':code_sha,
-                'git_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+                'git_commit':launch_commit,
                 'rank_model_hashes':hashes,'parameter_sync_pass':sync_pass})
             print(f'checkpoint={output / "checkpoints" / name} update={successful} ranks_synchronized={sync_pass}',flush=True)
     if not resume: save('step000000.pt')
@@ -166,11 +181,11 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if raw.objective=='fm': modules['time_embedding']=raw.flow.embedding
     samples={k:sample_parameters(m) for k,m in modules.items()}
     if ema is not None: samples['ema']=sample_parameters(ema)
-    raw.train(); failures=0; clipped=0; start=time.perf_counter(); log=(output/f'train_rank{rank}.jsonl').open('a',buffering=1)
+    raw.train(); start=time.perf_counter(); log=(output/f'train_rank{rank}.jsonl').open('a',buffering=1)
     while successful<steps:
         tick=time.perf_counter(); position=attempts*world+rank; epoch,index=divmod(position,len(ds))
         order=np.random.default_rng(train['seed']+epoch).permutation(len(ds)); record=ds[int(order[index])]
-        data_start=time.perf_counter()
+        data_start=tick  # include sampler and sparse mmap record retrieval above
         path=Path(cfg['data_root'])/record['sequence']/'input_'/f"{record['frame']:06d}.npy"
         xyz=torch.from_numpy(input_xyz(path)).to(device)
         target=ids_to_dense_occupancy(record['parent_ids'],g,device=device)
@@ -180,17 +195,19 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         with torch.autocast('cuda',dtype=torch.float16,enabled=scaler.is_enabled()):
             prediction=model(xyz,state=pair['state'],time=pair['time']) if pair is not None else model(xyz)
             loss=masked_occ_loss(prediction,pair['velocity'] if pair is not None else target,raw.valid,objective=raw.objective)
-        scaler.scale(loss).backward(); scaler.unscale_(optimizer)
+        scale_before=scaler.get_scale();scaler.scale(loss).backward(); scaler.unscale_(optimizer)
         norms={name:module_grad_norm(module) for name,module in (('encoder',raw.encoder),('flow',raw.flow))}
         audit=(successful==0 or (successful+1)%train.get('gradient_audit_every',50)==0)
         details={name:gradient_stats(module) for name,module in modules.items()} if audit else None
         grad=torch.nn.utils.clip_grad_norm_(raw.parameters(),train['grad_clip'])
-        if bool(torch.isfinite(grad)) and float(grad)>train['grad_clip']: clipped+=1
+        if bool(torch.isfinite(grad)) and float(grad)>train['grad_clip']: counters['clipping_events']+=1
         finite=torch.tensor(int(bool(torch.isfinite(loss) and torch.isfinite(grad)) and all(np.isfinite(x) and x>0 for x in norms.values())),device=device)
         if world>1: torch.distributed.all_reduce(finite,op=torch.distributed.ReduceOp.MIN)
         attempts+=1
         if not bool(finite):
             failures+=1
+            counters['invalid_attempts']+=1
+            if scaler.is_enabled() and not bool(torch.isfinite(grad)):counters['overflow_attempts']+=1
             if scaler.is_enabled(): scaler.update(new_scale=scaler.get_scale()/2)
             if failures>=3: stopped[0]=True
         else:
@@ -200,17 +217,23 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                 for buffer in raw.buffers(): torch.distributed.broadcast(buffer,0)
             if ema is not None: update_ema(ema,raw,train['ema_decay'])
         torch.cuda.synchronize(device)
+        global_loss=loss.detach().float().clone()
+        if world>1:torch.distributed.all_reduce(global_loss);global_loss/=world
         changed={}
         if audit and bool(finite):
             for name,module in modules.items(): samples[name],changed[name]=sample_changes(module,samples[name])
             if ema is not None: samples['ema'],changed['ema']=sample_changes(ema,samples['ema'])
         row={'successful_updates':successful,'attempts':attempts,'finite':bool(finite),
-            'loss':float(loss.detach()) if bool(torch.isfinite(loss)) else None,'gradient_norms':{k:v if np.isfinite(v) else None for k,v in norms.items()},
+            'loss':float(global_loss) if bool(torch.isfinite(global_loss)) else None,
+            'rank_loss':float(loss.detach()) if bool(torch.isfinite(loss)) else None,
+            'sampled_t':float(pair['time']) if pair is not None else None,
+            'gradient_norms':{k:v if np.isfinite(v) else None for k,v in norms.items()},
             'lr_encoder':optimizer.param_groups[0]['lr'],'lr_flow':optimizer.param_groups[1]['lr'],
             'sequence':record['sequence'],'frame':record['frame'],'seconds':time.perf_counter()-tick,'data_seconds':data_seconds,
             'global_gradient_before_clip':float(grad) if bool(torch.isfinite(grad)) else None,
-            'gradient_details':details,'parameter_changes':changed,'gradient_clipping_events':clipped,
-            'amp_scale':scaler.get_scale(),'skipped_attempts':attempts-successful,
+            'gradient_details':details,'parameter_changes':changed,'gradient_clipping_events':counters['clipping_events'],
+            'amp_scale':scaler.get_scale(),'amp_scale_before':scale_before,'amp_overflow_count':counters['overflow_attempts'],
+            'skipped_attempts':attempts-successful,
             'epoch_time':time.time(),'optimizer_steps':int(next(iter(optimizer.state.values()))['step']) if optimizer.state else 0,
             'peak_allocated_bytes':torch.cuda.max_memory_allocated(device),'peak_reserved_bytes':torch.cuda.max_memory_reserved(device)}
         log.write(json.dumps(row,allow_nan=False)+'\n')
@@ -234,6 +257,14 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                 result.update(successful_updates=successful,ema_used=use_ema)
                 atomic_json(output/'validation'/f'update_{successful:06d}.json',result)
                 print(f'validation update={successful} ema={use_ema} metrics='+str({k:v['summary']['macro'] for k,v in result['nfe_results'].items()}),flush=True)
+                if use_ema and val.get('compare_online'):
+                    online=evaluate_stage1(raw,cfg,g,device,max_frames=val['light_frames'])
+                    online.update(successful_updates=successful,ema_used=False,scope='online_light_diagnostic')
+                    atomic_json(output/'validation'/f'online_update_{successful:06d}.json',online)
+                if not use_ema and ema is not None and val.get('compare_ema'):
+                    averaged=evaluate_stage1(ema,cfg,g,device,max_frames=val['light_frames'])
+                    averaged.update(successful_updates=successful,ema_used=True,scope='ema_light_diagnostic')
+                    atomic_json(output/'validation'/f'ema_update_{successful:06d}.json',averaged)
                 if successful==steps and val.get('train_eval_at_end'):
                     diagnostic=copy.deepcopy(cfg);diagnostic['development_dataset']=cfg['train_dataset']
                     train_metrics=evaluate_stage1(ema if use_ema else raw,diagnostic,g,device)

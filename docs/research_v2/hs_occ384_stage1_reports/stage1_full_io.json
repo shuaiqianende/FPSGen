@@ -1,0 +1,47 @@
+{
+  "cold_cache_measured": false,
+  "gpu_wait_measured": false,
+  "rows": [
+    {
+      "checksum": 34770824974202.15,
+      "frames": 128,
+      "frames_per_second": 861.8685233134953,
+      "ipc_payload_bytes": 178296104,
+      "ipc_payload_bytes_per_second": 1200529686.461167,
+      "seconds": 0.1485145315527916,
+      "warmup_frames": 128,
+      "workers": 0
+    },
+    {
+      "checksum": 34770824974202.15,
+      "frames": 128,
+      "frames_per_second": 331.5492774800164,
+      "ipc_payload_bytes": 178296104,
+      "ipc_payload_bytes_per_second": 461827691.0836083,
+      "seconds": 0.3860662914812565,
+      "warmup_frames": 128,
+      "workers": 2
+    },
+    {
+      "checksum": 34770824974202.15,
+      "frames": 128,
+      "frames_per_second": 335.94516754302646,
+      "ipc_payload_bytes": 178296104,
+      "ipc_payload_bytes_per_second": 467950894.7699131,
+      "seconds": 0.38101455941796303,
+      "warmup_frames": 128,
+      "workers": 4
+    },
+    {
+      "checksum": 34770824974202.15,
+      "frames": 128,
+      "frames_per_second": 297.1291083757317,
+      "ipc_payload_bytes": 178296104,
+      "ipc_payload_bytes_per_second": 413882518.8155213,
+      "seconds": 0.4307891633361578,
+      "warmup_frames": 128,
+      "workers": 8
+    }
+  ],
+  "scope": "full train dataset,128 seeded random frames, warmed cache; startup included"
+}

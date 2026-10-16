@@ -1,0 +1,86 @@
+{
+  "frames_per_model": 5,
+  "rows": [
+    {
+      "actual_velocity_nfe": 1,
+      "finite": true,
+      "gt_accessed": false,
+      "model": "fm",
+      "parents": 134168,
+      "scene": "00_000000"
+    },
+    {
+      "actual_velocity_nfe": 1,
+      "finite": true,
+      "gt_accessed": false,
+      "model": "fm",
+      "parents": 105872,
+      "scene": "00_000200"
+    },
+    {
+      "actual_velocity_nfe": 1,
+      "finite": true,
+      "gt_accessed": false,
+      "model": "fm",
+      "parents": 123317,
+      "scene": "05_000000"
+    },
+    {
+      "actual_velocity_nfe": 1,
+      "finite": true,
+      "gt_accessed": false,
+      "model": "fm",
+      "parents": 177769,
+      "scene": "09_000200"
+    },
+    {
+      "actual_velocity_nfe": 1,
+      "finite": true,
+      "gt_accessed": false,
+      "model": "fm",
+      "parents": 173668,
+      "scene": "10_000000"
+    },
+    {
+      "actual_velocity_nfe": 0,
+      "finite": true,
+      "gt_accessed": false,
+      "model": "bce",
+      "parents": 161555,
+      "scene": "00_000000"
+    },
+    {
+      "actual_velocity_nfe": 0,
+      "finite": true,
+      "gt_accessed": false,
+      "model": "bce",
+      "parents": 141503,
+      "scene": "00_000200"
+    },
+    {
+      "actual_velocity_nfe": 0,
+      "finite": true,
+      "gt_accessed": false,
+      "model": "bce",
+      "parents": 150902,
+      "scene": "05_000000"
+    },
+    {
+      "actual_velocity_nfe": 0,
+      "finite": true,
+      "gt_accessed": false,
+      "model": "bce",
+      "parents": 232273,
+      "scene": "09_000200"
+    },
+    {
+      "actual_velocity_nfe": 0,
+      "finite": true,
+      "gt_accessed": false,
+      "model": "bce",
+      "parents": 198610,
+      "scene": "10_000000"
+    }
+  ],
+  "status": "PASS"
+}

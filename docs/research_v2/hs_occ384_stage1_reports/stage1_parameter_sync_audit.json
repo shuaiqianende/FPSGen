@@ -1,0 +1,17 @@
+{
+  "actual_successful_updates": 4,
+  "checkpoint_sha256": "99340e54a8c00f5c9e0339152b4bef2dbf7651069204459f015354278b6e3c32",
+  "parameter_sync_pass": true,
+  "rank_hashes": [
+    {
+      "ema": "5514d8947593bc609a9b7f01f07351a9c7a2fd2720f487b20373a3d3114415ce",
+      "online": "e97c08e11c6f788342d042619ce909d47718cb40256224f7370e01a0859f48a8"
+    },
+    {
+      "ema": "5514d8947593bc609a9b7f01f07351a9c7a2fd2720f487b20373a3d3114415ce",
+      "online": "e97c08e11c6f788342d042619ce909d47718cb40256224f7370e01a0859f48a8"
+    }
+  ],
+  "scope": "supplementary full-model and EMA synchronization check",
+  "world_size": 2
+}

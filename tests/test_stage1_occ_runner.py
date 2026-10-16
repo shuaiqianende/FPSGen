@@ -27,6 +27,8 @@ def test_stage1_config_locks384_occupancy_and_scratch():
         with pytest.raises(ValueError):validate_config(bad)
     bad=copy.deepcopy(cfg);bad['loss']['occupancy']=.1
     with pytest.raises(ValueError):validate_config(bad)
+    bad=copy.deepcopy(cfg);bad['geometry']['maximum']=[60.,50.,4.4]
+    with pytest.raises(ValueError):validate_config(bad)
     bad=copy.deepcopy(cfg);bad['geometry']['parent_resolution']=[256,256,32]
     with pytest.raises(ValueError):validate_config(bad)
 
@@ -90,6 +92,8 @@ def test_cpu_state_roundtrip_rejects_historical_resume(tmp_path):
     model.load_state_dict(value['model']);ema.load_state_dict(value['ema']);opt.load_state_dict(value['optimizer']);scheduler.load_state_dict(value['scheduler']);scaler.load_state_dict(value['scaler']);restore_rng(value['rng'],gen,torch.device('cpu'))
     assert step()==expected and state_sha(model)==expected_sha and state_sha(ema)==ema_sha
     with pytest.raises(ValueError):verify_stage1_resume(value,{'experiment':'old_density'})
+    unsafe=dict(value);unsafe['parameter_sync_pass']=False
+    with pytest.raises(ValueError):verify_stage1_resume(unsafe,identity)
 
 
 def test_stage1_input_only_export_rejects_gt():
@@ -164,3 +168,18 @@ def test_viewpoint_lookup_exact_membership_vs_original():
     for scan in (rng.uniform(-50,50,(100,3)),np.zeros((0,3))):
         points=np.concatenate((rng.uniform(-50,50,(2000,3)),np.array([[0,10,-10],[50,-50,4.4]])))
         assert np.array_equal(viewpoint_mask(scan,points,10.),viewpoint_mask_lookup(scan,points,10.))
+
+
+def test_formal_scope_cannot_disguise_short_smoke(tmp_path):
+    from fpsgen.hier_occ_flow.stage1_training import run_stage1
+    cfg=config();cfg['scope']='formal'
+    with pytest.raises(ValueError,match='full100K budget'):run_stage1(cfg,tmp_path,max_updates=4)
+
+
+def test_pilot_cannot_satisfy_formal30min_monitor(monkeypatch,tmp_path):
+    import sys
+    sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts/research_v2/hier_occ_flow'))
+    import monitor_stage1_occ as monitor
+    monkeypatch.setattr(monitor,'snapshot',lambda output:{'scope':'pilot'})
+    monkeypatch.setattr(sys,'argv',['monitor','--output',str(tmp_path),'--report',str(tmp_path/'report.json'),'--observe'])
+    with pytest.raises(ValueError,match='cannot satisfy formal30min'):monitor.main()

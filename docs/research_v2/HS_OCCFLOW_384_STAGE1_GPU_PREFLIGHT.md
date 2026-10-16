@@ -1,6 +1,6 @@
 # 384 Stage1 engineering preflight
 
-CPU suite: 83 passed,1 CUDA test skipped in that
+CPU suite: 85 passed,1 CUDA test skipped in that
 CPU invocation. The skipped CPU/CUDA geometry parity test was separately run
 on admitted physicalGPU2:1 passed. No system environment was changed.
 Environment: `/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39` for full model,
@@ -22,7 +22,9 @@ feature absolute differences<=1.2e-7 on three real scenes.
 Actual GPU2FM/GPU3BCE forwards and backwards passed at384 resolution:
 condition ZYX16x192x192,8x96x96,4x48x48,128 channels each;
 output[1,1,32,384,384]. Peak allocation~5GiB; sample-scene backward~1.05s after
-warmup. These are **cohort maxima**, not the unprocessed population maximum.
+warmup. Full-population follow-up GPU2 FM and GPU3 BCE tests also passed, including
+02/000925 with319,738 active parents, the complete training-set maximum.
+Reports retain both cohort and full-population test scope.
 Initial unscaled FP16 diagnostics underflowed; GradScaler65536 overflowed the
 FM output layer initially. Scale16384 is registered; occasional recoverable
 startup overflow occurred during warmup and remains in logs.

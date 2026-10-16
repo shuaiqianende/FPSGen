@@ -18,6 +18,10 @@ from pathlib import Path
 gate=json.loads(Path('experiments/hier_occ_flow/stage1_occ384_engineering_gate.json').read_text())
 if not gate['formal_ready']:raise SystemExit('Formal engineering gate is not ready')
 PY
+mkdir -p "$task_output/configs"
+cp configs/research_v2/hier_occ_flow/stage1_occ384_fm.yaml "$task_output/configs/frozen.yaml"
+cp configs/research_v2/hier_occ_flow/geometry_384_8way.yaml "$task_output/configs/geometry.yaml"
+cp experiments/hier_occ_flow/stage1_occ384_engineering_gate.json "$task_output/configs/engineering_gate.json"
 exec bash scripts/research_v2/hier_occ_flow/launch_stage1_occ.sh \
   --config configs/research_v2/hier_occ_flow/stage1_occ384_fm.yaml \
   --output "$task_output" --max-updates 100000

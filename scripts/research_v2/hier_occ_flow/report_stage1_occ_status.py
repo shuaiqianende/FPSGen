@@ -14,7 +14,7 @@ def read(path):return json.loads(path.read_text()) if path.exists() else None
 def main():
     p=argparse.ArgumentParser();p.add_argument('--run-root',type=Path,default=Path('experiments/hier_occ_flow'));args=p.parse_args()
     run=args.run_root;docs=ROOT/'docs/research_v2';reports=docs/'hs_occ384_stage1_reports';reports.mkdir(parents=True,exist_ok=True)
-    for name in ('stage1_cpu_model_audit','stage1_gpu2_f64_gate','stage1_gpu3_f64_gate','stage1_f64_same_origin_resume_audit','stage1_ddp_resume_audit','viewpoint_lookup_audit'):
+    for name in ('stage1_cpu_model_audit','stage1_gpu2_f64_gate','stage1_gpu3_f64_gate','stage1_f64_same_origin_resume_audit','stage1_ddp_resume_audit','viewpoint_lookup_audit','stage1_parameter_sync_audit','stage1_inputonly5_audit','stage1_full_io','stage1_gpu2_full_gate','stage1_gpu3_full_gate'):
         if (run/f'{name}.json').exists():shutil.copyfile(run/f'{name}.json',reports/f'{name}.json')
     suites=ET.parse(run/'stage1_cpu_tests.xml').getroot()
     tests={k:sum(int(s.get(k,0)) for s in suites.iter('testsuite')) for k in ('tests','failures','errors','skipped')}
@@ -98,7 +98,9 @@ feature absolute differences<=1.2e-7 on three real scenes.
 Actual GPU2FM/GPU3BCE forwards and backwards passed at384 resolution:
 condition ZYX16x192x192,8x96x96,4x48x48,128 channels each;
 output[1,1,32,384,384]. Peak allocation~5GiB; sample-scene backward~1.05s after
-warmup. These are **cohort maxima**, not the unprocessed population maximum.
+warmup. Full-population follow-up GPU2 FM and GPU3 BCE tests also passed, including
+02/000925 with319,738 active parents, the complete training-set maximum.
+Reports retain both cohort and full-population test scope.
 Initial unscaled FP16 diagnostics underflowed; GradScaler65536 overflowed the
 FM output layer initially. Scale16384 is registered; occasional recoverable
 startup overflow occurred during warmup and remains in logs.
@@ -149,11 +151,29 @@ formal output is `experiments/hier_occ_flow/stage1_occ384_fm_100k`.
 Planned tmux is `fpsgen_hs_occ384_stage1_fm100k_gpu23`. No formal process/PID or
 checkpoint is claimed. Existing pilot and smoke checkpoints are not formal ones.
 ''')
-    if not first30 or not first30.get('first30min_complete'):
-        docs.joinpath('HS_OCCFLOW_384_STAGE1_FIRST30MIN.md').write_text('''# Formal first30-minute observation: NOT COMPLETED
+    else:
+        launch=read(formal/'launch_parameters.json') or {}
+        lines=(formal/'train_rank0.jsonl').read_text().splitlines();latest=json.loads(lines[-1]) if lines else {}
+        pid=launch.get('rank0_pid');alive=bool(pid and Path(f'/proc/{pid}').exists())
+        actual=launch.get('actual_update_budget')==100000 and latest.get('successful_updates',0)>0
+        state='RUNNING' if alive and actual else 'NOT_RUNNING_OR_NOT_YET_UPDATED'
+        docs.joinpath('HS_OCCFLOW_384_STAGE1_FORMAL_LAUNCH.md').write_text(f'''# Formal100K launch snapshot
 
-Actual formal monitored duration:0 seconds. Formal training has not yet reached
-this gate. CPU preparation, GPU smoke, overfit and pilot time do not count.
+Status: **{state}**. Actual successful updates:{latest.get('successful_updates',0)};
+attempts:{latest.get('attempts',0)}. Rank0PID:{pid}. Budget:{launch.get('actual_update_budget')}.
+Tmux:`fpsgen_hs_occ384_stage1_fm100k_gpu23`. Output:`{(ROOT/formal).resolve()}`.
+Physical GPUs:{launch.get('physical_gpus')}. Formal scope:{launch.get('scope')}.
+This snapshot is generated from actual launch metadata and optimizer logs.
+See `initialization_audit.json`, `launch_parameters.json`, per-rank JSONL and
+atomic `checkpoints/step000000.pt` / `checkpoints/resume_latest.pt` in that output.
+The100K training budget is not asserted complete by a successful launch.
+''')
+    if not first30 or not first30.get('first30min_complete'):
+        duration=first30.get('actual_observed_seconds',0) if first30 else 0
+        docs.joinpath('HS_OCCFLOW_384_STAGE1_FIRST30MIN.md').write_text(f'''# Formal first30-minute observation: NOT COMPLETED
+
+Actual formal monitored duration:{duration:.1f} seconds. This gate is not yet
+complete. CPU preparation, GPU smoke, overfit and pilot time do not count.
 The monitoring script alone is not evidence. Actual live logs/GPU/process checks
 must continue for at least30 minutes after formal successful updates begin.
 ''')

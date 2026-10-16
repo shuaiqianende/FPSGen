@@ -1,0 +1,281 @@
+{
+  "executed_gpu_operations": true,
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "gpus": [
+    {
+      "available": true,
+      "driver": "580.159.03",
+      "existing_compute_pids": [],
+      "free_mib": 24105.0,
+      "physical_gpu": 2,
+      "total_mib": 24576.0,
+      "utilization_percent": 0.0
+    }
+  ],
+  "maximum_scope": "dataset maximum",
+  "minimum_free_gib": 16.0,
+  "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+  "rows": [
+    {
+      "amp_scale": 16384.0,
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "cpu_gpu_coarse_indices_exact": true,
+      "cpu_gpu_feature_max_abs_error": 1.1920928955078125e-07,
+      "frame": 925,
+      "gradients": {
+        "encoder": {
+          "abs_max": 0.001829594257287681,
+          "l2": 0.13828063011169434,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 1.0,
+          "parameters_with_gradient": 198
+        },
+        "flow": {
+          "abs_max": 1.666015625,
+          "l2": 6.892157077789307,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 1.0,
+          "parameters_with_gradient": 96
+        },
+        "head": {
+          "abs_max": 1.666015625,
+          "l2": 6.887941837310791,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 1.0,
+          "parameters_with_gradient": 2
+        }
+      },
+      "loss": 2.004744529724121,
+      "occupied_parents": 319738,
+      "output_shape": [
+        1,
+        1,
+        32,
+        384,
+        384
+      ],
+      "peak_allocated_bytes": 5327348736,
+      "peak_reserved_bytes": 5932843008,
+      "seconds": 4.371675830334425,
+      "sequence": "02"
+    },
+    {
+      "amp_scale": 16384.0,
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "cpu_gpu_coarse_indices_exact": true,
+      "cpu_gpu_feature_max_abs_error": 1.1920928955078125e-07,
+      "frame": 3360,
+      "gradients": {
+        "encoder": {
+          "abs_max": 0.0018447751644998789,
+          "l2": 0.1280088722705841,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 0.9090909090909091,
+          "parameters_with_gradient": 198
+        },
+        "flow": {
+          "abs_max": 1.7314453125,
+          "l2": 7.285113334655762,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 1.0,
+          "parameters_with_gradient": 96
+        },
+        "head": {
+          "abs_max": 1.7314453125,
+          "l2": 7.280476093292236,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 1.0,
+          "parameters_with_gradient": 2
+        }
+      },
+      "loss": 2.0073392391204834,
+      "occupied_parents": 259199,
+      "output_shape": [
+        1,
+        1,
+        32,
+        384,
+        384
+      ],
+      "peak_allocated_bytes": 5326539264,
+      "peak_reserved_bytes": 5932843008,
+      "seconds": 1.040527831763029,
+      "sequence": "02"
+    },
+    {
+      "amp_scale": 16384.0,
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "cpu_gpu_coarse_indices_exact": true,
+      "cpu_gpu_feature_max_abs_error": 1.1920928955078125e-07,
+      "frame": 4289,
+      "gradients": {
+        "encoder": {
+          "abs_max": 0.002080567181110382,
+          "l2": 0.12733414769172668,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 0.9393939393939394,
+          "parameters_with_gradient": 198
+        },
+        "flow": {
+          "abs_max": 1.861328125,
+          "l2": 7.634474754333496,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 1.0,
+          "parameters_with_gradient": 96
+        },
+        "head": {
+          "abs_max": 1.861328125,
+          "l2": 7.629570484161377,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 1.0,
+          "parameters_with_gradient": 2
+        }
+      },
+      "loss": 2.0064234733581543,
+      "occupied_parents": 137999,
+      "output_shape": [
+        1,
+        1,
+        32,
+        384,
+        384
+      ],
+      "peak_allocated_bytes": 5325212160,
+      "peak_reserved_bytes": 5932843008,
+      "seconds": 1.0410262644290924,
+      "sequence": "02"
+    },
+    {
+      "amp_scale": 16384.0,
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "cpu_gpu_coarse_indices_exact": true,
+      "cpu_gpu_feature_max_abs_error": 1.1920928955078125e-07,
+      "frame": 444,
+      "gradients": {
+        "encoder": {
+          "abs_max": 0.0019317844416946173,
+          "l2": 0.13571856915950775,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 0.9090909090909091,
+          "parameters_with_gradient": 198
+        },
+        "flow": {
+          "abs_max": 1.7861328125,
+          "l2": 8.112092018127441,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 1.0,
+          "parameters_with_gradient": 96
+        },
+        "head": {
+          "abs_max": 1.7861328125,
+          "l2": 8.106136322021484,
+          "nonfinite_elements": 0,
+          "nonzero_parameter_ratio": 1.0,
+          "parameters_with_gradient": 2
+        }
+      },
+      "loss": 2.0055408477783203,
+      "occupied_parents": 207214,
+      "output_shape": [
+        1,
+        1,
+        32,
+        384,
+        384
+      ],
+      "peak_allocated_bytes": 5326833664,
+      "peak_reserved_bytes": 5932843008,
+      "seconds": 1.0414836425334215,
+      "sequence": "06"
+    }
+  ],
+  "status": "PASS"
+}
