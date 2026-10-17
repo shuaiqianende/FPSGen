@@ -1,0 +1,14 @@
+{
+  "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_intermediate.pt",
+  "checkpoint_sha256": "b62b33fb285e38ae0c799388a38db7bc034d127d242bba4097b36b334cedf980",
+  "data_root": "/data-12/M2024-HWZ/KITTI_Odometry",
+  "dataset_root": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel",
+  "source_branch": "research/hs-occflow-384-stage1occ",
+  "source_head": "5985fb93d6a6e5671877cb3bff8ec371612b290c",
+  "source_worktree": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ",
+  "stage1_complete": false,
+  "stage1_config": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4/config.json",
+  "successful_frame_exposures": 70900,
+  "successful_updates": 27000,
+  "target_successful_frames": 100000
+}

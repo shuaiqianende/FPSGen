@@ -1,0 +1,11 @@
+{
+  "scope": "actual DDp engineering run, not pilot quality",
+  "successful_updates": 21,
+  "initial_optimizer_entries": 0,
+  "initial_online_equals_ema": true,
+  "changed_parameter_tensors": 169,
+  "max_abs_parameter_change": 0.0032807979732751846,
+  "all_finite": true,
+  "parameter_sync_pass": true,
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2"
+}

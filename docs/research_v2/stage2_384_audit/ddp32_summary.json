@@ -1,0 +1,35 @@
+{
+  "attempts": 32,
+  "formal_training_complete": false,
+  "identity": {
+    "config_sha256": "60b7920b01e4d18aab85233392747eb4478ee41fdb1d137a95713dcb1e898cf8",
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "experiment": "hs-occflow-stage2-384-v1",
+    "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+    "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_ddp32",
+    "source_sha256": "c875edfcccb58a3494468ea77dc0ccd76bc81f68fb459f2afcb0eaefc5c28f34",
+    "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+    "world_size": 2
+  },
+  "scope": "engineering_smoke",
+  "seconds": 71.05028486065567,
+  "stage1": {
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+    "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+    "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+    "data_version": "hs-occ-surface-hit-v1",
+    "feature_layout": "B,C,Z,Y,X",
+    "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+    "input_feature_version": "coarse_f64_v1",
+    "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+    "score_layout": "Z,Y,X",
+    "stage1_final_100k_frames": true,
+    "successful_frame_exposures": 100000,
+    "successful_updates": 34275,
+    "type": "FrozenStage1OccupancyAdapter",
+    "weights": "ema"
+  },
+  "status": "COMPLETE_REQUESTED_BUDGET",
+  "successful_updates": 32
+}

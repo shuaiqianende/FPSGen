@@ -1,0 +1,20 @@
+{
+  "all_eval": true,
+  "all_frozen": true,
+  "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+  "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+  "data_version": "hs-occ-surface-hit-v1",
+  "feature_layout": "B,C,Z,Y,X",
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "gpu_forward": "see actual GPU preflight reports",
+  "input_feature_version": "coarse_f64_v1",
+  "parameters": 19580641,
+  "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+  "score_layout": "Z,Y,X",
+  "stage1_final_100k_frames": true,
+  "successful_frame_exposures": 100000,
+  "successful_updates": 34275,
+  "type": "FrozenStage1OccupancyAdapter",
+  "weights": "ema"
+}

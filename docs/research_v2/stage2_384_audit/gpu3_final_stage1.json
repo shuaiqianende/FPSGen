@@ -1,0 +1,1558 @@
+{
+  "admission": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24106.0,
+        "physical_gpu": 3,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 16.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "executed_gpu_operations": true,
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "initialization": "random Stage2; frozen actual384 Occupancy Stage1",
+  "maximum_oracle_tokens": 399672,
+  "parity": [
+    {
+      "checkpointing_not_used_to_reduce_training_tokens": true,
+      "diagnostic_tokens": 2048,
+      "max_gradient_abs_error": 2.9103830456733704e-11,
+      "objective": "bce",
+      "pass": true
+    },
+    {
+      "checkpointing_not_used_to_reduce_training_tokens": true,
+      "diagnostic_tokens": 2048,
+      "max_gradient_abs_error": 1.4551915228366852e-10,
+      "objective": "fm",
+      "pass": true
+    }
+  ],
+  "parity_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.001
+  },
+  "permutation": [
+    {
+      "max_abs_error": 0.0,
+      "objective": "bce",
+      "pass": true,
+      "tokens": 172498
+    },
+    {
+      "max_abs_error": 0.0,
+      "objective": "fm",
+      "pass": true,
+      "tokens": 172498
+    }
+  ],
+  "permutation_atol": 0.0001,
+  "rows": [
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        172498,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 172498,
+        "f1": 0.8888910359842446,
+        "false_negative_rate": 0.0,
+        "fine_occupancy_recall_ceiling": 1.0,
+        "iou": 0.8000034783011977,
+        "precision": 0.8000034783011977,
+        "recall": 1.0
+      },
+      "candidate_mode": "oracle",
+      "condition_seconds": 3.361027594655752,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 6.456766238436103,
+      "frame": 4289,
+      "gradient_norm": 0.03854569420218468,
+      "gt_parents": 137999,
+      "loss": 0.6931480169296265,
+      "no_token_subsampling": true,
+      "objective": "bce",
+      "optimizer_update_executed": true,
+      "parameters": 2558040,
+      "peak_allocated_bytes": 3228298240,
+      "peak_reserved_bytes": 3667918848,
+      "quantile": 50,
+      "sampled_feature_shape": [
+        172498,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "mode": "oracle_not_deployable",
+        "nearby_empty_pool": 159384,
+        "nearby_negatives": 34499,
+        "negative_fraction_relative_to_gt": 0.25,
+        "negative_sampling_weight": 1.0,
+        "neutral_score": 1.0,
+        "score_policy": "constant_neutral_for_positive_and_negative",
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 0,
+        "stage1_seed": 518712589
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 172498
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        136996,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 136996,
+        "f1": 0.6594156257386498,
+        "false_negative_rate": 0.3429807462372916,
+        "fine_occupancy_recall_ceiling": 0.7387803188700375,
+        "iou": 0.49188670135140267,
+        "precision": 0.6618295424683932,
+        "recall": 0.6570192537627084
+      },
+      "candidate_mode": "predicted",
+      "condition_seconds": 0.6813202537596226,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.26589309982955456,
+      "frame": 4289,
+      "gradient_norm": 0.08063308894634247,
+      "gt_parents": 137999,
+      "loss": 0.6926791667938232,
+      "no_token_subsampling": true,
+      "objective": "bce",
+      "optimizer_update_executed": true,
+      "parameters": 2558040,
+      "peak_allocated_bytes": 3285464064,
+      "peak_reserved_bytes": 5079302144,
+      "quantile": 50,
+      "sampled_feature_shape": [
+        136996,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "before_budget": 136996,
+        "before_expansion": 136996,
+        "budget_dropped": 0,
+        "budget_policy": "error",
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "expansion": 0,
+        "mode": "predicted",
+        "score_definition": "uncalibrated Stage1 endpoint proxy",
+        "selected": 136996,
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 4,
+        "stage1_seed": 518712589
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 136996
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        259017,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 259017,
+        "f1": 0.8888898421597877,
+        "false_negative_rate": 0.0,
+        "fine_occupancy_recall_ceiling": 1.0,
+        "iou": 0.8000015443001811,
+        "precision": 0.8000015443001811,
+        "recall": 1.0
+      },
+      "candidate_mode": "oracle",
+      "condition_seconds": 0.5424535516649485,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.4482045993208885,
+      "frame": 444,
+      "gradient_norm": 0.12047422677278519,
+      "gt_parents": 207214,
+      "loss": 0.6919288635253906,
+      "no_token_subsampling": true,
+      "objective": "bce",
+      "optimizer_update_executed": true,
+      "parameters": 2558040,
+      "peak_allocated_bytes": 4336445440,
+      "peak_reserved_bytes": 5079302144,
+      "quantile": 90,
+      "sampled_feature_shape": [
+        259017,
+        384
+      ],
+      "sequence": "06",
+      "source": {
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "mode": "oracle_not_deployable",
+        "nearby_empty_pool": 314661,
+        "nearby_negatives": 51803,
+        "negative_fraction_relative_to_gt": 0.25,
+        "negative_sampling_weight": 1.0,
+        "neutral_score": 1.0,
+        "score_policy": "constant_neutral_for_positive_and_negative",
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 0,
+        "stage1_seed": 1252252556
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 259017
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        157017,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 157017,
+        "f1": 0.6811281851352575,
+        "false_negative_rate": 0.40137249413649656,
+        "fine_occupancy_recall_ceiling": 0.6927225165694213,
+        "iou": 0.5164476012440307,
+        "precision": 0.7900036301801716,
+        "recall": 0.5986275058635034
+      },
+      "candidate_mode": "predicted",
+      "condition_seconds": 0.6226842291653156,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.2841504607349634,
+      "frame": 444,
+      "gradient_norm": 0.11468450725078583,
+      "gt_parents": 207214,
+      "loss": 0.691777765750885,
+      "no_token_subsampling": true,
+      "objective": "bce",
+      "optimizer_update_executed": true,
+      "parameters": 2558040,
+      "peak_allocated_bytes": 3285195776,
+      "peak_reserved_bytes": 5079302144,
+      "quantile": 90,
+      "sampled_feature_shape": [
+        157017,
+        384
+      ],
+      "sequence": "06",
+      "source": {
+        "before_budget": 157017,
+        "before_expansion": 157017,
+        "budget_dropped": 0,
+        "budget_policy": "error",
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "expansion": 0,
+        "mode": "predicted",
+        "score_definition": "uncalibrated Stage1 endpoint proxy",
+        "selected": 157017,
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 4,
+        "stage1_seed": 1252252556
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 157017
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        323998,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 323998,
+        "f1": 0.8888900320131963,
+        "false_negative_rate": 0.0,
+        "fine_occupancy_recall_ceiling": 1.0,
+        "iou": 0.8000018518632831,
+        "precision": 0.8000018518632831,
+        "recall": 1.0
+      },
+      "candidate_mode": "oracle",
+      "condition_seconds": 0.677898583933711,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.5719105359166861,
+      "frame": 3360,
+      "gradient_norm": 0.20035430788993835,
+      "gt_parents": 259199,
+      "loss": 0.690087616443634,
+      "no_token_subsampling": true,
+      "objective": "bce",
+      "optimizer_update_executed": true,
+      "parameters": 2558040,
+      "peak_allocated_bytes": 5306450432,
+      "peak_reserved_bytes": 6578765824,
+      "quantile": 99,
+      "sampled_feature_shape": [
+        323998,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "mode": "oracle_not_deployable",
+        "nearby_empty_pool": 268153,
+        "nearby_negatives": 64799,
+        "negative_fraction_relative_to_gt": 0.25,
+        "negative_sampling_weight": 1.0,
+        "neutral_score": 1.0,
+        "score_policy": "constant_neutral_for_positive_and_negative",
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 0,
+        "stage1_seed": 605376929
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 323998
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        172048,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 172048,
+        "f1": 0.6262072547751056,
+        "false_negative_rate": 0.47906820628166,
+        "fine_occupancy_recall_ceiling": 0.6254163708482191,
+        "iou": 0.4558236727859511,
+        "precision": 0.7848100530084627,
+        "recall": 0.52093179371834
+      },
+      "candidate_mode": "predicted",
+      "condition_seconds": 0.6428958103060722,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.32007842138409615,
+      "frame": 3360,
+      "gradient_norm": 0.15660442411899567,
+      "gt_parents": 259199,
+      "loss": 0.6904187202453613,
+      "no_token_subsampling": true,
+      "objective": "bce",
+      "optimizer_update_executed": true,
+      "parameters": 2558040,
+      "peak_allocated_bytes": 3286667776,
+      "peak_reserved_bytes": 6578765824,
+      "quantile": 99,
+      "sampled_feature_shape": [
+        172048,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "before_budget": 172048,
+        "before_expansion": 172048,
+        "budget_dropped": 0,
+        "budget_policy": "error",
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "expansion": 0,
+        "mode": "predicted",
+        "score_definition": "uncalibrated Stage1 endpoint proxy",
+        "selected": 172048,
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 4,
+        "stage1_seed": 605376929
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 172048
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        399672,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 399672,
+        "f1": 0.8888895066790843,
+        "false_negative_rate": 0.0,
+        "fine_occupancy_recall_ceiling": 1.0,
+        "iou": 0.8000010008206729,
+        "precision": 0.8000010008206729,
+        "recall": 1.0
+      },
+      "candidate_mode": "oracle",
+      "condition_seconds": 0.7870052345097065,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.7057256363332272,
+      "frame": 925,
+      "gradient_norm": 0.24861013889312744,
+      "gt_parents": 319738,
+      "loss": 0.6880887150764465,
+      "no_token_subsampling": true,
+      "objective": "bce",
+      "optimizer_update_executed": true,
+      "parameters": 2558040,
+      "peak_allocated_bytes": 6488987648,
+      "peak_reserved_bytes": 8629780480,
+      "quantile": 100,
+      "sampled_feature_shape": [
+        399672,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "mode": "oracle_not_deployable",
+        "nearby_empty_pool": 313338,
+        "nearby_negatives": 79934,
+        "negative_fraction_relative_to_gt": 0.25,
+        "negative_sampling_weight": 1.0,
+        "neutral_score": 1.0,
+        "score_policy": "constant_neutral_for_positive_and_negative",
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 0,
+        "stage1_seed": 273883615
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 399672
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        166492,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 166492,
+        "f1": 0.5351500318779179,
+        "false_negative_rate": 0.5930949715079221,
+        "fine_occupancy_recall_ceiling": 0.49069624080799107,
+        "iou": 0.36532753764808623,
+        "precision": 0.7814369459193234,
+        "recall": 0.4069050284920779
+      },
+      "candidate_mode": "predicted",
+      "condition_seconds": 0.7021429762244225,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.31853196397423744,
+      "frame": 925,
+      "gradient_norm": 0.16404832899570465,
+      "gt_parents": 319738,
+      "loss": 0.6895300149917603,
+      "no_token_subsampling": true,
+      "objective": "bce",
+      "optimizer_update_executed": true,
+      "parameters": 2558040,
+      "peak_allocated_bytes": 3285334528,
+      "peak_reserved_bytes": 8629780480,
+      "quantile": 100,
+      "sampled_feature_shape": [
+        166492,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "before_budget": 166492,
+        "before_expansion": 166492,
+        "budget_dropped": 0,
+        "budget_policy": "error",
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "expansion": 0,
+        "mode": "predicted",
+        "score_definition": "uncalibrated Stage1 endpoint proxy",
+        "selected": 166492,
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 4,
+        "stage1_seed": 273883615
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 166492
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        172498,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 172498,
+        "f1": 0.8888910359842446,
+        "false_negative_rate": 0.0,
+        "fine_occupancy_recall_ceiling": 1.0,
+        "iou": 0.8000034783011977,
+        "precision": 0.8000034783011977,
+        "recall": 1.0
+      },
+      "candidate_mode": "oracle",
+      "condition_seconds": 0.48955100402235985,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.8233251478523016,
+      "frame": 4289,
+      "gradient_norm": 0.21678315103054047,
+      "gt_parents": 137999,
+      "loss": 1.999527931213379,
+      "no_token_subsampling": true,
+      "objective": "fm",
+      "optimizer_update_executed": true,
+      "parameters": 2677128,
+      "peak_allocated_bytes": 3620179456,
+      "peak_reserved_bytes": 3965714432,
+      "quantile": 50,
+      "sampled_feature_shape": [
+        172498,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "mode": "oracle_not_deployable",
+        "nearby_empty_pool": 159384,
+        "nearby_negatives": 34499,
+        "negative_fraction_relative_to_gt": 0.25,
+        "negative_sampling_weight": 1.0,
+        "neutral_score": 1.0,
+        "score_policy": "constant_neutral_for_positive_and_negative",
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 0,
+        "stage1_seed": 518712589
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 172498
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        136996,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 136996,
+        "f1": 0.6594156257386498,
+        "false_negative_rate": 0.3429807462372916,
+        "fine_occupancy_recall_ceiling": 0.7387803188700375,
+        "iou": 0.49188670135140267,
+        "precision": 0.6618295424683932,
+        "recall": 0.6570192537627084
+      },
+      "candidate_mode": "predicted",
+      "condition_seconds": 0.6653962694108486,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.656867166981101,
+      "frame": 4289,
+      "gradient_norm": 0.36062511801719666,
+      "gt_parents": 137999,
+      "loss": 1.9970424175262451,
+      "no_token_subsampling": true,
+      "objective": "fm",
+      "optimizer_update_executed": true,
+      "parameters": 2677128,
+      "peak_allocated_bytes": 3307463168,
+      "peak_reserved_bytes": 4492099584,
+      "quantile": 50,
+      "sampled_feature_shape": [
+        136996,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "before_budget": 136996,
+        "before_expansion": 136996,
+        "budget_dropped": 0,
+        "budget_policy": "error",
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "expansion": 0,
+        "mode": "predicted",
+        "score_definition": "uncalibrated Stage1 endpoint proxy",
+        "selected": 136996,
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 4,
+        "stage1_seed": 518712589
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 136996
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        259017,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 259017,
+        "f1": 0.8888898421597877,
+        "false_negative_rate": 0.0,
+        "fine_occupancy_recall_ceiling": 1.0,
+        "iou": 0.8000015443001811,
+        "precision": 0.8000015443001811,
+        "recall": 1.0
+      },
+      "candidate_mode": "oracle",
+      "condition_seconds": 0.6742729544639587,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 1.2093274369835854,
+      "frame": 444,
+      "gradient_norm": 0.49610915780067444,
+      "gt_parents": 207214,
+      "loss": 1.9935041666030884,
+      "no_token_subsampling": true,
+      "objective": "fm",
+      "optimizer_update_executed": true,
+      "parameters": 2677128,
+      "peak_allocated_bytes": 5438137856,
+      "peak_reserved_bytes": 6289358848,
+      "quantile": 90,
+      "sampled_feature_shape": [
+        259017,
+        384
+      ],
+      "sequence": "06",
+      "source": {
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "mode": "oracle_not_deployable",
+        "nearby_empty_pool": 314661,
+        "nearby_negatives": 51803,
+        "negative_fraction_relative_to_gt": 0.25,
+        "negative_sampling_weight": 1.0,
+        "neutral_score": 1.0,
+        "score_policy": "constant_neutral_for_positive_and_negative",
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 0,
+        "stage1_seed": 1252252556
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 259017
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        157017,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 157017,
+        "f1": 0.6811281851352575,
+        "false_negative_rate": 0.40137249413649656,
+        "fine_occupancy_recall_ceiling": 0.6927225165694213,
+        "iou": 0.5164476012440307,
+        "precision": 0.7900036301801716,
+        "recall": 0.5986275058635034
+      },
+      "candidate_mode": "predicted",
+      "condition_seconds": 0.6728540007025003,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.7318921014666557,
+      "frame": 444,
+      "gradient_norm": 0.3983596861362457,
+      "gt_parents": 207214,
+      "loss": 1.9938645362854004,
+      "no_token_subsampling": true,
+      "objective": "fm",
+      "optimizer_update_executed": true,
+      "parameters": 2677128,
+      "peak_allocated_bytes": 3370176000,
+      "peak_reserved_bytes": 6289358848,
+      "quantile": 90,
+      "sampled_feature_shape": [
+        157017,
+        384
+      ],
+      "sequence": "06",
+      "source": {
+        "before_budget": 157017,
+        "before_expansion": 157017,
+        "budget_dropped": 0,
+        "budget_policy": "error",
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "expansion": 0,
+        "mode": "predicted",
+        "score_definition": "uncalibrated Stage1 endpoint proxy",
+        "selected": 157017,
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 4,
+        "stage1_seed": 1252252556
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 157017
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        323998,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 323998,
+        "f1": 0.8888900320131963,
+        "false_negative_rate": 0.0,
+        "fine_occupancy_recall_ceiling": 1.0,
+        "iou": 0.8000018518632831,
+        "precision": 0.8000018518632831,
+        "recall": 1.0
+      },
+      "candidate_mode": "oracle",
+      "condition_seconds": 0.7591163627803326,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 1.5098619479686022,
+      "frame": 3360,
+      "gradient_norm": 0.9018890261650085,
+      "gt_parents": 259199,
+      "loss": 1.984548568725586,
+      "no_token_subsampling": true,
+      "objective": "fm",
+      "optimizer_update_executed": true,
+      "parameters": 2677128,
+      "peak_allocated_bytes": 6682317312,
+      "peak_reserved_bytes": 7788822528,
+      "quantile": 99,
+      "sampled_feature_shape": [
+        323998,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "mode": "oracle_not_deployable",
+        "nearby_empty_pool": 268153,
+        "nearby_negatives": 64799,
+        "negative_fraction_relative_to_gt": 0.25,
+        "negative_sampling_weight": 1.0,
+        "neutral_score": 1.0,
+        "score_policy": "constant_neutral_for_positive_and_negative",
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 0,
+        "stage1_seed": 605376929
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 323998
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        172048,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 172048,
+        "f1": 0.6262072547751056,
+        "false_negative_rate": 0.47906820628166,
+        "fine_occupancy_recall_ceiling": 0.6254163708482191,
+        "iou": 0.4558236727859511,
+        "precision": 0.7848100530084627,
+        "recall": 0.52093179371834
+      },
+      "candidate_mode": "predicted",
+      "condition_seconds": 0.701525466516614,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.7976640518754721,
+      "frame": 3360,
+      "gradient_norm": 0.7363969683647156,
+      "gt_parents": 259199,
+      "loss": 1.9814679622650146,
+      "no_token_subsampling": true,
+      "objective": "fm",
+      "optimizer_update_executed": true,
+      "parameters": 2677128,
+      "peak_allocated_bytes": 3641697792,
+      "peak_reserved_bytes": 7788822528,
+      "quantile": 99,
+      "sampled_feature_shape": [
+        172048,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "before_budget": 172048,
+        "before_expansion": 172048,
+        "budget_dropped": 0,
+        "budget_policy": "error",
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "expansion": 0,
+        "mode": "predicted",
+        "score_definition": "uncalibrated Stage1 endpoint proxy",
+        "selected": 172048,
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 4,
+        "stage1_seed": 605376929
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 172048
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        399672,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 399672,
+        "f1": 0.8888895066790843,
+        "false_negative_rate": 0.0,
+        "fine_occupancy_recall_ceiling": 1.0,
+        "iou": 0.8000010008206729,
+        "precision": 0.8000010008206729,
+        "recall": 1.0
+      },
+      "candidate_mode": "oracle",
+      "condition_seconds": 0.7329337112605572,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 1.8368994574993849,
+      "frame": 925,
+      "gradient_norm": 1.0522664785385132,
+      "gt_parents": 319738,
+      "loss": 1.9749934673309326,
+      "no_token_subsampling": true,
+      "objective": "fm",
+      "optimizer_update_executed": true,
+      "parameters": 2677128,
+      "peak_allocated_bytes": 8180592128,
+      "peak_reserved_bytes": 9636413440,
+      "quantile": 100,
+      "sampled_feature_shape": [
+        399672,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "mode": "oracle_not_deployable",
+        "nearby_empty_pool": 313338,
+        "nearby_negatives": 79934,
+        "negative_fraction_relative_to_gt": 0.25,
+        "negative_sampling_weight": 1.0,
+        "neutral_score": 1.0,
+        "score_policy": "constant_neutral_for_positive_and_negative",
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 0,
+        "stage1_seed": 273883615
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 399672
+    },
+    {
+      "actual_feature_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "actual_output_shape": [
+        166492,
+        8
+      ],
+      "amp_scale": 16384.0,
+      "candidate_metrics": {
+        "active_parent_count": 166492,
+        "f1": 0.5351500318779179,
+        "false_negative_rate": 0.5930949715079221,
+        "fine_occupancy_recall_ceiling": 0.49069624080799107,
+        "iou": 0.36532753764808623,
+        "precision": 0.7814369459193234,
+        "recall": 0.4069050284920779
+      },
+      "candidate_mode": "predicted",
+      "condition_seconds": 0.6280622333288193,
+      "finite_gradients": true,
+      "flash_calls": 12,
+      "forward_backward_step_seconds": 0.7665453404188156,
+      "frame": 925,
+      "gradient_norm": 0.7381578087806702,
+      "gt_parents": 319738,
+      "loss": 1.9761936664581299,
+      "no_token_subsampling": true,
+      "objective": "fm",
+      "optimizer_update_executed": true,
+      "parameters": 2677128,
+      "peak_allocated_bytes": 3538624000,
+      "peak_reserved_bytes": 9636413440,
+      "quantile": 100,
+      "sampled_feature_shape": [
+        166492,
+        384
+      ],
+      "sequence": "02",
+      "source": {
+        "before_budget": 166492,
+        "before_expansion": 166492,
+        "budget_dropped": 0,
+        "budget_policy": "error",
+        "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+        "expansion": 0,
+        "mode": "predicted",
+        "score_definition": "uncalibrated Stage1 endpoint proxy",
+        "selected": 166492,
+        "stage1": {
+          "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+          "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+          "data_version": "hs-occ-surface-hit-v1",
+          "feature_layout": "B,C,Z,Y,X",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "input_feature_version": "coarse_f64_v1",
+          "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+          "score_layout": "Z,Y,X",
+          "stage1_final_100k_frames": true,
+          "successful_frame_exposures": 100000,
+          "successful_updates": 34275,
+          "type": "FrozenStage1OccupancyAdapter",
+          "weights": "ema"
+        },
+        "stage1_encoder_forwards": 1,
+        "stage1_nfe": 4,
+        "stage1_seed": 273883615
+      },
+      "spconv_calls": 13,
+      "stage1_encoder_forwards": 1,
+      "tokens": 166492
+    }
+  ],
+  "stage1": {
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+    "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+    "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+    "data_version": "hs-occ-surface-hit-v1",
+    "feature_layout": "B,C,Z,Y,X",
+    "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+    "input_feature_version": "coarse_f64_v1",
+    "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+    "score_layout": "Z,Y,X",
+    "stage1_final_100k_frames": true,
+    "successful_frame_exposures": 100000,
+    "successful_updates": 34275,
+    "type": "FrozenStage1OccupancyAdapter",
+    "weights": "ema"
+  },
+  "stage1_unchanged": true,
+  "status": "PASS_GPU_FULL_SCENE",
+  "token_audit": "full17870 training scenes, actual max\u2014not sampled max"
+}

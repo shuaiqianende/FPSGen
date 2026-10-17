@@ -1,0 +1,35 @@
+{
+  "checkpointing_parity": true,
+  "ddp_resume": true,
+  "development_candidate_calibration": false,
+  "evidence": [
+    {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/gpu2_final_stage1.json",
+      "sha256": "e7cce9c5a7b3168cb15b6b2370b23dc5cd2612f3cc35bf5fe9573f35615c8cbd",
+      "status": "PASS_GPU_FULL_SCENE"
+    },
+    {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/gpu3_final_stage1.json",
+      "sha256": "6b3f30bbff02b9f43e88bfa609771ae25bd20d221d566d229b4792b96a56aa7d",
+      "status": "PASS_GPU_FULL_SCENE"
+    },
+    {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_ddp32/resume_comparison.json",
+      "sha256": "fd515bbdd372e80c9d97597fffb8b2184c0af8988a9191e7d464090cf6666ca8",
+      "status": "PASS_DDP_RESUME"
+    }
+  ],
+  "formal_budget_registered": false,
+  "full_scene_gpu": true,
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "matched_bce_fm_1k": false,
+  "maximum_scene_gpu": true,
+  "oracle_bce_overfit": false,
+  "oracle_fm_overfit": false,
+  "pilot5000": false,
+  "ptv3_permutation": true,
+  "schema": "hs-occflow-stage2-384-engineering-v1",
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "stage1_final_checkpoint": false,
+  "status": "PENDING_REAL_GPU_EVIDENCE"
+}

@@ -1,0 +1,54 @@
+{
+  "configs/research_v2/hier_occ_flow/stage2_384_ddp_smoke.yaml": {
+    "file_sha256": "148dcb14378f69d71c0f978fe407cfb9ae997d94c0cbada45fc427bfd0f82a07",
+    "resolved_config_sha256": "60b7920b01e4d18aab85233392747eb4478ee41fdb1d137a95713dcb1e898cf8"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_oracle_bce.yaml": {
+    "file_sha256": "61bcb07ac0a62c20bf49beaa63e42c26ad7481d64019ea228c8cf2f02d6d2c1e",
+    "resolved_config_sha256": "5d7f753c6d989bede5400b416fd115ec85e206a4e369bfb7840c7f7657f8ca6a"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_oracle_bce_pilot1000.yaml": {
+    "file_sha256": "dc6c2baff2db18fc5195a0fb6fb08141e4e8b60116e169ac384066290888062b",
+    "resolved_config_sha256": "75dfdb453b4799bb4a4ffffd335412598845b564ba9c2632bb59241efbab8f12"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_oracle_bce_pilot5000.yaml": {
+    "file_sha256": "a38fd7bdac3a5ba447e981323c68843145a2429dc21666f6f08fea774d816d2c",
+    "resolved_config_sha256": "41e6e6489bff76b1c9ae9f506d0f1426986529ef30663c52c059a1368292e64f"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_oracle_fm.yaml": {
+    "file_sha256": "a2990d0b34fa00bf5aba8d2ecddb88161c9d83c38b356aba769bf9f151af1a40",
+    "resolved_config_sha256": "04bb5f88dd3545529886cb09a972f1722dc21650da2a7b0fc04b2ed70e33f9cb"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_oracle_fm_pilot1000.yaml": {
+    "file_sha256": "97093faf74888f3855a72d18f3c4f75c6226b404f9e33f1e12c667540a932429",
+    "resolved_config_sha256": "5c80c494ae5d9a2cd1719e50bed4922d9f444c17c70e482fb82353bffaab7e29"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_oracle_fm_pilot5000.yaml": {
+    "file_sha256": "8488bcb4663762fb1bd0662a76c5ae02c2815b1d119559e1f2ff1cd38aaf9f55",
+    "resolved_config_sha256": "12357a2422e144dbc00fa2a95a87b9d2539bdbf6166b91fa5bc18a3564112e62"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_predicted_bce.yaml": {
+    "file_sha256": "10e0d42043b3b747550a309c253a71720faf4fa200e3dc51467207d769135830",
+    "resolved_config_sha256": "701262d3ce82fe00e7ea732da25024a4c0925ad04e0d07c35743aa011ab8918a"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_predicted_bce_pilot1000.yaml": {
+    "file_sha256": "999d3bea665f4910b5f31105b9bcef88f9005d8317fe19c089dafaf4ca384244",
+    "resolved_config_sha256": "a72b53ebab8b608603917653bba19da360420a4cf8cd1c7b86aabe26fa7d001d"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_predicted_bce_pilot5000.yaml": {
+    "file_sha256": "02c58b4ccdcc757666aeccddcf36f52d4a0d29ada9ba73386ba65183458d7b80",
+    "resolved_config_sha256": "35911bf32e37c32b55dc82b5ae719a65f46118a32c08ea3246a235a49f8d08e5"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_predicted_fm.yaml": {
+    "file_sha256": "60b0c298505439c071cde613cb49beba95aebf4464566a575b2b6f867b719851",
+    "resolved_config_sha256": "8e174b0e393678409d4a2dcdc11ab37b9b62eb091545bbd0175983bad679e833"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_predicted_fm_pilot1000.yaml": {
+    "file_sha256": "45b1867a40bf0194d19d1be3bb1eb9c191e873ae942598ef389e1a54ee6f89de",
+    "resolved_config_sha256": "0ca9fb4c8e0de6c752fb1bfdd71a70fceb1b3a548480b307d7186ce3169b3c56"
+  },
+  "configs/research_v2/hier_occ_flow/stage2_384_predicted_fm_pilot5000.yaml": {
+    "file_sha256": "0c24edf4bc89ca22a1e2f966833df937eb84034b514062aaa57d18ff107f48d7",
+    "resolved_config_sha256": "e50542caddc9e676886d30acd58157b4baad0fca21ca0c4e3ea2e1e7e937a776"
+  }
+}

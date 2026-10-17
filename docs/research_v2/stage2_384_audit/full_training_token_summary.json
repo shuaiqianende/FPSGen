@@ -1,0 +1,83 @@
+{
+  "data_version": "hs-occ-surface-hit-v1",
+  "development_frames": 900,
+  "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+  "full_per_frame_audit_sha256": "57cc39643cc42deb40174c6e27c68ffd6134f24ab7bc09c48386b0e375ad0cb8",
+  "full_table_location": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/token_audit.json",
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "gpu_forward_backward": "NOT_EXECUTED",
+  "gt_parent_quantiles": {
+    "0": 57862.0,
+    "100": 319738.0,
+    "50": 138000.0,
+    "90": 207215.2,
+    "99": 259269.3700000003
+  },
+  "guard_frames": 360,
+  "oracle_token_quantiles": {
+    "0": 72327.0,
+    "100": 399672.0,
+    "50": 172499.5,
+    "90": 259018.5,
+    "99": 324086.0400000004
+  },
+  "predicted_token_quantiles": "NOT_MEASURED_REQUIRES_FROZEN_STAGE1_GPU_FORWARD",
+  "proof": "Exact oracle count=min(available27-neighbor empties,floor0.25*GT). Vertical subset lower bound proves sufficiency; exact full neighborhood used otherwise.",
+  "representatives": [
+    {
+      "count_proof": "vertical_neighbors_prove_full_pool_sufficient",
+      "empty_pool_lower_bound": 78841,
+      "fine_occupied": 617932,
+      "frame": 4289,
+      "gt_parents": 137999,
+      "index": 9511,
+      "oracle_negative_parents": 34499,
+      "oracle_tokens": 172498,
+      "quantile": 50,
+      "sequence": "02"
+    },
+    {
+      "count_proof": "vertical_neighbors_prove_full_pool_sufficient",
+      "empty_pool_lower_bound": 177172,
+      "fine_occupied": 857453,
+      "frame": 444,
+      "gt_parents": 207214,
+      "index": 13880,
+      "oracle_negative_parents": 51803,
+      "oracle_tokens": 259017,
+      "quantile": 90,
+      "sequence": "06"
+    },
+    {
+      "count_proof": "vertical_neighbors_prove_full_pool_sufficient",
+      "empty_pool_lower_bound": 134427,
+      "fine_occupied": 1142311,
+      "frame": 3360,
+      "gt_parents": 259199,
+      "index": 8582,
+      "oracle_negative_parents": 64799,
+      "oracle_tokens": 323998,
+      "quantile": 99,
+      "sequence": "02"
+    },
+    {
+      "count_proof": "vertical_neighbors_prove_full_pool_sufficient",
+      "empty_pool_lower_bound": 139820,
+      "fine_occupied": 1369124,
+      "frame": 925,
+      "gt_parents": 319738,
+      "index": 6147,
+      "oracle_negative_parents": 79934,
+      "oracle_tokens": 399672,
+      "quantile": 100,
+      "sequence": "02"
+    }
+  ],
+  "seconds": 94.67640985921025,
+  "seq08_excluded": true,
+  "source_full_audit_sha256": "4a8bed679d9fdb6f6397d43e9ecd7867f022d4db03430974f9affecb0a6da261",
+  "stage1_checkpoint_sha256": "b62b33fb285e38ae0c799388a38db7bc034d127d242bba4097b36b334cedf980",
+  "status": "PASS_CPU_FULL_TRAINING_TOKEN_AUDIT",
+  "train_frames": 17870,
+  "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+}

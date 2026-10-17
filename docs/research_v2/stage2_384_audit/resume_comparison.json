@@ -1,0 +1,22 @@
+{
+  "checkpoints": {
+    "continuous": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_ddp32/continuous21.pt",
+      "sha256": "ab70bf379e2c9d23ca12af092ac984f4e0ff102a4a6fea690ffdb72151b7b1e8"
+    },
+    "resumed": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_ddp32/checkpoints/resume_latest.pt",
+      "sha256": "8ff530c28ec09928aab3075792122afaa1ea09c11a9c5e7a78123aef63fb7b47"
+    }
+  },
+  "errors": [],
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "status": "PASS_DDP_RESUME",
+  "successful_updates": 21,
+  "tolerance": {
+    "atol": 1e-05,
+    "rng_sampler_integer": "exact",
+    "rtol": 0.001
+  }
+}

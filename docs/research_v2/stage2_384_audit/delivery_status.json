@@ -1,0 +1,33 @@
+{
+  "observed_epoch": 1792239362.9086275,
+  "tmux": "fpsgen_hs_stage2_384_pilots_gpu23",
+  "stage1_complete": true,
+  "stage1_updates": 34275,
+  "stage1_successful_frame_exposures": 100000,
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "full_scene_gpu2": "PASS",
+  "full_scene_gpu3": "PASS",
+  "ddp_resume": "PASS",
+  "cpu_tests_passed": 58,
+  "cpu_tests_skipped": 1,
+  "overfit_runs": {
+    "bce": {
+      "directory": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_oracle_bce_overfit200",
+      "successful_updates": 0,
+      "loss_first": null,
+      "loss_latest": null,
+      "status": "STARTING"
+    },
+    "fm": {
+      "directory": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_oracle_fm_overfit200",
+      "successful_updates": 0,
+      "loss_first": null,
+      "loss_latest": null,
+      "status": "STARTING"
+    }
+  },
+  "pilot1000_status": "GATED_AFTER_OVERFIT",
+  "pilot5000_status": "NOT_STARTED",
+  "formal_training_ready": false,
+  "no_other_tasks_stopped": true
+}

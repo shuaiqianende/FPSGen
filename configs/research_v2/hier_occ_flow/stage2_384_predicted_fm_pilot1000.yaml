@@ -1,0 +1,76 @@
+geometry: geometry_384_8way.yaml
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/train
+development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development
+stage1:
+  type: occupancy384
+  checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+  adapter:
+    checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt
+    config: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4/config.json
+    checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+    weights: ema
+candidates:
+  mode: predicted
+  stage1_nfe: 4
+  seed: 20261018
+  negative_fraction: 0.25
+  oracle_score: neutral
+  neutral_score: 1.0
+  selection:
+    strategy: threshold
+    threshold: 0.5
+    expansion: 0
+    budget: 500000
+    overflow: error
+  calibration_status: pending_development
+model:
+  objective: fm
+  backbone: ptv3
+  width: 64
+  lidar_channels: 384
+  condition_mode: pyramid_observed
+  checkpointing: true
+  patch_sizes:
+  - 64
+  - 128
+training:
+  scope: pilot1000
+  successful_updates: 1000
+  batch_per_gpu: 1
+  precision: fp16
+  seed: 20261018
+  lr: 0.0002
+  weight_decay: 0.01
+  grad_clip: 1.0
+  warmup_updates: 100
+  checkpoint_every: 100
+  milestone_every: 1000
+  max_parent_tokens: 500000
+  ema_decay: 0.999
+  cpu_threads: 4
+flow:
+  source: gaussian
+  sigma: 1.0
+  target_mapping: binary_symmetric
+loss:
+  fm: 1.0
+cache:
+  enabled: false
+  root: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_cache/predicted
+  max_bytes: 8589934592
+validation:
+  every_updates: 200
+  max_frames: 8
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  threshold: 0.0
+  seed: 20261019
+  sampling_seeds:
+  - 20261019
+  - 20261020
+  structural_metrics: true
+engineering_gate: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/engineering_gate.json

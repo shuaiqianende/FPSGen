@@ -1,0 +1,37 @@
+{
+  "models": [
+    {
+      "all_trainable": true,
+      "flash_enabled": true,
+      "gpu_forward_backward": "NOT_EXECUTED",
+      "initial_optimizer_entries": 0,
+      "initial_state_sha256": "3736c7d7dc377b49728679cb76b50b5388f4358c5b7b84cbe42b2f37b843f4d7",
+      "objective": "bce",
+      "output_dimensions": 8,
+      "parameters": 2558040,
+      "time_modulated_ptv3_blocks": 0
+    },
+    {
+      "all_trainable": true,
+      "flash_enabled": true,
+      "gpu_forward_backward": "NOT_EXECUTED",
+      "initial_optimizer_entries": 0,
+      "initial_state_sha256": "4b1f9a7d5da30692371fdb855370599287621f2ad7caddac2651cc76076205b9",
+      "objective": "fm",
+      "output_dimensions": 8,
+      "parameters": 2677128,
+      "time_modulated_ptv3_blocks": 6
+    }
+  ],
+  "packages": {
+    "flash-attn": "2.5.9.post1",
+    "mmcv": "1.7.2",
+    "numpy": "1.23.5",
+    "spconv-cu117": "2.3.6",
+    "torch": "2.0.1+cu117",
+    "torch-scatter": "2.1.2+pt20cu117"
+  },
+  "python": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+  "scope": "CPU construction only",
+  "system_environment_modified": false
+}

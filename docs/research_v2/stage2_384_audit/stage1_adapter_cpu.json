@@ -1,0 +1,46 @@
+{
+  "all_frozen": true,
+  "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_intermediate.pt",
+  "checkpoint_sha256": "b62b33fb285e38ae0c799388a38db7bc034d127d242bba4097b36b334cedf980",
+  "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+  "data_version": "hs-occ-surface-hit-v1",
+  "encoder_parameters": 19056568,
+  "expected_feature_shapes": [
+    [
+      1,
+      128,
+      16,
+      192,
+      192
+    ],
+    [
+      1,
+      128,
+      8,
+      96,
+      96
+    ],
+    [
+      1,
+      128,
+      4,
+      48,
+      48
+    ]
+  ],
+  "feature_layout": "B,C,Z,Y,X",
+  "flow_parameters": 524073,
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "gpu_forward": "NOT_EXECUTED_GPU2_3_OCCUPIED",
+  "input_feature_version": "coarse_f64_v1",
+  "parameters": 19580641,
+  "scope": "CPU strict Stage1 construction/load only; not GPU forward",
+  "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+  "score_layout": "Z,Y,X",
+  "stage1_final_100k_frames": false,
+  "successful_frame_exposures": 70900,
+  "successful_updates": 27000,
+  "train_override_remains_eval": true,
+  "type": "FrozenStage1OccupancyAdapter",
+  "weights": "ema"
+}
