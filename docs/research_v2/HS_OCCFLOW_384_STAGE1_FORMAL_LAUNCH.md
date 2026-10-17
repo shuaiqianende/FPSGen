@@ -1,3 +1,5 @@
+> Budget clarification: the user now requires100K successful frame exposures, ending at34,275 cumulative optimizer updates. Earlier100K-update statements below are historical. See[corrected budget](HS_OCCFLOW_384_STAGE1_100K_FRAME_BUDGET.md).
+
 # Stage1 384 direct occupancy formal training
 
 Current status: **RUNNING, global batch4**.

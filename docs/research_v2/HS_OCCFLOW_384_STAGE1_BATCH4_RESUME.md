@@ -1,3 +1,5 @@
+> Budget clarification: the user now requires100K successful frame exposures, ending at34,275 cumulative optimizer updates. Earlier100K-update statements below are historical. See[corrected budget](HS_OCCFLOW_384_STAGE1_100K_FRAME_BUDGET.md).
+
 # Global batch4 continuation
 
 User requested true global batch4 and continuation from the latest own checkpoint.

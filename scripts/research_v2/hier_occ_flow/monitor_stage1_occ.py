@@ -41,10 +41,15 @@ def snapshot(output):
     gpu=subprocess.run(['nvidia-smi','--id=2,3','--query-gpu=index,memory.used,memory.free,utilization.gpu','--format=csv,noheader'],capture_output=True,text=True)
     cfg=json.loads((output/'config.json').read_text()) if (output/'config.json').exists() else {}
     launch=json.loads((output/'launch_parameters.json').read_text()) if (output/'launch_parameters.json').exists() else {}
-    formal=cfg.get('scope')=='formal' and launch.get('actual_update_budget')==100000
+    frame_budget=launch.get('successful_frame_exposure_budget')
+    formal=cfg.get('scope')=='formal' and (launch.get('actual_update_budget')==100000 or (
+        frame_budget==100000 and cfg.get('training',{}).get('successful_frame_exposures')==100000
+        and launch.get('actual_update_budget')==cfg['training']['successful_updates']))
     result={'epoch_time':time.time(),'processes':live_processes(output),'gpu':gpu.stdout.strip(),'gpu_error':gpu.stderr.strip(),
         'disk_free_bytes':shutil.disk_usage(output if output.exists() else ROOT).free,
         'successful_updates':successful[-1]['successful_updates'] if successful else 0,
+        'successful_frame_exposures':successful[-1].get('successful_frame_exposures') if successful else launch.get('starting_successful_frame_exposures'),
+        'target_updates':launch.get('actual_update_budget'),'target_successful_frame_exposures':frame_budget,
         'latest':successful[-1] if successful else None,'actual_training_observed':bool(successful) and formal,
         'scope':cfg.get('scope'),'formal_budget_verified':formal,'expected_world_size':launch.get('world_size',1),
         'last100_loss_mean':float(np.mean(losses)) if losses else None,

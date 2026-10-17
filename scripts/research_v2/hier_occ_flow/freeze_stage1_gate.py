@@ -64,6 +64,11 @@ def main():
             and batch_config and batch_config['training']['batch_per_gpu']==2
             and batch_launch and batch_launch['world_size']==2 and batch_launch['physical_gpus']==[2,3] and batch_launch['global_batch']==4
             and all(x and x['status']=='PASS' and x['batch_per_gpu']==2 and x['maximum_scope']=='dataset maximum' for x in batch_gpus))
+    if cfg['training'].get('successful_frame_exposures') is not None:
+        accounting=read(run/'stage1_frame_budget_preflight.json')
+        checks['frame_budget_accounting']=bool(accounting and accounting['status']=='PASS' and accounting['config_sha256']==sha
+            and accounting['target_successful_frames']==cfg['training']['successful_frame_exposures']
+            and accounting['target_successful_updates']==cfg['training']['successful_updates'])
     g=cfg['geometry'];from fpsgen.hier_occ_flow.geometry import SparseHierarchyGeometry
     result={**checks,'formal_ready':all(checks.values()),'geometry_sha256':SparseHierarchyGeometry(**g).sha256,
         'registered_config_sha256':sha,'pilots':pilots,

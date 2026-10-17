@@ -1,3 +1,5 @@
+> Budget clarification: the user now requires100K successful frame exposures, ending at34,275 cumulative optimizer updates. Earlier100K-update statements below are historical. See[corrected budget](HS_OCCFLOW_384_STAGE1_100K_FRAME_BUDGET.md).
+
 # Stage1 384 Occupancy: measured30-minute observation
 
 Formal training remains **RUNNING**. Observed 1823.3s after actual successful updates began; separate interactive agent observations: 34, spanning 1985.0s. Preparation/Pilot time is excluded.

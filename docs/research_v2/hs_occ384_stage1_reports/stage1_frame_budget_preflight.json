@@ -1,0 +1,23 @@
+{
+  "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+  "global_batch": 4,
+  "lr_at_boundary": [
+    9.190440524459204e-05,
+    0.00018380881048918408
+  ],
+  "lr_factor_after_restore": 0.9190440524459204,
+  "lr_factor_at_final": 0.0,
+  "remaining_updates": 14275,
+  "source_checkpoint_sha256": "ba316c8264d934480578c3802137d1236af6327c77c56c72b48dc1a571386044",
+  "source_successful_frames": 42900,
+  "source_updates": 20000,
+  "status": "PASS",
+  "target_successful_frames": 100000,
+  "target_successful_updates": 34275,
+  "tests": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests": 34
+  }
+}

@@ -21,6 +21,7 @@ from .dataset import input_xyz
 from .trainer import seed_all,rng_state,restore_rng,atomic_checkpoint,update_ema
 from .stage1_monitoring import module_grad_norm,gradient_stats,sample_parameters,sample_changes
 from .stage1_batch_transition import batch_indices,verify_batch_transition
+from .stage1_frame_budget import validate_frame_budget,verify_budget_transition,learning_rate_multiplier,final_update_for_frames
 
 
 def state_sha(model):
@@ -51,6 +52,7 @@ def validate_config(cfg):
     if cfg['training'].get('optimizer','AdamW')!='AdamW' or cfg['training'].get('scheduler','warmup_cosine')!='warmup_cosine':
         raise ValueError('This runner supports explicitly registered AdamW and warmup_cosine only')
     if cfg['training']['successful_updates']>100000: raise ValueError('Budget exceeds registration')
+    validate_frame_budget(cfg)
     return g
 
 
@@ -66,8 +68,9 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if not resume and any((output/'checkpoints').glob('*.pt')): raise FileExistsError('Fresh output already contains checkpoints')
     train=cfg['training']; steps=train['successful_updates'] if max_updates is None else max_updates
     if not 0<steps<=train['successful_updates']: raise ValueError('max-updates may only shorten registered budget')
-    if cfg['scope']=='formal' and (steps!=100000 or train['successful_updates']!=100000):
-        raise ValueError('Formal scope is the full100K budget; use a separately labeled smoke/pilot config for short runs')
+    frame_target=train.get('successful_frame_exposures')
+    if cfg['scope']=='formal' and (steps!=train['successful_updates'] or (steps!=100000 and frame_target!=100000)):
+        raise ValueError('Formal scope requires the full100K budget or explicitly registered100K-frame budget')
     if smoke and steps>32: raise ValueError('Smoke is limited to32 successful updates')
     if steps>1000 or cfg['scope']=='formal':
         gate=json.loads(Path(cfg['engineering_gate']).read_text()) if cfg.get('engineering_gate') else {}
@@ -76,6 +79,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             raise ValueError('Formal Stage1 requires independently measured data/GPU/overfit/pilot gates')
         if train['batch_per_gpu']==2 and not gate.get('batch2_ddp_resume'):
             raise ValueError('B2 formal continuation requires actual B2 DDP/resume evidence')
+        if frame_target is not None and gate.get('frame_budget_accounting') is not True:
+            raise ValueError('Frame-budget continuation requires verified mixed-batch accounting')
         config_sha=hashlib.sha256(json.dumps(cfg,sort_keys=True).encode()).hexdigest()
         if gate.get('registered_config_sha256')!=config_sha:raise ValueError('Formal config changed after engineering gate freeze')
         for key,split in (('train_dataset','train'),('development_dataset','development')):
@@ -121,9 +126,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     optimizer=torch.optim.AdamW([{'params':raw.encoder.parameters(),'lr':train['lr_encoder'],'name':'encoder'},
         {'params':raw.flow.parameters(),'lr':train['lr_flow'],'name':'flow'}],weight_decay=train['weight_decay'])
     def multiplier(u):
-        if u<train['warmup_updates']: return (u+1)/max(train['warmup_updates'],1)
-        p=(u-train['warmup_updates'])/max(train['successful_updates']-train['warmup_updates'],1)
-        return .5*(1+np.cos(np.pi*min(max(p,0),1)))
+        return learning_rate_multiplier(u,train,cfg.get('budget_transition'))
     scheduler=torch.optim.lr_scheduler.LambdaLR(optimizer,multiplier)
     scaler=torch.cuda.amp.GradScaler(enabled=train['precision']=='fp16',init_scale=train.get('amp_initial_scale',16384.))
     generator=torch.Generator(device=device).manual_seed(train['seed']+1000+rank)
@@ -137,11 +140,14 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if world>1:
         hashes=[None]*world; torch.distributed.all_gather_object(hashes,initialization['initial_model_sha256'])
         if len(set(hashes))!=1: raise RuntimeError('DDP initialization differs')
-    sample_cursor=0;successful_frame_exposures=0;batch_transition_applied=False
+    sample_cursor=0;successful_frame_exposures=0;batch_transition_applied=False;budget_transition_applied=False
     if resume:
         value=torch.load(resume,map_location='cpu')
-        batch_transition_applied=bool(cfg.get('batch_transition') and value.get('identity')!=identity)
-        value=verify_batch_transition(value,identity,cfg,resume) if batch_transition_applied else verify_stage1_resume(value,identity)
+        budget_transition_applied=bool(cfg.get('budget_transition') and value.get('identity')!=identity)
+        batch_transition_applied=bool(not budget_transition_applied and cfg.get('batch_transition') and value.get('identity')!=identity)
+        if budget_transition_applied:value=verify_budget_transition(value,identity,cfg,resume)
+        elif batch_transition_applied:value=verify_batch_transition(value,identity,cfg,resume)
+        else:value=verify_stage1_resume(value,identity)
         raw.load_state_dict(value['model'],strict=True); optimizer.load_state_dict(value['optimizer'])
         scheduler.load_state_dict(value['scheduler']); scaler.load_state_dict(value['scaler'])
         if ema is not None: ema.load_state_dict(value['ema'],strict=True)
@@ -150,6 +156,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         sample_cursor=value['sampler'].get('sample_cursor',attempts*world)
         successful_frame_exposures=value['sampler'].get('successful_frame_exposures',successful*world)
         restore_rng(value['rank_rng'][rank],generator,device)
+    if frame_target is not None and final_update_for_frames(successful,successful_frame_exposures,world*train['batch_per_gpu'],frame_target)!=steps:
+        raise ValueError('Actual restored exposure counter does not match registered stop update')
     output.mkdir(parents=True,exist_ok=True)
     code_sha={p.name:file_sha(p) for p in Path(__file__).parent.glob('stage1*.py')}
     launch_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
@@ -160,6 +168,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             'physical_gpus':list(map(int,visible.split(','))),'world_size':world,'scope':cfg['scope'],
             'actual_update_budget':steps,'starting_successful_updates':successful,'resume':str(resume) if resume else None,
             'batch_per_gpu':train['batch_per_gpu'],'global_batch':train['batch_per_gpu']*world,
+            'successful_frame_exposure_budget':frame_target,'starting_successful_frame_exposures':successful_frame_exposures,
             'epoch_time':time.time(),'identity':identity,'git_commit':launch_commit})
         print(f'phase=model_ready initialization=scratch encoder_params={sum(p.numel() for p in raw.encoder.parameters())} flow_params={sum(p.numel() for p in raw.flow.parameters())}',flush=True)
     stopped=[False]
@@ -184,6 +193,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                 'sampler':{'attempts':attempts,'world_size':world,'seed':train['seed'],'batch_per_gpu':train['batch_per_gpu'],
                     'sample_cursor':sample_cursor,'successful_frame_exposures':successful_frame_exposures},'source_code_sha256':code_sha,
                 'batch_transition':cfg.get('batch_transition'),
+                'budget_transition':cfg.get('budget_transition'),'training_budget':{'successful_updates':steps,'successful_frame_exposures':frame_target},
                 'git_commit':launch_commit,
                 'rank_model_hashes':hashes,'parameter_sync_pass':sync_pass})
             print(f'checkpoint={output / "checkpoints" / name} update={successful} ranks_synchronized={sync_pass}',flush=True)
@@ -196,6 +206,15 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                 'starting_attempts':attempts,'starting_sample_cursor':sample_cursor,'starting_successful_frame_exposures':successful_frame_exposures,
                 'model_sha256':state_sha(raw),'ema_sha256':state_sha(ema),'optimizer_entries':len(optimizer.state),
                 'scheduler_last_epoch':scheduler.last_epoch,'amp_scale':scaler.get_scale(),'learning_rates':[x['lr'] for x in optimizer.param_groups]})
+    elif budget_transition_applied:
+        save('budget_transition_start.pt')
+        if rank==0:
+            os.link(output/'checkpoints/budget_transition_start.pt',output/'checkpoints/resume_latest.pt')
+            atomic_json(output/'budget_transition_audit.json',{'source':cfg['budget_transition'],'starting_updates':successful,
+                'starting_successful_frame_exposures':successful_frame_exposures,'starting_sample_cursor':sample_cursor,
+                'model_sha256':state_sha(raw),'ema_sha256':state_sha(ema),'optimizer_entries':len(optimizer.state),
+                'scheduler_last_epoch':scheduler.last_epoch,'amp_scale':scaler.get_scale(),'learning_rates':[x['lr'] for x in optimizer.param_groups],
+                'target_updates':steps,'target_successful_frame_exposures':frame_target})
     modules={'encoder':raw.encoder,'flow':raw.flow,'velocity_head':raw.flow.output}
     if raw.objective=='fm': modules['time_embedding']=raw.flow.embedding
     samples={k:sample_parameters(m) for k,m in modules.items()}
@@ -234,6 +253,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         else:
             scaler.step(optimizer); scaler.update(); scheduler.step(); successful+=1; failures=0
             successful_frame_exposures+=world*train['batch_per_gpu']
+            if frame_target is not None and successful_frame_exposures>frame_target:raise RuntimeError('Successful frame budget exceeded')
             # BN buffers have per-rank sample statistics; choose rank0 before EMA.
             if world>1:
                 for buffer in raw.buffers(): torch.distributed.broadcast(buffer,0)
@@ -262,19 +282,20 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             'epoch_time':time.time(),'optimizer_steps':int(next(iter(optimizer.state.values()))['step']) if optimizer.state else 0,
             'peak_allocated_bytes':torch.cuda.max_memory_allocated(device),'peak_reserved_bytes':torch.cuda.max_memory_reserved(device)}
         log.write(json.dumps(row,allow_nan=False)+'\n')
-        if rank==0: print(f"update={successful}/{steps} {raw.objective}={row['loss']} gradients={norms} seconds={row['seconds']:.3f}",flush=True)
+        if rank==0: print(f"update={successful}/{steps} frames={successful_frame_exposures}/{frame_target or 'unbounded'} {raw.objective}={row['loss']} gradients={norms} seconds={row['seconds']:.3f}",flush=True)
         stop=torch.tensor(int(stopped[0]),device=device)
         if world>1: torch.distributed.all_reduce(stop,op=torch.distributed.ReduceOp.MAX)
         stopped[0]=bool(stop)
         if successful and successful%train['checkpoint_every']==0 or successful==steps or stopped[0]:
             save('resume_latest.pt')
             if successful and successful%train['milestone_every']==0: save(f'step{successful:06d}.pt')
+            elif successful==steps:save(f'step{successful:06d}.pt')
         val=cfg['validation']
-        if bool(finite) and successful%val['light_every']==0:
+        if bool(finite) and (successful%val['light_every']==0 or (frame_target is not None and successful==steps)):
             state=rng_state(generator,device)
             if rank==0:
                 from .stage1_evaluation import evaluate_stage1
-                frames=None if successful%val['full_every']==0 else val['light_frames']
+                frames=None if successful%val['full_every']==0 or (frame_target is not None and successful==steps) else val['light_frames']
                 print(f'phase=validation update={successful} frames={frames if frames is not None else len(dev)}',flush=True)
                 use_ema=ema is not None and val.get('use_ema',True)
                 sample_dir=output/'validation'/f'update_{successful:06d}_sample' if val.get('save_sample') else None
@@ -302,5 +323,6 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     for sig,handler in old.items(): signal.signal(sig,handler)
     if rank==0: atomic_json(output/'summary.json',{'status':'PAUSED' if stopped[0] else 'COMPLETE_REQUESTED_BUDGET',
         'successful_updates':successful,'attempts':attempts,'seconds':time.perf_counter()-start,
-        'formal_training_complete':cfg['scope']=='formal' and successful==100000})
+        'successful_frame_exposures':successful_frame_exposures,'target_successful_frame_exposures':frame_target,'target_successful_updates':steps,
+        'formal_training_complete':cfg['scope']=='formal' and successful==steps and (frame_target is None or successful_frame_exposures==frame_target)})
     if world>1: torch.distributed.destroy_process_group()

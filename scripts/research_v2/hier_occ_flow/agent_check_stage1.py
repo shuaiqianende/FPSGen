@@ -17,6 +17,8 @@ def main():
     latest=row['latest'] or {}
     print(json.dumps({'epoch_time':row['epoch_time'],'successful_updates':row['successful_updates'],'attempts':row['attempts'],
         'loss':latest.get('loss'),'last100_loss':row['last100_loss_mean'],'gradient_norms':latest.get('gradient_norms'),
+        'successful_frame_exposures':row.get('successful_frame_exposures'),'target_updates':row.get('target_updates'),
+        'target_successful_frame_exposures':row.get('target_successful_frame_exposures'),
         'amp_scale':latest.get('amp_scale'),'overflows':latest.get('amp_overflow_count'),
         'parameters_changed':latest.get('parameter_changes'),'processes':row['processes'],'gpu':row['gpu'],
         'latest_update_age_seconds':row['latest_update_age_seconds'],'checkpoint_exists':row['checkpoint_exists'],

@@ -1,0 +1,79 @@
+batch_transition:
+  checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k/checkpoints/step018550_batch2_transition.pt
+  checkpoint_sha256: 1411b9cd3d1be81c1fad98ec0ca1094ad75b8ccb9f10a0a1bbb6fbcc55a710fe
+  source_config: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k/config.json
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+development_dataset: experiments/hier_occ_flow/occ384_full_parallel/development
+engineering_gate: experiments/hier_occ_flow/stage1_occ384_frames_engineering_gate.json
+experiment: stage1_occ384_fm
+flow:
+  sigma: 1.0
+  source: gaussian
+  target: binary_symmetric
+geometry: geometry_384_8way.yaml
+loss:
+  fm: 1.0
+model:
+  activation_checkpointing: true
+  initialization: scratch
+  input_feature_version: coarse_f64_v1
+  objective: fm
+  pretrained_encoder: null
+  widths:
+  - 8
+  - 16
+  - 32
+  - 64
+scope: formal
+train_dataset: experiments/hier_occ_flow/occ384_full_parallel/train
+training:
+  amp_initial_scale: 16384.0
+  batch_per_gpu: 2
+  checkpoint_every: 1000
+  ema_decay: 0.999
+  grad_clip: 1.0
+  gradient_audit_every: 50
+  lr_encoder: 0.0001
+  lr_flow: 0.0002
+  milestone_every: 5000
+  optimizer: AdamW
+  physical_gpus:
+  - 2
+  - 3
+  precision: fp16
+  scheduler: warmup_cosine
+  seed: 20261017
+  successful_updates: 34275
+  warmup_updates: 2000
+  weight_decay: 0.01
+  successful_frame_exposures: 100000
+validation:
+  compare_ema: true
+  full_every: 5000
+  light_every: 1000
+  light_frames: 12
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  no_seq08_tuning: true
+  sample_nfe: 4
+  save_sample: true
+  seed: 20261018
+  target_definition: raw_pre_poisson_surface_hit
+  threshold: 0.5
+  threshold_sweep:
+  - 0.25
+  - 0.5
+  - 0.75
+  use_ema: false
+budget_transition:
+  checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4/checkpoints/step020000.pt
+  checkpoint_sha256: ba316c8264d934480578c3802137d1236af6327c77c56c72b48dc1a571386044
+  source_config: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4/config.json
+  source_updates: 20000
+  source_successful_frames: 42900
+  previous_update_budget: 100000
+  lr_policy: continuous_cosine_to_frame_budget
+  anchor_lr_factor: 0.9190440524459204
