@@ -57,6 +57,8 @@ def compare_resume(reference,resumed):
             'geometry_sha256':identity.get('geometry_sha256'),
             'stage1_checkpoint_sha256':identity.get('stage1_checkpoint_sha256'),
             'successful_updates':reference.get('successful_updates'),
+            'global_batch':reference.get('sampler',{}).get('global_batch',identity.get('world_size',1)),
+            'batch_per_gpu':reference.get('sampler',{}).get('batch_per_gpu',1),
             'tolerance':{'atol':RESUME_ATOL,'rtol':RESUME_RTOL,'rng_sampler_integer':'exact'},'errors':errors}
 
 
@@ -65,6 +67,12 @@ def overfit_evidence(directory,objective):
     identity=summary['identity'];n=summary['successful_updates']
     evaluation=json.loads((root/'overfit'/f'update_{n:06d}.json').read_text())
     logs=[json.loads(line) for line in (root/'train_rank0.jsonl').read_text().splitlines()]
+    launch=json.loads((root/'launch.json').read_text()) if (root/'launch.json').exists() else {}
+    transition=launch.get('transition')
+    if transition:
+        previous_root=Path(transition['source_identity']['output'])
+        inherited=[json.loads(line) for line in (previous_root/'train_rank0.jsonl').read_text().splitlines()]
+        logs=[row for row in inherited if row['successful_updates']<=transition['inherited_successful_updates']]+logs
     losses=[r['loss'] for r in logs if r['finite']]
     beginning=float(np.mean(losses[:20])) if len(losses)>=40 else float('inf')
     ending=float(np.mean(losses[-20:])) if len(losses)>=40 else float('inf')

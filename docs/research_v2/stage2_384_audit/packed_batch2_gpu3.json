@@ -1,0 +1,71 @@
+{
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "no_token_truncation": true,
+  "physical_gpu": 3,
+  "precision_contract": "Strict AMP-disabled control required; AMP row-count GEMMs may differ by half-precision rounding. Original cellwise AMP check remains reported.",
+  "rows": [
+    {
+      "amp_max_rounding_units": 1.0,
+      "batch_per_gpu": 2,
+      "finite": true,
+      "fp32_packed_vs_separate_max_abs": 9.5367431640625e-07,
+      "fp32_packed_vs_separate_mean_abs": 7.030853055312036e-08,
+      "fp32_packed_vs_separate_pass": true,
+      "gradient_norm": 0.28407278656959534,
+      "indices": [
+        9511,
+        6147
+      ],
+      "kind": "unequal_real_scenes",
+      "loss": 1.5644593238830566,
+      "optimizer_update_executed": true,
+      "original_strict_amp_comparison_met": false,
+      "packed_vs_separate_max_abs": 0.0009765625,
+      "packed_vs_separate_mean_abs": 2.7414735086495057e-06,
+      "packed_vs_separate_pass": true,
+      "packed_vs_separate_relative_l2": 4.836789594264701e-05,
+      "packed_vs_separate_sign_disagreement": 1.0923326954070944e-06,
+      "peak_allocated_bytes": 12158345728,
+      "peak_reserved_bytes": 12960399360,
+      "permutation_max_abs": 0.0,
+      "permutation_pass": true,
+      "scene_isolation_max_abs": 0.0,
+      "scene_isolation_pass": true,
+      "seconds": 28.26901989802718,
+      "tokens_per_scene": [
+        172498,
+        399672
+      ],
+      "tokens_total": 572170
+    },
+    {
+      "batch_per_gpu": 2,
+      "finite": true,
+      "gradient_norm": 0.5759801268577576,
+      "indices": [
+        6147,
+        6147
+      ],
+      "kind": "two_complete_maximum_scenes",
+      "loss": 1.5806963443756104,
+      "optimizer_update_executed": true,
+      "peak_allocated_bytes": 17242298368,
+      "peak_reserved_bytes": 19312672768,
+      "seconds": 4.9983068611472845,
+      "tokens_per_scene": [
+        399672,
+        399672
+      ],
+      "tokens_total": 799344
+    }
+  ],
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "status": "PASS_PACKED_BATCH2",
+  "tolerance": {
+    "amp_max_units": 2,
+    "amp_relative_l2": 0.0009765625,
+    "amp_sign_disagreement": 0.0001,
+    "control_atol": 0.0001,
+    "control_rtol": 0.001
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "batch_per_gpu": 2,
+  "checkpoints": {
+    "continuous": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_ddp32/continuous21.pt",
+      "sha256": "83b380419d338a0a16584f899ce952b3bd5f6d8983c41a8ad0a2048efebb2ed5"
+    },
+    "resumed": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_ddp32/checkpoints/resume_latest.pt",
+      "sha256": "0d0bb73988b22945266f9b1b93671e6ae2528626feebb0c4f42cb7ae0aef3312"
+    }
+  },
+  "errors": [],
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "global_batch": 4,
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "status": "PASS_DDP_RESUME",
+  "successful_updates": 21,
+  "tolerance": {
+    "atol": 1e-05,
+    "rng_sampler_integer": "exact",
+    "rtol": 0.001
+  }
+}

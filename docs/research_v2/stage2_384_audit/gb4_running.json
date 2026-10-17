@@ -1,0 +1,215 @@
+{
+  "observed_epoch": 1792241383.6491292,
+  "status": "FM_ONLY_GB4_RUNNING",
+  "tmux": "fpsgen_hs_stage2_384_fm_gb4_gpu23",
+  "batch_per_gpu": 2,
+  "global_batch": 4,
+  "current_scope": "oracle_parent_overfit",
+  "inherited_updates": 160,
+  "successful_updates": 200,
+  "amp_skips": 0,
+  "rank_latest_rows": [
+    {
+      "successful_updates": 200,
+      "attempts": 200,
+      "sampler_index": 14620,
+      "sequence": "07",
+      "frame": 223,
+      "tokens": 344150,
+      "batch_records": [
+        {
+          "sampler_index": 14620,
+          "sequence": "07",
+          "frame": 223,
+          "tokens": 131558
+        },
+        {
+          "sampler_index": 6497,
+          "sequence": "02",
+          "frame": 1275,
+          "tokens": 212592
+        }
+      ],
+      "batch_per_gpu": 2,
+      "global_batch": 4,
+      "successful_frame_exposures": 320,
+      "sample_cursor": 320,
+      "tokens_per_scene": [
+        131558,
+        212592
+      ],
+      "loss": 1.5445284843444824,
+      "rank_loss": 1.5772016048431396,
+      "gradient_norm": 0.2566074728965759,
+      "finite": true,
+      "amp_skips": 0,
+      "lr": 0.00010825793454723325,
+      "seconds": 3.632548052817583,
+      "peak_allocated_bytes": 9967714816,
+      "peak_reserved_bytes": 12012486656,
+      "candidate_source": [
+        {
+          "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+          "mode": "oracle_not_deployable",
+          "nearby_empty_pool": 190386,
+          "nearby_negatives": 26311,
+          "negative_fraction_relative_to_gt": 0.25,
+          "negative_sampling_weight": 1.0,
+          "neutral_score": 1.0,
+          "score_policy": "constant_neutral_for_positive_and_negative",
+          "stage1": {
+            "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+            "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+            "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+            "data_version": "hs-occ-surface-hit-v1",
+            "feature_layout": "B,C,Z,Y,X",
+            "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+            "input_feature_version": "coarse_f64_v1",
+            "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+            "score_layout": "Z,Y,X",
+            "stage1_final_100k_frames": true,
+            "successful_frame_exposures": 100000,
+            "successful_updates": 34275,
+            "type": "FrozenStage1OccupancyAdapter",
+            "weights": "ema"
+          },
+          "stage1_encoder_forwards": 1,
+          "stage1_nfe": 0,
+          "stage1_seed": 918217851
+        },
+        {
+          "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+          "mode": "oracle_not_deployable",
+          "nearby_empty_pool": 271552,
+          "nearby_negatives": 42518,
+          "negative_fraction_relative_to_gt": 0.25,
+          "negative_sampling_weight": 1.0,
+          "neutral_score": 1.0,
+          "score_policy": "constant_neutral_for_positive_and_negative",
+          "stage1": {
+            "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+            "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+            "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+            "data_version": "hs-occ-surface-hit-v1",
+            "feature_layout": "B,C,Z,Y,X",
+            "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+            "input_feature_version": "coarse_f64_v1",
+            "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+            "score_layout": "Z,Y,X",
+            "stage1_final_100k_frames": true,
+            "successful_frame_exposures": 100000,
+            "successful_updates": 34275,
+            "type": "FrozenStage1OccupancyAdapter",
+            "weights": "ema"
+          },
+          "stage1_encoder_forwards": 1,
+          "stage1_nfe": 0,
+          "stage1_seed": 151327093
+        }
+      ]
+    },
+    {
+      "successful_updates": 200,
+      "attempts": 200,
+      "sampler_index": 17869,
+      "sequence": "10",
+      "frame": 1200,
+      "tokens": 300374,
+      "batch_records": [
+        {
+          "sampler_index": 17869,
+          "sequence": "10",
+          "frame": 1200,
+          "tokens": 81553
+        },
+        {
+          "sampler_index": 0,
+          "sequence": "00",
+          "frame": 0,
+          "tokens": 218821
+        }
+      ],
+      "batch_per_gpu": 2,
+      "global_batch": 4,
+      "successful_frame_exposures": 320,
+      "sample_cursor": 320,
+      "tokens_per_scene": [
+        81553,
+        218821
+      ],
+      "loss": 1.5445284843444824,
+      "rank_loss": 1.5118553638458252,
+      "gradient_norm": 0.2566074728965759,
+      "finite": true,
+      "amp_skips": 0,
+      "lr": 0.00010825793454723325,
+      "seconds": 3.632537070661783,
+      "peak_allocated_bytes": 9941002240,
+      "peak_reserved_bytes": 12861833216,
+      "candidate_source": [
+        {
+          "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+          "mode": "oracle_not_deployable",
+          "nearby_empty_pool": 117922,
+          "nearby_negatives": 16310,
+          "negative_fraction_relative_to_gt": 0.25,
+          "negative_sampling_weight": 1.0,
+          "neutral_score": 1.0,
+          "score_policy": "constant_neutral_for_positive_and_negative",
+          "stage1": {
+            "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+            "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+            "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+            "data_version": "hs-occ-surface-hit-v1",
+            "feature_layout": "B,C,Z,Y,X",
+            "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+            "input_feature_version": "coarse_f64_v1",
+            "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+            "score_layout": "Z,Y,X",
+            "stage1_final_100k_frames": true,
+            "successful_frame_exposures": 100000,
+            "successful_updates": 34275,
+            "type": "FrozenStage1OccupancyAdapter",
+            "weights": "ema"
+          },
+          "stage1_encoder_forwards": 1,
+          "stage1_nfe": 0,
+          "stage1_seed": 648016253
+        },
+        {
+          "conditioning": "parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32",
+          "mode": "oracle_not_deployable",
+          "nearby_empty_pool": 290705,
+          "nearby_negatives": 43764,
+          "negative_fraction_relative_to_gt": 0.25,
+          "negative_sampling_weight": 1.0,
+          "neutral_score": 1.0,
+          "score_policy": "constant_neutral_for_positive_and_negative",
+          "stage1": {
+            "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+            "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+            "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+            "data_version": "hs-occ-surface-hit-v1",
+            "feature_layout": "B,C,Z,Y,X",
+            "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+            "input_feature_version": "coarse_f64_v1",
+            "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+            "score_layout": "Z,Y,X",
+            "stage1_final_100k_frames": true,
+            "successful_frame_exposures": 100000,
+            "successful_updates": 34275,
+            "type": "FrozenStage1OccupancyAdapter",
+            "weights": "ema"
+          },
+          "stage1_encoder_forwards": 1,
+          "stage1_nfe": 0,
+          "stage1_seed": 1428012844
+        }
+      ]
+    }
+  ],
+  "no_BCE_job_active": true,
+  "stage1_frozen": true,
+  "overfit_horizon": 400,
+  "next_phase": "1000 additional complete-training-split updates only after FM overfit quality passes"
+}

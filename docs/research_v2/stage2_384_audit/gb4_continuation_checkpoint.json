@@ -1,0 +1,25 @@
+{
+  "source_model_equals_transition_initial": true,
+  "source_ema_equals_transition_initial": true,
+  "optimizer_entries_initial": 169,
+  "successful_updates": 180,
+  "inherited_updates": 160,
+  "global_batch": 4,
+  "batch_per_gpu": 2,
+  "successful_frame_exposures": 240,
+  "expected_frame_exposures": 240,
+  "sample_cursor": 240,
+  "amp_skips": 0,
+  "parameter_sync_pass": true,
+  "rank_hashes": [
+    {
+      "online": "a882a86105e8dba41a18d524a046dcad03aaed0ec3a16249cd739edd1ffe71be",
+      "ema": "6e75028e8e7c6afd83bf0e5a611b8a92ab789f21fc045b968883cd2f6e124e1f"
+    },
+    {
+      "online": "a882a86105e8dba41a18d524a046dcad03aaed0ec3a16249cd739edd1ffe71be",
+      "ema": "6e75028e8e7c6afd83bf0e5a611b8a92ab789f21fc045b968883cd2f6e124e1f"
+    }
+  ],
+  "changed_parameter_tensors": 169
+}

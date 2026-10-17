@@ -1,5 +1,9 @@
 # Stage2 384 remaining gates and reproducible entrypoints
 
+The latest user-selected mainline is **FM only, DDP GPU2/3, packed2 scenes/rank,
+global batch4**. The previous paired BCE/FM queue below is historical and no
+longer runs. See [the GB4 continuation](HS_OCCFLOW_STAGE2_384_GB4.md).
+
 Code lives in the independent worktree
 `/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2`.
 Stage1's source, checkpoints and running process were preserved.

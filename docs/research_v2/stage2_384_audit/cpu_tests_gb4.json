@@ -1,0 +1,5 @@
+{
+  "passed": 62,
+  "skipped": 1,
+  "gpu_claim": "separate real GPU batch2 and DDP reports"
+}

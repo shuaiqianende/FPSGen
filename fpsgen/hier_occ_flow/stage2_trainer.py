@@ -18,6 +18,7 @@ from .flow_matching import training_pair,fm_loss,bce_loss
 from .trainer import seed_all,atomic_checkpoint,rng_state,restore_rng,update_ema
 from .stage1_training import state_sha
 from .storage import atomic_json,file_sha
+from .stage2_batching import pack_scenes,packed_training_pair,scene_mean_mse
 
 
 def own_resume(value,identity):
@@ -26,15 +27,17 @@ def own_resume(value,identity):
     return value
 
 
-def run_stage2(cfg,g,output,*,resume=None,max_updates=None):
+def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
     output=Path(output).resolve();train=cfg['training'];require_training_gate(cfg,g)
     steps=train['successful_updates'] if max_updates is None else max_updates
     if not 0<steps<=train['successful_updates']:raise ValueError('--max-updates only shortens a frozen horizon')
+    if resume and transition:raise ValueError('Exact resume and explicit batch transition are mutually exclusive')
     if not resume and any((output/'checkpoints').glob('*.pt')):raise FileExistsError('Fresh Stage2 output contains checkpoints')
     visible=os.environ.get('CUDA_VISIBLE_DEVICES','')
     if visible not in ('2','3','2,3'):raise ValueError('Only physical GPU2/3')
     rank=int(os.environ.get('RANK',0));world=int(os.environ.get('WORLD_SIZE',1));local=int(os.environ.get('LOCAL_RANK',0))
-    if world!=len(visible.split(',')):raise ValueError('One full scene per physical GPU/rank')
+    batch_per_gpu=train['batch_per_gpu'];global_batch=world*batch_per_gpu
+    if world!=len(visible.split(',')):raise ValueError('One rank per physical GPU')
     admission=json.loads(Path(os.environ['HS_STAGE2_ADMISSION']).read_text())
     if admission['status']!='AVAILABLE' or admission['physical_ids']!=list(map(int,visible.split(','))) or time.time()-admission['checked_at_epoch']>120:
         raise RuntimeError('Stage2 admission unavailable; never compete with Stage1')
@@ -64,14 +67,52 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None):
     scheduler=torch.optim.lr_scheduler.LambdaLR(optimizer,multiplier)
     scaler=torch.cuda.amp.GradScaler(enabled=train['precision']=='fp16',init_scale=16384.)
     generator=torch.Generator(device=device).manual_seed(train['seed']+1000+rank)
-    successful=attempts=failures=amp_skips=0
+    successful=attempts=failures=amp_skips=sample_cursor=successful_frames=0;transition_audit=None
     if resume:
         value=own_resume(torch.load(resume,map_location='cpu'),identity)
         raw.load_state_dict(value['model'],strict=True);optimizer.load_state_dict(value['optimizer'])
         scheduler.load_state_dict(value['scheduler']);scaler.load_state_dict(value['scaler'])
         if ema is not None:ema.load_state_dict(value['ema'],strict=True)
         successful=value['successful_updates'];attempts=value['attempts'];amp_skips=value['amp_skips'];failures=value['consecutive_failures']
+        sample_cursor=value['sampler'].get('sample_cursor',attempts*global_batch)
+        successful_frames=value['sampler'].get('successful_frame_exposures',successful*global_batch)
         restore_rng(value['rank_rng'][rank],generator,device)
+    if transition:
+        specification=cfg.get('transition',{})
+        if str(Path(transition).resolve())!=specification.get('checkpoint') or file_sha(transition)!=specification.get('checkpoint_sha256'):
+            raise ValueError('Explicit transition checkpoint path/SHA mismatch')
+        value=torch.load(transition,map_location='cpu');previous=value.get('identity',{})
+        previous_cfg=json.loads((Path(previous['output'])/'config.json').read_text())
+        common=('geometry_sha256','stage1_checkpoint_sha256','train_manifest_sha256','development_manifest_sha256')
+        if (previous.get('experiment')!='hs-occflow-stage2-384-v1' or value.get('initialization')!='scratch_stage2'
+            or value.get('parameter_sync_pass') is not True or any(previous.get(k)!=identity[k] for k in common)
+            or previous_cfg['model']!=cfg['model'] or previous_cfg['model']['objective']!='fm'
+            or config_sha(previous_cfg)!=previous['config_sha256']):raise ValueError('Only verified own384 FM continuation allowed')
+        raw.load_state_dict(value['model'],strict=True);optimizer.load_state_dict(value['optimizer'])
+        scheduler.load_state_dict(value['scheduler']);scaler.load_state_dict(value['scaler'])
+        if ema is not None:ema.load_state_dict(value['ema'],strict=True)
+        successful=value['successful_updates'];attempts=value['attempts'];amp_skips=value['amp_skips'];failures=value['consecutive_failures']
+        old_batch=previous['world_size']*previous_cfg['training']['batch_per_gpu']
+        sample_cursor=value['sampler'].get('sample_cursor',attempts*old_batch)
+        successful_frames=value['sampler'].get('successful_frame_exposures',successful*old_batch)
+        if previous['world_size']==world and old_batch==global_batch:restore_rng(value['rank_rng'][rank],generator,device)
+        elif rank==0:restore_rng(value['rank_rng'][0],generator,device)
+        old_cursor=sample_cursor
+        cohort_changed=previous_cfg.get('cohort_indices')!=cohort
+        if cohort_changed:sample_cursor=0
+        # The newly introduced rank gets an independent reproducible source
+        # stream. This is a registered batch/world-size transition, not an
+        # assertion of bit-identical RNG continuation across different batches.
+        before=[p['lr'] for p in optimizer.param_groups]
+        for group,base in zip(optimizer.param_groups,scheduler.base_lrs):group['lr']=base*multiplier(successful)
+        scheduler._last_lr=[p['lr'] for p in optimizer.param_groups]
+        transition_audit={'checkpoint':str(Path(transition).resolve()),'checkpoint_sha256':file_sha(transition),
+            'source_identity':previous,'old_global_batch':old_batch,'new_global_batch':global_batch,
+            'inherited_successful_updates':successful,'inherited_frame_exposures':successful_frames,
+            'sampler_cursor':sample_cursor,'lr_before':before,'lr_after':scheduler.get_last_lr(),
+            'previous_sampler_cursor':old_cursor,'cohort_changed_reset_order':cohort_changed,
+            'optimizer_ema_scaler_preserved':True,'rng_policy':'rank0 restores source; new rank uses independent registered seed'}
+    phase_start=value.get('phase_start_updates',successful) if resume else successful
     output.mkdir(parents=True,exist_ok=True);cache=None
     if cfg['cache']['enabled']:
         cache=ConditionCache(Path(cfg['cache']['root'])/output.name/f'rank{rank}',max_bytes=cfg['cache']['max_bytes']//world)
@@ -79,7 +120,8 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None):
         atomic_json(output/'config.json',cfg)
         atomic_json(output/'launch.json',{'rank0_pid':os.getpid(),'parent_pid':os.getppid(),'physical_gpus':list(map(int,visible.split(','))),
             'identity':identity,'stage1':adapter.provenance,'initialization':'scratch_stage2','starting_updates':successful,
-            'optimizer_entries':len(optimizer.state),'initial_model_sha256':state_sha(raw),'initial_ema_sha256':state_sha(ema) if ema else None})
+            'optimizer_entries':len(optimizer.state),'initial_model_sha256':state_sha(raw),'initial_ema_sha256':state_sha(ema) if ema else None,
+            'batch_per_gpu':batch_per_gpu,'global_batch':global_batch,'batching':'packed_variable_length','transition':transition_audit})
     stopped=[False]
     def request_stop(signum,frame):stopped[0]=True
     handlers={s:signal.signal(s,request_stop) for s in (signal.SIGINT,signal.SIGTERM)}
@@ -97,46 +139,58 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None):
                 'model':raw.state_dict(),'ema':ema.state_dict() if ema else None,'optimizer':optimizer.state_dict(),
                 'scheduler':scheduler.state_dict(),'scaler':scaler.state_dict(),'successful_updates':successful,
                 'attempts':attempts,'amp_skips':amp_skips,'consecutive_failures':failures,'rank_rng':states,
-                'sampler':{'attempts':attempts,'seed':train['seed'],'world_size':world,'cohort_indices':cohort},
+                'sampler':{'attempts':attempts,'seed':train['seed'],'world_size':world,'cohort_indices':cohort,
+                    'batch_per_gpu':batch_per_gpu,'global_batch':global_batch,'sample_cursor':sample_cursor,'successful_frame_exposures':successful_frames},
                 'parameter_sync_pass':synced,'rank_hashes':hashes,'stage1':adapter.provenance,
+                'batch_transition':transition_audit,
+                'phase_start_updates':phase_start,
                 'git_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()})
-    if not resume:save('step000000.pt')
+    if not resume:save(f'step{successful:06d}_transition.pt' if transition else 'step000000.pt')
     log=(output/f'train_rank{rank}.jsonl').open('a',buffering=1);start=time.perf_counter();raw.train()
     while successful<steps:
         tick=time.perf_counter();length=len(cohort) if cohort else len(ds)
-        index=sampler_index(attempts,rank,world,length,train['seed']);index=cohort[index] if cohort else index
-        record=ds[index];ids,c,target,source=assemble_stage2_scene(record,cfg,g,device,adapter,cache)
+        scenes=[];records=[];sources=[]
+        for slot in range(batch_per_gpu):
+            index=sampler_index(sample_cursor+rank*batch_per_gpu+slot,0,1,length,train['seed']);index=cohort[index] if cohort else index
+            record=ds[index];assembled=assemble_stage2_scene(record,cfg,g,device,adapter,cache)
+            scenes.append(assembled);sources.append(assembled[3]);records.append({'sampler_index':index,'sequence':record['sequence'],'frame':record['frame'],'tokens':len(assembled[0])})
+        ids,c,target,scene_lengths=pack_scenes(scenes);del scenes
+        if len(ids)>train.get('max_batch_parent_tokens',batch_per_gpu*train['max_parent_tokens']):raise RuntimeError('Full packed batch exceeds registered tokens; no truncation')
         optimizer.zero_grad(set_to_none=True)
         dtype=torch.bfloat16 if train['precision']=='bf16' else torch.float16
         with torch.autocast('cuda',dtype=dtype,enabled=train['precision']!='fp32'):
             if raw.objective=='fm':
-                pair=training_pair(target,c['valid_child_mask'],generator)
-                loss=fm_loss(model(ids,state=pair['state'],time=pair['time'],**c),pair['velocity'],c['valid_child_mask'])
+                pair=packed_training_pair(target,c['valid_child_mask'],c['batch'],generator)
+                loss=scene_mean_mse(model(ids,state=pair['state'],time=pair['time'],**c),pair['velocity'],c['valid_child_mask'],c['batch'])
             else:loss=bce_loss(model(ids,**c),target,c['valid_child_mask'])
         scaler.scale(loss).backward();scaler.unscale_(optimizer)
         grad=torch.nn.utils.clip_grad_norm_(raw.parameters(),train['grad_clip'])
         finite=torch.tensor(int(bool(torch.isfinite(loss) and torch.isfinite(grad)) and float(grad)>0),device=device)
         if world>1:torch.distributed.all_reduce(finite,op=torch.distributed.ReduceOp.MIN)
-        attempts+=1
+        attempts+=1;sample_cursor+=global_batch
         if not bool(finite):
             failures+=1;amp_skips+=1
             if scaler.is_enabled():scaler.update(new_scale=scaler.get_scale()/2)
             if failures>=3:stopped[0]=True
         else:
-            scaler.step(optimizer);scaler.update();scheduler.step();successful+=1;failures=0
+            scaler.step(optimizer);scaler.update();scheduler.step();successful+=1;successful_frames+=global_batch;failures=0
             if world>1:
                 for buffer in raw.buffers():torch.distributed.broadcast(buffer,0)
             if ema is not None:update_ema(ema,raw,train['ema_decay'])
         if any(p.grad is not None or p.requires_grad for p in adapter.parameters()):raise RuntimeError('Stage1 freeze violated')
         torch.cuda.synchronize(device)
-        row={'successful_updates':successful,'attempts':attempts,'sampler_index':index,'sequence':record['sequence'],
-            'frame':record['frame'],'tokens':len(ids),'loss':float(loss) if torch.isfinite(loss) else None,
+        display_loss=loss.detach().float().clone()
+        if world>1:torch.distributed.all_reduce(display_loss);display_loss/=world
+        row={'successful_updates':successful,'attempts':attempts,**records[0],
+            'batch_records':records,'batch_per_gpu':batch_per_gpu,'global_batch':global_batch,
+            'successful_frame_exposures':successful_frames,'sample_cursor':sample_cursor,'tokens_per_scene':scene_lengths,
+            'tokens':len(ids),'loss':float(display_loss) if torch.isfinite(display_loss) else None,'rank_loss':float(loss) if torch.isfinite(loss) else None,
             'gradient_norm':float(grad) if torch.isfinite(grad) else None,'finite':bool(finite),'amp_skips':amp_skips,
             'lr':optimizer.param_groups[0]['lr'],'seconds':time.perf_counter()-tick,
             'peak_allocated_bytes':torch.cuda.max_memory_allocated(device),'peak_reserved_bytes':torch.cuda.max_memory_reserved(device),
-            'candidate_source':source}
+            'candidate_source':sources[0] if len(sources)==1 else sources}
         log.write(json.dumps(row,allow_nan=False)+'\n')
-        if rank==0:print(f'update={successful}/{steps} {raw.objective}={row["loss"]} tokens={len(ids)} seconds={row["seconds"]:.3f}',flush=True)
+        if rank==0:print(f'update={successful}/{steps} {raw.objective}={row["loss"]} global_batch={global_batch} local_scene_tokens={scene_lengths} seconds={row["seconds"]:.3f}',flush=True)
         stop=torch.tensor(int(stopped[0]),device=device)
         if world>1:torch.distributed.all_reduce(stop,op=torch.distributed.ReduceOp.MAX)
         stopped[0]=bool(stop)
@@ -163,6 +217,8 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None):
     for s,handler in handlers.items():signal.signal(s,handler)
     if rank==0:atomic_json(output/'summary.json',{'status':'PAUSED' if stopped[0] else 'COMPLETE_REQUESTED_BUDGET',
         'successful_updates':successful,'attempts':attempts,'scope':train['scope'],'seconds':time.perf_counter()-start,
+        'global_batch':global_batch,'successful_frame_exposures':successful_frames,
+        'phase_start_updates':phase_start,'phase_successful_updates':successful-phase_start,
         'formal_training_complete':train['scope']=='formal' and successful==train['successful_updates'],
         'stage1':adapter.provenance,'identity':identity})
     if world>1:torch.distributed.destroy_process_group()

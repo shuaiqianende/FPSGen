@@ -1,0 +1,11 @@
+{
+  "source_successful_updates": 160,
+  "source_checkpoint_sha256": "0c793bec14f3fce91856ab6044fae430aa0dc97b83aee11df55bb62f5332fa1d",
+  "strict_parameter_load": "PASS",
+  "optimizer_entries": 169,
+  "parameter_count": 2677128,
+  "model_sha256": "f2fda1f1ded58f530101c945823e51cbdc902c3562651df2a4c7de105536d764",
+  "batch_per_gpu": 2,
+  "global_batch": 4,
+  "source_old_run_status": "PAUSED"
+}

@@ -1,5 +1,11 @@
 # Stage2 384 pilot status
 
+**Latest user steering:** both GPUs now belong to one FM model, packed2 scenes
+per GPU, global batch4. The old paired BCE/FM coordinator was stopped; BCE
+completed200 and FM safely paused at160. The following table is the preserved
+earlier snapshot. Current configuration, resource checks and continuation are
+documented in [HS_OCCFLOW_STAGE2_384_GB4.md](HS_OCCFLOW_STAGE2_384_GB4.md).
+
 | Phase | Actual status | Successful updates | Quality result |
 |---|---|---:|---|
 | CPU contracts and local math |58 passed,1 GPU unit skipped| CPU test only | independent real GPU reports attached |

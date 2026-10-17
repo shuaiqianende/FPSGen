@@ -19,7 +19,8 @@ def load_stage2_config(path):
     if m['condition_mode']!='pyramid_observed':raise ValueError('Main384 configs require actual LiDAR pyramid plus input child hits')
     if cfg['loss']!={m['objective']:1.} or m['objective'] not in ('fm','bce'):raise ValueError('Only pureFM or matchedBCE')
     if cfg['flow']!={'source':'gaussian','sigma':1.,'target_mapping':'binary_symmetric'}:raise ValueError('Binary occupancy flow only')
-    if cfg['training']['successful_updates']>100000 or cfg['training']['batch_per_gpu']!=1:raise ValueError('Register<=100K updates, one full scene/rank')
+    if cfg['training']['successful_updates']>100000 or cfg['training']['batch_per_gpu'] not in (1,2):raise ValueError('Register<=100K updates, one or two full scenes/rank')
+    if cfg['training']['batch_per_gpu']==2 and cfg['training'].get('batching')!='packed_variable_length':raise ValueError('B2 requires actual packed variable-length scenes')
     if cfg['training']['precision'] not in ('fp16','bf16','fp32'):raise ValueError('Unknown precision')
     if cfg['training']['scope'] not in ('engineering_smoke','overfit','pilot1000','pilot5000','formal'):raise ValueError('Explicit experimental phase required')
     if cfg['training']['scope']=='engineering_smoke' and cfg['training']['successful_updates']>32:raise ValueError('Engineering smoke<=32 updates')
@@ -70,8 +71,12 @@ def require_training_gate(cfg,g):
     gate=json.loads(Path(path).read_text()) if path and Path(path).exists() else {}
     required=['full_scene_gpu','maximum_scene_gpu','ptv3_permutation','checkpointing_parity']
     if scope!='engineering_smoke':required+=['ddp_resume']
-    if scope not in ('overfit','engineering_smoke'):required+=['oracle_bce_overfit','oracle_fm_overfit']
-    if scope in ('pilot5000','formal'):required+=['matched_bce_fm_1k']
+    if cfg['training']['batch_per_gpu']==2:
+        required+=['packed_batch2_gpu']
+        if scope!='engineering_smoke':required+=['packed_batch2_ddp_resume']
+    fm_only=cfg.get('research_protocol')=='fm_only_user_requested' and cfg['model']['objective']=='fm'
+    if scope not in ('overfit','engineering_smoke'):required+=['oracle_fm_overfit'] if fm_only else ['oracle_bce_overfit','oracle_fm_overfit']
+    if scope in ('pilot5000','formal'):required+=['fm_pilot_1k'] if fm_only else ['matched_bce_fm_1k']
     if scope=='formal':required+=['pilot5000','stage1_final_checkpoint','development_candidate_calibration','formal_budget_registered']
     if gate.get('geometry_sha256')!=g.sha256 or any(gate.get(k) is not True for k in required):
         raise ValueError(f'Stage2{scope} gate missing actual evidence: {[k for k in required if gate.get(k) is not True]}')

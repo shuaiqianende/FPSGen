@@ -12,7 +12,7 @@ if [[ -e "$task_output" ]]; then
   exit 2
 fi
 export CUDA_VISIBLE_DEVICES=2,3
-task_config=configs/research_v2/hier_occ_flow/stage2_384_ddp_smoke.yaml
+task_config=${HS_STAGE2_SMOKE_CONFIG:-configs/research_v2/hier_occ_flow/stage2_384_ddp_smoke.yaml}
 bash scripts/research_v2/hier_occ_flow/launch_stage2_384.sh --config "$task_config" --output "$task_output" --max-updates 21
 cp "$task_output/checkpoints/step000021.pt" "$task_output/continuous21.pt"
 # step20 was saved by the continuous run with all per-rank RNG/cursor state.
