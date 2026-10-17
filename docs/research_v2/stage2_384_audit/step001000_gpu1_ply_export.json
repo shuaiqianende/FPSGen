@@ -1,0 +1,170 @@
+{
+  "actual_stage1_encoder_forwards": 1,
+  "checkpoint_sha256": "00627719093af63d0f7f63bee2dbcc8a33a832e009c4b0542d59724cddb74643",
+  "checkpoint_step": 1000,
+  "checkpoint_successful_frame_exposures": 3520,
+  "cpu_tests": {
+    "passed": 2
+  },
+  "files": [
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "predicted",
+      "nfe": 1,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_predicted_online_nfe1.ply",
+      "points": 465499,
+      "weight": "online"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "predicted",
+      "nfe": 2,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_predicted_online_nfe2.ply",
+      "points": 486134,
+      "weight": "online"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "predicted",
+      "nfe": 4,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_predicted_online_nfe4.ply",
+      "points": 494557,
+      "weight": "online"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "predicted",
+      "nfe": 8,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_predicted_online_nfe8.ply",
+      "points": 497911,
+      "weight": "online"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "predicted",
+      "nfe": 1,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_predicted_ema_nfe1.ply",
+      "points": 601663,
+      "weight": "ema"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "predicted",
+      "nfe": 2,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_predicted_ema_nfe2.ply",
+      "points": 604064,
+      "weight": "ema"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "predicted",
+      "nfe": 4,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_predicted_ema_nfe4.ply",
+      "points": 605346,
+      "weight": "ema"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "predicted",
+      "nfe": 8,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_predicted_ema_nfe8.ply",
+      "points": 605891,
+      "weight": "ema"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "oracle",
+      "nfe": 1,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_oracle_online_nfe1.ply",
+      "points": 878388,
+      "weight": "online"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "oracle",
+      "nfe": 2,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_oracle_online_nfe2.ply",
+      "points": 886194,
+      "weight": "online"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "oracle",
+      "nfe": 4,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_oracle_online_nfe4.ply",
+      "points": 891502,
+      "weight": "online"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "oracle",
+      "nfe": 8,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_oracle_online_nfe8.ply",
+      "points": 895181,
+      "weight": "online"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "oracle",
+      "nfe": 1,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_oracle_ema_nfe1.ply",
+      "points": 1067359,
+      "weight": "ema"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "oracle",
+      "nfe": 2,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_oracle_ema_nfe2.ply",
+      "points": 1070646,
+      "weight": "ema"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "oracle",
+      "nfe": 4,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_oracle_ema_nfe4.ply",
+      "points": 1072217,
+      "weight": "ema"
+    },
+    {
+      "finite_xyz": true,
+      "header_and_byte_length_valid": true,
+      "mode": "oracle",
+      "nfe": 8,
+      "path": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage2_oracle_ema_nfe8.ply",
+      "points": 1072978,
+      "weight": "ema"
+    }
+  ],
+  "frame": "08/000000",
+  "gt_free_predicted_export_completed_before_opening_oracle_labels": true,
+  "gt_ply": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/gt_fine_occupancy.ply",
+  "oracle_trained_checkpoint": true,
+  "partial_ply": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/partial_lidar.ply",
+  "physical_gpu": 1,
+  "predicted_threshold": 0.5,
+  "recorded_at_epoch": 1792255235.1075947,
+  "stage1_ply": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step001000_seq08_000000/stage1_coarse_occupancy.ply",
+  "stage2_endpoint_threshold": 0.0,
+  "status": "PASS_REAL_GPU1_EXPORT",
+  "training_amp_skips": 0,
+  "training_source_unchanged": true,
+  "training_step_observed": 1000,
+  "user_authorized_gpu1_inference": true
+}
