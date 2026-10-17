@@ -42,3 +42,33 @@ Formal continuation target output:
 Launcher: `scripts/research_v2/hier_occ_flow/resume_stage1_gb4.sh`.
 Tmux: `fpsgen_hs_occ384_stage1_fm100k_gb4_gpu23`.
 Actual resumed-running evidence will be appended after successful updates.
+
+## Actual resumed-running evidence
+
+Formal continuation RUNNING at snapshot update18605;
+starting update18,550; actual global_batch4, output[2,1,32,384,384].
+Launch commit `aab49956f3a9ccce6e7006dfedae03730585e17b`; rank0PID1140376.
+All runtime restoration checks passed: original online/EMA hashes, unchanged
+LR/scheduler/scaler, optimizer step18,551 at first new update, and exact next
+four frame IDs from preserved global cursor. See runtime auditJSON.
+Original source and old experiment remain preserved. No pilot weight was used.
+
+## Completed observation
+
+Actual post-transition monitor:1,823.3seconds; initial/source preparation and
+Pilot time excluded. Separate active-agent checks span more than30minutes, with
+maximum gap under93seconds; long earlier interaction gaps are excluded.
+Observed updates18,551→19,494. Window skips0, nonfinite loss0, clipping138;
+cumulative skips13 were inherited from the original phase. Mean training step
+1.896s; GPU2/3 peakallocated10.126/10.125GiB andreserved11.729/11.723GiB.
+19K checkpoint readback passed, model/EMA rank hashes identical, optimizer steps
+19,000, global data cursor38,926, successful frame exposures38,900.
+Latest running snapshot:19578 /100,000. Training is left running.
+
+19K online dev12,1NFE,score>0.5:IoU0.454275,F1=0.620402,recall0.506963.
+Separate EMA dev12:IoU0.484319,F1=0.648658,recall0.553774.
+These are native384-grid diagnostics, not0.5m evaluation and not dev900.
+Full900-frame15K online1NFE:F1=0.623493,IoU0.458741,recall0.531449.
+The registered0.25 threshold gives recall0.689149 andfine recall ceiling0.75089
+with161,171 mean parents at15K, versus92,547 at0.5. No deployment threshold is
+selected on seq08. Stage2 high-recall requirements remain under investigation.

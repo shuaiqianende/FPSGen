@@ -1,0 +1,351 @@
+{
+  "actual_observed_seconds": 1823.2862887512892,
+  "agent_check_max_gap_seconds": 92.4440848827362,
+  "agent_check_span_seconds": 1984.9566791057587,
+  "agent_checks": 34,
+  "amp_overflow_count": 13,
+  "amp_scale": 1024.0,
+  "attempts": 19603,
+  "checkpoint": {
+    "optimizer_entries": 294,
+    "optimizer_steps": [
+      19000
+    ],
+    "parameter_sync_pass": true,
+    "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4/checkpoints/resume_latest.pt",
+    "rank_model_hashes": [
+      {
+        "ema": "e27ad2c453d2fb12b870ca8aa6788c2d40a493fd3a8ffd6b28d2276516d9a4b4",
+        "online": "278cba536eadd5ff1af70186e4ba3e59e9002518290baf63b23a2b6de3c703b2"
+      },
+      {
+        "ema": "e27ad2c453d2fb12b870ca8aa6788c2d40a493fd3a8ffd6b28d2276516d9a4b4",
+        "online": "278cba536eadd5ff1af70186e4ba3e59e9002518290baf63b23a2b6de3c703b2"
+      }
+    ],
+    "rank_rng_states": 2,
+    "required_fields_present": true,
+    "sampler": {
+      "attempts": 19013,
+      "batch_per_gpu": 2,
+      "sample_cursor": 38926,
+      "seed": 20261017,
+      "successful_frame_exposures": 38900,
+      "world_size": 2
+    },
+    "scheduler_last_epoch": 19000,
+    "sha256": "711aa13ef66e802e445655f3520eaebba232586fbc5d89ec40dc3f7f0b0e4db5",
+    "successful_updates": 19000
+  },
+  "current_gpu": "2, 13451 MiB, 10674 MiB, 100 %\n3, 13445 MiB, 10680 MiB, 93 %",
+  "current_processes": [
+    "1139837 python          /data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -m torch.distributed.run --standalone --nproc_per_node=2 scripts/research_v2/hier_occ_flow/train_stage1_occ.py --config configs/research_v2/hier_occ_flow/stage1_occ384_fm_gb4.yaml --output experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4 --resume /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k/checkpoints/step018550_batch2_transition.pt --max-updates 100000",
+    "1140376 python          /data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u scripts/research_v2/hier_occ_flow/train_stage1_occ.py --config configs/research_v2/hier_occ_flow/stage1_occ384_fm_gb4.yaml --output experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4 --resume /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k/checkpoints/step018550_batch2_transition.pt --max-updates 100000",
+    "1140377 python          /data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u scripts/research_v2/hier_occ_flow/train_stage1_occ.py --config configs/research_v2/hier_occ_flow/stage1_occ384_fm_gb4.yaml --output experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4 --resume /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k/checkpoints/step018550_batch2_transition.pt --max-updates 100000"
+  ],
+  "current_successful_updates": 19590,
+  "disk_free_bytes": 1142990565376,
+  "ending_update": 19494,
+  "formal_training_started": true,
+  "gradient_clipping_events": 8384,
+  "initial_checkpoint_origin": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k/checkpoints/step000000.pt",
+  "initial_loss": 0.05289815366268158,
+  "initial_phase_loss": 0.06952674686908722,
+  "interactive_observation": "latest continuous segment; gaps >120 seconds excluded",
+  "last100_data_seconds": 0.0037611334025859835,
+  "last100_mean_loss": 0.052628269474953415,
+  "last100_p50_loss": 0.052522510290145874,
+  "last100_p95_loss": 0.07640479914844035,
+  "latest_global_gradient_norm": 0.5281410813331604,
+  "latest_loss": 0.04443517327308655,
+  "latest_module_gradient_update": 19450,
+  "latest_module_gradients": {
+    "encoder": {
+      "abs_max": 0.0006413142546080053,
+      "l2": 0.008777090348303318,
+      "nonfinite_elements": 0,
+      "nonzero_parameter_ratio": 1.0,
+      "parameters_with_gradient": 198
+    },
+    "flow": {
+      "abs_max": 0.739436149597168,
+      "l2": 2.5236284732818604,
+      "nonfinite_elements": 0,
+      "nonzero_parameter_ratio": 1.0,
+      "parameters_with_gradient": 96
+    },
+    "time_embedding": {
+      "abs_max": 0.0561848059296608,
+      "l2": 0.9514833092689514,
+      "nonfinite_elements": 0,
+      "nonzero_parameter_ratio": 1.0,
+      "parameters_with_gradient": 4
+    },
+    "velocity_head": {
+      "abs_max": 0.06721305847167969,
+      "l2": 0.23795847594738007,
+      "nonfinite_elements": 0,
+      "nonzero_parameter_ratio": 1.0,
+      "parameters_with_gradient": 2
+    }
+  },
+  "latest_parameter_sample_changes": {
+    "ema": {
+      "sample_changed_elements": 16215,
+      "sample_delta_l2": 0.009144867770373821,
+      "sample_elements": 16217,
+      "sample_sha256": "cad35795c91bc57a8ac8074ad41a417dfdc6500f1612fa59e5e5450b37fec5b8"
+    },
+    "encoder": {
+      "sample_changed_elements": 12280,
+      "sample_delta_l2": 0.0423944815993309,
+      "sample_elements": 12280,
+      "sample_sha256": "c03fea6087163d7dc1a06e0ca1403756b9e36cb9d0009e8eade245437d9d2381"
+    },
+    "flow": {
+      "sample_changed_elements": 3937,
+      "sample_delta_l2": 0.025522273033857346,
+      "sample_elements": 3937,
+      "sample_sha256": "ac80618cebbf722eb86d8ea26d35abbaba1519e6f486365ce763de1f93e6425d"
+    },
+    "time_embedding": {
+      "sample_changed_elements": 256,
+      "sample_delta_l2": 0.009402654133737087,
+      "sample_elements": 256,
+      "sample_sha256": "ec346cb7d3c048d77647e0f14d1d39450b1d8cfc38976c24e2071e33142bbea6"
+    },
+    "velocity_head": {
+      "sample_changed_elements": 65,
+      "sample_delta_l2": 0.0013713116059079766,
+      "sample_elements": 65,
+      "sample_sha256": "ceaf20fa97c5d998902686cc60f337ee730eb1ab835b9d84cfc5344c0187fd3b"
+    }
+  },
+  "launch": {
+    "actual_update_budget": 100000,
+    "batch_per_gpu": 2,
+    "epoch_time": 1792201005.6517625,
+    "git_commit": "aab49956f3a9ccce6e7006dfedae03730585e17b",
+    "global_batch": 4,
+    "identity": {
+      "config_sha256": "945f16d9039c5a62fd95062b7d4f5f18dec0d520f5686f28e962807ddafbe886",
+      "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+      "experiment": "hs-occflow-stage1-occ384-v1",
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "objective": "fm",
+      "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4",
+      "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+      "world_size": 2
+    },
+    "parent_pid": 1139837,
+    "physical_gpus": [
+      2,
+      3
+    ],
+    "rank0_pid": 1140376,
+    "resume": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k/checkpoints/step018550_batch2_transition.pt",
+    "scope": "formal",
+    "starting_successful_updates": 18550,
+    "world_size": 2
+  },
+  "loss_ema_alpha005": 0.05515962441376933,
+  "mean_train_step_seconds": 1.8957396688893802,
+  "monitor_report": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4/first30min.json",
+  "monitor_status": "OBSERVED_REQUESTED_DURATION",
+  "nonfinite_gradient_attempts": 0,
+  "nonfinite_loss_incidents": 0,
+  "parameter_changes_since_step0": {
+    "ema": {
+      "changed_tensors": 405
+    },
+    "encoder": {
+      "changed_tensors": 272,
+      "floating_tensors": 272,
+      "state_difference_l2": 3013.3135582873424
+    },
+    "flow": {
+      "changed_tensors": 96,
+      "floating_tensors": 96,
+      "state_difference_l2": 16.033047314579214
+    },
+    "time_embedding": {
+      "changed_tensors": 4,
+      "floating_tensors": 4,
+      "state_difference_l2": 4.6389259850040725
+    },
+    "velocity_head": {
+      "changed_tensors": 2,
+      "floating_tensors": 2,
+      "state_difference_l2": 0.6402787708589621
+    }
+  },
+  "peak_memory_by_local_rank": {
+    "0": {
+      "peak_allocated_bytes": 10872194048,
+      "peak_reserved_bytes": 12593397760
+    },
+    "1": {
+      "peak_allocated_bytes": 10871264256,
+      "peak_reserved_bytes": 12587106304
+    }
+  },
+  "process_alive": true,
+  "skipped_attempts": 13,
+  "starting_update": 18551,
+  "still_running": true,
+  "tmux": "fpsgen_hs_occ384_stage1_fm100k_gb4_gpu23",
+  "validation": [
+    {
+      "file": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4/validation/update_019000.json",
+      "results": {
+        "1": {
+          "active_parents": 81142.5,
+          "f1": 0.6204016086645091,
+          "fine_recall_ceiling": 0.5962740356959791,
+          "gt_occupied_ratio": 0.03675176923501273,
+          "iou": 0.45427483854504164,
+          "precision": 0.8250344935383276,
+          "predicted_occupied_ratio": 0.0217999825906415,
+          "recall": 0.5069633531997607,
+          "thresholds": {
+            "0.25": {
+              "active_parents": 152136.5,
+              "f1": 0.6360633229651854,
+              "fine_recall_ceiling": 0.7536803578634131,
+              "iou": 0.46843679458903487,
+              "precision": 0.6006558324647563,
+              "recall": 0.6880827386024045
+            },
+            "0.5": {
+              "active_parents": 81142.5,
+              "f1": 0.6204016086645091,
+              "fine_recall_ceiling": 0.5962740356959791,
+              "iou": 0.45427483854504164,
+              "precision": 0.8250344935383276,
+              "recall": 0.5069633531997607
+            },
+            "0.75": {
+              "active_parents": 44940.5,
+              "f1": 0.47511955426965996,
+              "fine_recall_ceiling": 0.4187407068226538,
+              "iou": 0.3169929482259614,
+              "precision": 0.9461720796398042,
+              "recall": 0.3244637576708466
+            }
+          }
+        },
+        "2": {
+          "active_parents": 91940.08333333333,
+          "f1": 0.589407230614823,
+          "fine_recall_ceiling": 0.5900298342972806,
+          "gt_occupied_ratio": 0.03675176923501273,
+          "iou": 0.421248293457517,
+          "precision": 0.7239268019540924,
+          "predicted_occupied_ratio": 0.024700893071433538,
+          "recall": 0.5058658220846999,
+          "thresholds": {
+            "0.25": {
+              "active_parents": 119353.5,
+              "f1": 0.6044261698789727,
+              "fine_recall_ceiling": 0.658757858968846,
+              "iou": 0.4357432232629866,
+              "precision": 0.6422774550031157,
+              "recall": 0.580911964385782
+            },
+            "0.5": {
+              "active_parents": 91940.08333333333,
+              "f1": 0.589407230614823,
+              "fine_recall_ceiling": 0.5900298342972806,
+              "iou": 0.421248293457517,
+              "precision": 0.7239268019540924,
+              "recall": 0.5058658220846999
+            },
+            "0.75": {
+              "active_parents": 70040.25,
+              "f1": 0.5497187224334664,
+              "fine_recall_ceiling": 0.5138928965392562,
+              "iou": 0.3830425634849392,
+              "precision": 0.7992206555742253,
+              "recall": 0.4265666899619042
+            }
+          }
+        },
+        "4": {
+          "active_parents": 97040.58333333333,
+          "f1": 0.5672497359376146,
+          "fine_recall_ceiling": 0.5791475786290717,
+          "gt_occupied_ratio": 0.03675176923501273,
+          "iou": 0.39891858145170284,
+          "precision": 0.6747103424399395,
+          "predicted_occupied_ratio": 0.02607120839575269,
+          "recall": 0.4979273922757046,
+          "thresholds": {
+            "0.25": {
+              "active_parents": 106307.25,
+              "f1": 0.5745978944667158,
+              "fine_recall_ceiling": 0.6041086176555581,
+              "iou": 0.40594632519721396,
+              "precision": 0.6494858693765867,
+              "recall": 0.5243765401012791
+            },
+            "0.5": {
+              "active_parents": 97040.58333333333,
+              "f1": 0.5672497359376146,
+              "fine_recall_ceiling": 0.5791475786290717,
+              "iou": 0.39891858145170284,
+              "precision": 0.6747103424399395,
+              "recall": 0.4979273922757046
+            },
+            "0.75": {
+              "active_parents": 88815.33333333333,
+              "f1": 0.5568673949510049,
+              "fine_recall_ceiling": 0.5535321678981984,
+              "iou": 0.3889748804303886,
+              "precision": 0.6972630343161165,
+              "recall": 0.4715788356476716
+            }
+          }
+        },
+        "8": {
+          "active_parents": 99944.08333333333,
+          "f1": 0.5480084723894314,
+          "fine_recall_ceiling": 0.566390579875619,
+          "gt_occupied_ratio": 0.03675176923501273,
+          "iou": 0.38013254631877186,
+          "precision": 0.6409661051725328,
+          "predicted_occupied_ratio": 0.02685127124138756,
+          "recall": 0.4872431211166268,
+          "thresholds": {
+            "0.25": {
+              "active_parents": 104194.0,
+              "f1": 0.5514475233008099,
+              "fine_recall_ceiling": 0.5779397731806003,
+              "iou": 0.3833517148602788,
+              "precision": 0.6301860450238681,
+              "recall": 0.4991063963178641
+            },
+            "0.5": {
+              "active_parents": 99944.08333333333,
+              "f1": 0.5480084723894314,
+              "fine_recall_ceiling": 0.566390579875619,
+              "iou": 0.38013254631877186,
+              "precision": 0.6409661051725328,
+              "recall": 0.4872431211166268
+            },
+            "0.75": {
+              "active_parents": 96237.91666666667,
+              "f1": 0.5438682357538588,
+              "fine_recall_ceiling": 0.5552994640033756,
+              "iou": 0.3762412359396563,
+              "precision": 0.6498923885506548,
+              "recall": 0.47601100671712104
+            }
+          }
+        }
+      }
+    }
+  ],
+  "wallclock_successful_updates_per_second": 0.5173884511677495,
+  "window_gradient_clipping_events": 138,
+  "window_skipped_attempts": 0
+}

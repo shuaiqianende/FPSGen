@@ -14,7 +14,9 @@ from monitor_stage1_occ import read_rows
 
 def main():
     p=argparse.ArgumentParser(__doc__);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
-    rows=[r for r in read_rows(a.output/'train_rank0.jsonl') if r.get('finite')]
+    cfg=json.loads((a.output/'config.json').read_text())
+    roots=([Path(cfg['batch_transition']['source_config']).parent] if cfg.get('batch_transition') else [])+[a.output]
+    rows=[r for root in roots for r in read_rows(root/'train_rank0.jsonl') if r.get('finite')]
     steps=np.array([r['successful_updates'] for r in rows]);loss=np.array([r['loss'] for r in rows])
     fig,axes=plt.subplots(2,2,figsize=(12,8),constrained_layout=True)
     stride=max(1,len(rows)//2500)
@@ -27,7 +29,7 @@ def main():
     axes[0,1].set_yscale('log');axes[0,1].set_title('Gradient L2 before clipping');axes[0,1].legend()
     axes[1,0].set_title('Actual learning rates');axes[1,0].legend()
     val=[]
-    for path in sorted((a.output/'validation').glob('update_*.json')):
+    for path in sorted((path for root in roots for path in (root/'validation').glob('update_*.json')),key=lambda path:path.name):
         d=json.loads(path.read_text());v=d['nfe_results']['1']['summary']
         val.append((int(path.stem.split('_')[-1]),v['frames'],v['macro']['f1'],v['macro']['iou']))
     for frames,marker in ((12,'.'),(900,'o')):
@@ -35,7 +37,9 @@ def main():
         for i,name in ((2,'F1'),(3,'IoU')):
             axes[1,1].plot([v[0] for v in subset],[v[i] for v in subset],marker=marker,label=f'{name}, dev{frames}',ls='-' if frames==900 else ':')
     axes[1,1].set_title('Online,1 NFE, native384 grid, score>0.5');axes[1,1].set_ylim(0,1);axes[1,1].legend()
-    for ax in axes.flat:ax.set_xlabel('Successful optimizer updates');ax.grid(alpha=.2)
+    for ax in axes.flat:
+        ax.set_xlabel('Successful optimizer updates');ax.grid(alpha=.2)
+        if cfg.get('batch_transition'):ax.axvline(json.loads((a.output/'launch_parameters.json').read_text())['starting_successful_updates'],color='grey',ls='--',lw=.8)
     fig.suptitle(f'HS-OccFlow Stage1 occupancy: actual progress through {steps[-1]:,} updates')
     dest=ROOT/'docs/research_v2/hs_occ384_stage1_reports/formal_training_progress.png'
     fig.savefig(dest,dpi=160);plt.close(fig);print(dest)

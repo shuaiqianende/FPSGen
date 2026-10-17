@@ -18,3 +18,4 @@ wandb/
 configs/*.local.yaml
 RELEASE_AND_LOCAL_MANIFEST.md
 fpsgen/models/ChamferDistancePytorch/tmp/
+env/cache/

@@ -1,0 +1,20 @@
+{
+  "amp_scale": 1024.0,
+  "ema_sha256": "d1f18a098fabc148fc6713c2cf07b91ae6c20b4ec269bf6e5a4b4b9ab63964d3",
+  "learning_rates": [
+    9.312658465293529e-05,
+    0.00018625316930587059
+  ],
+  "model_sha256": "e23b88dfbeddcbd97a2a95ea57b778de4376d986b1e34d1951c3508a1e48adca",
+  "optimizer_entries": 294,
+  "scheduler_last_epoch": 18550,
+  "source": {
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k/checkpoints/step018550_batch2_transition.pt",
+    "checkpoint_sha256": "1411b9cd3d1be81c1fad98ec0ca1094ad75b8ccb9f10a0a1bbb6fbcc55a710fe",
+    "source_config": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k/config.json"
+  },
+  "starting_attempts": 18563,
+  "starting_sample_cursor": 37126,
+  "starting_successful_frame_exposures": 37100,
+  "starting_updates": 18550
+}
