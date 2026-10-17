@@ -66,6 +66,40 @@ def sampler_index(attempt,rank,world,length,seed):
     return int(__import__('numpy').random.default_rng(seed+epoch).permutation(length)[index])
 
 
+def frame_budget_plan(successful_updates,successful_frames,target_frames,global_batch):
+    """Count successful scene exposures, including earlier variable-batch phases."""
+    if any(type(x) is not int or x<0 for x in (successful_updates,successful_frames,target_frames)) or global_batch<=0:
+        raise ValueError('Nonnegative integer successful counters and positive global batch required')
+    remaining=target_frames-successful_frames
+    if remaining<0 or remaining%global_batch:
+        raise ValueError('Exact frame budget must be reachable without dropping a scene from the global batch')
+    return {'target_successful_frame_exposures':target_frames,'inherited_successful_frame_exposures':successful_frames,
+            'remaining_successful_updates':remaining//global_batch,
+            'target_successful_updates':successful_updates+remaining//global_batch,'global_batch':global_batch}
+
+
+def direct_full_train_policy(cfg,g):
+    """An explicit user research decision may waive QUALITY gates, never engineering."""
+    policy=cfg.get('direct_training')
+    if policy is None:return None
+    if (policy.get('authorization')!='user_requested_100k_successful_frames'
+        or policy.get('quality_gate_policy')!='monitor_only'
+        or cfg['training']['scope']!='formal' or cfg.get('cohort_indices') is not None
+        or cfg['training'].get('successful_frame_exposures')!=100000
+        or cfg['training']['batch_per_gpu']!=2 or cfg['model']['objective']!='fm'
+        or cfg.get('research_protocol')!='fm_only_user_requested' or cfg['candidates']['mode']!='oracle'):
+        raise ValueError('Direct100K-frame authorization is specific to the full-split Oracle FM GB4 experiment')
+    path=Path(policy['previous_quality_evidence'])
+    if file_sha(path)!=policy['previous_quality_sha256']:raise ValueError('Preserve the real prior quality evidence')
+    evidence=json.loads(path.read_text())
+    if (evidence.get('status') not in ('FAIL_ORACLE_OVERFIT','PASS_ORACLE_OVERFIT')
+        or evidence.get('geometry_sha256')!=g.sha256
+        or evidence.get('stage1_checkpoint_sha256')!=cfg['stage1']['checkpoint_sha256']):
+        raise ValueError('Direct-training quality evidence identity mismatch')
+    return {**policy,'actual_previous_quality_status':evidence['status'],
+            'quality_pass_claimed':False,'engineering_checks_waived':False}
+
+
 def require_training_gate(cfg,g):
     scope=cfg['training']['scope'];path=cfg.get('engineering_gate')
     gate=json.loads(Path(path).read_text()) if path and Path(path).exists() else {}
@@ -75,9 +109,11 @@ def require_training_gate(cfg,g):
         required+=['packed_batch2_gpu']
         if scope!='engineering_smoke':required+=['packed_batch2_ddp_resume']
     fm_only=cfg.get('research_protocol')=='fm_only_user_requested' and cfg['model']['objective']=='fm'
-    if scope not in ('overfit','engineering_smoke'):required+=['oracle_fm_overfit'] if fm_only else ['oracle_bce_overfit','oracle_fm_overfit']
-    if scope in ('pilot5000','formal'):required+=['fm_pilot_1k'] if fm_only else ['matched_bce_fm_1k']
-    if scope=='formal':required+=['pilot5000','stage1_final_checkpoint','development_candidate_calibration','formal_budget_registered']
+    direct=direct_full_train_policy(cfg,g)
+    if not direct:
+        if scope not in ('overfit','engineering_smoke'):required+=['oracle_fm_overfit'] if fm_only else ['oracle_bce_overfit','oracle_fm_overfit']
+        if scope in ('pilot5000','formal'):required+=['fm_pilot_1k'] if fm_only else ['matched_bce_fm_1k']
+        if scope=='formal':required+=['pilot5000','stage1_final_checkpoint','development_candidate_calibration','formal_budget_registered']
     if gate.get('geometry_sha256')!=g.sha256 or any(gate.get(k) is not True for k in required):
         raise ValueError(f'Stage2{scope} gate missing actual evidence: {[k for k in required if gate.get(k) is not True]}')
     if gate.get('stage1_checkpoint_sha256')!=cfg['stage1']['checkpoint_sha256']:raise ValueError('Gate Stage1 identity differs')

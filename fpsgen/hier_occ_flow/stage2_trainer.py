@@ -12,7 +12,7 @@ import torch
 from .stage2_model import Stage2OccupancyModel as HierarchicalOccupancyModel
 from .stage1_occ_adapter import FrozenStage1OccupancyAdapter
 from .stage2_dataset import assemble_stage2_scene,ConditionCache
-from .stage2_runtime import dataset_identity,config_sha,source_sha,sampler_index,require_training_gate
+from .stage2_runtime import dataset_identity,config_sha,source_sha,sampler_index,require_training_gate,frame_budget_plan,direct_full_train_policy
 from .stage2_evaluation import evaluate_stage2
 from .flow_matching import training_pair,fm_loss,bce_loss
 from .trainer import seed_all,atomic_checkpoint,rng_state,restore_rng,update_ema
@@ -113,6 +113,13 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
             'previous_sampler_cursor':old_cursor,'cohort_changed_reset_order':cohort_changed,
             'optimizer_ema_scaler_preserved':True,'rng_policy':'rank0 restores source; new rank uses independent registered seed'}
     phase_start=value.get('phase_start_updates',successful) if resume else successful
+    phase_start_frames=value.get('phase_start_frame_exposures',successful_frames) if resume else successful_frames
+    frame_target=train.get('successful_frame_exposures');budget=None
+    if frame_target is not None:
+        budget=frame_budget_plan(successful,successful_frames,frame_target,global_batch)
+        if train['successful_updates']!=budget['target_successful_updates']:
+            raise ValueError('Frozen optimizer horizon must exactly match actual successful-frame budget')
+    direct_policy=direct_full_train_policy(cfg,g)
     output.mkdir(parents=True,exist_ok=True);cache=None
     if cfg['cache']['enabled']:
         cache=ConditionCache(Path(cfg['cache']['root'])/output.name/f'rank{rank}',max_bytes=cfg['cache']['max_bytes']//world)
@@ -122,6 +129,9 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
             'identity':identity,'stage1':adapter.provenance,'initialization':'scratch_stage2','starting_updates':successful,
             'optimizer_entries':len(optimizer.state),'initial_model_sha256':state_sha(raw),'initial_ema_sha256':state_sha(ema) if ema else None,
             'batch_per_gpu':batch_per_gpu,'global_batch':global_batch,'batching':'packed_variable_length','transition':transition_audit})
+        if budget or direct_policy:
+            launch=json.loads((output/'launch.json').read_text())
+            atomic_json(output/'launch.json',{**launch,'frame_budget':budget,'direct_training':direct_policy})
     stopped=[False]
     def request_stop(signum,frame):stopped[0]=True
     handlers={s:signal.signal(s,request_stop) for s in (signal.SIGINT,signal.SIGTERM)}
@@ -144,10 +154,11 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
                 'parameter_sync_pass':synced,'rank_hashes':hashes,'stage1':adapter.provenance,
                 'batch_transition':transition_audit,
                 'phase_start_updates':phase_start,
+                'phase_start_frame_exposures':phase_start_frames,'frame_budget':budget,
                 'git_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()})
     if not resume:save(f'step{successful:06d}_transition.pt' if transition else 'step000000.pt')
     log=(output/f'train_rank{rank}.jsonl').open('a',buffering=1);start=time.perf_counter();raw.train()
-    while successful<steps:
+    while successful<steps and (frame_target is None or successful_frames<frame_target):
         tick=time.perf_counter();length=len(cohort) if cohort else len(ds)
         scenes=[];records=[];sources=[]
         for slot in range(batch_per_gpu):
@@ -184,13 +195,15 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
         row={'successful_updates':successful,'attempts':attempts,**records[0],
             'batch_records':records,'batch_per_gpu':batch_per_gpu,'global_batch':global_batch,
             'successful_frame_exposures':successful_frames,'sample_cursor':sample_cursor,'tokens_per_scene':scene_lengths,
+            'target_successful_frame_exposures':frame_target,
+            'phase_successful_frame_exposures':successful_frames-phase_start_frames,
             'tokens':len(ids),'loss':float(display_loss) if torch.isfinite(display_loss) else None,'rank_loss':float(loss) if torch.isfinite(loss) else None,
             'gradient_norm':float(grad) if torch.isfinite(grad) else None,'finite':bool(finite),'amp_skips':amp_skips,
             'lr':optimizer.param_groups[0]['lr'],'seconds':time.perf_counter()-tick,
             'peak_allocated_bytes':torch.cuda.max_memory_allocated(device),'peak_reserved_bytes':torch.cuda.max_memory_reserved(device),
             'candidate_source':sources[0] if len(sources)==1 else sources}
         log.write(json.dumps(row,allow_nan=False)+'\n')
-        if rank==0:print(f'update={successful}/{steps} {raw.objective}={row["loss"]} global_batch={global_batch} local_scene_tokens={scene_lengths} seconds={row["seconds"]:.3f}',flush=True)
+        if rank==0:print(f'update={successful}/{steps} frames={successful_frames}/{frame_target or "unbounded"} {raw.objective}={row["loss"]} global_batch={global_batch} local_scene_tokens={scene_lengths} seconds={row["seconds"]:.3f}',flush=True)
         stop=torch.tensor(int(stopped[0]),device=device)
         if world>1:torch.distributed.all_reduce(stop,op=torch.distributed.ReduceOp.MAX)
         stopped[0]=bool(stop)
@@ -219,6 +232,9 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
         'successful_updates':successful,'attempts':attempts,'scope':train['scope'],'seconds':time.perf_counter()-start,
         'global_batch':global_batch,'successful_frame_exposures':successful_frames,
         'phase_start_updates':phase_start,'phase_successful_updates':successful-phase_start,
-        'formal_training_complete':train['scope']=='formal' and successful==train['successful_updates'],
+        'phase_start_frame_exposures':phase_start_frames,'phase_successful_frame_exposures':successful_frames-phase_start_frames,
+        'frame_budget':budget,'direct_training':direct_policy,
+        'formal_training_complete':train['scope']=='formal' and successful==train['successful_updates']
+            and (frame_target is None or successful_frames==frame_target),
         'stage1':adapter.provenance,'identity':identity})
     if world>1:torch.distributed.destroy_process_group()

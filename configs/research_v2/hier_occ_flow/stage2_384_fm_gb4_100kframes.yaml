@@ -1,0 +1,97 @@
+geometry: geometry_384_8way.yaml
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/train
+development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development
+stage1:
+  type: occupancy384
+  checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+  adapter:
+    checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt
+    config: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4/config.json
+    checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+    weights: ema
+candidates:
+  mode: oracle
+  stage1_nfe: 4
+  seed: 20261018
+  negative_fraction: 0.25
+  oracle_score: neutral
+  neutral_score: 1.0
+  selection:
+    strategy: threshold
+    threshold: 0.5
+    expansion: 0
+    budget: 500000
+    overflow: error
+  calibration_status: not_applicable_oracle
+model:
+  objective: fm
+  backbone: ptv3
+  width: 64
+  lidar_channels: 384
+  condition_mode: pyramid_observed
+  checkpointing: true
+  patch_sizes:
+  - 64
+  - 128
+training:
+  scope: formal
+  successful_updates: 25120
+  batch_per_gpu: 2
+  precision: fp16
+  seed: 20261018
+  lr: 0.0002
+  weight_decay: 0.01
+  grad_clip: 1.0
+  warmup_updates: 20
+  checkpoint_every: 500
+  milestone_every: 2500
+  max_parent_tokens: 500000
+  ema_decay: 0.999
+  cpu_threads: 4
+  batching: packed_variable_length
+  max_batch_parent_tokens: 1000000
+  successful_frame_exposures: 100000
+flow:
+  source: gaussian
+  sigma: 1.0
+  target_mapping: binary_symmetric
+loss:
+  fm: 1.0
+cache:
+  enabled: false
+  root: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_cache/oracle
+  max_bytes: 8589934592
+validation:
+  every_updates: 1000
+  max_frames: 8
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  threshold: 0.0
+  seed: 20261019
+  sampling_seeds:
+  - 20261019
+  - 20261020
+  structural_metrics: true
+engineering_gate: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/engineering_gate_gb4.json
+research_protocol: fm_only_user_requested
+transition:
+  checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/fm_before_full100kframes.pt
+  checkpoint_sha256: aa8d6174f0c04ea9fd777faf5077b29c9770c71adf865675bc6a00a9dc2bbd5e
+  reason: User explicitly requests direct100K successful-frame training; continue
+    own FM state from572, reset sampler onto full17870 frames; record failed quality
+    gate without relabeling; extend cosine horizon to25120.
+direct_training:
+  authorization: user_requested_100k_successful_frames
+  quality_gate_policy: monitor_only
+  previous_quality_evidence: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/fm_gb4_overfit_evidence.json
+  previous_quality_sha256: f51ab3c3b09af96b3e647e86190628d6e53e2b9babc645a151abc463c8f8edb2
+  user_instruction: 不能直接开始训练10w个样本吗
+  budget_accounting: Total successful frame exposures include1808 inherited small-cohort
+    frames; remaining98192 exposures use the full17870-frame training split. Previous
+    quality failure remains recorded.
+  oracle_protocol: GT-derived parent support plus25% nearby empty parents, actual
+    frozen Stage1 LiDAR features, neutral score; not predicted-parent deployment.
