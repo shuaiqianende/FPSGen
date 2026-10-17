@@ -1,5 +1,11 @@
 # FM-only Stage2: true ragged global batch4
 
+Update2026-10-18: the400-update queue completed but **failed the Oracle quality
+gate**, so its shell exited and tmux disappeared. No full-split1K pilot ran.
+See [the recovery report](HS_OCCFLOW_STAGE2_384_TMUX_RECOVERY.md) for the
+unchanged quality thresholds and bounded400→1000 overfit diagnostic. Launch
+snapshots below describe the earlier run, not a current live status.
+
 The latest user instruction supersedes the earlier paired BCE/FM queue. BCE's
 completed200-update result is preserved. Its coordinator was terminated by
 verified PID; the FM process received its own safe-stop signal and saved at

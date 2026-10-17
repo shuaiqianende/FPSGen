@@ -1,0 +1,32 @@
+{
+  "recorded_at_epoch": 1792253027.673536,
+  "status": "RUNNING_BOUNDED_ORACLE_DIAGNOSTIC",
+  "previous_quality_status": "FAIL_ORACLE_OVERFIT",
+  "successful_updates": 420,
+  "diagnostic_target": 1000,
+  "global_batch": 4,
+  "batch_per_gpu": 2,
+  "physical_gpus": [
+    2,
+    3
+  ],
+  "amp_skips": 0,
+  "changed_model_tensors": 169,
+  "parameter_sync_pass": true,
+  "rank_hashes_equal": true,
+  "optimizer_entries": 169,
+  "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_overfit1000_diagnostic/checkpoints/resume_latest.pt",
+  "tmux": "fpsgen_hs_stage2_384_fm_gb4_gpu23",
+  "formal_training_started": false,
+  "full_split_pilot_started": false,
+  "config_sha256": "d83d6cd874d9e8bcfdfc77e472dc8f02825a1dcfbf0459544066ea4ed288fa19",
+  "source_checkpoint_sha256": "9543a671e3f2e8781d3a71a83707a2d8ee1bb251bc733b3630b53c8ed8910d5c",
+  "original_gate_preserved": true,
+  "cpu_regressions": "34 passed",
+  "gpu_observation": {
+    "physical2_memory_mib": 12331,
+    "physical3_memory_mib": 12317,
+    "physical2_utilization": 100,
+    "physical3_utilization": 97
+  }
+}
