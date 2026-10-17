@@ -7,8 +7,8 @@
 | Actual PTv3 CPU construction | passed | 0 | FM/BCE random, capacity audited |
 | GPU full-scene / maximum | PASS on GPU2/GPU3 |16 optimizer steps/GPU|399,672 tokens, FM7.619 GiB allocated |
 | DDP + AMP + CUDA resume | PASS |32 successful updates|21 vs20+restore1 passed |
-| Oracle BCE overfit |STARTING|0 /200 at report capture| quality pending |
-| Oracle FM overfit |STARTING|0 /200 at report capture| quality pending |
+| Oracle BCE overfit | RUNNING | 75 /200 at report capture | quality pending |
+| Oracle FM overfit | RUNNING | 50 /200 at report capture | quality pending |
 | Matched full-split 1K BCE/FM | not started | 0 / 1,000 each | no result |
 | Oracle/Predicted 5K | not started | 0 / 5,000 each | gated |
 | Formal long training | not ready | 0 | not launched |
@@ -59,3 +59,12 @@ the completed100K-frame final EMA. Once both saved learning gates pass, the
 queue starts matched full-training-split1K pilots. It stops on a failed gate
 and never automatically launches100K Stage2 or PointFlow. Logs are under
 `experiments/hier_occ_flow/stage2_384_preflight/`. Stage1 training was preserved.
+
+Latest launch evidence: GPU2 BCE PID3451435,
+GPU3 FM PID3451438. Both have finite nonzero
+gradients, zero AMP skips and saved initial checkpoints. BCE loss changed from
+0.693113 to0.550112;
+FM loss changed from2.001712 to1.727059.
+These training losses do not establish fine occupancy quality; evaluation is pending.
+Code and real engineering reports were pushed to private branch
+research/hs-occflow-384-stage2, code commit5b8587f.

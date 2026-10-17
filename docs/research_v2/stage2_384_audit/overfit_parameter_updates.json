@@ -1,0 +1,24 @@
+{
+  "bce": {
+    "successful_updates": 100,
+    "optimizer_entries": 149,
+    "initial_optimizer_entries": 0,
+    "amp_skips": 0,
+    "initial_ema_equals_online": true,
+    "changed_float_tensors": 149,
+    "maximum_weight_change": 0.022974133491516113,
+    "parameter_sync_pass": true,
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_oracle_bce_overfit200/checkpoints/resume_latest.pt"
+  },
+  "fm": {
+    "successful_updates": 50,
+    "optimizer_entries": 169,
+    "initial_optimizer_entries": 0,
+    "amp_skips": 0,
+    "initial_ema_equals_online": true,
+    "changed_float_tensors": 169,
+    "maximum_weight_change": 0.01028714794665575,
+    "parameter_sync_pass": true,
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_oracle_fm_overfit200/checkpoints/resume_latest.pt"
+  }
+}

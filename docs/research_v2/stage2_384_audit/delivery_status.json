@@ -1,5 +1,5 @@
 {
-  "observed_epoch": 1792239362.9086275,
+  "observed_epoch": 1792239444.451203,
   "tmux": "fpsgen_hs_stage2_384_pilots_gpu23",
   "stage1_complete": true,
   "stage1_updates": 34275,
@@ -13,21 +13,35 @@
   "overfit_runs": {
     "bce": {
       "directory": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_oracle_bce_overfit200",
-      "successful_updates": 0,
-      "loss_first": null,
-      "loss_latest": null,
-      "status": "STARTING"
+      "successful_updates": 75,
+      "loss_first": 0.6931132674217224,
+      "loss_latest": 0.550112247467041,
+      "status": "RUNNING",
+      "amp_skips": 0,
+      "gradient_norm": 0.38853365182876587,
+      "seconds_latest": 1.123541472479701,
+      "checkpoint_directory": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_oracle_bce_overfit200/checkpoints",
+      "rank0_pid": 3451435
     },
     "fm": {
       "directory": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_oracle_fm_overfit200",
-      "successful_updates": 0,
-      "loss_first": null,
-      "loss_latest": null,
-      "status": "STARTING"
+      "successful_updates": 50,
+      "loss_first": 2.0017120838165283,
+      "loss_latest": 1.7270587682724,
+      "status": "RUNNING",
+      "amp_skips": 0,
+      "gradient_norm": 0.9726278185844421,
+      "seconds_latest": 0.6642006766051054,
+      "checkpoint_directory": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_final_stage1_oracle_fm_overfit200/checkpoints",
+      "rank0_pid": 3451438
     }
   },
   "pilot1000_status": "GATED_AFTER_OVERFIT",
   "pilot5000_status": "NOT_STARTED",
   "formal_training_ready": false,
-  "no_other_tasks_stopped": true
+  "no_other_tasks_stopped": true,
+  "code_commit": "5b8587f6795e05ae92bd66454bdd494d098ca0b9",
+  "github_branch": "research/hs-occflow-384-stage2",
+  "github_remote": "private",
+  "first_code_commit_pushed": true
 }
