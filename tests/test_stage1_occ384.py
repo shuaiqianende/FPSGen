@@ -40,3 +40,16 @@ def test_masked_losses_and_invalid_voxels():
     result = masked_occ_loss(p,t,mask,objective="fm")
     assert result.item() == pytest.approx(1.0)
     assert torch.isfinite(masked_occ_loss(p,torch.tensor([[[[[0.,1.,0.]]]]]),mask,objective="bce"))
+
+
+def test_batch2_independent_scene_times_and_loss_normalization():
+    occupied=torch.tensor([[[[[0.,1.,0.]]]],[[[[1.,0.,0.]]]]])
+    valid=torch.tensor([[[[[True,True,False]]]]])
+    pair=occupancy_flow_pair(occupied,valid,generator=torch.Generator().manual_seed(3),time=torch.tensor([.2,.8]))
+    for i,t in enumerate((.2,.8)):
+        torch.testing.assert_close(pair['state'][i],(1-t)*pair['source'][i]+t*pair['target'][i])
+    assert pair['time'].shape==(2,) and torch.all(pair['state'][...,2]==0)
+    loss=masked_occ_loss(torch.zeros_like(occupied),occupied,valid,objective='fm')
+    assert loss.item()==pytest.approx(.5)  # broadcast mask denominator includes both scenes
+    repeat=occupancy_flow_pair(occupied,valid,generator=torch.Generator().manual_seed(3),time=torch.tensor([.2,.8]))
+    torch.testing.assert_close(pair['source'],repeat['source'])

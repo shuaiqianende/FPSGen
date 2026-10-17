@@ -1,0 +1,65 @@
+experiment: stage1_occ384_fm
+scope: smoke
+geometry: geometry_384_8way.yaml
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: experiments/hier_occ_flow/occ384_full_parallel/train
+development_dataset: experiments/hier_occ_flow/occ384_full_parallel/development
+model:
+  objective: fm
+  initialization: scratch
+  pretrained_encoder: null
+  widths:
+  - 8
+  - 16
+  - 32
+  - 64
+  activation_checkpointing: true
+  input_feature_version: coarse_f64_v1
+loss:
+  fm: 1.0
+training:
+  successful_updates: 32
+  seed: 20261017
+  batch_per_gpu: 2
+  physical_gpus:
+  - 2
+  - 3
+  lr_encoder: 0.0001
+  lr_flow: 0.0002
+  precision: fp16
+  weight_decay: 0.01
+  grad_clip: 1.0
+  warmup_updates: 10
+  checkpoint_every: 31
+  milestone_every: 31
+  ema_decay: 0.999
+  gradient_audit_every: 50
+  amp_initial_scale: 16384.0
+  optimizer: AdamW
+  scheduler: warmup_cosine
+validation:
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  light_every: 1000
+  full_every: 5000
+  light_frames: 12
+  seed: 20261018
+  threshold: 0.5
+  threshold_sweep:
+  - 0.25
+  - 0.5
+  - 0.75
+  target_definition: raw_pre_poisson_surface_hit
+  no_seq08_tuning: true
+  save_sample: true
+  sample_nfe: 4
+  use_ema: false
+  compare_ema: true
+engineering_gate: experiments/hier_occ_flow/stage1_occ384_engineering_gate.json
+flow:
+  source: gaussian
+  sigma: 1.0
+  target: binary_symmetric

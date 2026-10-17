@@ -52,6 +52,18 @@ def main():
         'ddp_resume':bool(resume and resume['status']=='PASS_CUDA_TOLERANCE' and sync and sync['parameter_sync_pass'])}
     pilots={o:pilot_check(run/f'stage1_{o}_pilot1000_f64') for o in ('fm','bce')}
     checks['fm_bce_overfit']=all(v['pass'] for v in pilots.values());checks['pilot1000']=checks['fm_bce_overfit']
+    if cfg['training']['batch_per_gpu']==2:
+        batch_resume=read(run/'stage1_batch2_ddp_resume_audit.json')
+        batch_summary=read(run/'stage1_batch2_smoke32/summary.json')
+        batch_config=read(run/'stage1_batch2_smoke32/config.json')
+        batch_launch=read(run/'stage1_batch2_smoke32/launch_parameters.json')
+        batch_gpus=[read(run/f'stage1_gpu{n}_batch2_full_gate.json') for n in (2,3)]
+        checks['batch2_ddp_resume']=bool(batch_resume and batch_resume['status']=='PASS_CUDA_TOLERANCE'
+            and batch_resume['same_origin'] and batch_summary and batch_summary['successful_updates']==32
+            and batch_summary['status']=='COMPLETE_REQUESTED_BUDGET'
+            and batch_config and batch_config['training']['batch_per_gpu']==2
+            and batch_launch and batch_launch['world_size']==2 and batch_launch['physical_gpus']==[2,3] and batch_launch['global_batch']==4
+            and all(x and x['status']=='PASS' and x['batch_per_gpu']==2 and x['maximum_scope']=='dataset maximum' for x in batch_gpus))
     g=cfg['geometry'];from fpsgen.hier_occ_flow.geometry import SparseHierarchyGeometry
     result={**checks,'formal_ready':all(checks.values()),'geometry_sha256':SparseHierarchyGeometry(**g).sha256,
         'registered_config_sha256':sha,'pilots':pilots,

@@ -2,6 +2,7 @@
 from common import ROOT
 import argparse
 import csv
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -14,9 +15,16 @@ from monitor_stage1_occ import read_rows, snapshot
 def main():
     p=argparse.ArgumentParser(__doc__)
     p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--monitor-report',type=Path)
     a=p.parse_args();out=a.output
-    monitor=json.loads((out/'first30min.json').read_text())
+    monitor_path=a.monitor_report or out/'first30min.json'
+    monitor=json.loads(monitor_path.read_text())
     checks=read_rows(out/'agent_checks.jsonl')
+    # A long gap between interactions is not personal observation. Require the
+    # latest uninterrupted segment; preserve all historical checks separately.
+    for i in range(len(checks)-1,0,-1):
+        if checks[i]['epoch_time']-checks[i-1]['epoch_time']>120:
+            checks=checks[i:];break
     if not monitor.get('first30min_complete') or monitor['actual_observed_seconds']<1800:
         raise ValueError('Real formal 30-minute monitoring is not complete')
     if len(checks)<20 or checks[-1]['epoch_time']-checks[0]['epoch_time']<1800:
@@ -28,19 +36,30 @@ def main():
     observed=[r for r in monitor['events'] if r.get('actual_training_observed')]
     start=observed[0]['epoch_time'];end=observed[-1]['epoch_time']
     rows=read_rows(out/'train_rank0.jsonl')
-    success=[r for r in rows if r.get('finite') and r['epoch_time']<=end]
+    all_success=[r for r in rows if r.get('finite') and r['epoch_time']<=end]
+    success=[r for r in all_success if r['epoch_time']>=start]
     last=success[-1];recent=success[-100:]
     audits=[r for r in success if r.get('gradient_details')]
-    initial=torch.load(out/'checkpoints/step000000.pt',map_location='cpu')
+    initial_path=out/'checkpoints/step000000.pt'
+    if not initial_path.exists():
+        cfg=json.loads((out/'config.json').read_text())
+        initial_path=Path(cfg['batch_transition']['source_config']).parent/'checkpoints/step000000.pt'
+    initial=torch.load(initial_path,map_location='cpu')
     latest_path=out/'checkpoints/resume_latest.pt'
-    latest=torch.load(latest_path,map_location='cpu')
+    # Hold one inode across hashing/readback while the trainer atomically
+    # replaces resume_latest.pt; do not pair a previous payload with a newSHA.
+    with latest_path.open('rb') as stream:
+        digest=hashlib.sha256()
+        for block in iter(lambda:stream.read(4*1024*1024),b''):digest.update(block)
+        checkpoint_sha=digest.hexdigest();stream.seek(0)
+        latest=torch.load(stream,map_location='cpu')
     changes={}
     for name,prefix in [('encoder','encoder.'),('flow','flow.'),('velocity_head','flow.output.'),('time_embedding','flow.embedding.')]:
         keys=[k for k,v in initial['model'].items() if k.startswith(prefix) and v.is_floating_point()]
         squared=sum(float((latest['model'][k].double()-initial['model'][k].double()).square().sum()) for k in keys)
         changes[name]={'state_difference_l2':math.sqrt(squared),'changed_tensors':sum(not torch.equal(initial['model'][k],latest['model'][k]) for k in keys),'floating_tensors':len(keys)}
     changes['ema']={'changed_tensors':sum(not torch.equal(v,latest['ema'][k]) for k,v in initial['ema'].items())}
-    checkpoint={'path':str(latest_path.resolve()),'sha256':file_sha(latest_path),'successful_updates':latest['successful_updates'],
+    checkpoint={'path':str(latest_path.resolve()),'sha256':checkpoint_sha,'successful_updates':latest['successful_updates'],
         'parameter_sync_pass':latest['parameter_sync_pass'],'rank_model_hashes':latest['rank_model_hashes'],
         'rank_rng_states':len(latest['rank_rng']),'optimizer_entries':len(latest['optimizer']['state']),
         'scheduler_last_epoch':latest['scheduler'].get('last_epoch'),'sampler':latest['sampler'],
@@ -52,14 +71,22 @@ def main():
     validation=[]
     for path in sorted((out/'validation').glob('update_*.json')):
         v=json.loads(path.read_text())
-        validation.append({'file':str(path.resolve()),'results':{k:x['summary']['macro'] for k,x in v['nfe_results'].items()}})
+        metrics={}
+        for k,x in v['nfe_results'].items():
+            metrics[k]={**x['summary']['macro'],
+                **{name:float(np.mean([r[name] for r in x['rows']])) for name in ('predicted_occupied_ratio','gt_occupied_ratio')},
+                'thresholds':{threshold:{name:float(np.mean([r['thresholds'][threshold][name] for r in x['rows']]))
+                    for name in ('precision','recall','f1','iou','active_parents','fine_recall_ceiling')}
+                    for threshold in x['rows'][0]['thresholds']}}
+        validation.append({'file':str(path.resolve()),'results':metrics})
     launch=json.loads((out/'launch_parameters.json').read_text())
     result={'formal_training_started':True,'process_alive':True,'still_running':True,
+        'monitor_report':str(monitor_path.resolve()),'interactive_observation':'latest continuous segment; gaps >120 seconds excluded',
         'monitor_status':monitor['status'],'actual_observed_seconds':monitor['actual_observed_seconds'],
         'agent_checks':len(checks),'agent_check_span_seconds':checks[-1]['epoch_time']-checks[0]['epoch_time'],
         'starting_update':observed[0]['successful_updates'],'ending_update':last['successful_updates'],
         'current_successful_updates':current['successful_updates'],'attempts':current['attempts'],
-        'initial_loss':success[0]['loss'],'latest_loss':last['loss'],
+        'initial_formal_loss':all_success[0]['loss'],'initial_loss':success[0]['loss'],'latest_loss':last['loss'],
         'last100_mean_loss':float(np.mean([r['loss'] for r in recent])),
         'last100_p50_loss':float(np.percentile([r['loss'] for r in recent],50)),
         'last100_p95_loss':float(np.percentile([r['loss'] for r in recent],95)),
@@ -76,6 +103,7 @@ def main():
         'wallclock_successful_updates_per_second':(last['successful_updates']-success[0]['successful_updates'])/(last['epoch_time']-success[0]['epoch_time']),
         'peak_memory_by_local_rank':peak,'checkpoint':checkpoint,'parameter_changes_since_step0':changes,
         'launch':launch,'current_gpu':current['gpu'],'current_processes':current['processes'],
+        'initial_checkpoint_origin':str(initial_path.resolve()),
         'disk_free_bytes':current['disk_free_bytes'],'validation':validation}
     reports=ROOT/'docs/research_v2/hs_occ384_stage1_reports';reports.mkdir(exist_ok=True)
     atomic_json(reports/'formal_first30_summary.json',result)
@@ -83,9 +111,11 @@ def main():
     with (reports/'formal_monitor_timeline.csv').open('w') as f:
         writer=csv.DictWriter(f,fieldnames=fields);writer.writeheader()
         for r in observed:writer.writerow({k:r.get(k) for k in fields})
-    text=f'''# Stage1 384 Occupancy: actual first30 minutes
+    text=f'''# Stage1 384 Occupancy: measured30-minute observation
 
 Formal training remains **RUNNING**. Observed {monitor['actual_observed_seconds']:.1f}s after actual successful updates began; separate interactive agent observations: {len(checks)}, spanning {result['agent_check_span_seconds']:.1f}s. Preparation/Pilot time is excluded.
+
+Observation source: `{monitor_path.resolve()}`. The original `first30min.json` is preserved independently. When this is a follow-up observation, it is not described as personal observation of the initial30 minutes. Long gaps between agent interactions are excluded rather than counted toward the continuous observation gate.
 
 Updates observed: {result['starting_update']} → {result['ending_update']}; current snapshot: {current['successful_updates']} /100,000. Attempts: {current['attempts']}. This is an ongoing100K budget, not completed training.
 

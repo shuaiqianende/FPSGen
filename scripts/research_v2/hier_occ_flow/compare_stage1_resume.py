@@ -41,14 +41,18 @@ def main():
     p=argparse.ArgumentParser(__doc__);p.add_argument('--continuous',type=Path,required=True);p.add_argument('--resumed',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--same-origin',action='store_true');p.add_argument('--atol',type=float,default=1e-3);p.add_argument('--rtol',type=float,default=1e-2)
     args=p.parse_args();a=torch.load(args.continuous/'checkpoints/resume_latest.pt',map_location='cpu');b=torch.load(args.resumed/'checkpoints/resume_latest.pt',map_location='cpu')
+    summary=args.resumed/'summary.json';logfile=args.resumed/'train_rank0.jsonl'
+    if not summary.exists() or summary.stat().st_mtime_ns<logfile.stat().st_mtime_ns:
+        raise RuntimeError('Wait for resumed run to finish and commit its checkpoint before comparison')
     rows={k:compare(a[k],b[k],atol=0.,rtol=0.) if k in ('sampler','rank_rng','scaler','successful_updates','attempts','initialization') else compare(a[k],b[k])
         for k in ('model','ema','optimizer','scheduler','scaler','sampler','rank_rng','successful_updates','attempts','initialization')}
     for k in ('model','ema','optimizer','scheduler'):rows[k]=compare(a[k],b[k],atol=args.atol,rtol=args.rtol)
     logs=[]
     for root in (args.continuous,args.resumed):
         logs.append([json.loads(line) for line in (root/'train_rank0.jsonl').read_text().splitlines()])
-    order=lambda data:[(r['attempts'],r['sequence'],r['frame']) for r in data]
+    order=lambda data:[(r['attempts'],tuple((x['sequence'],x['frame']) for x in r.get('batch_records',[r]))) for r in data]
     if args.same_origin:
+        if len(logs[1])<=len(logs[0]):raise RuntimeError('No newly resumed update has been recorded')
         logs[1]=list({r['attempts']:r for r in logs[1]}.values())
     rows['frame_order']={'pass':order(logs[0])==order(logs[1])}
     atomic_json(args.output,{'status':'PASS_CUDA_TOLERANCE' if all(v['pass'] for v in rows.values()) else 'FAIL',

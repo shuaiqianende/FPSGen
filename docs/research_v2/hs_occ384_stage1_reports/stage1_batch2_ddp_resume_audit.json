@@ -1,0 +1,64 @@
+{
+  "atol": 1e-05,
+  "bit_identical_claim": false,
+  "continuous_updates": 32,
+  "resumed_updates": 32,
+  "rows": {
+    "attempts": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "ema": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 7.450580596923828e-09,
+      "pass": true
+    },
+    "frame_order": {
+      "pass": true
+    },
+    "initialization": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "model": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 8.195638656616211e-08,
+      "pass": true
+    },
+    "optimizer": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 1.575099304318428e-07,
+      "pass": true
+    },
+    "rank_rng": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "sampler": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "scaler": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "scheduler": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    },
+    "successful_updates": {
+      "failed_paths": [],
+      "maximum_float_abs_difference": 0.0,
+      "pass": true
+    }
+  },
+  "rtol": 0.001,
+  "same_origin": true,
+  "status": "PASS_CUDA_TOLERANCE"
+}

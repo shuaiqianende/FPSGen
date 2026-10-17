@@ -20,6 +20,7 @@ from .storage import SparseShardDataset,atomic_json,file_sha
 from .dataset import input_xyz
 from .trainer import seed_all,rng_state,restore_rng,atomic_checkpoint,update_ema
 from .stage1_monitoring import module_grad_norm,gradient_stats,sample_parameters,sample_changes
+from .stage1_batch_transition import batch_indices,verify_batch_transition
 
 
 def state_sha(model):
@@ -44,8 +45,8 @@ def validate_config(cfg):
     if objective not in ('fm','bce') or cfg.get('loss')!={objective:1.0}: raise ValueError('Only pure FM or direct BCE loss allowed')
     if objective=='fm' and cfg.get('flow')!={'source':'gaussian','sigma':1.0,'target':'binary_symmetric'}:
         raise ValueError('Unit Gaussian to binary -1/+1 occupancy required')
-    if cfg['training']['physical_gpus']!=[2,3] or cfg['training']['batch_per_gpu']!=1:
-        raise ValueError('Validated starting configuration is GPU2/3 B1/rank')
+    if cfg['training']['physical_gpus']!=[2,3] or cfg['training']['batch_per_gpu'] not in (1,2):
+        raise ValueError('Supported configuration is GPU2/3 B1 or B2/rank')
     if cfg['training']['precision'] not in ('fp16','fp32'): raise ValueError('Unsupported precision')
     if cfg['training'].get('optimizer','AdamW')!='AdamW' or cfg['training'].get('scheduler','warmup_cosine')!='warmup_cosine':
         raise ValueError('This runner supports explicitly registered AdamW and warmup_cosine only')
@@ -73,6 +74,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         required=('formal_ready','full_preprocessing','gpu_shapes','ddp_resume','fm_bce_overfit','pilot1000')
         if not all(gate.get(k) is True for k in required) or gate.get('geometry_sha256')!=g.sha256:
             raise ValueError('Formal Stage1 requires independently measured data/GPU/overfit/pilot gates')
+        if train['batch_per_gpu']==2 and not gate.get('batch2_ddp_resume'):
+            raise ValueError('B2 formal continuation requires actual B2 DDP/resume evidence')
         config_sha=hashlib.sha256(json.dumps(cfg,sort_keys=True).encode()).hexdigest()
         if gate.get('registered_config_sha256')!=config_sha:raise ValueError('Formal config changed after engineering gate freeze')
         for key,split in (('train_dataset','train'),('development_dataset','development')):
@@ -134,13 +137,18 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if world>1:
         hashes=[None]*world; torch.distributed.all_gather_object(hashes,initialization['initial_model_sha256'])
         if len(set(hashes))!=1: raise RuntimeError('DDP initialization differs')
+    sample_cursor=0;successful_frame_exposures=0;batch_transition_applied=False
     if resume:
-        value=verify_stage1_resume(torch.load(resume,map_location='cpu'),identity)
+        value=torch.load(resume,map_location='cpu')
+        batch_transition_applied=bool(cfg.get('batch_transition') and value.get('identity')!=identity)
+        value=verify_batch_transition(value,identity,cfg,resume) if batch_transition_applied else verify_stage1_resume(value,identity)
         raw.load_state_dict(value['model'],strict=True); optimizer.load_state_dict(value['optimizer'])
         scheduler.load_state_dict(value['scheduler']); scaler.load_state_dict(value['scaler'])
         if ema is not None: ema.load_state_dict(value['ema'],strict=True)
         successful=value['successful_updates']; attempts=value['attempts']; initialization=value['initialization']
         failures=value.get('consecutive_failures',0);counters=value.get('monitor_counters',counters)
+        sample_cursor=value['sampler'].get('sample_cursor',attempts*world)
+        successful_frame_exposures=value['sampler'].get('successful_frame_exposures',successful*world)
         restore_rng(value['rank_rng'][rank],generator,device)
     output.mkdir(parents=True,exist_ok=True)
     code_sha={p.name:file_sha(p) for p in Path(__file__).parent.glob('stage1*.py')}
@@ -151,6 +159,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         atomic_json(output/'launch_parameters.json',{'rank0_pid':os.getpid(),'parent_pid':os.getppid(),
             'physical_gpus':list(map(int,visible.split(','))),'world_size':world,'scope':cfg['scope'],
             'actual_update_budget':steps,'starting_successful_updates':successful,'resume':str(resume) if resume else None,
+            'batch_per_gpu':train['batch_per_gpu'],'global_batch':train['batch_per_gpu']*world,
             'epoch_time':time.time(),'identity':identity,'git_commit':launch_commit})
         print(f'phase=model_ready initialization=scratch encoder_params={sum(p.numel() for p in raw.encoder.parameters())} flow_params={sum(p.numel() for p in raw.flow.parameters())}',flush=True)
     stopped=[False]
@@ -172,23 +181,34 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                 'optimizer':optimizer.state_dict(),'scheduler':scheduler.state_dict(),'scaler':scaler.state_dict(),
                 'successful_updates':successful,'attempts':attempts,'rank_rng':states,
                 'monitor_counters':counters,'consecutive_failures':failures,
-                'sampler':{'attempts':attempts,'world_size':world,'seed':train['seed']},'source_code_sha256':code_sha,
+                'sampler':{'attempts':attempts,'world_size':world,'seed':train['seed'],'batch_per_gpu':train['batch_per_gpu'],
+                    'sample_cursor':sample_cursor,'successful_frame_exposures':successful_frame_exposures},'source_code_sha256':code_sha,
+                'batch_transition':cfg.get('batch_transition'),
                 'git_commit':launch_commit,
                 'rank_model_hashes':hashes,'parameter_sync_pass':sync_pass})
             print(f'checkpoint={output / "checkpoints" / name} update={successful} ranks_synchronized={sync_pass}',flush=True)
     if not resume: save('step000000.pt')
+    elif batch_transition_applied:
+        save('batch_transition_start.pt')
+        if rank==0:
+            os.link(output/'checkpoints/batch_transition_start.pt',output/'checkpoints/resume_latest.pt')
+            atomic_json(output/'batch_transition_audit.json',{'source':cfg['batch_transition'],'starting_updates':successful,
+                'starting_attempts':attempts,'starting_sample_cursor':sample_cursor,'starting_successful_frame_exposures':successful_frame_exposures,
+                'model_sha256':state_sha(raw),'ema_sha256':state_sha(ema),'optimizer_entries':len(optimizer.state),
+                'scheduler_last_epoch':scheduler.last_epoch,'amp_scale':scaler.get_scale(),'learning_rates':[x['lr'] for x in optimizer.param_groups]})
     modules={'encoder':raw.encoder,'flow':raw.flow,'velocity_head':raw.flow.output}
     if raw.objective=='fm': modules['time_embedding']=raw.flow.embedding
     samples={k:sample_parameters(m) for k,m in modules.items()}
     if ema is not None: samples['ema']=sample_parameters(ema)
     raw.train(); start=time.perf_counter(); log=(output/f'train_rank{rank}.jsonl').open('a',buffering=1)
     while successful<steps:
-        tick=time.perf_counter(); position=attempts*world+rank; epoch,index=divmod(position,len(ds))
-        order=np.random.default_rng(train['seed']+epoch).permutation(len(ds)); record=ds[int(order[index])]
+        tick=time.perf_counter()
+        records=[ds[index] for index in batch_indices(sample_cursor,train['batch_per_gpu'],rank,world,len(ds),train['seed'])]
+        record=records[0]
         data_start=tick  # include sampler and sparse mmap record retrieval above
-        path=Path(cfg['data_root'])/record['sequence']/'input_'/f"{record['frame']:06d}.npy"
-        xyz=torch.from_numpy(input_xyz(path)).to(device)
-        target=ids_to_dense_occupancy(record['parent_ids'],g,device=device)
+        scenes=[torch.from_numpy(input_xyz(Path(cfg['data_root'])/r['sequence']/'input_'/f"{r['frame']:06d}.npy")).to(device) for r in records]
+        xyz=scenes[0] if len(scenes)==1 else scenes
+        target=torch.cat([ids_to_dense_occupancy(r['parent_ids'],g,device=device) for r in records],0)
         data_seconds=time.perf_counter()-data_start
         optimizer.zero_grad(set_to_none=True)
         pair=occupancy_flow_pair(target,raw.valid,generator=generator) if raw.objective=='fm' else None
@@ -204,6 +224,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         finite=torch.tensor(int(bool(torch.isfinite(loss) and torch.isfinite(grad)) and all(np.isfinite(x) and x>0 for x in norms.values())),device=device)
         if world>1: torch.distributed.all_reduce(finite,op=torch.distributed.ReduceOp.MIN)
         attempts+=1
+        sample_cursor+=world*train['batch_per_gpu']
         if not bool(finite):
             failures+=1
             counters['invalid_attempts']+=1
@@ -212,6 +233,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             if failures>=3: stopped[0]=True
         else:
             scaler.step(optimizer); scaler.update(); scheduler.step(); successful+=1; failures=0
+            successful_frame_exposures+=world*train['batch_per_gpu']
             # BN buffers have per-rank sample statistics; choose rank0 before EMA.
             if world>1:
                 for buffer in raw.buffers(): torch.distributed.broadcast(buffer,0)
@@ -226,7 +248,10 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         row={'successful_updates':successful,'attempts':attempts,'finite':bool(finite),
             'loss':float(global_loss) if bool(torch.isfinite(global_loss)) else None,
             'rank_loss':float(loss.detach()) if bool(torch.isfinite(loss)) else None,
-            'sampled_t':float(pair['time']) if pair is not None else None,
+            'sampled_t':(float(pair['time']) if pair['time'].numel()==1 else pair['time'].tolist()) if pair is not None else None,
+            'batch_records':[{'sequence':r['sequence'],'frame':r['frame']} for r in records],
+            'prediction_shape':list(prediction.shape),
+            'global_batch':world*train['batch_per_gpu'],'sample_cursor':sample_cursor,'successful_frame_exposures':successful_frame_exposures,
             'gradient_norms':{k:v if np.isfinite(v) else None for k,v in norms.items()},
             'lr_encoder':optimizer.param_groups[0]['lr'],'lr_flow':optimizer.param_groups[1]['lr'],
             'sequence':record['sequence'],'frame':record['frame'],'seconds':time.perf_counter()-tick,'data_seconds':data_seconds,

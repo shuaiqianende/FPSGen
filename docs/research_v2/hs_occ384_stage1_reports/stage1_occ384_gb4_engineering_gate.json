@@ -1,0 +1,104 @@
+{
+  "batch2_ddp_resume": true,
+  "ddp_resume": true,
+  "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+  "engineering_quality_rule": "F1 exceeds twice the all-occupied baseline; positive recall/noncollapsed support; genuine loss/parameter learning; not a claim of method superiority",
+  "fm_bce_overfit": true,
+  "formal_ready": true,
+  "full_preprocessing": true,
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "gpu_shapes": true,
+  "pilot1000": true,
+  "pilots": {
+    "bce": {
+      "development": [
+        {
+          "all_occupied_f1": 0.0666963497430989,
+          "macro_f1": 0.5521418004490092,
+          "nfe": "1",
+          "pass": true
+        }
+      ],
+      "finite_and_completed": true,
+      "loss_learning_trend": true,
+      "metrics_sha256": "72d7e1f8e82e95df5ea84fb6ed5a8e23cda38bfa8a0a37deef28e588858e2456",
+      "nonzero_gradients": true,
+      "parameter_updates": true,
+      "pass": true,
+      "scratch": true,
+      "summary_sha256": "dd7a9ad9c6ffb2daa049f8b6b37a22891fb6df4ba1d6cd7e6fc2e822e8898966",
+      "training_diagnostic": [
+        {
+          "all_occupied_f1": 0.08721089473768179,
+          "macro_f1": 0.7421072045143098,
+          "nfe": "1",
+          "pass": true
+        }
+      ]
+    },
+    "fm": {
+      "development": [
+        {
+          "all_occupied_f1": 0.0666963497430989,
+          "macro_f1": 0.5437066277211979,
+          "nfe": "1",
+          "pass": true
+        },
+        {
+          "all_occupied_f1": 0.0666963497430989,
+          "macro_f1": 0.5053878646735077,
+          "nfe": "2",
+          "pass": true
+        },
+        {
+          "all_occupied_f1": 0.0666963497430989,
+          "macro_f1": 0.48224655225145335,
+          "nfe": "4",
+          "pass": true
+        },
+        {
+          "all_occupied_f1": 0.0666963497430989,
+          "macro_f1": 0.4680638648886323,
+          "nfe": "8",
+          "pass": true
+        }
+      ],
+      "finite_and_completed": true,
+      "loss_learning_trend": true,
+      "metrics_sha256": "d2cbb5b557013b64713ee6813804c0a2ef775168a2c9153c55d38934eff148f8",
+      "nonzero_gradients": true,
+      "parameter_updates": true,
+      "pass": true,
+      "scratch": true,
+      "summary_sha256": "af114c44c874e779096d5800dbbc2f9fa061459d3a14af577d39372ea5833b8e",
+      "training_diagnostic": [
+        {
+          "all_occupied_f1": 0.08721089473768179,
+          "macro_f1": 0.6315524668556631,
+          "nfe": "1",
+          "pass": true
+        },
+        {
+          "all_occupied_f1": 0.08721089473768179,
+          "macro_f1": 0.5953370143288093,
+          "nfe": "2",
+          "pass": true
+        },
+        {
+          "all_occupied_f1": 0.08721089473768179,
+          "macro_f1": 0.5744371793990826,
+          "nfe": "4",
+          "pass": true
+        },
+        {
+          "all_occupied_f1": 0.08721089473768179,
+          "macro_f1": 0.5609072368140927,
+          "nfe": "8",
+          "pass": true
+        }
+      ]
+    }
+  },
+  "registered_config_sha256": "945f16d9039c5a62fd95062b7d4f5f18dec0d520f5686f28e962807ddafbe886",
+  "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+}

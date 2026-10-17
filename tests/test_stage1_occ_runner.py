@@ -34,12 +34,13 @@ def test_stage1_config_locks384_occupancy_and_scratch():
 
 
 @pytest.mark.parametrize('objective',['fm','bce'])
-def test_real_unet_unit_grid_gradients_and_no_unused_parameters(objective):
+@pytest.mark.parametrize('batch',[1,2])
+def test_real_unet_unit_grid_gradients_and_no_unused_parameters(objective,batch):
     #8-cubed tests layer math only; it is never a384-scene smoke result.
     torch.manual_seed(2);m=OccupancyUNet(objective,activation_checkpointing=True)
-    state=torch.randn(1,1,8,8,8);observed=torch.rand_like(state)>.8
-    condition=[torch.randn(1,128,n,n,n,requires_grad=True) for n in (4,2,1)]
-    result=m(state if objective=='fm' else torch.zeros_like(state),observed,condition,torch.tensor(.4) if objective=='fm' else None)
+    state=torch.randn(batch,1,8,8,8);observed=torch.rand_like(state)>.8
+    condition=[torch.randn(batch,128,n,n,n,requires_grad=True) for n in (4,2,1)]
+    result=m(state if objective=='fm' else torch.zeros_like(state),observed,condition,torch.full((batch,),.4) if objective=='fm' else None)
     loss=masked_occ_loss(result,torch.randn_like(result) if objective=='fm' else observed.float(),torch.ones_like(observed),objective=objective)
     loss.backward()
     assert result.shape==state.shape and torch.isfinite(loss)
@@ -183,3 +184,33 @@ def test_pilot_cannot_satisfy_formal30min_monitor(monkeypatch,tmp_path):
     monkeypatch.setattr(monitor,'snapshot',lambda output:{'scope':'pilot'})
     monkeypatch.setattr(sys,'argv',['monitor','--output',str(tmp_path),'--report',str(tmp_path/'report.json'),'--observe'])
     with pytest.raises(ValueError,match='cannot satisfy formal30min'):monitor.main()
+
+
+def test_batch_transition_preserves_global_cursor_and_epoch_order():
+    from fpsgen.hier_occ_flow.stage1_batch_transition import batch_indices
+    length=7;seed=23
+    def expected(cursor,count):
+        return [int(np.random.default_rng(seed+p//length).permutation(length)[p%length]) for p in range(cursor,cursor+count)]
+    old=batch_indices(4,1,0,2,length,seed)+batch_indices(4,1,1,2,length,seed)
+    assert old==expected(4,2)
+    new=batch_indices(6,2,0,2,length,seed)+batch_indices(6,2,1,2,length,seed)
+    assert new==expected(6,4)  # no skip at old→new batch/epoch boundaries
+
+
+def test_batch_transition_rejects_unrelated_config_or_checkpoint(tmp_path):
+    from fpsgen.hier_occ_flow.stage1_batch_transition import verify_batch_transition
+    from fpsgen.hier_occ_flow.storage import file_sha
+    import hashlib
+    old=config();old['engineering_gate']='old_gate';old['training']['lr_encoder']=1e-4
+    source=tmp_path/'config.json';source.write_text(json.dumps(old));ckpt=tmp_path/'resume.pt';ckpt.write_bytes(b'test')
+    identity={'experiment':'hs-occflow-stage1-occ384-v1','objective':'fm','geometry_sha256':'384',
+        'train_manifest_sha256':'train','development_manifest_sha256':'dev','world_size':2,'output':str(tmp_path),
+        'config_sha256':hashlib.sha256(json.dumps(old,sort_keys=True).encode()).hexdigest()}
+    value={'identity':identity,'initialization_mode':'scratch','parameter_sync_pass':True}
+    new=copy.deepcopy(old);new['training']['batch_per_gpu']=2;new['engineering_gate']='new_gate'
+    new['batch_transition']={'checkpoint':str(ckpt),'checkpoint_sha256':file_sha(ckpt),'source_config':str(source)}
+    assert verify_batch_transition(value,identity,new,ckpt) is value
+    bad=copy.deepcopy(new);bad['training']['lr_encoder']=2e-4
+    with pytest.raises(ValueError,match='only batch'):verify_batch_transition(value,identity,bad,ckpt)
+    bad=copy.deepcopy(new);bad['batch_transition']['checkpoint_sha256']='bad'
+    with pytest.raises(ValueError,match='SHA mismatch'):verify_batch_transition(value,identity,bad,ckpt)

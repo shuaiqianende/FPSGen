@@ -30,11 +30,11 @@ def occupancy_flow_pair(occupied, valid_mask, *, generator, time=None):
     """Gaussian -> symmetric binary occupation; uniform scene-shared t."""
     if generator is None:
         raise ValueError("Explicit RNG is required")
-    if occupied.ndim != 5 or occupied.shape != valid_mask.shape:
+    if occupied.ndim != 5 or occupied.shape[1:] != valid_mask.shape[1:] or valid_mask.shape[0] not in (1,occupied.shape[0]):
         raise ValueError("Dense occupancy and ROI mask shape mismatch")
     if bool(((occupied != 0) & (occupied != 1)).any()):
         raise ValueError("Occupancy must be binary")
-    valid = valid_mask.bool()
+    valid = valid_mask.bool().expand_as(occupied)
     if not bool(valid.any()):
         raise ValueError("No valid voxels")
     if bool((occupied.bool() & ~valid).any()):
@@ -42,18 +42,18 @@ def occupancy_flow_pair(occupied, valid_mask, *, generator, time=None):
     x1 = (2.0 * occupied.float() - 1.0) * valid
     x0 = torch.randn(x1.shape, device=x1.device, dtype=x1.dtype, generator=generator) * valid
     if time is None:
-        time = torch.rand((1,), device=x1.device, generator=generator)
-    if time.numel() != 1 or not bool(((time >= 0) & (time <= 1)).all()):
-        raise ValueError("A single time in [0,1] is required")
-    time = time.reshape(1)
-    return {"state": (1 - time) * x0 + time * x1,
+        time = torch.rand((len(x1),), device=x1.device, generator=generator)
+    if time.numel() != len(x1) or not bool(((time >= 0) & (time <= 1)).all()):
+        raise ValueError("One independent scene-shared time per batch item is required")
+    time = time.reshape(len(x1));weight=time.reshape(-1,1,1,1,1)
+    return {"state": (1 - weight) * x0 + weight * x1,
             "velocity": x1 - x0, "source": x0, "target": x1, "time": time}
 
 
 def masked_occ_loss(prediction, target, valid_mask, *, objective):
-    if prediction.shape != target.shape or target.shape != valid_mask.shape:
+    if prediction.shape != target.shape or target.shape[1:] != valid_mask.shape[1:] or valid_mask.shape[0] not in (1,target.shape[0]):
         raise ValueError("Prediction/target/ROI mask mismatch")
-    valid = valid_mask.bool()
+    valid = valid_mask.bool().expand_as(target)
     if objective == "fm":
         per_voxel = (prediction.float() - target.float()).square()
     elif objective == "bce":
@@ -97,7 +97,8 @@ class Stage1DirectOccupancy(nn.Module):
     def forward(self, lidar_xyz, *, state=None, time=None, condition=None):
         if condition is None:
             condition = self.encode_condition(lidar_xyz)
-        observed = self.geometry.observed_mask(lidar_xyz)
+        scenes=[lidar_xyz] if isinstance(lidar_xyz,torch.Tensor) else list(lidar_xyz)
+        observed = torch.cat([self.geometry.observed_mask(x) for x in scenes],0)
         if self.objective == "fm":
             if state is None or time is None:
                 raise ValueError("FM requires state and time")
