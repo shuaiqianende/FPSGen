@@ -1,0 +1,26 @@
+{
+  "amp_scale": 2048.0,
+  "ema_sha256": "58aa3879989f8f935e69142140656b6fd57f8397746928651f091638668974bf",
+  "learning_rates": [
+    9.190440524459204e-05,
+    0.00018380881048918408
+  ],
+  "model_sha256": "c1c31cb08e16bf10b6afd84d71a41a00e53f46811603d68455fa5cb15ffa9b41",
+  "optimizer_entries": 294,
+  "scheduler_last_epoch": 20000,
+  "source": {
+    "anchor_lr_factor": 0.9190440524459204,
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4/checkpoints/step020000.pt",
+    "checkpoint_sha256": "ba316c8264d934480578c3802137d1236af6327c77c56c72b48dc1a571386044",
+    "lr_policy": "continuous_cosine_to_frame_budget",
+    "previous_update_budget": 100000,
+    "source_config": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4/config.json",
+    "source_successful_frames": 42900,
+    "source_updates": 20000
+  },
+  "starting_sample_cursor": 42926,
+  "starting_successful_frame_exposures": 42900,
+  "starting_updates": 20000,
+  "target_successful_frame_exposures": 100000,
+  "target_updates": 34275
+}

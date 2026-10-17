@@ -1,0 +1,103 @@
+{
+  "status": "RUNNING",
+  "actual_updates": 20080,
+  "target_updates": 34275,
+  "actual_successful_frame_exposures": 43220,
+  "target_successful_frame_exposures": 100000,
+  "attempts": 20093,
+  "global_batch": 4,
+  "new_skipped_attempts": 0,
+  "latest_loss": 0.05511467903852463,
+  "gradient_audit_update": 20050,
+  "gradient_details": {
+    "encoder": {
+      "l2": 0.010376235470175743,
+      "abs_max": 0.0006872972007840872,
+      "nonfinite_elements": 0,
+      "parameters_with_gradient": 198,
+      "nonzero_parameter_ratio": 1.0
+    },
+    "flow": {
+      "l2": 0.9256752133369446,
+      "abs_max": 0.17230224609375,
+      "nonfinite_elements": 0,
+      "parameters_with_gradient": 96,
+      "nonzero_parameter_ratio": 1.0
+    },
+    "velocity_head": {
+      "l2": 0.8992905020713806,
+      "abs_max": 0.17230224609375,
+      "nonfinite_elements": 0,
+      "parameters_with_gradient": 2,
+      "nonzero_parameter_ratio": 1.0
+    },
+    "time_embedding": {
+      "l2": 0.016764136031270027,
+      "abs_max": 0.0009963512420654297,
+      "nonfinite_elements": 0,
+      "parameters_with_gradient": 4,
+      "nonzero_parameter_ratio": 1.0
+    }
+  },
+  "parameter_changes": {
+    "encoder": {
+      "sample_delta_l2": 0.04389578476548195,
+      "sample_changed_elements": 12280,
+      "sample_elements": 12280,
+      "sample_sha256": "eb897561200be4475c62cc2106bad0e9c8c29bbf06869230e3397e54994807a5"
+    },
+    "flow": {
+      "sample_delta_l2": 0.026826508343219757,
+      "sample_changed_elements": 3937,
+      "sample_elements": 3937,
+      "sample_sha256": "d911c0dc000d646811b3ad5374729dcaf6578c50dc4e934d24d2396061bec9dd"
+    },
+    "velocity_head": {
+      "sample_delta_l2": 0.0020202212035655975,
+      "sample_changed_elements": 65,
+      "sample_elements": 65,
+      "sample_sha256": "0f865a4896989f558253841230e899970eb86dbc8f40b9fa61bca2c7f209158b"
+    },
+    "time_embedding": {
+      "sample_delta_l2": 0.007176980841904879,
+      "sample_changed_elements": 256,
+      "sample_elements": 256,
+      "sample_sha256": "bc350cb2f6fbf0744a89c235ae512725883bbd97e383db853d944f15cc6ec565"
+    },
+    "ema": {
+      "sample_delta_l2": 0.00951994676142931,
+      "sample_changed_elements": 16216,
+      "sample_elements": 16217,
+      "sample_sha256": "ca4ec204977b07e2102ecececfccb3399f7bf9187db5c171bc787168faef80c3"
+    }
+  },
+  "launch": {
+    "actual_update_budget": 34275,
+    "batch_per_gpu": 2,
+    "epoch_time": 1792205067.8377855,
+    "git_commit": "6f6361f2c1f2100dac6428973801d7a44101dea9",
+    "global_batch": 4,
+    "identity": {
+      "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+      "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+      "experiment": "hs-occflow-stage1-occ384-v1",
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "objective": "fm",
+      "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4",
+      "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+      "world_size": 2
+    },
+    "parent_pid": 1395733,
+    "physical_gpus": [
+      2,
+      3
+    ],
+    "rank0_pid": 1396126,
+    "resume": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4/checkpoints/step020000.pt",
+    "scope": "formal",
+    "starting_successful_frame_exposures": 42900,
+    "starting_successful_updates": 20000,
+    "successful_frame_exposure_budget": 100000,
+    "world_size": 2
+  }
+}

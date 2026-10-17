@@ -1,0 +1,44 @@
+{
+  "checks": {
+    "all_four_next_frames_correct": true,
+    "correct_actual_stop_budget": true,
+    "ema_exactly_restored": true,
+    "frame_counter_continued": true,
+    "global_batch4": true,
+    "lr_at_restore_unchanged": true,
+    "model_exactly_restored": true,
+    "new_cosine_matches_runtime": true,
+    "optimizer_steps_continued": true,
+    "sampler_cursor_continued": true,
+    "scheduler_and_scaler_restored": true
+  },
+  "current_frames": 43048,
+  "current_updates": 20037,
+  "first_four_records": [
+    [
+      {
+        "frame": 3647,
+        "sequence": "00"
+      },
+      {
+        "frame": 3968,
+        "sequence": "02"
+      }
+    ],
+    [
+      {
+        "frame": 287,
+        "sequence": "07"
+      },
+      {
+        "frame": 2128,
+        "sequence": "00"
+      }
+    ]
+  ],
+  "starting_frames": 42900,
+  "starting_updates": 20000,
+  "status": "PASS",
+  "target_frames": 100000,
+  "target_updates": 34275
+}

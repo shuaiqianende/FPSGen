@@ -15,7 +15,13 @@ from monitor_stage1_occ import read_rows
 def main():
     p=argparse.ArgumentParser(__doc__);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
     cfg=json.loads((a.output/'config.json').read_text())
-    roots=([Path(cfg['batch_transition']['source_config']).parent] if cfg.get('batch_transition') else [])+[a.output]
+    def lineage(root,seen=None):
+        seen=set() if seen is None else seen
+        if root.resolve() in seen:raise ValueError('Continuation lineage contains a cycle')
+        seen.add(root.resolve());c=json.loads((root/'config.json').read_text())
+        parent=c.get('budget_transition') or c.get('batch_transition')
+        return (lineage(Path(parent['source_config']).parent,seen) if parent else [])+[root]
+    roots=lineage(a.output)
     rows=[r for root in roots for r in read_rows(root/'train_rank0.jsonl') if r.get('finite')]
     steps=np.array([r['successful_updates'] for r in rows]);loss=np.array([r['loss'] for r in rows])
     fig,axes=plt.subplots(2,2,figsize=(12,8),constrained_layout=True)
@@ -39,7 +45,7 @@ def main():
     axes[1,1].set_title('Online,1 NFE, native384 grid, score>0.5');axes[1,1].set_ylim(0,1);axes[1,1].legend()
     for ax in axes.flat:
         ax.set_xlabel('Successful optimizer updates');ax.grid(alpha=.2)
-        if cfg.get('batch_transition'):ax.axvline(json.loads((a.output/'launch_parameters.json').read_text())['starting_successful_updates'],color='grey',ls='--',lw=.8)
+        for root in roots[1:]:ax.axvline(json.loads((root/'launch_parameters.json').read_text())['starting_successful_updates'],color='grey',ls='--',lw=.8)
     fig.suptitle(f'HS-OccFlow Stage1 occupancy: actual progress through {steps[-1]:,} updates')
     dest=ROOT/'docs/research_v2/hs_occ384_stage1_reports/formal_training_progress.png'
     fig.savefig(dest,dpi=160);plt.close(fig);print(dest)

@@ -1,21 +1,21 @@
-> Budget clarification: the user now requires100K successful frame exposures, ending at34,275 cumulative optimizer updates. Earlier100K-update statements below are historical. See[corrected budget](HS_OCCFLOW_384_STAGE1_100K_FRAME_BUDGET.md).
+# Stage1 384 occupancy:100K training-frame budget
 
-# Stage1 384 direct occupancy formal training
+**RUNNING**, global batch4 on physicalGPU2/3. The user clarified that100K
+means successful training-frame exposures. Final optimizer update:**34,275**.
+Actual snapshot:20080 updates,43220/100,000frames.
 
-Current status: **RUNNING, global batch4**.
-Latest actual snapshot update:19608 /100,000.
-Original B1/rank phase was safely paused at18,550 updates; it is preserved.
-The same model/EMA/optimizer/scheduler/scaler/RNG was restored into a separate
-continuation directory after explicit user authorization to change batch.
+Original scratch phase0→18,550 used global2, contributing37,100frames.
+All later successful updates use global4. Full20K checkpoint has42,900frames.
+New phase resumes its own20K checkpoint, preserving online/EMA/optimizer/scaler/
+scheduler and sampler/RNG. No external pretrained weights or pilot state loaded.
+Learning rate continues smoothly from the current value to zero at the new end.
 
-Active tmux:`fpsgen_hs_occ384_stage1_fm100k_gb4_gpu23`.
-Active output:`/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4`.
-Latest recoverable checkpoint:`/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_gb4/checkpoints/resume_latest.pt`.
-PhysicalGPU2/3; B2/rank, global4, no gradient accumulation.
-Rank0PID:1140376; launch commit`aab49956f3a9ccce6e7006dfedae03730585e17b`.
+Active tmux:`fpsgen_hs_occ384_stage1_100kframes_gb4_gpu23`, training window1.
+Output:`/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4`.
+Latest own-phase checkpoint:`/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4/checkpoints/resume_latest.pt`.
+Rank0PID:1396126; training launch commit`6f6361f2c1f2100dac6428973801d7a44101dea9`.
 
-See[batch transition](HS_OCCFLOW_384_STAGE1_BATCH4_RESUME.md) and
-[observation](HS_OCCFLOW_384_STAGE1_FIRST30MIN.md). Initial formal start remains
-a true scratch initialization atstep0 with zero pretrained parameters. This
-continuation is not a fresh initialization and does not reset successful steps.
-The100K budget is ongoing; no completion claim is made.
+See[exact accounting and runtime proof](HS_OCCFLOW_384_STAGE1_100K_FRAME_BUDGET.md).
+The earlier100K-optimizer-update plan is superseded. Historical raw checkpoints,
+20K900-frame evaluation, batch-switch audit, and completed30-minute observation
+remain preserved. Stage2 is not trained. System environment is unchanged.

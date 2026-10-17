@@ -41,11 +41,31 @@ optimizer step99,996→100,000, checkpoint output, LR continuity/monotonicity,
 and rejection of unrelated source/config changes are tested. Existing actual
 batch2 GPU/DDP/resume and maximum-scene gates are retained: architecture and
 batch have not changed. Formal stop update34,275 is checked again against
-actual counters after restore. The final checkpoint and full900-frame density-
-independent occupancy evaluation run at that stop even though it is not a
+actual counters after restore. The final checkpoint and full900-frame occupancy evaluation run at that stop even though it is not a
 multiple of1,000 or5,000.
 
-Current status: prepared; waiting for the already-running20K development900
-validation to finish and the verified old ranks to exit safely. Actual resumed
-updates will be appended after launch. No RUNNING claim is made for this new
-phase before its optimizer actually updates.
+Registration initially waited for the20K development900 validation and safe
+source-rank exit. The actual resumed-running evidence is recorded below.
+
+## Actual continuation:RUNNING
+
+The source completed its full900-frame20K evaluation and exited withPAUSED
+at20,000 successful updates. A conservative waiting helper briefly rejected
+an empty cmdline from an exiting process; no competing GPU task was started.
+After verifying both source PIDs had exited andGPU2/3 were free, continuation
+was launched in the new tmux's active training window1. The diagnostic remains
+in console.log; no checkpoint or result was removed.
+
+Actual runtime checks all passed: exact source online/EMA hashes, optimizer
+step20,001 after first new update, scaler/scheduler restored, unchanged LR at
+the boundary, next four frameIDs and sampler cursor correct, runtime LR matches
+the new continuous cosine, and actual stop metadata is34,275 /100,000frames.
+At least50 successful resumed updates were observed; update20080,
+frames43220/100,000 at this snapshot, no newAMPskip.
+The latest full module audit at20050 has finite nonzero
+gradients and measured parameter changes in encoder/flow/head/time embedding/EMA.
+Source launch commit:`6f6361f2c1f2100dac6428973801d7a44101dea9`. Rank0PID:1396126.
+Training remains running; this does not claim the100K frame budget is finished.
+
+20K full900 development, online1NFE,threshold0.5,native384grid:IoU47.9201%,
+F1=64.2340%,recall55.6807%. These metrics do not enter theFM loss.
