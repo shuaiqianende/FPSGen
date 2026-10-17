@@ -1,5 +1,27 @@
 # Stage2 384 remaining gates and reproducible entrypoints
 
+## Latest user decision: direct100K successful-frame training
+
+On2026-10-18 the user explicitly requested direct training on100K samples.
+The active protocol now uses the complete17,870-frame train split, pureFM,
+Oracle parent support and true GB4 DDP on GPU2/3. The former quality gate is
+preserved as failed evidence and changed to monitoring by this explicit user
+decision; engineering/numerical/checkpoint gates remain mandatory.
+
+See [the actual budget and launch report](HS_OCCFLOW_STAGE2_384_FM_100KFRAMES.md).
+The572-update diagnostic was safely paused at1808 successful exposures. The
+remaining98192 exposures require24548 updates, ending at absolute update25120.
+tmux is `fpsgen_hs_stage2_384_fm_gb4_gpu23`, window `fm100kframes`.
+Output is `experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes`.
+
+Next research work is to monitor the actual NFE quality and complete a separate
+Predicted Parent calibration/full-scene audit before deployment claims. No BCE,
+PointFlow or Teacher job is queued. Only count100K complete when the saved
+successful-frame counter reaches100000. The older instructions below are
+historical; their approval-service and paired-pilot status is superseded.
+
+## Historical gated pilot plan
+
 The latest user-selected mainline is **FM only, DDP GPU2/3, packed2 scenes/rank,
 global batch4**. The previous paired BCE/FM queue below is historical and no
 longer runs. See [the GB4 continuation](HS_OCCFLOW_STAGE2_384_GB4.md).

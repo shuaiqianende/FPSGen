@@ -1,5 +1,10 @@
 # FM-only Stage2: true ragged global batch4
 
+Latest2026-10-18: the user requested direct100K successful-frame training.
+See [the full-split budget and launch report](HS_OCCFLOW_STAGE2_384_FM_100KFRAMES.md).
+Quality prerequisites are now monitoring by explicit user decision; the
+failed Oracle gate is preserved and engineering checks remain enforced.
+
 Update2026-10-18: the400-update queue completed but **failed the Oracle quality
 gate**, so its shell exited and tmux disappeared. No full-split1K pilot ran.
 See [the recovery report](HS_OCCFLOW_STAGE2_384_TMUX_RECOVERY.md) for the

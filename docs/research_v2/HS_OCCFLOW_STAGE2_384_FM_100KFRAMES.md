@@ -92,3 +92,18 @@ long-running job is queued. Existing Stage1 and older Stage2 artifacts remain.
 Actual launch/first20/resume evidence is recorded under this experiment and
 `docs/research_v2/stage2_384_audit`; only small JSON and code enter Git.
 Training is complete only at100000 successful exposures, never at launch.
+
+## Actual startup evidence
+
+The20-update full-split check passed at592 updates/1888 successful exposures:
+all169 model tensors changed,169 AdamW states continued, both online/EMA rank
+hashes matched, gradients were finite and nonzero, and AMP skippedzero attempts.
+The launcher then actually resumed the same output/config/source identity from
+592 and continued beyond600 updates. This is not merely a queued continuation.
+See `stage2_384_audit/full100kframes_launch.json` for the timestamped live
+snapshot; the experiment's `full_split20_audit.json` contains the real check.
+
+The first20-update median was2.59seconds after startup. Early post-resume scenes
+instead took about6.27seconds/update (8 warm observations), so the initial19–22h
+estimate was optimistic; roughly40–45h is the current early estimate, subject
+to actual throughput across the complete split. All evaluation history remains.
