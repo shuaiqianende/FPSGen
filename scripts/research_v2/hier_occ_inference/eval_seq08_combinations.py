@@ -93,6 +93,12 @@ def aggregate(rows):
     return out
 
 
+def requested_nfes(values):
+    if not values or len(set(values))!=len(values) or any(n not in (1,2,4) for n in values):
+        raise ValueError('Choose distinct registered NFE values from1/2/4')
+    return tuple(values)
+
+
 @torch.no_grad()
 def main():
     p=argparse.ArgumentParser(__doc__)
@@ -101,18 +107,22 @@ def main():
     p.add_argument('--workers',type=int,default=4);p.add_argument('--max-frames',type=int,default=41)
     p.add_argument('--physical-gpu',type=int,choices=[0,1],default=1)
     p.add_argument('--idle-service-pid',type=int)
+    p.add_argument('--stage1-nfes',nargs='+',type=int,choices=[1,2,4],default=[1,2,4])
+    p.add_argument('--stage2-nfes',nargs='+',type=int,choices=[1,2,4],default=[1,2,4])
     p.add_argument('--resume',action='store_true');a=p.parse_args()
+    s1_nfes=requested_nfes(a.stage1_nfes);s2_nfes=requested_nfes(a.stage2_nfes)
     if not 1<=a.max_frames<=41 or not 1<=a.workers<=4:raise ValueError('At most41 frames and4 CPU workers')
     cfg,g=load_stage2_config(a.config);saved=torch.load(a.checkpoint,map_location='cpu');validate_snapshot(saved,cfg,g)
     reference=json.loads((a.reference/'protocol.json').read_text())
     frames=reference['frames'];assert [r['frame'] for r in frames]==list(range(0,4001,100)) and all(r['sequence']=='08' for r in frames)
     assert reference['geometry_sha256']==g.sha256
     frames=frames[:a.max_frames]
+    expected_rows=len(frames)*len(s1_nfes)*len(s2_nfes)
     protocol={'checkpoint_sha256':file_sha(a.checkpoint),'checkpoint_updates':saved['successful_updates'],
         'checkpoint_frames':saved['sampler']['successful_frame_exposures'],'geometry_sha256':g.sha256,
-        'stage1':cfg['stage1'],'stage2_weights':'online','frames':frames,'stage1_nfes':[1,2,4],'stage2_nfes':[1,2,4],
+        'stage1':cfg['stage1'],'stage2_weights':'online','frames':frames,'stage1_nfes':list(s1_nfes),'stage2_nfes':list(s2_nfes),
         'stage1_seed':'scene_seed(sequence,frame,candidates.seed)','stage2_seed_base':cfg['validation']['seed'],
-        'stage2_noise':'full parent-indexed Gaussian table shared across all9 combinations within each frame',
+        'stage2_noise':'full parent-indexed Gaussian table shared across requested NFE combinations within each frame',
         'stage1_threshold':.5,'stage2_state_threshold':0.,'extra_filter':'NONE',
         'cd':'0.5*(mean Euclidean NN prediction->raw GT +mean Euclidean NN raw GT->prediction), meters',
         'cd_gt':'All valid raw pre-Poisson local map candidate points; no point subsampling',
@@ -131,7 +141,7 @@ def main():
     rows=[];journal=a.output/'per_frame.jsonl'
     if a.resume and journal.exists():rows=[json.loads(s) for s in journal.read_text().splitlines()]
     done={(r['frame'],r['stage1_nfe'],r['stage2_nfe']) for r in rows}
-    atomic_json(a.output/'progress.json',{'status':'VERIFYING_RAW_SOURCE','completed_combinations':len(rows),'requested_combinations':len(frames)*9})
+    atomic_json(a.output/'progress.json',{'status':'VERIFYING_RAW_SOURCE','completed_combinations':len(rows),'requested_combinations':expected_rows})
     source,source_sha=raw_source_snapshot(cfg['data_root'],[('08',r['frame']) for r in reference['frames']])
     if source_sha!=reference['raw_source_manifest_sha256']:raise ValueError('Raw map/pose/scan/protocol sources changed')
     atomic_json(a.output/'raw_sources.json',source)
@@ -145,7 +155,7 @@ def main():
     for index,record in enumerate(frames):
         if a.physical_gpu==0:check_gpu0_background(a.idle_service_pid)
         frame=record['frame']
-        if all((frame,s1,s2) in done for s1 in (1,2,4) for s2 in (1,2,4)):continue
+        if all((frame,s1,s2) in done for s1 in s1_nfes for s2 in s2_nfes):continue
         tick=time.perf_counter();metadata=json.loads((a.reference/'targets'/f'08_{frame:06d}.json').read_text())
         if metadata['input_sha256']!=file_sha(record['input']) or metadata['geometry_sha256']!=g.sha256:
             raise ValueError('Target/input identity mismatch')
@@ -164,8 +174,8 @@ def main():
         tick=time.perf_counter();pyramid=adapter.encode_features(xyz);torch.cuda.synchronize();encoding_seconds=time.perf_counter()-tick
         seed=scene_seed('08',frame,cfg['candidates']['seed'])
         noise=torch.randn((g.num_parents,g.k),device=device,generator=torch.Generator(device=device).manual_seed(cfg['validation']['seed']+frame))
-        for s1 in (1,2,4):
-            if all((frame,s1,s2) in done for s2 in (1,2,4)):continue
+        for s1 in s1_nfes:
+            if all((frame,s1,s2) in done for s2 in s2_nfes):continue
             tick=time.perf_counter()
             with torch.autocast('cuda',dtype=torch.float16):
                 score,state=adapter.model.sample(xyz,nfe=s1,condition=pyramid,generator=torch.Generator(device=device).manual_seed(seed))
@@ -175,7 +185,7 @@ def main():
             ids,c,provenance=input_conditions(xyz,g,EncodedInput(pyramid,score[0,0].float(),adapter.provenance),policy,seed=seed)
             if len(ids)>cfg['training']['max_parent_tokens']:raise ValueError('No token truncation permitted')
             source_noise=noise[ids]*c['valid_child_mask']
-            for s2 in (1,2,4):
+            for s2 in s2_nfes:
                 if (frame,s1,s2) in done:continue
                 tick=time.perf_counter()
                 with torch.autocast('cuda',dtype=torch.float16):occ=integrate(model,ids,c,source_noise,s2)
@@ -194,14 +204,14 @@ def main():
                 with journal.open('a') as f:f.write(json.dumps(row,allow_nan=False)+'\n')
                 rows.append(row);done.add((frame,s1,s2))
                 atomic_json(a.output/'progress.json',{'status':'RUNNING','completed_combinations':len(rows),
-                    'requested_combinations':len(frames)*9,'completed_scenes':sum(all((r['frame'],a,b) in done for a in (1,2,4) for b in (1,2,4)) for r in frames),
+                    'requested_combinations':expected_rows,'completed_scenes':sum(all((r['frame'],n1,n2) in done for n1 in s1_nfes for n2 in s2_nfes) for r in frames),
                     'seconds_current_invocation':time.perf_counter()-begin,'results':aggregate(rows)})
-                print(f'{len(rows)}/{len(frames)*9} 08/{frame:06d} S1={s1} S2={s2} CD={metric["cd_m"]} IoU05={support["iou"]:.6f} metric_seconds={row["metric_seconds"]:.2f}',flush=True)
+                print(f'{len(rows)}/{expected_rows} 08/{frame:06d} S1={s1} S2={s2} CD={metric["cd_m"]} IoU05={support["iou"]:.6f} metric_seconds={row["metric_seconds"]:.2f}',flush=True)
             del ids,c,source_noise,score,state
         del noise,pyramid,xyz,gt_tree,xyz_gt
     result={'status':'COMPLETE','frames':len(frames),'combinations':len(rows),'protocol':protocol,'results':aggregate(rows),
             'seconds_current_invocation':time.perf_counter()-begin,'rows':rows}
-    if len(rows)!=len(frames)*9:raise ValueError('Incomplete grid evaluation')
+    if len(rows)!=expected_rows:raise ValueError('Incomplete grid evaluation')
     atomic_json(a.output/'results.json',result);atomic_json(a.output/'progress.json',{k:v for k,v in result.items() if k!='rows'})
     with (a.output/'per_frame.csv').open('w') as f:
         writer=csv.DictWriter(f,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)

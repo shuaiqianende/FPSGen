@@ -1,0 +1,25 @@
+{
+  "status": "WAITING_GPU0",
+  "completed_frames": 37,
+  "required_frames": 41,
+  "pending_frames": [
+    3700,
+    3800,
+    3900,
+    4000
+  ],
+  "checkpoint_updates": 16000,
+  "successful_training_frames": 63520,
+  "checkpoint_sha256": "6891ea7139b428b7c17882e3d206fba5dc19a336a08ce404200dd9e269c4ec46",
+  "stage1_nfe": 4,
+  "stage2_nfe": 4,
+  "weights": "online",
+  "full_41_frame_metrics_available": false,
+  "partial_rows_unique_and_finite": true,
+  "reason": "A different user started a GPU0 compute process; evaluation stopped at frame boundary. No process was stopped or reclaimed.",
+  "resume_tmux": "fpsgen_hs_stage2_eval16000_4x4_gpu0",
+  "resume_poll_seconds": 30,
+  "output": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_eval/step016000_seq08_skip100_s1nfe4_s2nfe4_gpu0",
+  "cpu_tests_passed": 13,
+  "training_source_sha256_unchanged": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7"
+}

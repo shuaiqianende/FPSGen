@@ -50,3 +50,14 @@ def test_macro_frame_mean_is_not_micro_and_invalid_cd_is_not_silently_dropped():
     assert r['cd_m']==pytest.approx(.2) and r['iou05_macro']==.375 and r['iou05_micro']==pytest.approx(1/3)
     rows[-1].update(valid_cd=False,cd_m=None)
     assert entry.aggregate(rows)[0]['cd_m'] is None
+
+
+def test_single_four_plus_four_selection_preserves_registered_nfes():
+    assert entry.requested_nfes([4])==(4,)
+    assert entry.requested_nfes([1,2,4])==(1,2,4)
+    for values in ([],[4,4],[8],[0]):
+        with pytest.raises(ValueError):entry.requested_nfes(values)
+    row={'stage1_nfe':4,'stage2_nfe':4,'valid_cd':True,'cd_m':.2,
+         'iou05':.5,'tp':1,'fp':0,'fn':1,'predicted_fine_voxels':1}
+    result=entry.aggregate([row])
+    assert len(result)==1 and result[0]['stage1_nfe']==result[0]['stage2_nfe']==4
