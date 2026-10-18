@@ -1,5 +1,10 @@
 # Stage2 FM: user-authorized100K successful training-frame exposures
 
+Latest measured progress, loss windows and evaluation results are in
+[HS_OCCFLOW_STAGE2_LATEST_STATUS.md](HS_OCCFLOW_STAGE2_LATEST_STATUS.md).
+This document preserves budget/launch history; its early throughput/ETA values
+are observations at launch, not current estimates.
+
 On2026-10-18 the user requested direct training on100K samples instead of
 waiting for the overfit gate. This explicitly changes the earlier QUALITY
 prerequisites to monitoring. It does not waive GPU admission, full-scene memory,

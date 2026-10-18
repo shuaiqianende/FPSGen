@@ -1,5 +1,9 @@
 # Stage2 384 remaining gates and reproducible entrypoints
 
+For the current measured training state, completed evaluations and unresolved
+quality issues, start with [the latest discussion/status report](HS_OCCFLOW_STAGE2_LATEST_STATUS.md).
+The dated execution states below preserve historical decisions and queues.
+
 ## Latest user decision: direct100K successful-frame training
 
 On2026-10-18 the user explicitly requested direct training on100K samples.

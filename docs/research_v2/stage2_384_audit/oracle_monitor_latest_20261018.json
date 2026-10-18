@@ -1,0 +1,52 @@
+{
+  "successful_updates": 21000,
+  "candidate_mode": "oracle",
+  "ema_used": true,
+  "native_fine_grid": [
+    768,
+    768,
+    64
+  ],
+  "rows": [
+    {
+      "nfe": 1,
+      "unique_frames": 8,
+      "seeds": 2,
+      "scene_seed_rows": 16,
+      "f1": 0.7575141032730852,
+      "iou": 0.6100243163611577,
+      "precision": 0.7621342102620632,
+      "recall": 0.7533495843029199
+    },
+    {
+      "nfe": 2,
+      "unique_frames": 8,
+      "seeds": 2,
+      "scene_seed_rows": 16,
+      "f1": 0.7159673211116274,
+      "iou": 0.5579325830565379,
+      "precision": 0.7129256506173285,
+      "recall": 0.7191929429819026
+    },
+    {
+      "nfe": 4,
+      "unique_frames": 8,
+      "seeds": 2,
+      "scene_seed_rows": 16,
+      "f1": 0.6938105491612501,
+      "iou": 0.5314859531802327,
+      "precision": 0.6905333339683903,
+      "recall": 0.6972714940955127
+    },
+    {
+      "nfe": 8,
+      "unique_frames": 8,
+      "seeds": 2,
+      "scene_seed_rows": 16,
+      "f1": 0.6824408455142337,
+      "iou": 0.5182658288941572,
+      "precision": 0.6808083516481286,
+      "recall": 0.6842289162428414
+    }
+  ]
+}

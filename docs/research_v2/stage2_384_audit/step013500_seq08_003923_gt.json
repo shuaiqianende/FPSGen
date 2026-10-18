@@ -1,0 +1,50 @@
+{
+  "audit": {
+    "active_parents": 128143,
+    "filtered_points": 0,
+    "fine_occupied": 496747,
+    "input_points": 997208,
+    "valid_points": 997208
+  },
+  "coarse_occupied": 128143,
+  "files": [
+    "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step013500_seq08_003923/gt_raw_map.ply",
+    "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step013500_seq08_003923/gt_fine_occupancy.ply",
+    "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step013500_seq08_003923/gt_coarse_occupancy.ply"
+  ],
+  "fine_occupied": 496747,
+  "frame": 3923,
+  "geometry": {
+    "child_split": [
+      2,
+      2,
+      2
+    ],
+    "maximum": [
+      50.0,
+      50.0,
+      4.4
+    ],
+    "origin": [
+      -50.0,
+      -50.0,
+      -4.0
+    ],
+    "parent_resolution": [
+      384,
+      384,
+      32
+    ],
+    "sphere_radius": 50.0
+  },
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "gt_definition": "raw pre-Poisson full-map candidate, original pose/crop/viewpoint, strict sphere50m and open height bounds",
+  "inference_manifest_sha256_unchanged": "82dbc97554c652959a753facc4be97c35c298cf41284f18923b67df30675bb07",
+  "input_sha256": "99ff87a1f6c9ff25a41fa3844b1fad0216d66ed4a231388b1248ee1daec46d4a",
+  "raw_gt_points": 997208,
+  "raw_source_manifest_sha256": "2e1712a34736ffb67897914cd19f619eacc7b4f07b06daf4be97d6413ca59bc7",
+  "runtime_seconds": 22.873396679759026,
+  "scope": "GT added after completed input-only inference; never used for generation",
+  "sequence": "08",
+  "status": "COMPLETE"
+}

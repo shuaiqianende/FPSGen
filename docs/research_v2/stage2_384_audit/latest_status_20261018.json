@@ -1,0 +1,173 @@
+{
+  "captured_local_time": "2026-10-18T16:58:41",
+  "timezone": "Asia/Shanghai",
+  "branch": "research/hs-occflow-384-stage2",
+  "source_commit_before_report": "67a93fa80c409b9804f4e142b35703797d0eb9bf",
+  "training_status": "RUNNING",
+  "successful_updates": 21905,
+  "successful_training_frames": 87140,
+  "target_successful_updates": 25120,
+  "target_successful_training_frames": 100000,
+  "global_batch": 4,
+  "amp_skips": 11,
+  "latest_checkpoint": {
+    "successful_updates": 21500,
+    "successful_frames": 85520,
+    "sha256": "4c7842510f0415fcb0656146bce539fdc49123138e724541c8277c77380bfa79",
+    "parameter_sync_pass": true
+  },
+  "fm_loss_latest": 0.5048139691352844,
+  "mean_last1000_step_seconds": 2.6923125935308634,
+  "training_source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+  "identity": {
+    "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "experiment": "hs-occflow-stage2-384-v1",
+    "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+    "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+    "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+    "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+    "world_size": 2
+  },
+  "loss_per2000": [
+    {
+      "step_start": 1,
+      "step_end": 2000,
+      "count": 2000,
+      "mean_fm_loss": 1.0982851462364196,
+      "complete_window": true
+    },
+    {
+      "step_start": 2001,
+      "step_end": 4000,
+      "count": 2000,
+      "mean_fm_loss": 0.6120256955698132,
+      "complete_window": true
+    },
+    {
+      "step_start": 4001,
+      "step_end": 6000,
+      "count": 2000,
+      "mean_fm_loss": 0.574729909112677,
+      "complete_window": true
+    },
+    {
+      "step_start": 6001,
+      "step_end": 8000,
+      "count": 2000,
+      "mean_fm_loss": 0.5590538773294538,
+      "complete_window": true
+    },
+    {
+      "step_start": 8001,
+      "step_end": 10000,
+      "count": 2000,
+      "mean_fm_loss": 0.5577088839448988,
+      "complete_window": true
+    },
+    {
+      "step_start": 10001,
+      "step_end": 12000,
+      "count": 2000,
+      "mean_fm_loss": 0.5375425831060856,
+      "complete_window": true
+    },
+    {
+      "step_start": 12001,
+      "step_end": 14000,
+      "count": 2000,
+      "mean_fm_loss": 0.5413382573518902,
+      "complete_window": true
+    },
+    {
+      "step_start": 14001,
+      "step_end": 16000,
+      "count": 2000,
+      "mean_fm_loss": 0.5307314925258979,
+      "complete_window": true
+    },
+    {
+      "step_start": 16001,
+      "step_end": 18000,
+      "count": 2000,
+      "mean_fm_loss": 0.5235130425179377,
+      "complete_window": true
+    },
+    {
+      "step_start": 18001,
+      "step_end": 20000,
+      "count": 2000,
+      "mean_fm_loss": 0.5183966659302823,
+      "complete_window": true
+    },
+    {
+      "step_start": 20001,
+      "step_end": 21905,
+      "count": 1905,
+      "mean_fm_loss": 0.518753442116903,
+      "complete_window": false
+    }
+  ],
+  "oracle_monitor": {
+    "successful_updates": 21000,
+    "candidate_mode": "oracle",
+    "ema_used": true,
+    "native_fine_grid": [
+      768,
+      768,
+      64
+    ],
+    "rows": [
+      {
+        "nfe": 1,
+        "unique_frames": 8,
+        "seeds": 2,
+        "scene_seed_rows": 16,
+        "f1": 0.7575141032730852,
+        "iou": 0.6100243163611577,
+        "precision": 0.7621342102620632,
+        "recall": 0.7533495843029199
+      },
+      {
+        "nfe": 2,
+        "unique_frames": 8,
+        "seeds": 2,
+        "scene_seed_rows": 16,
+        "f1": 0.7159673211116274,
+        "iou": 0.5579325830565379,
+        "precision": 0.7129256506173285,
+        "recall": 0.7191929429819026
+      },
+      {
+        "nfe": 4,
+        "unique_frames": 8,
+        "seeds": 2,
+        "scene_seed_rows": 16,
+        "f1": 0.6938105491612501,
+        "iou": 0.5314859531802327,
+        "precision": 0.6905333339683903,
+        "recall": 0.6972714940955127
+      },
+      {
+        "nfe": 8,
+        "unique_frames": 8,
+        "seeds": 2,
+        "scene_seed_rows": 16,
+        "f1": 0.6824408455142337,
+        "iou": 0.5182658288941572,
+        "precision": 0.6808083516481286,
+        "recall": 0.6842289162428414
+      }
+    ]
+  },
+  "evaluation16k": {
+    "status": "INCOMPLETE_RESOURCE_WAIT",
+    "completed_frames": 37,
+    "required_frames": 41,
+    "latest_progress_file_status": "VERIFYING_RAW_SOURCE",
+    "full_metrics_claimed": false,
+    "resume_tmux": "fpsgen_hs_stage2_eval16000_4x4_gpu0"
+  },
+  "scope": "HS-OccFlow current branch only; unrelated root worktree changes preserved; no checkpoints/datasets/PLY/environments published"
+}
