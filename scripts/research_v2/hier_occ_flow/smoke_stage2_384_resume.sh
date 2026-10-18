@@ -19,8 +19,9 @@ cp "$task_output/checkpoints/step000021.pt" "$task_output/continuous21.pt"
 # Resume the same identity, not a renamed experiment or a different horizon.
 bash scripts/research_v2/hier_occ_flow/launch_stage2_384.sh --config "$task_config" --output "$task_output" \
   --resume "$task_output/checkpoints/step000020.pt" --max-updates 21
+cp "$task_output/checkpoints/resume_latest.pt" "$task_output/resumed21.pt"
 "$task_python" scripts/research_v2/hier_occ_flow/check_stage2_384_evidence.py resume \
-  --continuous "$task_output/continuous21.pt" --resumed "$task_output/checkpoints/resume_latest.pt" \
+  --continuous "$task_output/continuous21.pt" --resumed "$task_output/resumed21.pt" \
   --output "$task_output/resume_comparison.json"
 # Continue to32 only if the registered resume comparison passed.
 bash scripts/research_v2/hier_occ_flow/launch_stage2_384.sh --config "$task_config" --output "$task_output" \

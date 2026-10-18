@@ -1,0 +1,110 @@
+geometry: geometry_384_8way.yaml
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/occ384_morph_close26_training_v1/train
+development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/occ384_morph_close26_training_v1/development
+stage1:
+  type: occupancy384
+  checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+  adapter:
+    checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt
+    config: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4/config.json
+    checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+    weights: ema
+candidates:
+  mode: oracle
+  stage1_nfe: 4
+  seed: 20261018
+  negative_fraction: 0.0
+  oracle_score: stage1
+  selection:
+    strategy: threshold
+    threshold: 0.5
+    expansion: 0
+    budget: 500000
+    overflow: error
+  calibration_status: not_applicable_oracle
+model:
+  objective: fm
+  backbone: ptv3
+  width: 64
+  lidar_channels: 384
+  condition_mode: pyramid_observed
+  checkpointing: true
+  patch_sizes:
+  - 64
+  - 128
+training:
+  scope: formal
+  successful_updates: 25000
+  batch_per_gpu: 2
+  precision: fp16
+  seed: 20261018
+  lr: 0.0002
+  weight_decay: 0.01
+  grad_clip: 1.0
+  warmup_updates: 1000
+  checkpoint_every: 500
+  milestone_every: 2500
+  max_parent_tokens: 500000
+  ema_decay: 0.999
+  cpu_threads: 4
+  batching: packed_variable_length
+  max_batch_parent_tokens: 1000000
+  successful_frame_exposures: 100000
+  startup_checkpoint_updates:
+  - 20
+  - 100
+flow:
+  source: gaussian
+  sigma: 1.0
+  target_mapping: binary_symmetric
+loss:
+  fm: 1.0
+cache:
+  enabled: false
+  root: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_real_score_gt_only_morph/cache
+  max_bytes: 8589934592
+validation:
+  every_updates: 1000
+  max_frames: 8
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  threshold: 0.0
+  seed: 20261019
+  sampling_seeds:
+  - 20261019
+  - 20261020
+  structural_metrics: true
+  enabled: false
+  disabled_reason: User requested removing automatic large validation; seq08 skip100
+    evaluation only on explicit request, no test-set tuning.
+engineering_gate: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_real_score_gt_only_morph/preflight/engineering_gate.json
+research_protocol: fm_real_stage1_score_gt_parents_only_v1
+experiment_changes:
+  parent_score: actual frozen Stage1 endpoint score for every GT parent; no constant1
+  negative_parent_fraction: 0.0
+  fine_gt: separate parent-preserving monotone26-neighbor closing target version;
+    original raw map retained for evaluation
+  stage1_weights: unchanged final100K-frame EMA
+  stage2_architecture: unchanged
+  formal_training: authorized; fresh random Stage2, final frozen Stage1; actual launch
+    evidence required
+raw_target_datasets:
+  train: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/train
+  development: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development
+target_data_version: hs-occ-morph-close-v1
+target_transform_sha256: 1c88afa56324775ecc3a56f7720d0f2d69b38b7ee9ac7f925b67b9dcfaae3802
+target_processor_sha256: 83803bbbf2cf7d483d5319a983cb03120116f0e6a42113d0c00f6ffb0f566060
+direct_training:
+  authorization: user_requested_morph_real_score_gt_only_100k_frames
+  quality_gate_policy: monitor_only
+  user_instruction: "\u53EF\u4EE5\u7528\u8FD9\u4E2A\u6570\u636E\u96C6\uFF0C\u7136\u540E\
+    \u6211\u8DDF\u4F60\u8BF4\u7684\u90A3\u4E2A\u65B0\u65B9\u6848\u5F00\u59CB\u8BAD\
+    \u7EC3\u5427"
+  budget_accounting: fresh25000 successful optimizer updates x globalbatch4 =100000
+    successful frame exposures; smoke excluded
+  protocol: Actual frozen Stage1 scores, GT occupied parents only, morphology augmented8-way
+    target, pureFM; no inherited Stage2 weights or optimizer

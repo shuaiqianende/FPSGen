@@ -207,10 +207,11 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
         stop=torch.tensor(int(stopped[0]),device=device)
         if world>1:torch.distributed.all_reduce(stop,op=torch.distributed.ReduceOp.MAX)
         stopped[0]=bool(stop)
-        if (successful and successful%train['checkpoint_every']==0) or successful==steps or stopped[0]:
+        startup_checkpoint=bool(finite) and successful in train.get('startup_checkpoint_updates',[])
+        if (successful and successful%train['checkpoint_every']==0) or successful==steps or stopped[0] or startup_checkpoint:
             save('resume_latest.pt')
-            if successful==steps or successful%train['milestone_every']==0:save(f'step{successful:06d}.pt')
-        due=bool(finite) and (successful%cfg['validation']['every_updates']==0 or successful==steps)
+            if successful==steps or successful%train['milestone_every']==0 or startup_checkpoint:save(f'step{successful:06d}.pt')
+        due=cfg['validation'].get('enabled',True) and bool(finite) and (successful%cfg['validation']['every_updates']==0 or successful==steps)
         if due and not stopped[0] and train['scope']!='engineering_smoke':
             state=rng_state(generator,device)
             if rank==0:

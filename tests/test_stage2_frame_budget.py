@@ -71,3 +71,18 @@ def test_direct_request_cannot_be_used_for_predicted_or_small_cohort(tmp_path):
     with pytest.raises(ValueError,match='specific'):direct_full_train_policy(cfg,g)
     cfg['candidates']['mode']='oracle';cfg['cohort_indices']=[1,2]
     with pytest.raises(ValueError,match='specific'):direct_full_train_policy(cfg,g)
+
+
+def test_morphology_formal_request_is_fresh_100k_frames_and_keeps_engineering_gates():
+    cfg,g=load_stage2_config(Path('configs/research_v2/hier_occ_flow/stage2_384_real_score_gt_only_morph_100kframes.yaml'))
+    decision=direct_full_train_policy(cfg,g)
+    assert cfg['training']['successful_updates']==25000
+    assert cfg['training']['successful_frame_exposures']==25000*4
+    assert decision['previous_run_state_inherited'] is False and decision['quality_pass_claimed'] is False
+    assert decision['engineering_checks_waived'] is False
+    with pytest.raises(ValueError,match='gate missing'):require_training_gate({**cfg,'engineering_gate':'/tmp/does-not-exist-hs-morph-gate.json'},g)
+    for field,value in (('negative_fraction',.25),('oracle_score','neutral'),('mode','predicted')):
+        bad=copy.deepcopy(cfg);bad['candidates'][field]=value
+        with pytest.raises(ValueError,match='Morphology direct training'):direct_full_train_policy(bad,g)
+    bad=copy.deepcopy(cfg);bad['transition']={'checkpoint':'old.pt'}
+    with pytest.raises(ValueError,match='Morphology direct training'):direct_full_train_policy(bad,g)

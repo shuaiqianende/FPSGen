@@ -1,15 +1,16 @@
 """Actual B2 ragged PTv3 validation including two complete maximum scenes."""
 from common import ROOT
-import argparse,json,os,time,traceback
+import argparse,copy,json,os,time,traceback
 from pathlib import Path
 import torch
 from fpsgen.hier_occ_flow.resources import gpu_preflight
-from fpsgen.hier_occ_flow.stage2_runtime import load_stage2_config,dataset_identity
+from fpsgen.hier_occ_flow.stage2_runtime import load_stage2_config,dataset_identity,source_sha
 from fpsgen.hier_occ_flow.stage1_occ_adapter import FrozenStage1OccupancyAdapter
 from fpsgen.hier_occ_flow.stage2_dataset import assemble_stage2_scene
 from fpsgen.hier_occ_flow.stage2_model import Stage2OccupancyModel
 from fpsgen.hier_occ_flow.stage2_batching import pack_scenes,packed_training_pair,scene_mean_mse
 from fpsgen.hier_occ_flow.storage import atomic_json,file_sha
+from fpsgen.hier_occ_flow.stage1_training import state_sha
 
 
 def main():
@@ -19,9 +20,17 @@ def main():
     if admission['status']!='AVAILABLE':atomic_json(args.output,{'status':'BLOCKED','admission':admission});return
     if os.environ.get('CUDA_VISIBLE_DEVICES')!=str(args.physical_gpu):raise ValueError('Single admitted GPU required')
     torch.set_num_threads(4);torch.cuda.set_device(0);device=torch.device('cuda')
-    cfg,g=load_stage2_config(args.config);dataset,_,_=dataset_identity(cfg,g,verify=True)
+    cfg,g=load_stage2_config(args.config);dataset,_,data_identity=dataset_identity(cfg,g,verify=True)
     adapter=FrozenStage1OccupancyAdapter(**cfg['stage1']['adapter']).to(device).eval()
     torch.manual_seed(cfg['training']['seed']);model=Stage2OccupancyModel(g,**cfg['model']).to(device)
+    frozen_hash=state_sha(adapter.model)
+    from fpsgen.voxel_point.vendor.pwm.ptv3_reference import model as official
+    import spconv.pytorch as spconv
+    counts={'flash':0,'spconv':0};original_flash=official.flash_attn.flash_attn_varlen_qkvpacked_func
+    def flash(*a,**kw):counts['flash']+=1;return original_flash(*a,**kw)
+    official.flash_attn.flash_attn_varlen_qkvpacked_func=flash
+    hooks=[m.register_forward_hook(lambda *unused:counts.__setitem__('spconv',counts['spconv']+1))
+           for m in model.modules() if isinstance(m,spconv.SubMConv3d)]
     if cfg.get('transition'):
         transition=cfg['transition']
         if file_sha(transition['checkpoint'])!=transition['checkpoint_sha256']:raise ValueError('Changed own FM source checkpoint')
@@ -30,6 +39,10 @@ def main():
         model.load_state_dict(own['model'],strict=True)
     optimizer=torch.optim.AdamW(model.parameters(),lr=cfg['training']['lr']);scaler=torch.cuda.amp.GradScaler(init_scale=16384.)
     report={'status':'RUNNING','physical_gpu':args.physical_gpu,'geometry_sha256':g.sha256,
+            'source_sha256':source_sha(),
+            'data_identity':data_identity,'target_data_version':dataset.meta['data_version'],
+            'target_transform_sha256':cfg.get('target_transform_sha256'),
+            'target_processor_sha256':cfg.get('target_processor_sha256'),
             'candidate_policy':cfg['candidates'],'parameters':sum(p.numel() for p in model.parameters()),
             'stage1_checkpoint_sha256':cfg['stage1']['checkpoint_sha256'],'rows':[],
             'tolerance':{'control_atol':1e-4,'control_rtol':1e-3,'amp_relative_l2':torch.finfo(torch.float16).eps,
@@ -103,27 +116,53 @@ def main():
                     and checks['amp_max_rounding_units']<=2 and checks['packed_vs_separate_sign_disagreement']<=1e-4)
                 torch.backends.cuda.matmul.allow_tf32=tf32
                 del packed32,isolated32,independent32
-            model.train();optimizer.zero_grad(set_to_none=True)
+            model.train();optimizer.zero_grad(set_to_none=True);counts['flash']=counts['spconv']=0
             with torch.autocast('cuda',dtype=torch.float16):
                 prediction=model(ids,state=pair['state'],time=pair['time'],**c)
                 loss=scene_mean_mse(prediction,pair['velocity'],c['valid_child_mask'],c['batch'])
             scaler.scale(loss).backward();scaler.unscale_(optimizer);grad=torch.nn.utils.clip_grad_norm_(model.parameters(),1.)
             finite=bool(torch.isfinite(loss) and torch.isfinite(grad)) and float(grad)>0
             if not finite:raise RuntimeError('Nonfinite packed batch gradient')
-            scaler.step(optimizer);scaler.update();torch.cuda.synchronize()
+            scale=scaler.get_scale();scaler.step(optimizer);scaler.update();torch.cuda.synchronize()
+            if scaler.get_scale()<scale:raise RuntimeError('AMP skipped packed benchmark update')
             row={'kind':kind,'indices':indices,'tokens_per_scene':lengths,'tokens_total':len(ids),'batch_per_gpu':2,
                 'actual_condition_checks':condition_checks,
                  'loss':float(loss),'gradient_norm':float(grad),'finite':finite,'optimizer_update_executed':True,
+                 'flash_calls':counts['flash'],'spconv_calls':counts['spconv'],
                  'peak_allocated_bytes':torch.cuda.max_memory_allocated(),'peak_reserved_bytes':torch.cuda.max_memory_reserved(),
                  'seconds':time.perf_counter()-start,**checks}
             report['rows'].append(row);atomic_json(args.output,report);print(row,flush=True)
+            if kind=='unequal_real_scenes':
+                small_ids=ids[:2048];small_c={k:v[:2048] for k,v in c.items()};small_target=pair['velocity'][:2048]
+                options=copy.deepcopy(cfg['model']);options['checkpointing']=False
+                reference=Stage2OccupancyModel(g,**options).to(device).train()
+                reference.load_state_dict(model.state_dict(),strict=True);values=[];grads=[]
+                for net in (model,reference):
+                    net.zero_grad(set_to_none=True);torch.manual_seed(20261018)
+                    with torch.autocast('cuda',dtype=torch.float16):
+                        value=net(small_ids,state=pair['state'][:2048],time=pair['time'][0],**small_c)
+                        local_loss=scene_mean_mse(value,small_target,small_c['valid_child_mask'],small_c['batch'])
+                    (local_loss*16384.).backward();values.append(value.detach().float().cpu())
+                    grads.append({k:p.grad.detach().float().cpu()/16384. if p.grad is not None else None for k,p in net.named_parameters()})
+                parity=torch.allclose(*values,atol=1e-5,rtol=1e-3);errors=[]
+                for name,a in grads[0].items():
+                    b=grads[1][name]
+                    if a is None or b is None:parity&=(a is None and b is None)
+                    else:parity&=torch.allclose(a,b,atol=1e-5,rtol=1e-3);errors.append(float((a-b).abs().max()))
+                report['checkpointing_parity']={'pass':bool(parity),'diagnostic_tokens':2048,
+                    'max_gradient_abs_error':max(errors),'atol':1e-5,'rtol':1e-3}
+                del reference,values,grads,small_ids,small_c,small_target,value,local_loss,net
             del scenes,ids,c,target,pair,prediction,loss
         passed=all(row['finite'] and all(v for k,v in row.items() if k.endswith('_pass')) for row in report['rows'])
+        report['stage1_unchanged']=state_sha(adapter.model)==frozen_hash and all(p.grad is None and not p.requires_grad for p in adapter.parameters())
+        passed=passed and report['stage1_unchanged'] and report['checkpointing_parity']['pass'] and all(r['flash_calls']>0 and r['spconv_calls']>0 for r in report['rows'])
         report['status']='PASS_PACKED_BATCH2' if passed else 'FAIL_PACKED_BATCH2'
     except Exception as exc:
         report.update(status='FAIL_PACKED_BATCH2',exception=repr(exc),traceback=traceback.format_exc())
         atomic_json(args.output,report);raise
     atomic_json(args.output,report)
+    official.flash_attn.flash_attn_varlen_qkvpacked_func=original_flash
+    for hook in hooks:hook.remove()
     if report['status']!='PASS_PACKED_BATCH2':raise SystemExit(2)
 
 

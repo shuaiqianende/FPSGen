@@ -1,7 +1,7 @@
 geometry: geometry_384_8way.yaml
 data_root: /data-12/M2024-HWZ/KITTI_Odometry
-train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/occ384_morph_close26_parent_preserving_v1/train
-development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/occ384_morph_close26_parent_preserving_v1/development
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/occ384_morph_close26_training_v1/train
+development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/occ384_morph_close26_training_v1/development
 stage1:
   type: occupancy384
   checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
@@ -43,8 +43,8 @@ training:
   weight_decay: 0.01
   grad_clip: 1.0
   warmup_updates: 20
-  checkpoint_every: 16
-  milestone_every: 32
+  checkpoint_every: 20
+  milestone_every: 20
   max_parent_tokens: 500000
   ema_decay: 0.999
   cpu_threads: 4
@@ -102,4 +102,4 @@ raw_target_datasets:
   development: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development
 target_data_version: hs-occ-morph-close-v1
 target_transform_sha256: 1c88afa56324775ecc3a56f7720d0f2d69b38b7ee9ac7f925b67b9dcfaae3802
-target_processor_sha256: 522d31fb4e0543e9b398f28334103f22485a951979580fc2ac92e18829a85395
+target_processor_sha256: 83803bbbf2cf7d483d5319a983cb03120116f0e6a42113d0c00f6ffb0f566060

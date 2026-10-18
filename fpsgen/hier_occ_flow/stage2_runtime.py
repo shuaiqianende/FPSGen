@@ -99,6 +99,20 @@ def direct_full_train_policy(cfg,g):
     """An explicit user research decision may waive QUALITY gates, never engineering."""
     policy=cfg.get('direct_training')
     if policy is None:return None
+    if policy.get('authorization')=='user_requested_morph_real_score_gt_only_100k_frames':
+        c=cfg['candidates'];t=cfg['training']
+        from .morphology import MORPH_DATA_VERSION
+        if (cfg.get('research_protocol')!='fm_real_stage1_score_gt_parents_only_v1'
+            or cfg.get('target_data_version')!=MORPH_DATA_VERSION
+            or c.get('mode')!='oracle' or c.get('oracle_score')!='stage1' or c.get('negative_fraction')!=0
+            or policy.get('quality_gate_policy')!='monitor_only'
+            or cfg['model']['objective']!='fm' or cfg.get('cohort_indices') is not None
+            or t.get('scope')!='formal' or t.get('batch_per_gpu')!=2
+            or t.get('successful_updates')!=25000 or t.get('successful_frame_exposures')!=100000
+            or 'transition' in cfg):
+            raise ValueError('Morphology direct training requires fresh GT-only real-score FM GB4 and100K frames')
+        return {**policy,'quality_pass_claimed':False,'engineering_checks_waived':False,
+                'initialization':'fresh_random_stage2','previous_run_state_inherited':False}
     if (policy.get('authorization')!='user_requested_100k_successful_frames'
         or policy.get('quality_gate_policy')!='monitor_only'
         or cfg['training']['scope']!='formal' or cfg.get('cohort_indices') is not None
@@ -134,4 +148,8 @@ def require_training_gate(cfg,g):
     if gate.get('geometry_sha256')!=g.sha256 or any(gate.get(k) is not True for k in required):
         raise ValueError(f'Stage2{scope} gate missing actual evidence: {[k for k in required if gate.get(k) is not True]}')
     if gate.get('stage1_checkpoint_sha256')!=cfg['stage1']['checkpoint_sha256']:raise ValueError('Gate Stage1 identity differs')
+    if cfg.get('target_data_version')=='hs-occ-morph-close-v1':
+        if (gate.get('source_sha256')!=source_sha()
+            or any(gate.get(k)!=cfg.get(k) for k in ('target_data_version','target_transform_sha256','target_processor_sha256'))):
+            raise ValueError('Morphology engineering gate source/target identity differs')
     return gate

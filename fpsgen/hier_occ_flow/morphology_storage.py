@@ -54,7 +54,7 @@ def link_or_copy(source,destination):
 
 
 def derive_dataset(source,output,geometry,spec,*,workers=4,resume=False,max_shards=None):
-    if workers<1 or workers>8:raise ValueError('Register1-8 CPU workers')
+    if workers<1 or workers>32:raise ValueError('Register1-32 CPU workers')
     source=Path(source).resolve();output=Path(output).resolve()
     if source==output or source in output.parents or output in source.parents:raise ValueError('Separate derived dataset root required')
     ds=SparseShardDataset(source,geometry,verify=True);source_sha=file_sha(source/'manifest.json')
