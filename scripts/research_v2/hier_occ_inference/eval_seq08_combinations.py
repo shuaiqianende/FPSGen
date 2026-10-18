@@ -1,6 +1,6 @@
 """Frozen seq08/skip100: Stage1(1,2,4) x Stage2(1,2,4), raw-map CD and IoU0.5m.
 
-Inference-only GPU1 entry. No training sources or policies are changed. Exact
+Inference-only explicitly selected GPU entry. No training sources or policies are changed. Exact
 CPU KD-trees avoid dense pairwise costs; all target points participate in CD.
 """
 import argparse
@@ -17,6 +17,7 @@ import numpy as np
 from scipy.spatial import cKDTree
 import torch
 from export_stage2_snapshot import admit_gpu1,validate_snapshot,predicted_policy,EncodedInput
+from eval_gpu import admit_gpu0,check_gpu0_background
 from fpsgen.hier_occ_flow.stage2_runtime import load_stage2_config
 from fpsgen.hier_occ_flow.stage1_occ_adapter import FrozenStage1OccupancyAdapter
 from fpsgen.hier_occ_flow.stage2_model import Stage2OccupancyModel
@@ -98,6 +99,8 @@ def main():
     p.add_argument('--config',type=Path,required=True);p.add_argument('--checkpoint',type=Path,required=True)
     p.add_argument('--reference',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--workers',type=int,default=4);p.add_argument('--max-frames',type=int,default=41)
+    p.add_argument('--physical-gpu',type=int,choices=[0,1],default=1)
+    p.add_argument('--idle-service-pid',type=int)
     p.add_argument('--resume',action='store_true');a=p.parse_args()
     if not 1<=a.max_frames<=41 or not 1<=a.workers<=4:raise ValueError('At most41 frames and4 CPU workers')
     cfg,g=load_stage2_config(a.config);saved=torch.load(a.checkpoint,map_location='cpu');validate_snapshot(saved,cfg,g)
@@ -118,7 +121,9 @@ def main():
         'reference_input_manifest_sha256':file_sha(a.reference/'input_manifest.json'),
         'code_sha256':file_sha(__file__),'training_selection':'interim requested test only; no test tuning or model selection',
         'candidate_mode':'actual predicted parents; checkpoint trained on Oracle support','raw_cd_backend':'exact scipy.cKDTree, eps=0',
-        'physical_gpu':1,'workers':a.workers}
+        'physical_gpu':a.physical_gpu,'workers':a.workers,
+        'gpu_admission_code_sha256':file_sha(HERE/'eval_gpu.py'),
+        'allowed_idle_service_pid':a.idle_service_pid}
     a.output.mkdir(parents=True,exist_ok=a.resume)
     if a.resume:
         if json.loads((a.output/'protocol.json').read_text())!=protocol:raise ValueError('Resume protocol identity differs')
@@ -130,13 +135,15 @@ def main():
     source,source_sha=raw_source_snapshot(cfg['data_root'],[('08',r['frame']) for r in reference['frames']])
     if source_sha!=reference['raw_source_manifest_sha256']:raise ValueError('Raw map/pose/scan/protocol sources changed')
     atomic_json(a.output/'raw_sources.json',source)
-    atomic_json(a.output/'admission.json',admit_gpu1())
+    atomic_json(a.output/'admission.json',admit_gpu1() if a.physical_gpu==1 else admit_gpu0(a.idle_service_pid))
     torch.set_num_threads(4);device=torch.device('cuda:0')
+    if a.physical_gpu==0:torch.cuda.set_per_process_memory_fraction(.25,device)
     adapter=FrozenStage1OccupancyAdapter(**cfg['stage1']['adapter']).to(device).eval()
     model=Stage2OccupancyModel(g,**cfg['model']).to(device).eval();model.load_state_dict(saved['model'],strict=True)
     del saved
     raw=RawMapSource(cfg['data_root'],fast_viewpoint=True);begin=time.perf_counter()
     for index,record in enumerate(frames):
+        if a.physical_gpu==0:check_gpu0_background(a.idle_service_pid)
         frame=record['frame']
         if all((frame,s1,s2) in done for s1 in (1,2,4) for s2 in (1,2,4)):continue
         tick=time.perf_counter();metadata=json.loads((a.reference/'targets'/f'08_{frame:06d}.json').read_text())
