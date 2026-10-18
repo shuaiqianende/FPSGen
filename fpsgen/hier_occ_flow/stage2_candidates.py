@@ -55,6 +55,15 @@ def select_occupancy_candidates(score_zyx,geometry,*,strategy='threshold',thresh
 def oracle_parent_candidates(label_ids,geometry,*,seed,negative_fraction=.25,neutral_score=1.):
     ids=np.asarray(label_ids,dtype=np.int64)
     if not 0<=negative_fraction<=1:raise ValueError('Invalid negative fraction')
+    if negative_fraction==0:
+        geometry.unflatten(ids)
+        ids=np.unique(ids)
+        return ids,np.full(len(ids),neutral_score,np.float32),{
+            'mode':'oracle_not_deployable','nearby_empty_pool':None,
+            'nearby_pool_evaluated':False,'nearby_negatives':0,
+            'negative_fraction_relative_to_gt':0.,'negative_sampling_weight':1.,
+            'positive_parent_count':len(ids),
+            'score_policy':'constant_neutral_for_positive_and_negative','neutral_score':neutral_score}
     nearby=expand_parent_ids(ids,geometry,1)
     empty=np.setdiff1d(nearby,ids,assume_unique=True)
     n=min(len(empty),int(len(ids)*negative_fraction))

@@ -1,0 +1,60 @@
+{
+  "attempts": 25133,
+  "direct_training": {
+    "actual_previous_quality_status": "FAIL_ORACLE_OVERFIT",
+    "authorization": "user_requested_100k_successful_frames",
+    "budget_accounting": "Total successful frame exposures include1808 inherited small-cohort frames; remaining98192 exposures use the full17870-frame training split. Previous quality failure remains recorded.",
+    "engineering_checks_waived": false,
+    "oracle_protocol": "GT-derived parent support plus25% nearby empty parents, actual frozen Stage1 LiDAR features, neutral score; not predicted-parent deployment.",
+    "previous_quality_evidence": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/fm_gb4_overfit_evidence.json",
+    "previous_quality_sha256": "f51ab3c3b09af96b3e647e86190628d6e53e2b9babc645a151abc463c8f8edb2",
+    "quality_gate_policy": "monitor_only",
+    "quality_pass_claimed": false,
+    "user_instruction": "\u4e0d\u80fd\u76f4\u63a5\u5f00\u59cb\u8bad\u7ec310w\u4e2a\u6837\u672c\u5417"
+  },
+  "formal_training_complete": true,
+  "frame_budget": {
+    "global_batch": 4,
+    "inherited_successful_frame_exposures": 1888,
+    "remaining_successful_updates": 24528,
+    "target_successful_frame_exposures": 100000,
+    "target_successful_updates": 25120
+  },
+  "global_batch": 4,
+  "identity": {
+    "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "experiment": "hs-occflow-stage2-384-v1",
+    "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+    "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+    "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+    "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+    "world_size": 2
+  },
+  "phase_start_frame_exposures": 1808,
+  "phase_start_updates": 572,
+  "phase_successful_frame_exposures": 98192,
+  "phase_successful_updates": 24548,
+  "scope": "formal",
+  "seconds": 69313.58373935148,
+  "stage1": {
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+    "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+    "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+    "data_version": "hs-occ-surface-hit-v1",
+    "feature_layout": "B,C,Z,Y,X",
+    "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+    "input_feature_version": "coarse_f64_v1",
+    "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+    "score_layout": "Z,Y,X",
+    "stage1_final_100k_frames": true,
+    "successful_frame_exposures": 100000,
+    "successful_updates": 34275,
+    "type": "FrozenStage1OccupancyAdapter",
+    "weights": "ema"
+  },
+  "status": "COMPLETE_REQUESTED_BUDGET",
+  "successful_frame_exposures": 100000,
+  "successful_updates": 25120
+}

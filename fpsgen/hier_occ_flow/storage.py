@@ -83,10 +83,10 @@ class SparseShardWriter:
 
 
 class SparseShardDataset:
-    def __init__(self,root,geometry,*,verify=False):
+    def __init__(self,root,geometry,*,verify=False,data_version=DATA_VERSION):
         self.root=Path(root); self.geometry=geometry
         self.meta=json.loads((self.root/'manifest.json').read_text())
-        if self.meta['data_version']!=DATA_VERSION or self.meta['geometry_sha256']!=geometry.sha256:
+        if self.meta['data_version']!=data_version or self.meta['geometry_sha256']!=geometry.sha256:
             raise ValueError('Dataset geometry/version mismatch')
         self.index=np.load(self.root/self.meta['index'],allow_pickle=False)
         if self.index.dtype!=INDEX_DTYPE or len(self.index)!=self.meta['records']: raise ValueError('Corrupt index')

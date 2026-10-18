@@ -1,0 +1,131 @@
+{
+  "candidate_policy": {
+    "calibration_status": "not_applicable_oracle",
+    "mode": "oracle",
+    "negative_fraction": 0.0,
+    "oracle_score": "stage1",
+    "seed": 20261018,
+    "selection": {
+      "budget": 500000,
+      "expansion": 0,
+      "overflow": "error",
+      "strategy": "threshold",
+      "threshold": 0.5
+    },
+    "stage1_nfe": 4
+  },
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "no_token_truncation": true,
+  "parameters": 2677128,
+  "physical_gpu": 3,
+  "precision_contract": "Strict AMP-disabled control required; AMP row-count GEMMs may differ by half-precision rounding. Original cellwise AMP check remains reported.",
+  "rows": [
+    {
+      "actual_condition_checks": [
+        {
+          "actual_score_matches_stage1": true,
+          "extra_empty_parents": 0,
+          "gt_parents_only": true,
+          "index": 9511,
+          "score_below_half_fraction": 0.3429807424545288,
+          "score_max": 1.0,
+          "score_mean": 0.6458089351654053,
+          "score_min": 0.0
+        },
+        {
+          "actual_score_matches_stage1": true,
+          "extra_empty_parents": 0,
+          "gt_parents_only": true,
+          "index": 6147,
+          "score_below_half_fraction": 0.5930949449539185,
+          "score_max": 1.0,
+          "score_mean": 0.4039345383644104,
+          "score_min": 0.0
+        }
+      ],
+      "amp_max_rounding_units": 0.0078125,
+      "batch_per_gpu": 2,
+      "finite": true,
+      "fp32_packed_vs_separate_max_abs": 2.0721927285194397e-08,
+      "fp32_packed_vs_separate_mean_abs": 2.3004174121155074e-09,
+      "fp32_packed_vs_separate_pass": true,
+      "gradient_norm": 0.20894795656204224,
+      "indices": [
+        9511,
+        6147
+      ],
+      "kind": "unequal_real_scenes",
+      "loss": 2.00054931640625,
+      "optimizer_update_executed": true,
+      "original_strict_amp_comparison_met": true,
+      "packed_vs_separate_max_abs": 7.62939453125e-06,
+      "packed_vs_separate_mean_abs": 1.8798773737671581e-07,
+      "packed_vs_separate_pass": true,
+      "packed_vs_separate_relative_l2": 0.00022956130851525813,
+      "packed_vs_separate_sign_disagreement": 3.35891563736368e-05,
+      "peak_allocated_bytes": 9726736896,
+      "peak_reserved_bytes": 10584326144,
+      "permutation_max_abs": 0.0,
+      "permutation_pass": true,
+      "scene_isolation_max_abs": 0.0,
+      "scene_isolation_pass": true,
+      "seconds": 36.29104786552489,
+      "tokens_per_scene": [
+        137999,
+        319738
+      ],
+      "tokens_total": 457737
+    },
+    {
+      "actual_condition_checks": [
+        {
+          "actual_score_matches_stage1": true,
+          "extra_empty_parents": 0,
+          "gt_parents_only": true,
+          "index": 6147,
+          "score_below_half_fraction": 0.5930949449539185,
+          "score_max": 1.0,
+          "score_mean": 0.4039345383644104,
+          "score_min": 0.0
+        },
+        {
+          "actual_score_matches_stage1": true,
+          "extra_empty_parents": 0,
+          "gt_parents_only": true,
+          "index": 6147,
+          "score_below_half_fraction": 0.5930949449539185,
+          "score_max": 1.0,
+          "score_mean": 0.4039345383644104,
+          "score_min": 0.0
+        }
+      ],
+      "batch_per_gpu": 2,
+      "finite": true,
+      "gradient_norm": 0.4397442042827606,
+      "indices": [
+        6147,
+        6147
+      ],
+      "kind": "two_complete_maximum_scenes",
+      "loss": 1.9980907440185547,
+      "optimizer_update_executed": true,
+      "peak_allocated_bytes": 13771586048,
+      "peak_reserved_bytes": 15183380480,
+      "seconds": 5.214140124619007,
+      "tokens_per_scene": [
+        319738,
+        319738
+      ],
+      "tokens_total": 639476
+    }
+  ],
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "status": "PASS_PACKED_BATCH2",
+  "tolerance": {
+    "amp_max_units": 2,
+    "amp_relative_l2": 0.0009765625,
+    "amp_sign_disagreement": 0.0001,
+    "control_atol": 0.0001,
+    "control_rtol": 0.001
+  }
+}

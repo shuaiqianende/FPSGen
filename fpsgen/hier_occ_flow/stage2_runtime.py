@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import yaml
 from .geometry import SparseHierarchyGeometry
-from .storage import SparseShardDataset,file_sha
+from .storage import SparseShardDataset,file_sha,DATA_VERSION
 
 
 def load_stage2_config(path):
@@ -25,6 +25,10 @@ def load_stage2_config(path):
     if cfg['training']['scope'] not in ('engineering_smoke','overfit','pilot1000','pilot5000','formal'):raise ValueError('Explicit experimental phase required')
     if cfg['training']['scope']=='engineering_smoke' and cfg['training']['successful_updates']>32:raise ValueError('Engineering smoke<=32 updates')
     if cfg['candidates']['mode'] not in ('oracle','predicted'):raise ValueError('Explicit support source required')
+    if cfg.get('research_protocol')=='fm_real_stage1_score_gt_parents_only_v1':
+        c=cfg['candidates']
+        if c['mode']!='oracle' or c.get('oracle_score')!='stage1' or c.get('negative_fraction')!=0:
+            raise ValueError('This variant requires actual Stage1 scores and GT parents only')
     if cfg['stage1']['type']!='occupancy384':raise ValueError('Old density adapters are prohibited')
     if cfg['stage1']['checkpoint_sha256']!=cfg['stage1']['adapter']['checkpoint_sha256']:
         raise ValueError('Stage1 adapter/checkpoint/gate identity must agree')
@@ -37,8 +41,21 @@ def load_stage2_config(path):
 
 
 def dataset_identity(cfg,g,*,verify=False):
-    train=SparseShardDataset(cfg['train_dataset'],g,verify=verify)
-    dev=SparseShardDataset(cfg['development_dataset'],g,verify=verify)
+    from .morphology import MORPH_DATA_VERSION
+    version=cfg.get('target_data_version',DATA_VERSION)
+    if version not in (DATA_VERSION,MORPH_DATA_VERSION):raise ValueError('Unknown fine target version')
+    train=SparseShardDataset(cfg['train_dataset'],g,verify=verify,data_version=version)
+    dev=SparseShardDataset(cfg['development_dataset'],g,verify=verify,data_version=version)
+    if version==MORPH_DATA_VERSION:
+        if any(not isinstance(cfg.get(key),str) or len(cfg[key])!=64 for key in ('target_transform_sha256','target_processor_sha256')):
+            raise ValueError('Explicit morphology transform/processor identity required')
+        for name,ds in (('train',train),('development',dev)):
+            raw=cfg.get('raw_target_datasets',{}).get(name)
+            if (not raw or ds.meta.get('source_parent_manifest_sha256')!=file_sha(Path(raw)/'manifest.json')
+                or ds.meta.get('target_transform_sha256')!=cfg.get('target_transform_sha256')
+                or ds.meta.get('target_processor_sha256')!=cfg['target_processor_sha256']
+                or ds.meta.get('parent_ids_unchanged') is not True):
+                raise ValueError('Morphology target source/transform identity mismatch')
     keys=lambda ds:{(r['sequence'].decode(),int(r['frame'])) for r in ds.index}
     a,b=keys(train),keys(dev)
     if a&b or any(s=='08' for s,f in a|b):raise ValueError('Stage2 train/development must not overlap or contain seq08')

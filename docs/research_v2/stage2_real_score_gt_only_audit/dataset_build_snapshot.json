@@ -1,0 +1,89 @@
+{
+  "completed_frames": 416,
+  "completed_shards": [
+    {
+      "frames": 32,
+      "mask_sha256": "f6f0be0b32a97762737f73bb3c74bf1106e29c609f9189852f66c44f76ed2958",
+      "shard": 0
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "76273d6b8e0b22a0b169875eed7fc62a148b639dc7e05e8049eb8f62dde08c3b",
+      "shard": 1
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "569f55b8afc0a5e4143948347f7277f50474c07cb1de572e3e2b3a3ac6ac1d84",
+      "shard": 2
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "6c74593d734bc93d488f4c15b0b5936be2daacc5fb725d2254ec23230e197dff",
+      "shard": 3
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "b3389a44ac706d37632837a57f2b929b5808710a6ad1771654bc25593725c669",
+      "shard": 4
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "7aa9bda12ade3913fa69d81f180b20aa0db7fcf034e1c95d0e53304abf39e542",
+      "shard": 5
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "d8740d4fc45dfc8f51cb619b74ae2ec48f6d225669d1b2142c3e48fc11a850c4",
+      "shard": 6
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "849058cc07c094b80c92e206ebecc40059343b2072966b077906269943a0c48a",
+      "shard": 7
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "1cf90de376bf7d5d486d5ad92362fb9e5c6f2c43e1d355c63d03625de24210c8",
+      "shard": 8
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "dc9f1c13969ece442c2b42ce0784c28402d7c6deab52b81b5c2f54df9731bba4",
+      "shard": 9
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "600e574e209179319be86312e317ef5b012e26c07894eedbda704ae4398f5d59",
+      "shard": 10
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "be276df3c6d63adb70590f38d538764069a1ce130b78575f4ceb2b8ee4f4c641",
+      "shard": 11
+    },
+    {
+      "frames": 32,
+      "mask_sha256": "09384c9167d04a06f1490866bfa1b11f3545d170db7f0fe0194b0a21e9407d59",
+      "shard": 12
+    }
+  ],
+  "estimated_additional_bytes": 2624014274,
+  "identity": {
+    "data_version": "hs-occ-morph-close-v1",
+    "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+    "source_parent_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+    "target_processor_sha256": "522d31fb4e0543e9b398f28334103f22485a951979580fc2ac92e18829a85395",
+    "target_transform_sha256": "1c88afa56324775ecc3a56f7720d0f2d69b38b7ee9ac7f925b67b9dcfaae3802",
+    "transform": {
+      "connectivity": 26,
+      "iterations": 1,
+      "method": "parent_preserving_monotone_closing",
+      "tile_parent_xy": 64
+    }
+  },
+  "new_fine": 309634109,
+  "original_fine": 229419871,
+  "seconds_this_invocation": 160.47091453708708,
+  "status": "RUNNING",
+  "workers": 4
+}

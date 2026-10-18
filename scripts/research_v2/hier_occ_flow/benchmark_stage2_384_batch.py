@@ -30,6 +30,7 @@ def main():
         model.load_state_dict(own['model'],strict=True)
     optimizer=torch.optim.AdamW(model.parameters(),lr=cfg['training']['lr']);scaler=torch.cuda.amp.GradScaler(init_scale=16384.)
     report={'status':'RUNNING','physical_gpu':args.physical_gpu,'geometry_sha256':g.sha256,
+            'candidate_policy':cfg['candidates'],'parameters':sum(p.numel() for p in model.parameters()),
             'stage1_checkpoint_sha256':cfg['stage1']['checkpoint_sha256'],'rows':[],
             'tolerance':{'control_atol':1e-4,'control_rtol':1e-3,'amp_relative_l2':torch.finfo(torch.float16).eps,
                 'amp_max_units':2,'amp_sign_disagreement':1e-4},'no_token_truncation':True,
@@ -37,7 +38,24 @@ def main():
     try:
         for kind,indices in (('unequal_real_scenes',[9511,6147]),('two_complete_maximum_scenes',[6147,6147])):
             torch.cuda.reset_peak_memory_stats();start=time.perf_counter()
-            scenes=[assemble_stage2_scene(dataset[i],cfg,g,device,adapter) for i in indices]
+            scenes=[];condition_checks=[];captured={}
+            def remember_stage1(module,inputs,outputs):captured['score']=outputs[1]
+            hook=adapter.register_forward_hook(remember_stage1)
+            try:
+                for i in indices:
+                    record=dataset[i];scene=assemble_stage2_scene(record,cfg,g,device,adapter);scenes.append(scene)
+                    if cfg.get('research_protocol')=='fm_real_stage1_score_gt_parents_only_v1':
+                        parent,condition,labels,source=scene
+                        expected=captured['score'].reshape(-1)[parent]
+                        aligned=torch.equal(condition['parent_score'].float(),expected.float())
+                        gt_only=torch.equal(parent,torch.as_tensor(record['parent_ids'].astype('int64'),device=device))
+                        if not aligned or not gt_only or source['nearby_negatives']!=0 or not bool(labels.any(1).all()):
+                            raise ValueError('Actual score/GT-only GPU condition contract failed')
+                        condition_checks.append({'index':i,'actual_score_matches_stage1':aligned,
+                            'gt_parents_only':gt_only,'extra_empty_parents':source['nearby_negatives'],
+                            'score_min':float(expected.min()),'score_max':float(expected.max()),
+                            'score_mean':float(expected.mean()),'score_below_half_fraction':float((expected<=.5).float().mean())})
+            finally:hook.remove()
             ids,c,target,lengths=pack_scenes(scenes)
             pair=packed_training_pair(target,c['valid_child_mask'],c['batch'],torch.Generator(device=device).manual_seed(111))
             checks={};model.eval()
@@ -94,6 +112,7 @@ def main():
             if not finite:raise RuntimeError('Nonfinite packed batch gradient')
             scaler.step(optimizer);scaler.update();torch.cuda.synchronize()
             row={'kind':kind,'indices':indices,'tokens_per_scene':lengths,'tokens_total':len(ids),'batch_per_gpu':2,
+                'actual_condition_checks':condition_checks,
                  'loss':float(loss),'gradient_norm':float(grad),'finite':finite,'optimizer_update_executed':True,
                  'peak_allocated_bytes':torch.cuda.max_memory_allocated(),'peak_reserved_bytes':torch.cuda.max_memory_reserved(),
                  'seconds':time.perf_counter()-start,**checks}

@@ -22,6 +22,11 @@ def input_conditions(xyz,geometry,adapter,policy,*,seed,oracle_ids=None):
     if mode=='predicted' and oracle_ids is not None:raise ValueError('Predicted candidates must not receive GT support')
     need_scores=mode=='predicted' or score_mode=='stage1'
     pyramid,score=adapter(xyz,nfe=policy['stage1_nfe'],seed=seed,with_scores=need_scores)
+    if need_scores:
+        if score is None or tuple(score.shape)!=geometry.parent_resolution[::-1]:
+            raise ValueError('Actual Stage1 score field in ZYX layout required')
+        if not bool(torch.isfinite(score).all() and ((score>=0)&(score<=1)).all()):
+            raise ValueError('Stage1 endpoint score must be finite and in[0,1]')
     if mode=='predicted':
         ids,scores,provenance=select_occupancy_candidates(score.cpu().numpy(),geometry,**policy['selection'])
     else:
@@ -30,8 +35,9 @@ def input_conditions(xyz,geometry,adapter,policy,*,seed,oracle_ids=None):
         ids,scores,provenance=oracle_parent_candidates(oracle_ids,geometry,seed=seed,
             negative_fraction=policy.get('negative_fraction',.25),neutral_score=policy.get('neutral_score',1.))
         if need_scores:
-            scores=score.cpu().numpy().ravel()[ids]
+            scores=score.reshape(-1)[torch.as_tensor(ids,device=score.device)].detach()
             provenance['score_policy']='actual_Stage1_score_for_every_positive_and_negative'
+            provenance.pop('neutral_score',None)
     if not len(ids):raise ValueError('Empty candidate set; no GT/uniform fallback')
     parent_ids=torch.from_numpy(ids).to(xyz.device)
     centers=geometry.centers(geometry.unflatten(parent_ids)).float()
@@ -45,4 +51,6 @@ def input_conditions(xyz,geometry,adapter,policy,*,seed,oracle_ids=None):
     provenance.update(stage1_nfe=policy['stage1_nfe'] if need_scores else 0,
         stage1_encoder_forwards=1,stage1_seed=seed,stage1=adapter.provenance,
         conditioning='parent_centered384D,normalizedXYZ,score,input_only_observed8,scene_time32')
+    provenance['parent_score_source']='actual_stage1_endpoint' if need_scores else 'constant_neutral'
+    provenance['stage1_score_is_calibrated_probability']=False
     return parent_ids,condition,provenance

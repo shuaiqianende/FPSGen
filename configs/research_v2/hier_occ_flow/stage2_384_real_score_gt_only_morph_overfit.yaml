@@ -1,0 +1,105 @@
+geometry: geometry_384_8way.yaml
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/occ384_morph_close26_parent_preserving_v1/train
+development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/occ384_morph_close26_parent_preserving_v1/development
+stage1:
+  type: occupancy384
+  checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+  adapter:
+    checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt
+    config: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4/config.json
+    checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+    weights: ema
+candidates:
+  mode: oracle
+  stage1_nfe: 4
+  seed: 20261018
+  negative_fraction: 0.0
+  oracle_score: stage1
+  selection:
+    strategy: threshold
+    threshold: 0.5
+    expansion: 0
+    budget: 500000
+    overflow: error
+  calibration_status: not_applicable_oracle
+model:
+  objective: fm
+  backbone: ptv3
+  width: 64
+  lidar_channels: 384
+  condition_mode: pyramid_observed
+  checkpointing: true
+  patch_sizes:
+  - 64
+  - 128
+training:
+  scope: overfit
+  successful_updates: 200
+  batch_per_gpu: 2
+  precision: fp16
+  seed: 20261018
+  lr: 0.0002
+  weight_decay: 0.01
+  grad_clip: 1.0
+  warmup_updates: 20
+  checkpoint_every: 50
+  milestone_every: 200
+  max_parent_tokens: 500000
+  ema_decay: 0.999
+  cpu_threads: 4
+  batching: packed_variable_length
+  max_batch_parent_tokens: 1000000
+flow:
+  source: gaussian
+  sigma: 1.0
+  target_mapping: binary_symmetric
+loss:
+  fm: 1.0
+cohort_indices:
+- 0
+- 1624
+- 3248
+- 4873
+- 6497
+- 8122
+- 9746
+- 11371
+- 12995
+- 14620
+- 16244
+- 17869
+cache:
+  enabled: false
+  root: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_real_score_gt_only_morph/cache
+  max_bytes: 8589934592
+validation:
+  every_updates: 100
+  max_frames: 8
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  threshold: 0.0
+  seed: 20261019
+  sampling_seeds:
+  - 20261019
+  - 20261020
+  structural_metrics: true
+engineering_gate: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_real_score_gt_only_morph/preflight/engineering_gate.json
+research_protocol: fm_real_stage1_score_gt_parents_only_v1
+experiment_changes:
+  parent_score: actual frozen Stage1 endpoint score for every GT parent; no constant1
+  negative_parent_fraction: 0.0
+  fine_gt: separate parent-preserving monotone26-neighbor closing target version;
+    original raw map retained for evaluation
+  stage1_weights: unchanged final100K-frame EMA
+  stage2_architecture: unchanged
+  formal_training: not_started; separate output and correctness/quality checks required
+raw_target_datasets:
+  train: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/train
+  development: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development
+target_data_version: hs-occ-morph-close-v1
+target_transform_sha256: 1c88afa56324775ecc3a56f7720d0f2d69b38b7ee9ac7f925b67b9dcfaae3802
+target_processor_sha256: 522d31fb4e0543e9b398f28334103f22485a951979580fc2ac92e18829a85395
