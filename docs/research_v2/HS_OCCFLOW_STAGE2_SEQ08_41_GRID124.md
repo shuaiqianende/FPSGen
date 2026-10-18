@@ -64,4 +64,41 @@ requires exact protocol/code/checkpoint identity. Full per-frame rows and nine
 aggregates are exported as JSON/CSV at completion. Checkpoints, GT and PLYs are
 not committed. This run does not select checkpoints/hyperparameters on seq08.
 
-Final results are populated only after all41 frames finish.
+## Completed41-frame results
+
+Status:COMPLETE. All369 distinct scene/combination rows are present; zero
+duplicates, missing rows or invalid CDs. Macro means were independently
+recomputed from individual rows, and each CD's directional terms and each
+IoU's TP/FP/FN identity were checked. The evaluation loop took893.46seconds.
+Actual GPU1 peak allocated/reserved memory was3.009/3.840GiB. GPU1 returned to
+idle afterward; GPU2/3 training continued, observed at update10416 with its
+source hash unchanged. This completed budget is evaluation, not formal training
+completion or a claim that the Oracle learning gate passed.
+
+| Stage1 NFE | Stage2 NFE | CD(m), lower better | IoU0.5m macro, higher better |
+|---:|---:|---:|---:|
+|1|1|0.3366|40.69%|
+|1|2|0.3187|42.96%|
+|1|4|0.3136|43.87%|
+|2|1|0.3242|39.29%|
+|2|2|0.2540|45.68%|
+|2|4|0.2426|47.16%|
+|4|1|0.2793|40.28%|
+|4|2|0.2382|45.94%|
+|4|4|0.2325|47.09%|
+
+For this intermediate checkpoint,4+4 gives the lowest observed CD;2+4 gives
+the highest macroIoU, only0.067 percentage points above4+4. Stage2's1->2 NFE
+gain exceeds its2->4 gain for all three Stage1 settings. These are descriptive
+results for this frozen snapshot; no statistical superiority or test-based
+selection of a new training protocol is claimed.
+
+Committed small artifacts:
+
+- `stage2_384_audit/step010000_seq08_grid124_complete.json`: actual completion,
+  identities, units, memory, integrity and all nine aggregates.
+- `stage2_384_audit/step010000_seq08_grid124_summary.csv`: nine macro/micro rows.
+- `stage2_384_audit/step010000_seq08_grid124_per_frame.csv`: all369 point/IoU/CD
+  records, including directional CD and complete GT counts.
+
+The full results/protocol and timing journal remain at the output path above.
