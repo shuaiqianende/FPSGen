@@ -102,3 +102,51 @@ Committed small artifacts:
   records, including directional CD and complete GT counts.
 
 The full results/protocol and timing journal remain at the output path above.
+
+## Matched Stage1-only control: confirmed IoU regression
+
+A subsequent GPU1 control repeats all41 inputs with the identical final Stage1
+EMA weights, scene_seed noise, NFE and threshold used by the nine-combination
+run. It uses the same cached raw-map0.5m GT, geometry and macro averaging. All123
+frame/NFE candidate counts match all369 original evaluation rows. One encoder
+forward per frame;246 control rows;131.21seconds after initialization. Eight
+existing metric/inference CPU tests pass. Training sources remain unchanged.
+
+| Stage1 NFE | Stage1 only, parent centers | +Stage2 NFE1 | +Stage2 NFE2 | +Stage2 NFE4 |
+|---:|---:|---:|---:|---:|
+|1|46.28%|40.69%|42.96%|43.87%|
+|2|48.81%|39.29%|45.68%|47.16%|
+|4|47.55%|40.28%|45.94%|47.09%|
+
+Thus Stage2 currently lowers0.5m IoU in all nine matched settings. For2+4,
+the decrease is48.81%->47.16%, or1.65percentage points; for4+4 it is
+47.55%->47.09%, or0.46points. The earlier historical Stage1 checkpoint24000
+EMA gave48.76% at NFE2, but this matched comparison removes checkpoint/seed
+confounding. No conclusion that Stage2 improves the system is supported.
+
+A no-network control fills all eight geometrically valid children of each
+selected parent before rasterization. Its0.5m IoUs are50.78%,51.40%,49.76%
+for Stage1 NFE1,2,4. This records the effect of retained coarse spatial
+coverage; it does not establish fine-resolution occupancy accuracy, and is
+not a learned model or GT-assisted prediction. Stage2 also fails to beat this
+simple coverage control at0.5m. Fine/native accuracy must be evaluated before
+claiming high-resolution benefit.
+
+The evaluated Stage2 remains Oracle-trained, with neutral parent scores, but
+deployment uses predicted parents and actual Stage1 scores. This verified
+protocol mismatch is a risk, not a demonstrated causal explanation for the
+regression. No training loss, thresholds or candidate protocol were changed
+on seq08, and GPU2/3 training was not interrupted. Predicted-parent adaptation
+and error diagnosis must use training/development data. The result is an
+intermediate10000-update snapshot, not a finished100K-frame experiment.
+
+For the matched Stage1 NFE2 -> Stage2 NFE4 comparison, macro precision rises
+from75.33% to86.27%, while macro recall falls from58.57% to51.22%.
+The measured regression therefore accompanies loss of true covered support
+despite fewer false positives; this describes the error tradeoff, without
+asserting a proven architectural or training cause.
+
+Control results and per-frame data:
+`/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_eval/step010000_matched_stage1_control`.
+Small audited aggregates are committed in
+`stage2_384_audit/step010000_matched_stage1_control.json`.
