@@ -4,7 +4,7 @@ No checkpoint/model is inherited from the smoke or the historical experiment.
 Every transition records its real status; failed gates terminate this launcher.
 """
 from common import ROOT
-import argparse,json,os,subprocess,sys,time,traceback
+import argparse,json,os,signal,subprocess,sys,time,traceback
 from pathlib import Path
 import torch
 from fpsgen.hier_occ_flow.stage2_runtime import load_stage2_config,dataset_identity,require_training_gate,source_sha,config_sha
@@ -71,6 +71,7 @@ def main():
     if any(cfg.get(k)!=smoke.get(k) for k in ('train_dataset','development_dataset','target_data_version',
         'target_transform_sha256','target_processor_sha256','model','candidates','stage1')):
         raise ValueError('Smoke/formal target/model/condition mismatch')
+    child=None
     try:
         state(status,'WAITING_FOR_COMPLETE_MORPH_DATA',formal_started=False,output=str(a.output))
         while True:
@@ -130,7 +131,14 @@ def main():
         state(status,phase,formal_started=True,successful_updates=summary['successful_updates'],
             successful_frame_exposures=summary['successful_frame_exposures'],output=str(a.output))
     except BaseException as exc:
-        state(status,'FAILED_OR_BLOCKED',exception=repr(exc),traceback=traceback.format_exc())
+        stop_status='not_running'
+        if child is not None and child.poll() is None:
+            # This exact child is our own torchrun launcher. SIGTERM is
+            # forwarded to both ranks, whose handlers save at update bounds.
+            child.send_signal(signal.SIGTERM)
+            try:child.wait(timeout=30);stop_status='own_launcher_exited_after_sigterm'
+            except subprocess.TimeoutExpired:stop_status='safe_stop_requested_not_yet_confirmed_no_force_kill'
+        state(status,'FAILED_OR_BLOCKED',exception=repr(exc),traceback=traceback.format_exc(),safe_stop=stop_status)
         raise
 
 
