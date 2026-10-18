@@ -128,6 +128,7 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
         atomic_json(output/'launch.json',{'rank0_pid':os.getpid(),'parent_pid':os.getppid(),'physical_gpus':list(map(int,visible.split(','))),
             'identity':identity,'stage1':adapter.provenance,'initialization':'scratch_stage2','starting_updates':successful,
             'optimizer_entries':len(optimizer.state),'initial_model_sha256':state_sha(raw),'initial_ema_sha256':state_sha(ema) if ema else None,
+            'trainable_parameter_names':[name for name,p in raw.named_parameters() if p.requires_grad],
             'batch_per_gpu':batch_per_gpu,'global_batch':global_batch,'batching':'packed_variable_length','transition':transition_audit})
         if budget or direct_policy:
             launch=json.loads((output/'launch.json').read_text())

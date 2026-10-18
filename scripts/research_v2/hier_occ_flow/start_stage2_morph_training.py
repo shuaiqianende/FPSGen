@@ -20,11 +20,18 @@ def verify_launch(output):
     start=torch.load(output/'checkpoints/step000000.pt',map_location='cpu')
     current=torch.load(output/'checkpoints/step000020.pt',map_location='cpu')
     launch=json.loads((output/'launch.json').read_text())
-    changed=[k for k,v in start['model'].items() if not torch.equal(v,current['model'][k])]
+    names=launch['trainable_parameter_names']
+    changed=[k for k in names if not torch.equal(start['model'][k],current['model'][k])]
+    deltas={}
+    for name in names:
+        module=name.split('.')[0]
+        delta=float((start['model'][name].float()-current['model'][name].float()).abs().max())
+        deltas[module]=max(deltas.get(module,0.),delta)
     if (start['successful_updates']!=0 or start['optimizer']['state'] or launch['optimizer_entries']!=0
         or launch['transition'] is not None or launch['global_batch']!=4
         or current['successful_updates']!=20 or current['sampler']['successful_frame_exposures']!=80
-        or not changed or current['parameter_sync_pass'] is not True or len(current['rank_rng'])!=2):
+        or not changed or any(deltas.get(k,0.)<=0 for k in ('local','trunk','decoder','score'))
+        or current['parameter_sync_pass'] is not True or len(current['rank_rng'])!=2):
         raise ValueError('Fresh Stage2 initialization/actual updates/DDP checkpoint proof failed')
     for name,value in start['model'].items():
         if not torch.equal(value,start['ema'][name]):raise ValueError('Initial EMA differs from fresh online')
@@ -42,7 +49,8 @@ def verify_launch(output):
         'initial_ema_sha256':start['rank_hashes'][0]['ema'],
         'initial_checkpoint_sha256':file_sha(output/'checkpoints/step000000.pt'),
         'update20_checkpoint_sha256':file_sha(output/'checkpoints/step000020.pt'),
-        'changed_model_state_entries':len(changed),'global_batch':4,'rank_progress':rows}
+        'changed_trainable_parameter_tensors':len(changed),'parameter_delta_max_abs_by_module':deltas,
+        'global_batch':4,'rank_progress':rows}
 
 
 def main():
