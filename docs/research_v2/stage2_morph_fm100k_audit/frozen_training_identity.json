@@ -1,0 +1,17 @@
+{
+  "config_sha256": "baf889fc3f864f8f7100fb0f4874bbad70304798242647facf0fe8191bfa6681",
+  "development_manifest_sha256": "7e2b85a7c9d9cdeb672678eea08ca37e6b1a3e7d8d60dc85818057cd6dd94023",
+  "git_commit": "1d298483f23badf7263e1b71a6d3a72231a53a85",
+  "global_batch": 4,
+  "gpu_ids": [
+    2,
+    3
+  ],
+  "initialization": "fresh_random_stage2",
+  "smoke_weights_reused": false,
+  "source_sha256": "85bdbb777dc08c827f24b39208027bbc28dce813c1fc863896fc995498830d48",
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "target_frame_exposures": 100000,
+  "target_optimizer_updates": 25000,
+  "train_manifest_sha256": "b0f79f5d5ec1a2ff94bdb80edf79af7ea7f92600319af8ea8659e0b41b7d7270"
+}

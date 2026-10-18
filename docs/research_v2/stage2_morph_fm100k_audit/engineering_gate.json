@@ -1,0 +1,44 @@
+{
+  "checkpointing_parity": true,
+  "ddp_resume": true,
+  "development_manifest_sha256": "7e2b85a7c9d9cdeb672678eea08ca37e6b1a3e7d8d60dc85818057cd6dd94023",
+  "evidence": [
+    {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_real_score_gt_only_morph/preflight/gpu2_morph_batch2.json",
+      "sha256": "3eb45cbbaf921570fdd8046bcd4d5f7aab32ff7c56f9c18ef9d3e3122116d0f6"
+    },
+    {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_real_score_gt_only_morph/preflight/gpu3_morph_batch2.json",
+      "sha256": "f956d0a07e3eac1e1dcf63704693356ef4f03f9a8de301bf0c48825a01dbb1a8"
+    },
+    {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_real_score_gt_only_morph/preflight/ddp_resume32/resume_comparison.json",
+      "sha256": "31975a7e3a0b811f5b9b61e79684bc5f9346302335be00cb6f41e965dbe1ddf6"
+    }
+  ],
+  "full_scene_gpu": true,
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "matched_bce_fm_1k": false,
+  "maximum_b2_tokens": 639476,
+  "maximum_gt_parents": 319738,
+  "maximum_scene_gpu": true,
+  "oracle_bce_overfit": false,
+  "oracle_fm_overfit": false,
+  "oracle_quality_pass_claimed": false,
+  "packed_batch2_ddp_resume": true,
+  "packed_batch2_gpu": true,
+  "physical_gpus": [
+    2,
+    3
+  ],
+  "pilot5000": false,
+  "ptv3_permutation": true,
+  "schema": "hs-occflow-stage2-morph-engineering-v1",
+  "source_sha256": "85bdbb777dc08c827f24b39208027bbc28dce813c1fc863896fc995498830d48",
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "status": "PASS_MORPH_ENGINEERING",
+  "target_data_version": "hs-occ-morph-close-v1",
+  "target_processor_sha256": "83803bbbf2cf7d483d5319a983cb03120116f0e6a42113d0c00f6ffb0f566060",
+  "target_transform_sha256": "1c88afa56324775ecc3a56f7720d0f2d69b38b7ee9ac7f925b67b9dcfaae3802",
+  "train_manifest_sha256": "b0f79f5d5ec1a2ff94bdb80edf79af7ea7f92600319af8ea8659e0b41b7d7270"
+}

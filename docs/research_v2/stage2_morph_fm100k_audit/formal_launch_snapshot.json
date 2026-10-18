@@ -1,0 +1,32 @@
+{
+  "all_100k_frames_complete": false,
+  "amp_skips": 0,
+  "batch_per_gpu": 2,
+  "changed_trainable_parameter_tensors_at20": 163,
+  "checkpoint0_sha256": "93909a1ecd9a66b209a18abd077ec1a2d4241025e1636b4e46e524f1d4365705",
+  "checkpoint20_sha256": "1a8c18d57230eabb46380c18efb2a5629422b1ae4fe2198588890fb78cb073da",
+  "config_sha256": "baf889fc3f864f8f7100fb0f4874bbad70304798242647facf0fe8191bfa6681",
+  "estimated_remaining_hours_from_startup_sample": 20.396400689534946,
+  "global_batch": 4,
+  "initial_model_sha256": "4b1f9a7d5da30692371fdb855370599287621f2ad7caddac2651cc76076205b9",
+  "latest_checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_384_real_score_gt_only_morph_100kframes/checkpoints/resume_latest.pt",
+  "launch_git_commit": "1d298483f23badf7263e1b71a6d3a72231a53a85",
+  "loss_fm_only": 1.9833773374557495,
+  "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_384_real_score_gt_only_morph_100kframes",
+  "physical_gpus": [
+    2,
+    3
+  ],
+  "quality_evaluation_performed": false,
+  "rank0_pid": 329325,
+  "recent_mean_step_seconds": 2.944738018140197,
+  "snapshot_epoch": 1792329605.8248625,
+  "source_sha256": "85bdbb777dc08c827f24b39208027bbc28dce813c1fc863896fc995498830d48",
+  "status": "RUNNING",
+  "successful_frame_exposures": 260,
+  "successful_updates": 65,
+  "target_successful_frame_exposures": 100000,
+  "target_successful_updates": 25000,
+  "tmux": "fpsgen_hs_stage2_morph_fm_gb4_gpu23",
+  "torchrun_pid": 328886
+}

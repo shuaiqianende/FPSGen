@@ -1,0 +1,11 @@
+.....s.................................................................. [ 78%]
+....................                                                     [100%]
+=============================== warnings summary ===============================
+tests/test_hier_occ_flow.py::test_real_ptv3_construction_bce_has_no_unused_time_parameters
+  /data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/timm/models/layers/__init__.py:49: DeprecationWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+    warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", DeprecationWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_hier_occ_geometry.py:52: GPU not available/allocated for audit
+91 passed, 1 skipped, 1 warning in 19.21s

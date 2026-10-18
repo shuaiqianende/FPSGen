@@ -1,0 +1,151 @@
+{
+  "candidate_policy": {
+    "calibration_status": "not_applicable_oracle",
+    "mode": "oracle",
+    "negative_fraction": 0.0,
+    "oracle_score": "stage1",
+    "seed": 20261018,
+    "selection": {
+      "budget": 500000,
+      "expansion": 0,
+      "overflow": "error",
+      "strategy": "threshold",
+      "threshold": 0.5
+    },
+    "stage1_nfe": 4
+  },
+  "checkpointing_parity": {
+    "atol": 1e-05,
+    "diagnostic_tokens": 2048,
+    "max_gradient_abs_error": 2.0372681319713593e-10,
+    "pass": true,
+    "rtol": 0.001
+  },
+  "data_identity": {
+    "development_manifest_sha256": "7e2b85a7c9d9cdeb672678eea08ca37e6b1a3e7d8d60dc85818057cd6dd94023",
+    "train_manifest_sha256": "b0f79f5d5ec1a2ff94bdb80edf79af7ea7f92600319af8ea8659e0b41b7d7270"
+  },
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "no_token_truncation": true,
+  "parameters": 2677128,
+  "physical_gpu": 2,
+  "precision_contract": "Strict AMP-disabled control required; AMP row-count GEMMs may differ by half-precision rounding. Original cellwise AMP check remains reported.",
+  "rows": [
+    {
+      "actual_condition_checks": [
+        {
+          "actual_score_matches_stage1": true,
+          "extra_empty_parents": 0,
+          "gt_parents_only": true,
+          "index": 9511,
+          "score_below_half_fraction": 0.3429807424545288,
+          "score_max": 1.0,
+          "score_mean": 0.6458089351654053,
+          "score_min": 0.0
+        },
+        {
+          "actual_score_matches_stage1": true,
+          "extra_empty_parents": 0,
+          "gt_parents_only": true,
+          "index": 6147,
+          "score_below_half_fraction": 0.5930949449539185,
+          "score_max": 1.0,
+          "score_mean": 0.4039345383644104,
+          "score_min": 0.0
+        }
+      ],
+      "amp_max_rounding_units": 0.0078125,
+      "batch_per_gpu": 2,
+      "finite": true,
+      "flash_calls": 12,
+      "fp32_packed_vs_separate_max_abs": 2.0765583030879498e-08,
+      "fp32_packed_vs_separate_mean_abs": 2.296503209819889e-09,
+      "fp32_packed_vs_separate_pass": true,
+      "gradient_norm": 0.6861640810966492,
+      "indices": [
+        9511,
+        6147
+      ],
+      "kind": "unequal_real_scenes",
+      "loss": 2.0010218620300293,
+      "optimizer_update_executed": true,
+      "original_strict_amp_comparison_met": true,
+      "packed_vs_separate_max_abs": 7.62939453125e-06,
+      "packed_vs_separate_mean_abs": 1.883715583517187e-07,
+      "packed_vs_separate_pass": true,
+      "packed_vs_separate_relative_l2": 0.0002256902662338689,
+      "packed_vs_separate_sign_disagreement": 2.6215926482109353e-05,
+      "peak_allocated_bytes": 9726736896,
+      "peak_reserved_bytes": 10584326144,
+      "permutation_max_abs": 0.0,
+      "permutation_pass": true,
+      "scene_isolation_max_abs": 0.0,
+      "scene_isolation_pass": true,
+      "seconds": 23.71810263209045,
+      "spconv_calls": 13,
+      "tokens_per_scene": [
+        137999,
+        319738
+      ],
+      "tokens_total": 457737
+    },
+    {
+      "actual_condition_checks": [
+        {
+          "actual_score_matches_stage1": true,
+          "extra_empty_parents": 0,
+          "gt_parents_only": true,
+          "index": 6147,
+          "score_below_half_fraction": 0.5930949449539185,
+          "score_max": 1.0,
+          "score_mean": 0.4039345383644104,
+          "score_min": 0.0
+        },
+        {
+          "actual_score_matches_stage1": true,
+          "extra_empty_parents": 0,
+          "gt_parents_only": true,
+          "index": 6147,
+          "score_below_half_fraction": 0.5930949449539185,
+          "score_max": 1.0,
+          "score_mean": 0.4039345383644104,
+          "score_min": 0.0
+        }
+      ],
+      "batch_per_gpu": 2,
+      "finite": true,
+      "flash_calls": 12,
+      "gradient_norm": 1.0438339710235596,
+      "indices": [
+        6147,
+        6147
+      ],
+      "kind": "two_complete_maximum_scenes",
+      "loss": 1.9952266216278076,
+      "optimizer_update_executed": true,
+      "peak_allocated_bytes": 13786768384,
+      "peak_reserved_bytes": 15246295040,
+      "seconds": 4.114544128999114,
+      "spconv_calls": 13,
+      "tokens_per_scene": [
+        319738,
+        319738
+      ],
+      "tokens_total": 639476
+    }
+  ],
+  "source_sha256": "85bdbb777dc08c827f24b39208027bbc28dce813c1fc863896fc995498830d48",
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "stage1_unchanged": true,
+  "status": "PASS_PACKED_BATCH2",
+  "target_data_version": "hs-occ-morph-close-v1",
+  "target_processor_sha256": "83803bbbf2cf7d483d5319a983cb03120116f0e6a42113d0c00f6ffb0f566060",
+  "target_transform_sha256": "1c88afa56324775ecc3a56f7720d0f2d69b38b7ee9ac7f925b67b9dcfaae3802",
+  "tolerance": {
+    "amp_max_units": 2,
+    "amp_relative_l2": 0.0009765625,
+    "amp_sign_disagreement": 0.0001,
+    "control_atol": 0.0001,
+    "control_rtol": 0.001
+  }
+}

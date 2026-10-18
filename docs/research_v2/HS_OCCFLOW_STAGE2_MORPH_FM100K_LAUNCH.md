@@ -1,10 +1,10 @@
 # Stage2 新方案100K样本训练启动记录
 
-本报告启动准备阶段，正式运行状态以实际日志、`controller_status.json`和`launch_verification.json`为准。
+本轮正式训练已经实际启动，启动后参数更新和双卡同步审计通过。以下快照仅为启动报告，100K样本预算尚未完成。
 
 ## 固定实验
 
-- 分支：`research/hs-occflow-384-stage2-score-gtparents`；正式代码版本：`d686d15`。
+- 分支：`research/hs-occflow-384-stage2-score-gtparents`；正式代码版本：`1d29848`。
 - 用户授权：“可以用这个数据集，然后我跟你说的那个新方案开始训练吧”。
 - 预算：100,000次成功样本曝光；globalbatch4（GPU2/3、每卡2个完整变长场景），从零共25,000次成功更新。工程Smoke不计入正式预算。
 - Stage2：2,677,128参数、64D Sparse PTv3、每父体素一个token、8维局部Flow；纯有效子体素FM MSE，Gaussian sigma1，target=2occ-1。无BCE/Shortcut/Chamfer等训练项。
@@ -36,3 +36,25 @@ tmux attach -t fpsgen_hs_stage2_morph_fm_gb4_gpu23
 正式输出：`experiments/hier_occ_flow/stage2_384_real_score_gt_only_morph_100kframes/`。
 
 正式step0保存online、EMA、optimizer、scaler、scheduler、各rank RNG及sampler；step20和100另存早期checkpoint，之后每500步latest、每2500步里程碑。启动审计必须验证online与初始EMA相同、优化器初始为空、local/PTv3/score/decoder参数真实改变、两rank同步、实际80次样本曝光和有限非零梯度。
+
+
+## 实际执行证据：RUNNING
+
+- 完整新数据：train17,870、development900，生成与校验均COMPLETE。新增细占用分别37.7944%/35.6478%，父体素ID和所有原占用保留。train平均5.3411/8子格占用，全8格占用父体素比例37.48%；数据是形态学增强标签，非额外传感器测量。
+- 新train manifest SHA：`b0f79f5d5ec1a2ff94bdb80edf79af7ea7f92600319af8ea8659e0b41b7d7270`；development：`7e2b85a7c9d9cdeb672678eea08ca37e6b1a3e7d8d60dc85818057cd6dd94023`。
+- CPU回归91PASS、1项CUDA检查在CPU命令中SKIP；随后GPU2/3实际新标签B2最大场景、Flash/SpConv、排列/打包/重计算梯度检查全部PASS。每卡最大639,476tokens，峰值allocated12.840GiB/reserved14.199GiB。
+- 双卡32次成功更新已实际执行，AMP跳步0；连续21对照20+恢复1的模型/EMA/优化器/scaler/RNG/sampler检查PASS，未放宽原预注册容差。
+- 短smoke FM loss：约1.9996→1.8924，仅工程学习迹象，不是几何质量验证。smoke权重未接入正式训练。
+- 正式模型从随机参数重新启动：step0 optimizer为空、EMA=online；step20有163个可训练参数张量改变，local/trunk/score/decoder等模块均发生实际更新。
+- 正式快照：65次成功更新，260/100,000次成功样本曝光，FM=1.983377，AMP跳步0。
+- 近期平均2.945s/update，据启动期小样本外推剩余约20.4小时；尚未稳定覆盖全场景分布，不能当作精确完工时间。
+- torchrun PID：328886，rank0 PID：329325；物理GPU2/3，未终止其他GPU作业。
+- 实际初始化model/EMA SHA均为`4b1f9a7d5da30692371fdb855370599287621f2ad7caddac2651cc76076205b9`。
+- 初始checkpoint SHA：`93909a1ecd9a66b209a18abd077ec1a2d4241025e1636b4e46e524f1d4365705`；step20 SHA：`1a8c18d57230eabb46380c18efb2a5629422b1ae4fe2198588890fb78cb073da`。
+- 配置SHA：`baf889fc3f864f8f7100fb0f4874bbad70304798242647facf0fe8191bfa6681`；source SHA：`85bdbb777dc08c827f24b39208027bbc28dce813c1fc863896fc995498830d48`；launch Git：`1d298483f23badf7263e1b71a6d3a72231a53a85`。
+- 已保存step0/20及resume_latest完整训练状态。固定1000步warmup+cosine，500步保存latest，2500步保存里程碑，100步另有早期checkpoint。
+- 小型完整证据见 `stage2_morph_fm100k_audit/`。不提交数据、PLY、环境和模型权重。
+
+### 本次工程故障及修复
+
+提高CPU并行度的断点续做首次因JSON几何列表/内存元组比较失败，未覆盖已完成7822帧。已规范化JSON比较并新增真实CLI fresh+resume回归测试，之后成功续做至完整数据。旧4worker部分生成目录及日志保留，正式训练使用新的`occ384_morph_close26_training_v1`，未修改旧训练结果。

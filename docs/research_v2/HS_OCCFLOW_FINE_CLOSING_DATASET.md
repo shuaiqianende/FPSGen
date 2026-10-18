@@ -61,3 +61,8 @@ scripts/research_v2/hier_occ_flow/prepare_fine_closing.py \
  --workers 4 --connectivity 26
 # 断点继续时添加 --resume；不要并行启动同一输出的第二个生成器。
 ```
+
+
+## 后续状态更正：完整训练标签已完成
+
+上述4worker目录为历史快照，已安全暂停并保留。最终正式使用的数据位于`experiments/hier_occ_flow/occ384_morph_close26_training_v1/`，train17870/development900均已COMPLETE，训练/开发细占用新增37.79%/35.65%。仅worker上限适配，闭运算定义保持一致；最终processor SHA为`83803bbbf2cf7d483d5319a983cb03120116f0e6a42113d0c00f6ffb0f566060`。正式Stage2已经通过新工程门槛并实际启动，详见`HS_OCCFLOW_STAGE2_MORPH_FM100K_LAUNCH.md`。

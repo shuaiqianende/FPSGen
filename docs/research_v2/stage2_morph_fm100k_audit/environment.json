@@ -1,0 +1,19 @@
+{
+  "dataset_cpu_workers": 32,
+  "packages": {
+    "flash-attn": "2.5.9.post1",
+    "mmcv-full": "distribution_name_not_found",
+    "numpy": "1.23.5",
+    "scipy": "1.10.1",
+    "spconv-cu117": "2.3.6",
+    "torch": "2.0.1+cu117",
+    "torch-scatter": "2.1.2+pt20cu117"
+  },
+  "python": "3.9.19",
+  "python_executable": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+  "system_environment_modified": false,
+  "training_physical_gpus": [
+    2,
+    3
+  ]
+}
