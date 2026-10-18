@@ -1,4 +1,4 @@
-"""GPU1 inference authorized by the user; training GPU2/3 policy is unchanged.
+"""Explicitly selected inference GPU; training GPU2/3 policy is unchanged.
 
 Separate from the source-hashed training directory so adding an export tool does
 not invalidate an actively running experiment's exact-resume source identity.
@@ -15,6 +15,7 @@ import time
 
 ROOT=Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(ROOT))
+sys.path.insert(0,str(Path(__file__).resolve().parent))
 import numpy as np
 import torch
 from fpsgen.hier_occ_flow.stage2_runtime import load_stage2_config,config_sha
@@ -26,6 +27,7 @@ from fpsgen.hier_occ_flow.inference import sample,export_occupancy
 from fpsgen.hier_occ_flow.stage2_visualization import write_xyz_ply
 from fpsgen.hier_occ_flow.voxelization import occupied_fine_coords
 from fpsgen.hier_occ_flow.storage import atomic_json,file_sha
+from eval_gpu import admit_gpu0,check_gpu0_background
 
 
 def admit_gpu1():
@@ -70,11 +72,15 @@ def main():
     parser.add_argument('--input',type=Path,required=True);parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--oracle-labels',type=Path);parser.add_argument('--nfes',nargs='+',type=int,default=[1,2,4,8])
     parser.add_argument('--weights',nargs='+',choices=['online','ema'],default=['online'])
+    parser.add_argument('--physical-gpu',type=int,choices=[0,1],default=1)
+    parser.add_argument('--idle-service-pid',type=int)
     args=parser.parse_args()
     if any(n not in (1,2,4,8) for n in args.nfes):raise ValueError('Registered1/2/4/8 NFE only')
     if args.output.exists():raise FileExistsError('Never overwrite an existing export')
     cfg,g=load_stage2_config(args.config);saved=torch.load(args.checkpoint,map_location='cpu');validate_snapshot(saved,cfg,g)
-    admission=admit_gpu1();torch.set_num_threads(4);device=torch.device('cuda:0')
+    admission=admit_gpu1() if args.physical_gpu==1 else admit_gpu0(args.idle_service_pid)
+    torch.set_num_threads(4);device=torch.device('cuda:0')
+    if args.physical_gpu==0:torch.cuda.set_per_process_memory_fraction(.25,device)
     args.output.mkdir(parents=True)
     atomic_json(args.output/'admission.json',admission)
     frame=int(args.input.stem);sequence=args.input.parent.parent.name
@@ -93,7 +99,7 @@ def main():
         'predicted_support_status':'uncalibrated diagnostic; checkpoint trained with Oracle support',
         'stage1':adapter.provenance,'stage1_nfe':cfg['candidates']['stage1_nfe'],'stage1_seed':seed,
         'stage2_seed':cfg['validation']['seed'],'stage2_endpoint_threshold':cfg['validation']['threshold'],
-        'points_are_quantized_surface_hit_centers':True,'fixed180k_points':False,'physical_gpu':1,'exports':[]}
+        'points_are_quantized_surface_hit_centers':True,'fixed180k_points':False,'physical_gpu':args.physical_gpu,'exports':[]}
     # Run input-only predicted support BEFORE opening any optional GT artifact.
     for mode in ['predicted']+(['oracle'] if args.oracle_labels else []):
         ids_gt=None
@@ -115,6 +121,7 @@ def main():
             if state is None:raise ValueError('Requested model state absent')
             model.load_state_dict(state,strict=True)
             for nfe in args.nfes:
+                if args.physical_gpu==0:check_gpu0_background(args.idle_service_pid)
                 before=time.perf_counter()
                 with torch.autocast('cuda',dtype=torch.float16):
                     _,occ,calls=sample(model,ids,c,nfe=nfe,generator=torch.Generator(device=device).manual_seed(cfg['validation']['seed']),threshold=cfg['validation']['threshold'])

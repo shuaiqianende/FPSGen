@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "checkpoint_updates": 13500,
+  "successful_frames": 53520,
+  "stage2_checkpoint_sha256": "c76ac5f554891da851b5ad94c535624d43ba7102b1daabb15fed335ef028c695",
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "stage1_nfe": 4,
+  "actual_stage1_encoder_forwards": 1,
+  "input_only_generation": true,
+  "physical_gpu": 0,
+  "cpu_tests_passed": 12,
+  "files": [
+    {
+      "ply": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step013500_seq08_003923/stage2_nfe1.ply",
+      "points": 275076,
+      "finite": true,
+      "packed_occupancy_coordinates_match": true,
+      "sha256": "bc82647cf81fb02ecc871f95be269c3944d3df111c4f8751a9d058df1564e04f"
+    },
+    {
+      "ply": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step013500_seq08_003923/stage2_nfe2.ply",
+      "points": 286808,
+      "finite": true,
+      "packed_occupancy_coordinates_match": true,
+      "sha256": "b6777f8a2e61e8f93c02b04172468e297603704846e693ccd4480df420e98639"
+    },
+    {
+      "ply": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step013500_seq08_003923/stage2_nfe4.ply",
+      "points": 293219,
+      "finite": true,
+      "packed_occupancy_coordinates_match": true,
+      "sha256": "0db469f20728f5018c0ae2b93d25e497b8a9fabbae9ab6109ea4ad0a242ca0d1"
+    },
+    {
+      "ply": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step013500_seq08_003923/stage2_nfe8.ply",
+      "points": 293379,
+      "finite": true,
+      "packed_occupancy_coordinates_match": true,
+      "sha256": "87334a1cb40a38183334a8ca09f82260c9aecf3d9a7b7ad823d1fa2a9d20b065"
+    },
+    {
+      "ply": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step013500_seq08_003923/partial_lidar.ply",
+      "points": 18000,
+      "finite": true,
+      "sha256": "afa68bb4835a80fb9cdfa34548ea25ea3a32b216e49592601e2759f730882fb2"
+    },
+    {
+      "ply": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_ply/step013500_seq08_003923/stage1_coarse_occupancy.ply",
+      "points": 99167,
+      "finite": true,
+      "sha256": "0bd676f80f722cb21fa2c9d4c85d653d9c5cf768e79ea2581b75fbc51545b045"
+    }
+  ],
+  "training_source_sha256_unchanged": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7"
+}
