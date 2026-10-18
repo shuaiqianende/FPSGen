@@ -82,3 +82,22 @@ def test_derived_dataset_partial_resume_identity_and_original_immutable(tmp_path
 def test_invalid_morphology_options_and_masks_rejected():
     for opts in ({'iterations':2},{'connectivity':18},{'tile_parent_xy':0}):
         with pytest.raises(ValueError):FineClosingSpec(**opts)
+
+
+def test_dataset_cli_resume_canonicalizes_json_geometry(tmp_path,monkeypatch):
+    import importlib.util,sys
+    path=Path('scripts/research_v2/hier_occ_flow/prepare_fine_closing.py').resolve()
+    monkeypatch.syspath_prepend(str(path.parent))
+    spec=importlib.util.spec_from_file_location('morph_cli_resume_test',path)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    g=SparseHierarchyGeometry(parent_resolution=(8,8,4),child_split=(2,2,2),origin=(-2.,-2.,-1.),maximum=(2.,2.,1.))
+    source=tmp_path/'source';ids,masks=labels(g)
+    writer=SparseShardWriter(source,g,'raw-test');writer.add('00',0,ids,masks);writer.flush()
+    monkeypatch.setattr(module,'load_stage2_config',lambda path:({'train_dataset':str(source),'development_dataset':str(source)},g))
+    out=tmp_path/'derived'
+    args=['prepare_fine_closing.py','--config','unused.yaml','--output',str(out),'--workers','1']
+    monkeypatch.setattr(sys,'argv',args);module.main()
+    before=file_sha(out/'train/manifest.json')
+    monkeypatch.setattr(sys,'argv',args+['--resume']);module.main()
+    assert file_sha(out/'train/manifest.json')==before
+    assert json.loads((out/'development/build_state.json').read_text())['status']=='COMPLETE'
