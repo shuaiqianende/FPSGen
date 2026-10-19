@@ -35,6 +35,7 @@ from fpsgen.hier_occ_flow.stage2_runtime import load_stage2_config
 from fpsgen.hier_occ_flow.storage import atomic_json, file_sha
 from fpsgen.hier_occ_flow.voxelization import occupied_fine_coords, pack_children
 from fpsgen.utils.gpu_kdtree_metrics import GPUKDTreeMetrics
+from voxel_guided_resampling import voxel_guided_uniform_resample
 
 
 def admit_gpu3(*, startup=True):
@@ -116,6 +117,15 @@ def main():
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--max-frames', type=int, default=408)
     p.add_argument('--resume', action='store_true')
+    p.add_argument('--enable-voxel-upsampling', action='store_true',
+                   help='Add PatchScene-style uniform resampling metrics')
+    p.add_argument('--target-points', type=int, default=1_080_000)
+    p.add_argument('--upsampling-voxel-size', type=float, default=0.15625)
+    p.add_argument('--upsampling-count-policy', choices=('exact_target', 'patchscene_ceil'),
+                   default='exact_target')
+    p.add_argument('--upsampling-seed-base', type=int, default=20261019)
+    p.add_argument('--save-point-samples', action='store_true',
+                   help='Save per-frame center and resampled XYZ arrays (large output)')
     a = p.parse_args()
     if not 1 <= a.max_frames <= 408:
         raise ValueError('Expected 1..408 frames from the frozen seq08/skip10 protocol')
@@ -162,6 +172,14 @@ def main():
         'metric_filter': 'NONE', 'source_downsampling': 'NONE',
         'config_sha256': file_sha(a.config), 'evaluator_sha256': file_sha(Path(__file__)),
         'stage2_training_target': 'morph-close26 8-way FM, oracle GT parents only; evaluation uses actual predicted parents',
+        'voxel_upsampling_enabled': bool(a.enable_voxel_upsampling),
+        'target_points': int(a.target_points) if a.enable_voxel_upsampling else None,
+        'upsampling_voxel_size': float(a.upsampling_voxel_size) if a.enable_voxel_upsampling else None,
+        'upsampling_count_policy': a.upsampling_count_policy if a.enable_voxel_upsampling else None,
+        'upsampling_seed_base': int(a.upsampling_seed_base) if a.enable_voxel_upsampling else None,
+        'upsampling_distribution': 'uniform_within_occupied_voxel' if a.enable_voxel_upsampling else None,
+        'upsampling_roi_policy': 'frozen_existing_roi:xyz_bounds_and_open_3d_sphere' if a.enable_voxel_upsampling else None,
+        'upsampling_algorithm_sha256': file_sha(Path(__file__).with_name('voxel_guided_resampling.py')) if a.enable_voxel_upsampling else None,
     }
     a.output.mkdir(parents=True, exist_ok=a.resume)
     protocol_path = a.output / 'protocol.json'
@@ -286,6 +304,66 @@ def main():
                     jsd = jsd_metrics(target, predicted)
                     if offset == 0 and i == 0 and s1nfe == 2:
                         verify_jsd_parity(target, predicted)
+                    upsample_metadata = None
+                    upsample_metrics = {}
+                    if a.enable_voxel_upsampling:
+                        point_seed = int(a.upsampling_seed_base + frame)
+                        predicted_upsampled, upsample_metadata = voxel_guided_uniform_resample(
+                            predicted,
+                            bounds={'minimum': g.origin, 'maximum': g.maximum,
+                                    'sphere_radius': g.sphere_radius},
+                            voxel_size=a.upsampling_voxel_size,
+                            target_points=a.target_points,
+                            count_policy=a.upsampling_count_policy,
+                            seed=point_seed,
+                        )
+                        if a.save_point_samples:
+                            samples_dir = a.output / 'point_samples'
+                            samples_dir.mkdir(parents=True, exist_ok=True)
+                            np.save(samples_dir / f'predicted_center_{frame:06d}.npy', predicted)
+                            np.save(samples_dir / f'predicted_upsampled_{frame:06d}.npy', predicted_upsampled)
+                        up_gpu = torch.from_numpy(np.ascontiguousarray(predicted_upsampled)).to(device)
+                        torch.cuda.synchronize()
+                        up_cd_started = time.perf_counter()
+                        up_cd = metric.evaluate(up_gpu, target_gpu)
+                        torch.cuda.synchronize()
+                        up_cd_seconds = time.perf_counter() - up_cd_started
+                        up_iou_counts = {}
+                        for resolution, key in ((0.5, 'iou05'), (0.2, 'iou02'), (0.1, 'iou01')):
+                            pred_ids = physical_grid_ids(predicted_upsampled, g, resolution=resolution)
+                            gt_ids = physical_grid_ids(target, g, resolution=resolution, target_points=True)
+                            up_iou_counts[key] = support_counts(pred_ids, gt_ids)
+                        up_jsd = jsd_metrics(target, predicted_upsampled)
+                        if offset == 0 and i == 0 and s1nfe == 2:
+                            verify_jsd_parity(target, predicted_upsampled)
+                        upsample_metrics = {
+                            'cd_m_upsampled': float(up_cd['cd_m']),
+                            'cd_m_upsampled_seconds': float(up_cd_seconds),
+                            'iou05_upsampled': up_iou_counts['iou05']['iou'],
+                            'iou02_upsampled': up_iou_counts['iou02']['iou'],
+                            'iou01_upsampled': up_iou_counts['iou01']['iou'],
+                            'iou05_upsampled_tp': up_iou_counts['iou05']['tp'],
+                            'iou05_upsampled_fp': up_iou_counts['iou05']['fp'],
+                            'iou05_upsampled_fn': up_iou_counts['iou05']['fn'],
+                            'iou02_upsampled_tp': up_iou_counts['iou02']['tp'],
+                            'iou02_upsampled_fp': up_iou_counts['iou02']['fp'],
+                            'iou02_upsampled_fn': up_iou_counts['iou02']['fn'],
+                            'iou01_upsampled_tp': up_iou_counts['iou01']['tp'],
+                            'iou01_upsampled_fp': up_iou_counts['iou01']['fp'],
+                            'iou01_upsampled_fn': up_iou_counts['iou01']['fn'],
+                            'jsd_bev_upsampled': up_jsd['jsd_bev'],
+                            'jsd_3d_upsampled': up_jsd['jsd_3d'],
+                            'resample_occupied_voxels': upsample_metadata['occupied_resample_voxels'],
+                            'resampled_point_count': upsample_metadata['actual_output_points'],
+                            'resampling_seconds': upsample_metadata['resampling_seconds'],
+                            'resampling_seed': point_seed,
+                            'sampling_k_min': upsample_metadata['min_points_per_voxel'],
+                            'sampling_k_max': upsample_metadata['max_points_per_voxel'],
+                            'sampling_k_mean': upsample_metadata['mean_points_per_voxel'],
+                            'dropped_occupied_voxels': upsample_metadata['dropped_occupied_voxels'],
+                            'voxel_coverage_ratio': upsample_metadata['voxel_coverage_ratio'],
+                            'resampling_voxel_size': upsample_metadata['voxel_size'],
+                        }
                     row = {
                         'sequence': '08', 'frame': frame, 'stage1_nfe': s1nfe,
                         'stage2_nfe': s2nfe, 'cd_m': float(cd['cd_m']),
@@ -295,7 +373,7 @@ def main():
                         **{f'{metric}_{part}': iou_counts[metric][part]
                            for metric in ('iou05', 'iou02', 'iou01')
                            for part in ('tp', 'fp', 'fn')},
-                        **jsd, 'candidate_parents': int(len(scene_ids)),
+                        **jsd, **upsample_metrics, 'candidate_parents': int(len(scene_ids)),
                         'predicted_fine_voxels': int(len(predicted)), 'raw_gt_points': int(len(target)),
                         'raw_candidate_points_before_roi': target_meta['raw_candidate_points_before_roi'],
                         'filtered_points': target_meta['filtered_points'],
@@ -316,6 +394,8 @@ def main():
                           f'{row["iou05"]:.5f}/{row["iou02"]:.5f}/{row["iou01"]:.5f} '
                           f'JSD-BEV={row["jsd_bev"]:.5f} JSD-3D={row["jsd_3d"]:.5f} '
                           f'tokens={len(scene_ids)} batch={len(active)}', flush=True)
+                    if a.enable_voxel_upsampling:
+                        del predicted_upsampled, up_gpu
                     del occupancy, fine, predicted, target_gpu, pred_gpu
                 # Keep per-frame inputs/features/GT targets for the second NFE
                 # configuration in this same 4-scene pack.  They are released
@@ -325,7 +405,7 @@ def main():
     selected = [r for r in rows if r['stage1_nfe'] == 2 and r['stage2_nfe'] == 4]
     if len(selected) != len(frames):
         raise RuntimeError(f'Incomplete S1/S2 2/4: {len(selected)}/{len(frames)}')
-    summaries = [{
+    summary = {
         'frames': len(selected), 'stage1_nfe': 2, 'stage2_nfe': 4,
         'cd_m_macro': float(np.mean([r['cd_m'] for r in selected])),
         'iou05_macro': float(np.mean([r['iou05'] for r in selected])),
@@ -339,7 +419,29 @@ def main():
         'mean_candidate_parents': float(np.mean([r['candidate_parents'] for r in selected])),
         'mean_predicted_fine_voxels': float(np.mean([r['predicted_fine_voxels'] for r in selected])),
         'mean_raw_gt_points': float(np.mean([r['raw_gt_points'] for r in selected])),
-    }]
+    }
+    if a.enable_voxel_upsampling:
+        summary.update({
+            'cd_m_upsampled_macro': float(np.mean([r['cd_m_upsampled'] for r in selected])),
+            'iou05_upsampled_macro': float(np.mean([r['iou05_upsampled'] for r in selected])),
+            'iou05_upsampled_micro': sum(r['iou05_upsampled_tp'] for r in selected) / max(sum(r['iou05_upsampled_tp'] + r['iou05_upsampled_fp'] + r['iou05_upsampled_fn'] for r in selected), 1),
+            'iou02_upsampled_macro': float(np.mean([r['iou02_upsampled'] for r in selected])),
+            'iou02_upsampled_micro': sum(r['iou02_upsampled_tp'] for r in selected) / max(sum(r['iou02_upsampled_tp'] + r['iou02_upsampled_fp'] + r['iou02_upsampled_fn'] for r in selected), 1),
+            'iou01_upsampled_macro': float(np.mean([r['iou01_upsampled'] for r in selected])),
+            'iou01_upsampled_micro': sum(r['iou01_upsampled_tp'] for r in selected) / max(sum(r['iou01_upsampled_tp'] + r['iou01_upsampled_fp'] + r['iou01_upsampled_fn'] for r in selected), 1),
+            'jsd_bev_upsampled_macro': float(np.mean([r['jsd_bev_upsampled'] for r in selected])),
+            'jsd_3d_upsampled_macro': float(np.mean([r['jsd_3d_upsampled'] for r in selected])),
+            'mean_resampled_point_count': float(np.mean([r['resampled_point_count'] for r in selected])),
+            'min_resampled_point_count': int(min(r['resampled_point_count'] for r in selected)),
+            'max_resampled_point_count': int(max(r['resampled_point_count'] for r in selected)),
+            'mean_resample_occupied_voxels': float(np.mean([r['resample_occupied_voxels'] for r in selected])),
+            'mean_resampling_seconds': float(np.mean([r['resampling_seconds'] for r in selected])),
+            'mean_upsampled_cd_seconds': float(np.mean([r['cd_m_upsampled_seconds'] for r in selected])),
+            'mean_sampling_k': float(np.mean([r['sampling_k_mean'] for r in selected])),
+            'mean_voxel_coverage_ratio': float(np.mean([r['voxel_coverage_ratio'] for r in selected])),
+            'total_dropped_occupied_voxels': int(sum(r['dropped_occupied_voxels'] for r in selected)),
+        })
+    summaries = [summary]
     result = {'status': 'COMPLETE', 'protocol': protocol, 'summary': summaries,
               'elapsed_seconds': time.perf_counter() - start, 'rows': len(rows)}
     atomic_json(a.output / 'results.json', result)
