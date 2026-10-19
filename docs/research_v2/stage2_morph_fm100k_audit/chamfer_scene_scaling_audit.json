@@ -1,0 +1,12 @@
+{
+  "legacy_sources_unchanged": true,
+  "maximum_cd_error_m": 1.7679763963940331e-07,
+  "note": "Performance/loss/finite-gradient checks only; real Teacher gradient parity separate",
+  "original_source_hashes": {
+    "/data-12/M2024-HWZ/FPSGen/fpsgen/models/ChamferDistancePytorch/chamfer3D/chamfer3D.cu": "4a832e6711538edd8648dd4c1acd0389be9bbf450fa2f4ee73bb5cc077e7f4f3",
+    "/data-12/M2024-HWZ/FPSGen/fpsgen/models/ChamferDistancePytorch/chamfer3D/chamfer_cuda.cpp": "038c6c6301416a58532bc6654af7ac115213fbc3a6c9f165159bb37a4a87cb4c",
+    "/data-12/M2024-HWZ/FPSGen/fpsgen/ops/chamfer.py": "3d270093cb3c3600758ba2cc4f896adb9f142c55c71ea5fc5ce33461207bd6f1"
+  },
+  "results_sha256": "79694ce2e2a7fa224e7337da94c78073a87e6a4677b06c4041c04dceeab91e2a",
+  "status": "PASS_55_PAIRS_165_TRIALS"
+}

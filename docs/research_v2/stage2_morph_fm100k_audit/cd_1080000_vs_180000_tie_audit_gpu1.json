@@ -1,0 +1,77 @@
+{
+  "admission": {
+    "authorization": "user: \u53ef\u4ee5\u75281\u53f7\u5361",
+    "compute_pids": [],
+    "free_mib": 24103.0,
+    "physical_gpu": 1,
+    "training_gpu_policy_modified": false,
+    "utilization_percent": 0.0
+  },
+  "conclusion": "CPU and GPU may select different exact equidistant neighbors. CD values agree; tie-point subgradient need not be unique. Existing KeOps and GPU KD-tree gradients compared explicitly.",
+  "coordinate_gradients_vs_keops": {
+    "chamfer_cuda": {
+      "changed_prediction_points": 0,
+      "max_absolute": 0.0,
+      "relative_l2": 0.0
+    },
+    "cpu": {
+      "changed_prediction_points": 2,
+      "max_absolute": 3.9340000057563884e-07,
+      "relative_l2": 0.00018909679783973843
+    },
+    "gpu_kdtree": {
+      "changed_prediction_points": 0,
+      "max_absolute": 0.0,
+      "relative_l2": 0.0
+    }
+  },
+  "losses": {
+    "chamfer_cuda": 0.20444166660308838,
+    "cpu": 0.20444166660308838,
+    "gpu_kdtree": 0.20444166660308838,
+    "keops": 0.20444166660308838
+  },
+  "note": "Original gradient gate remains GRADIENT_REVIEW_REQUIRED; this audit identifies valid tie subgradients explicitly.",
+  "per_direction": [
+    {
+      "cpu_vs_tree_index_differences": 0,
+      "direction": "p_to_g",
+      "keops_vs_tree_index_differences": 0,
+      "queries": 180000,
+      "ties": []
+    },
+    {
+      "cpu_vs_tree_index_differences": 1,
+      "direction": "g_to_p",
+      "keops_vs_tree_index_differences": 0,
+      "queries": 1080000,
+      "ties": [
+        {
+          "cpu_index": 6371,
+          "cpu_neighbor_xyz": [
+            -35.09114456176758,
+            -6.575520992279053,
+            -2.621875047683716
+          ],
+          "cpu_squared_distance": 0.0058702772783476576,
+          "exact_equal_squared_distance": true,
+          "gpu_index": 6368,
+          "gpu_neighbor_xyz": [
+            -35.22135543823242,
+            -6.575520992279053,
+            -2.621875047683716
+          ],
+          "gpu_squared_distance": 0.0058702772783476576,
+          "query_index": 283440,
+          "query_xyz": [
+            -35.15625,
+            -6.581221580505371,
+            -2.5818867683410645
+          ]
+        }
+      ]
+    }
+  ],
+  "source_sha256": "93e0f19bb224bfdd148ae153ef99787a40aab230bff2080869db7f0a35824cbf",
+  "status": "PASS_EXACT_DISTANCE_WITH_TIE_SUBGRADIENT"
+}

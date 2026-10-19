@@ -1,0 +1,5 @@
+{
+  "fpsgen/ops/chamfer_scene.py": "42dd48e44a39c77122f7167fb2d1cd64ac1866a5b08a7b16ec7f732775a1575f",
+  "fpsgen/ops/chamfer_scene_cuda.cu": "1bfa5119aab13af3c676cd825b891afab6c34a175e57480d46f83d5dde93b764",
+  "scripts/research_v2/hier_occ_inference/benchmark_chamfer_scene_scaling.py": "90b43471ab6a9b26b8db024cd6140ee5c414ffac4f62bd91373228a19baacf58"
+}

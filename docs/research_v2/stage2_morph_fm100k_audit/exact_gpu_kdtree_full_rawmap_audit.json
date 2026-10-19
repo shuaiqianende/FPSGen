@@ -1,0 +1,143 @@
+{
+  "admission": {
+    "authorization": "user: \u53ef\u4ee5\u75281\u53f7\u5361",
+    "compute_pids": [],
+    "free_mib": 24103.0,
+    "physical_gpu": 1,
+    "training_gpu_policy_modified": false,
+    "utilization_percent": 0.0
+  },
+  "cd_cpu_absolute_error_m": 8.326672684688674e-17,
+  "cd_cuda_absolute_error_m": 8.367251336238724e-11,
+  "compile_seconds": 70.71221411041915,
+  "cpu_cd_m": 0.1801439730220031,
+  "cuda_full_pair_cd": {
+    "cd_m": 0.18014397310567554,
+    "gt_to_pred_m": 0.23058927171341245,
+    "pred_to_gt_m": 0.12969867449793862,
+    "valid_cd": true
+  },
+  "cuda_full_pair_seconds": 5.375497346743941,
+  "design": "GPU cyclic-axis segmented sorting, bounding-box build and exact branch-and-bound; no CPU tree for GPU results; no approximation/padding/sampling",
+  "directions": [
+    {
+      "build_seconds": 0.014813423156738281,
+      "checked_queries": 504083,
+      "cpu_build_and_query_seconds": 0.8011624831706285,
+      "cpu_mean_m": 0.12969867440334354,
+      "direction": "prediction_to_gt",
+      "gpu_mean_m": 0.12969867440334354,
+      "max_distance_error_m": 0.0,
+      "mean_distance_error_m": 0.0,
+      "pass_test": true,
+      "query_seconds": 0.030621062964200974
+    },
+    {
+      "build_seconds": 0.012172432616353035,
+      "checked_queries": 1144476,
+      "cpu_build_and_query_seconds": 0.7882781717926264,
+      "cpu_mean_m": 0.23058927164066267,
+      "direction": "gt_to_prediction",
+      "gpu_mean_m": 0.23058927164066267,
+      "max_distance_error_m": 0.0,
+      "mean_distance_error_m": 0.0,
+      "pass_test": true,
+      "query_seconds": 0.08081816509366035
+    }
+  ],
+  "frame": 3900,
+  "full_warmup_seconds": 0.15309040062129498,
+  "median_fresh_gpu_tree_cd_seconds": 0.13457118719816208,
+  "peak_allocated_gib": 0.13443517684936523,
+  "precision": "FP32 input coordinates and boxes; FP64 query distances and means; conservative pruning",
+  "predicted_points": 504083,
+  "prediction_sha256": "3a47ea9ccdd8866eedaba7a8cf1128754273df55f074ddc0b80152b5b9dd3f8d",
+  "raw_gt_points": 1144476,
+  "real_repeats": [
+    {
+      "cd_m": 0.18014397302200302,
+      "gt_to_pred_m": 0.23058927164066254,
+      "pred_to_gt_m": 0.1296986744033435,
+      "repeat": 0,
+      "seconds": 0.13867704756557941,
+      "valid_cd": true
+    },
+    {
+      "cd_m": 0.18014397302200302,
+      "gt_to_pred_m": 0.23058927164066254,
+      "pred_to_gt_m": 0.1296986744033435,
+      "repeat": 1,
+      "seconds": 0.133126987144351,
+      "valid_cd": true
+    },
+    {
+      "cd_m": 0.18014397302200302,
+      "gt_to_pred_m": 0.23058927164066254,
+      "pred_to_gt_m": 0.1296986744033435,
+      "repeat": 2,
+      "seconds": 0.13457118719816208,
+      "valid_cd": true
+    }
+  ],
+  "source_hashes": {
+    "gpu_kdtree.py": "57c9e87f54c1c412e01feea33bc3cc1f74063045521f344de4abfeace5efd32b",
+    "gpu_kdtree_cuda.cu": "f77cf5b7f726f2c0791ee1e588509f677c34cdf197141af5c375642cd750bbec"
+  },
+  "status": "PASS",
+  "tests": [
+    {
+      "max_distance_error_m": 0.0,
+      "name": "random_1_7",
+      "pass_test": true,
+      "queries": 7,
+      "support": 1
+    },
+    {
+      "max_distance_error_m": 0.0,
+      "name": "random_9_33",
+      "pass_test": true,
+      "queries": 33,
+      "support": 9
+    },
+    {
+      "max_distance_error_m": 0.0,
+      "name": "random_31_257",
+      "pass_test": true,
+      "queries": 257,
+      "support": 31
+    },
+    {
+      "max_distance_error_m": 0.0,
+      "name": "random_65_513",
+      "pass_test": true,
+      "queries": 513,
+      "support": 65
+    },
+    {
+      "max_distance_error_m": 0.0,
+      "name": "random_4099_2053",
+      "pass_test": true,
+      "queries": 2053,
+      "support": 4099
+    },
+    {
+      "max_distance_error_m": 0.0,
+      "name": "plane_exact_hits_and_far_queries",
+      "pass_test": true,
+      "queries": 1001,
+      "support": 2049
+    },
+    {
+      "max_distance_error_m": 0.0,
+      "name": "duplicates_ties",
+      "pass_test": true,
+      "queries": 3,
+      "support": 1025
+    }
+  ],
+  "tolerance": {
+    "cd_vs_cpu_absolute_m": 1e-09,
+    "cd_vs_cuda_fp32_absolute_m": 1e-05,
+    "each_nearest_distance_absolute_m": 1e-09
+  }
+}

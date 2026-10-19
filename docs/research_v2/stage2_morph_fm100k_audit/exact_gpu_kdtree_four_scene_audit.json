@@ -1,0 +1,142 @@
+{
+  "admission": {
+    "authorization": "user: \u53ef\u4ee5\u75281\u53f7\u5361",
+    "compute_pids": [],
+    "free_mib": 24103.0,
+    "physical_gpu": 1,
+    "training_gpu_policy_modified": false,
+    "utilization_percent": 0.0
+  },
+  "checkpoint_sha256": "e0844ce76a7ac45c4765fbf7255d8ef537ae92b4143bb095f2c0795c2f585184",
+  "checks": [
+    {
+      "cd_absolute_error_m": 5.551115123125783e-17,
+      "cd_m": 0.2505725815861195,
+      "cpu_cd_m": 0.25057258158611956,
+      "fn": 28293,
+      "fp": 12676,
+      "frame": 0,
+      "gt_to_pred_m": 0.34031439909128086,
+      "iou05": 0.4712585824170151,
+      "pass_test": true,
+      "per_direction": [
+        {
+          "cpu_mean_m": 0.16083076408095823,
+          "max_error_m": 0.0,
+          "queries": 835526
+        },
+        {
+          "cpu_mean_m": 0.34031439909128086,
+          "max_error_m": 0.0,
+          "queries": 1728347
+        }
+      ],
+      "pred_to_gt_m": 0.16083076408095817,
+      "predicted_points": 835526,
+      "raw_gt_points": 1728347,
+      "seconds": 0.23183091171085835,
+      "tp": 36515,
+      "valid_cd": true
+    },
+    {
+      "cd_absolute_error_m": 0.0,
+      "cd_m": 0.17904843778015295,
+      "cpu_cd_m": 0.17904843778015295,
+      "fn": 34573,
+      "fp": 7013,
+      "frame": 100,
+      "gt_to_pred_m": 0.2524559099274714,
+      "iou05": 0.5047752875890157,
+      "pass_test": true,
+      "per_direction": [
+        {
+          "cpu_mean_m": 0.10564096563283444,
+          "max_error_m": 0.0,
+          "queries": 821565
+        },
+        {
+          "cpu_mean_m": 0.25245590992747147,
+          "max_error_m": 0.0,
+          "queries": 2381384
+        }
+      ],
+      "pred_to_gt_m": 0.10564096563283447,
+      "predicted_points": 821565,
+      "raw_gt_points": 2381384,
+      "seconds": 0.264709884300828,
+      "tp": 42388,
+      "valid_cd": true
+    },
+    {
+      "cd_absolute_error_m": 2.7755575615628914e-17,
+      "cd_m": 0.1692304722581612,
+      "cpu_cd_m": 0.16923047225816124,
+      "fn": 36395,
+      "fp": 5992,
+      "frame": 1800,
+      "gt_to_pred_m": 0.24650176154968662,
+      "iou05": 0.5098918887668382,
+      "pass_test": true,
+      "per_direction": [
+        {
+          "cpu_mean_m": 0.09195918296663576,
+          "max_error_m": 0.0,
+          "queries": 843202
+        },
+        {
+          "cpu_mean_m": 0.24650176154968673,
+          "max_error_m": 0.0,
+          "queries": 2450855
+        }
+      ],
+      "pred_to_gt_m": 0.09195918296663581,
+      "predicted_points": 843202,
+      "raw_gt_points": 2450855,
+      "seconds": 0.2552481181919575,
+      "tp": 44098,
+      "valid_cd": true
+    },
+    {
+      "cd_absolute_error_m": 2.7755575615628914e-17,
+      "cd_m": 0.17817526941587572,
+      "cpu_cd_m": 0.1781752694158757,
+      "fn": 11914,
+      "fp": 13678,
+      "frame": 4000,
+      "gt_to_pred_m": 0.19129801655897424,
+      "iou05": 0.5666632801652612,
+      "pass_test": true,
+      "per_direction": [
+        {
+          "cpu_mean_m": 0.1650525222727772,
+          "max_error_m": 0.0,
+          "queries": 816495
+        },
+        {
+          "cpu_mean_m": 0.19129801655897416,
+          "max_error_m": 0.0,
+          "queries": 1126190
+        }
+      ],
+      "pred_to_gt_m": 0.1650525222727772,
+      "predicted_points": 816495,
+      "raw_gt_points": 1126190,
+      "seconds": 0.15898717194795609,
+      "tp": 33466,
+      "valid_cd": true
+    }
+  ],
+  "design": "Model packedB4; exact CUDA KD-tree individually on natural full point sets, no padding; full raw GT retained",
+  "frames": [
+    0,
+    100,
+    1800,
+    4000
+  ],
+  "gpu_tree_seconds_for_four": 0.9107760861515999,
+  "source_hashes": {
+    "gpu_kdtree.py": "57c9e87f54c1c412e01feea33bc3cc1f74063045521f344de4abfeace5efd32b",
+    "gpu_kdtree_cuda.cu": "f77cf5b7f726f2c0791ee1e588509f677c34cdf197141af5c375642cd750bbec"
+  },
+  "status": "PASS"
+}

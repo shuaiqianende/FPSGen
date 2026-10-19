@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "frame": 0,
+      "cd_cuda": 0.25057258169048424,
+      "cd_gpu_tree": 0.2505725815861195,
+      "error_m": 1.0436473907304844e-10,
+      "iou_counts_equal": true
+    },
+    {
+      "frame": 100,
+      "cd_cuda": 0.17904843781101787,
+      "cd_gpu_tree": 0.17904843778015295,
+      "error_m": 3.086492172954536e-11,
+      "iou_counts_equal": true
+    },
+    {
+      "frame": 1800,
+      "cd_cuda": 0.16923047233393992,
+      "cd_gpu_tree": 0.1692304722581612,
+      "error_m": 7.577871663499991e-11,
+      "iou_counts_equal": true
+    },
+    {
+      "frame": 4000,
+      "cd_cuda": 0.1781752694873608,
+      "cd_gpu_tree": 0.17817526941587572,
+      "error_m": 7.14850678651402e-11,
+      "iou_counts_equal": true
+    }
+  ],
+  "old_cuda_padded_four_seconds": 39.17201094888151,
+  "new_gpu_tree_four_seconds": 0.9107760861515999,
+  "timing_note": "Old CUDA time includes GPU IoU; new tree time is CD only. The single-scene benchmark separates CD fairly."
+}

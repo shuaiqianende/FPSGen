@@ -1,0 +1,248 @@
+{
+  "admission": {
+    "authorization": "user: \u53ef\u4ee5\u75281\u53f7\u5361",
+    "compute_pids": [],
+    "free_mib": 24103.0,
+    "physical_gpu": 1,
+    "training_gpu_policy_modified": false,
+    "utilization_percent": 0.0
+  },
+  "checks": [
+    {
+      "max_loss_difference": 0.0,
+      "median_ms": 2.2119469940662384,
+      "mode": "tiled",
+      "n": 8192,
+      "pass_test": true,
+      "reference_loss": 1.235701322555542,
+      "trials": [
+        {
+          "extra_peak_allocated_mib": 0.5009765625,
+          "gradient_finite": true,
+          "loss": 1.235701322555542,
+          "seconds": 0.00439608097076416,
+          "warmup": true
+        },
+        {
+          "extra_peak_allocated_mib": 0.5009765625,
+          "gradient_finite": true,
+          "loss": 1.235701322555542,
+          "seconds": 0.0022119469940662384,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 0.5009765625,
+          "gradient_finite": true,
+          "loss": 1.235701322555542,
+          "seconds": 0.002175481989979744,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 0.5009765625,
+          "gradient_finite": true,
+          "loss": 1.235701322555542,
+          "seconds": 0.0023579001426696777,
+          "warmup": false
+        }
+      ]
+    },
+    {
+      "max_loss_difference": 0.0,
+      "median_ms": 3.184160217642784,
+      "mode": "bvh",
+      "n": 8192,
+      "pass_test": true,
+      "reference_loss": 1.235701322555542,
+      "trials": [
+        {
+          "extra_peak_allocated_mib": 0.55810546875,
+          "gradient_finite": true,
+          "loss": 1.235701322555542,
+          "seconds": 0.0058152563869953156,
+          "warmup": true
+        },
+        {
+          "extra_peak_allocated_mib": 0.55810546875,
+          "gradient_finite": true,
+          "loss": 1.235701322555542,
+          "seconds": 0.0029156189411878586,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 0.55810546875,
+          "gradient_finite": true,
+          "loss": 1.235701322555542,
+          "seconds": 0.003184160217642784,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 0.55810546875,
+          "gradient_finite": true,
+          "loss": 1.235701322555542,
+          "seconds": 0.003930568695068359,
+          "warmup": false
+        }
+      ]
+    },
+    {
+      "max_loss_difference": 0.0,
+      "median_ms": 12.891987338662148,
+      "mode": "tiled",
+      "n": 65536,
+      "pass_test": true,
+      "reference_loss": 0.6113415956497192,
+      "trials": [
+        {
+          "extra_peak_allocated_mib": 4.0009765625,
+          "gradient_finite": true,
+          "loss": 0.6113415956497192,
+          "seconds": 0.0129510797560215,
+          "warmup": true
+        },
+        {
+          "extra_peak_allocated_mib": 4.0009765625,
+          "gradient_finite": true,
+          "loss": 0.6113415956497192,
+          "seconds": 0.012861108407378197,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 4.0009765625,
+          "gradient_finite": true,
+          "loss": 0.6113415956497192,
+          "seconds": 0.012891987338662148,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 4.0009765625,
+          "gradient_finite": true,
+          "loss": 0.6113415956497192,
+          "seconds": 0.012953726574778557,
+          "warmup": false
+        }
+      ]
+    },
+    {
+      "max_loss_difference": 0.0,
+      "median_ms": 5.841488018631935,
+      "mode": "bvh",
+      "n": 65536,
+      "pass_test": true,
+      "reference_loss": 0.6113415956497192,
+      "trials": [
+        {
+          "extra_peak_allocated_mib": 4.40087890625,
+          "gradient_finite": true,
+          "loss": 0.6113415956497192,
+          "seconds": 0.006402883678674698,
+          "warmup": true
+        },
+        {
+          "extra_peak_allocated_mib": 4.40087890625,
+          "gradient_finite": true,
+          "loss": 0.6113415956497192,
+          "seconds": 0.005820615217089653,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 4.40087890625,
+          "gradient_finite": true,
+          "loss": 0.6113415956497192,
+          "seconds": 0.005841488018631935,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 4.40087890625,
+          "gradient_finite": true,
+          "loss": 0.6113415956497192,
+          "seconds": 0.005880076438188553,
+          "warmup": false
+        }
+      ]
+    },
+    {
+      "max_loss_difference": 0.0,
+      "median_ms": 2168.121160939336,
+      "mode": "tiled",
+      "n": 1048576,
+      "pass_test": true,
+      "reference_loss": 0.24034930765628815,
+      "trials": [
+        {
+          "extra_peak_allocated_mib": 64.0009765625,
+          "gradient_finite": true,
+          "loss": 0.24034930765628815,
+          "seconds": 2.1616607420146465,
+          "warmup": true
+        },
+        {
+          "extra_peak_allocated_mib": 64.0009765625,
+          "gradient_finite": true,
+          "loss": 0.24034930765628815,
+          "seconds": 2.1655144840478897,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 64.0009765625,
+          "gradient_finite": true,
+          "loss": 0.24034930765628815,
+          "seconds": 2.168121160939336,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 64.0009765625,
+          "gradient_finite": true,
+          "loss": 0.24034930765628815,
+          "seconds": 2.17133036442101,
+          "warmup": false
+        }
+      ]
+    },
+    {
+      "max_loss_difference": 0.0,
+      "median_ms": 51.42351612448692,
+      "mode": "bvh",
+      "n": 1048576,
+      "pass_test": true,
+      "reference_loss": 0.24034930765628815,
+      "trials": [
+        {
+          "extra_peak_allocated_mib": 70.27587890625,
+          "gradient_finite": true,
+          "loss": 0.24034930765628815,
+          "seconds": 0.050834283232688904,
+          "warmup": true
+        },
+        {
+          "extra_peak_allocated_mib": 70.27587890625,
+          "gradient_finite": true,
+          "loss": 0.24034930765628815,
+          "seconds": 0.052012890577316284,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 70.27587890625,
+          "gradient_finite": true,
+          "loss": 0.24034930765628815,
+          "seconds": 0.05142351612448692,
+          "warmup": false
+        },
+        {
+          "extra_peak_allocated_mib": 70.27587890625,
+          "gradient_finite": true,
+          "loss": 0.24034930765628815,
+          "seconds": 0.05105230398476124,
+          "warmup": false
+        }
+      ]
+    }
+  ],
+  "final_source_and_binary_hashes": {
+    "/data-12/M2024-HWZ/FPSGen/env/voxel_point_cache/chamfer_scene_v1/fpsgen_chamfer_scene_v1.so": "5097f3f9b25bcf98bd5fbafbed2c28f3b31c63f38a0859a92b2d7e2ae9e152e7",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/fpsgen/ops/chamfer_scene.py": "42dd48e44a39c77122f7167fb2d1cd64ac1866a5b08a7b16ec7f732775a1575f",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/fpsgen/ops/chamfer_scene_cuda.cu": "e1ea714286b04bf8112ddf3c8f8d6cfb6b4f9e87b1df2b36da6eda4f6c1ef725"
+  },
+  "original_sources_unchanged": true,
+  "patch": "Initialize tiled nearest index to valid0 when all squared distances overflow FP32; normal finite d2 algorithm unchanged",
+  "status": "PASS_FINAL_RELEASE_6_CASES"
+}

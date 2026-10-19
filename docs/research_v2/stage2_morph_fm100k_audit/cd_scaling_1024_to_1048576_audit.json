@@ -1,0 +1,9 @@
+{
+  "figure_sha256": "563537d917684bbb60add0b98319c047ce5183e562778928e1f0cfb1f57bd260",
+  "max_cd_cpu_absolute_error_m": 1.7679763963940331e-07,
+  "note": "Loss values and finite gradients checked, not universal gradient equivalence",
+  "rows": 33,
+  "source_result_sha256": "7266cce9fd482d4a273c7145eaa8c23e5141423184598135dff6d169630f97ac",
+  "status": "PASS_33_PAIRS_99_TRIALS",
+  "trials": 99
+}

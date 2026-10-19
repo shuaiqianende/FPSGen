@@ -1,0 +1,26 @@
+{
+  "status": "IMPLEMENTED_AND_GPU_VALIDATED",
+  "utc": "2026-10-19T06:16:56.323160+00:00",
+  "branch": "research/hs-occflow-384-stage2-score-gtparents",
+  "head": "3a06d025b483efab23003433ac8914a2de8cb020",
+  "new_scene_gpu_tests": 26,
+  "existing_regressions": 24,
+  "total_tests": 50,
+  "scaling_combinations": 55,
+  "scaling_measured_trials": 165,
+  "teacher_context_points": 1080000,
+  "teacher_source_points": 180000,
+  "scene_teacher_gradient_pass": true,
+  "original_sources_unchanged": true,
+  "final_release_cases_pass": 6,
+  "final_loss_difference_vs_preboundaryfix": 0.0,
+  "system_environment_modified": false,
+  "training_jobs_modified": false,
+  "training_backend_replaced": false,
+  "physical_benchmark_gpu": 1,
+  "final_hashes": {
+    "/data-12/M2024-HWZ/FPSGen/env/voxel_point_cache/chamfer_scene_v1/fpsgen_chamfer_scene_v1.so": "5097f3f9b25bcf98bd5fbafbed2c28f3b31c63f38a0859a92b2d7e2ae9e152e7",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/fpsgen/ops/chamfer_scene.py": "42dd48e44a39c77122f7167fb2d1cd64ac1866a5b08a7b16ec7f732775a1575f",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/fpsgen/ops/chamfer_scene_cuda.cu": "e1ea714286b04bf8112ddf3c8f8d6cfb6b4f9e87b1df2b36da6eda4f6c1ef725"
+  }
+}

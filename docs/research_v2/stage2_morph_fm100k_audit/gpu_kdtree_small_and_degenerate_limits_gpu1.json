@@ -1,0 +1,321 @@
+{
+  "admission": {
+    "authorization": "user: \u53ef\u4ee5\u75281\u53f7\u5361",
+    "compute_pids": [],
+    "free_mib": 24103.0,
+    "physical_gpu": 1,
+    "training_gpu_policy_modified": false,
+    "utilization_percent": 0.0
+  },
+  "cases": [
+    {
+      "backends": {
+        "chamfer_cuda": {
+          "median_seconds": 0.00021642260253429413,
+          "runs": [
+            {
+              "cd_m": 0.5777303440263495,
+              "repeat": 0,
+              "seconds": 0.007788004353642464,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.5777303440263495,
+              "repeat": 1,
+              "seconds": 0.0003400314599275589,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.5777303440263495,
+              "repeat": 2,
+              "seconds": 0.0002959650009870529,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.5777303440263495,
+              "repeat": 3,
+              "seconds": 0.0002285577356815338,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.5777303440263495,
+              "repeat": 4,
+              "seconds": 0.00021642260253429413,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.5777303440263495,
+              "repeat": 5,
+              "seconds": 0.00021336786448955536,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.5777303440263495,
+              "repeat": 6,
+              "seconds": 0.00021352805197238922,
+              "warmup": false
+            }
+          ]
+        },
+        "gpu_kdtree": {
+          "median_seconds": 0.0011311117559671402,
+          "runs": [
+            {
+              "cd_m": 0.577730348568538,
+              "repeat": 0,
+              "seconds": 0.003764115273952484,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.577730348568538,
+              "repeat": 1,
+              "seconds": 0.0011489670723676682,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.577730348568538,
+              "repeat": 2,
+              "seconds": 0.0011417139321565628,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.577730348568538,
+              "repeat": 3,
+              "seconds": 0.0011311117559671402,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.577730348568538,
+              "repeat": 4,
+              "seconds": 0.0011297445744276047,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.577730348568538,
+              "repeat": 5,
+              "seconds": 0.0011410973966121674,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.577730348568538,
+              "repeat": 6,
+              "seconds": 0.0010951105505228043,
+              "warmup": false
+            }
+          ]
+        }
+      },
+      "name": "tiny_random",
+      "prediction_points": 64,
+      "target_points": 64,
+      "tree_over_cuda_time_ratio": 5.226403077691043
+    },
+    {
+      "backends": {
+        "chamfer_cuda": {
+          "median_seconds": 0.0006105266511440277,
+          "runs": [
+            {
+              "cd_m": 0.18381166290089368,
+              "repeat": 0,
+              "seconds": 0.0009305179119110107,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.18381166290089368,
+              "repeat": 1,
+              "seconds": 0.0007262453436851501,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.18381166290089368,
+              "repeat": 2,
+              "seconds": 0.0006404481828212738,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.18381166290089368,
+              "repeat": 3,
+              "seconds": 0.0006105266511440277,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.18381166290089368,
+              "repeat": 4,
+              "seconds": 0.000611431896686554,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.18381166290089368,
+              "repeat": 5,
+              "seconds": 0.0006099995225667953,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.18381166290089368,
+              "repeat": 6,
+              "seconds": 0.0006062034517526627,
+              "warmup": false
+            }
+          ]
+        },
+        "gpu_kdtree": {
+          "median_seconds": 0.012388091534376144,
+          "runs": [
+            {
+              "cd_m": 0.18381166308416558,
+              "repeat": 0,
+              "seconds": 0.013528214767575264,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.18381166308416558,
+              "repeat": 1,
+              "seconds": 0.012018170207738876,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.18381166308416558,
+              "repeat": 2,
+              "seconds": 0.012388091534376144,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.18381166308416558,
+              "repeat": 3,
+              "seconds": 0.012422023341059685,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.18381166308416558,
+              "repeat": 4,
+              "seconds": 0.012711843475699425,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.18381166308416558,
+              "repeat": 5,
+              "seconds": 0.011955095455050468,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.18381166308416558,
+              "repeat": 6,
+              "seconds": 0.011581754311919212,
+              "warmup": false
+            }
+          ]
+        }
+      },
+      "name": "small_random",
+      "prediction_points": 1024,
+      "target_points": 8192,
+      "tree_over_cuda_time_ratio": 20.29082843666673
+    },
+    {
+      "backends": {
+        "chamfer_cuda": {
+          "median_seconds": 0.0008750967681407928,
+          "runs": [
+            {
+              "cd_m": 0.0,
+              "repeat": 0,
+              "seconds": 0.0012625940144062042,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 1,
+              "seconds": 0.0008465349674224854,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 2,
+              "seconds": 0.0007516313344240189,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 3,
+              "seconds": 0.000890679657459259,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 4,
+              "seconds": 0.0008533336222171783,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 5,
+              "seconds": 0.0008750967681407928,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 6,
+              "seconds": 0.000898163765668869,
+              "warmup": false
+            }
+          ]
+        },
+        "gpu_kdtree": {
+          "median_seconds": 0.028070596978068352,
+          "runs": [
+            {
+              "cd_m": 0.0,
+              "repeat": 0,
+              "seconds": 0.023401832208037376,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 1,
+              "seconds": 0.02239813283085823,
+              "warmup": true
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 2,
+              "seconds": 0.025570431724190712,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 3,
+              "seconds": 0.027235843241214752,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 4,
+              "seconds": 0.028244003653526306,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 5,
+              "seconds": 0.028070596978068352,
+              "warmup": false
+            },
+            {
+              "cd_m": 0.0,
+              "repeat": 6,
+              "seconds": 0.028141003102064133,
+              "warmup": false
+            }
+          ]
+        }
+      },
+      "name": "all_identical_points",
+      "prediction_points": 1024,
+      "target_points": 8192,
+      "tree_over_cuda_time_ratio": 32.077134780998435
+    }
+  ],
+  "note": "Synthetic small stress cases, not representative raw LiDAR quality metrics; synchronized build+query timing; first two runs warmup.",
+  "source_sha256": "6657c7d15e2e0179451187053276b93f66e5b3e4984e4296fbe1bc3501f4d84b",
+  "status": "COMPLETE"
+}

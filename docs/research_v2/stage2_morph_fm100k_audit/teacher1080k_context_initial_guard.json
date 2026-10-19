@@ -1,0 +1,38 @@
+{
+  "admission": {
+    "authorization": "user: \u53ef\u4ee5\u75281\u53f7\u5361",
+    "compute_pids": [],
+    "free_mib": 24103.0,
+    "physical_gpu": 1,
+    "training_gpu_policy_modified": false,
+    "utilization_percent": 0.0
+  },
+  "checkpoint_sha256": "11dcff7cea84b9e0faa30d3b3e34d42b6e9290bfae8dacef445bf93064928371",
+  "context_protocol": "Exactly1080000 original raw-map points chosen without replacement;180000 source anchors from corresponding Poisson GT density; profiling only, no training update",
+  "context_seed": 20261019,
+  "context_shape": [
+    1080000,
+    3
+  ],
+  "criteria": {
+    "endpoint_gradient_absolute": 1e-06,
+    "endpoint_gradient_relative_l2": 0.0001,
+    "loss_absolute": 1e-06
+  },
+  "frame": "08/003900",
+  "full_teacher": {},
+  "gt_context_points": 1080000,
+  "historical_cd_backend": "keops",
+  "historical_step_seconds": 1.4417583656664752,
+  "isolated_cd": {},
+  "network_input_points": 1260000,
+  "original_valid_raw_context_points": 1144476,
+  "parameter_count": 14708739,
+  "scope": "SingleGPU FP16 Teacher training-mode benchmark, no optimizer updates/checkpoint writes; historical checkpoint read for realistic endpoints only",
+  "source_points": 180000,
+  "status": "BLOCKED_BY_LEGACY_CONTEXT_SHAPE_GUARD",
+  "failed_stage": "INITIAL_TEACHER_FORWARD",
+  "error": "Worktree MappingTeacher.forward requires GT context exactly180000; no1260000-point network forward executed",
+  "architecture_capacity_tested": false,
+  "followup": "benchmark-only subclass with same net/parameters and variable context guard"
+}

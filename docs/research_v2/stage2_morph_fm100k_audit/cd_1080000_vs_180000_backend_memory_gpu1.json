@@ -1,0 +1,215 @@
+{
+  "admission": {
+    "authorization": "user: \u53ef\u4ee5\u75281\u53f7\u5361",
+    "compute_pids": [],
+    "free_mib": 24103.0,
+    "physical_gpu": 1,
+    "training_gpu_policy_modified": false,
+    "utilization_percent": 0.0
+  },
+  "allocator_caveat": "PyTorch allocator counters measure live tensors/workspaces allocated through Torch, not necessarily raw allocations inside third-party CUDA libraries; reserved cache is not live usage.",
+  "backends": {},
+  "context": "180000 vs1080000 real fixed-point sets; build+loss+prediction-gradient measured; excludes model and immutable input baseline",
+  "cpu_build_query_seconds": 2.0193055663257837,
+  "cpu_cd_m": 0.20444166331372704,
+  "memory_backend_trials": {
+    "chamfer_cuda": {
+      "median_extra_peak_allocated_bytes": 30243328,
+      "median_peak_reserved_bytes": 83886080,
+      "trials": [
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.003960395231842995,
+          "cd_forward_seconds": 2.416045783087611,
+          "extra_peak_allocated_bytes": 30243328,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 59854848,
+          "peak_reserved_bytes": 83886080,
+          "repeat": 0,
+          "warmup": true
+        },
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.002157963812351227,
+          "cd_forward_seconds": 1.8324277605861425,
+          "extra_peak_allocated_bytes": 30243328,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 59854848,
+          "peak_reserved_bytes": 83886080,
+          "repeat": 1,
+          "warmup": false
+        },
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.0027258656919002533,
+          "cd_forward_seconds": 1.8324848413467407,
+          "extra_peak_allocated_bytes": 30243328,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 59854848,
+          "peak_reserved_bytes": 83886080,
+          "repeat": 2,
+          "warmup": false
+        },
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.0024969708174467087,
+          "cd_forward_seconds": 1.238435946404934,
+          "extra_peak_allocated_bytes": 30243328,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 59854848,
+          "peak_reserved_bytes": 83886080,
+          "repeat": 3,
+          "warmup": false
+        }
+      ]
+    },
+    "gpu_kdtree": {
+      "median_extra_peak_allocated_bytes": 116937728,
+      "median_peak_reserved_bytes": 180355072,
+      "trials": [
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.005132364109158516,
+          "cd_forward_seconds": 0.0899585410952568,
+          "extra_peak_allocated_bytes": 116937728,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 146549248,
+          "peak_reserved_bytes": 180355072,
+          "repeat": 0,
+          "warmup": true
+        },
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.002813884988427162,
+          "cd_forward_seconds": 0.0896836705505848,
+          "extra_peak_allocated_bytes": 116937728,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 146549248,
+          "peak_reserved_bytes": 180355072,
+          "repeat": 1,
+          "warmup": false
+        },
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.0024959761649370193,
+          "cd_forward_seconds": 0.08889773674309254,
+          "extra_peak_allocated_bytes": 116937728,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 146549248,
+          "peak_reserved_bytes": 180355072,
+          "repeat": 2,
+          "warmup": false
+        },
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.0023602843284606934,
+          "cd_forward_seconds": 0.08927448093891144,
+          "extra_peak_allocated_bytes": 116937728,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 146549248,
+          "peak_reserved_bytes": 180355072,
+          "repeat": 3,
+          "warmup": false
+        }
+      ]
+    },
+    "keops": {
+      "median_extra_peak_allocated_bytes": 78774784,
+      "median_peak_reserved_bytes": 148897792,
+      "trials": [
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.0046454258263111115,
+          "cd_forward_seconds": 5.144246252253652,
+          "extra_peak_allocated_bytes": 78774784,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 108386304,
+          "peak_reserved_bytes": 148897792,
+          "repeat": 0,
+          "warmup": true
+        },
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.0036476217210292816,
+          "cd_forward_seconds": 1.413045261055231,
+          "extra_peak_allocated_bytes": 78774784,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 108386304,
+          "peak_reserved_bytes": 148897792,
+          "repeat": 1,
+          "warmup": false
+        },
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.002884684130549431,
+          "cd_forward_seconds": 1.4158283472061157,
+          "extra_peak_allocated_bytes": 78774784,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 108386304,
+          "peak_reserved_bytes": 148897792,
+          "repeat": 2,
+          "warmup": false
+        },
+        {
+          "baseline_allocated_bytes": 29611520,
+          "baseline_reserved_bytes": 41943040,
+          "cd_backward_seconds": 0.003642784431576729,
+          "cd_forward_seconds": 1.4149144887924194,
+          "extra_peak_allocated_bytes": 78774784,
+          "loss": 0.20444166660308838,
+          "peak_allocated_bytes": 108386304,
+          "peak_reserved_bytes": 148897792,
+          "repeat": 3,
+          "warmup": false
+        }
+      ]
+    }
+  },
+  "oracle_fp32_loss": 0.20444166660308838,
+  "original_gt_points": 1144476,
+  "original_prediction_points": 504083,
+  "pair_count": 194400000000,
+  "per_point_checks": [
+    {
+      "cuda_fp32_max_distance_error_m": 4.097515535761431e-07,
+      "direction": "prediction_to_gt",
+      "gpu_tree_max_distance_error_m": 0.0,
+      "gpu_tree_nearest_index_mismatches": 0,
+      "pass_test": true,
+      "queries": 180000
+    },
+    {
+      "cuda_fp32_max_distance_error_m": 6.890721380159448e-07,
+      "direction": "gt_to_prediction",
+      "gpu_tree_max_distance_error_m": 0.0,
+      "gpu_tree_nearest_index_mismatches": 1,
+      "pass_test": true,
+      "queries": 1080000
+    }
+  ],
+  "predicted_points": 180000,
+  "prediction_source_sha256": "3a47ea9ccdd8866eedaba7a8cf1128754273df55f074ddc0b80152b5b9dd3f8d",
+  "protocol": "SIZE BENCHMARK ONLY: fixed seeded subsets without replacement from real08/003900 prediction and raw map; does not replace full-point evaluation",
+  "seed": 20261019,
+  "source_sha256": "b0e4351541153b54f88e4f3ef9e34b18ed3db644a82a33bbe5b3bea6d08582f0",
+  "status": "MEMORY_PROFILE_COMPLETE",
+  "target_points": 1080000,
+  "thresholds": {
+    "cd_absolute_m": 1e-06,
+    "each_distance_m": 1e-05,
+    "gradient_max_absolute": 1e-06,
+    "gradient_relative_l2": 0.0001
+  },
+  "timing": "Per-backend PyTorch peak allocated delta above live input baseline; shared inputs excluded; cold reserved cache cleared per trial; no model"
+}
