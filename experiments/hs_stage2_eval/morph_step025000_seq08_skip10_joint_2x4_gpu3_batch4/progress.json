@@ -1,0 +1,24 @@
+{
+  "elapsed_seconds": 1550.952925881371,
+  "rows": 408,
+  "status": "COMPLETE",
+  "summary": [
+    {
+      "cd_m_macro": 0.2018256159762142,
+      "frames": 408,
+      "iou01_macro": 0.1672576001623081,
+      "iou01_micro": 0.16659986794983878,
+      "iou02_macro": 0.40298023872559796,
+      "iou02_micro": 0.3996080941147867,
+      "iou05_macro": 0.5105414457793824,
+      "iou05_micro": 0.5061817153851514,
+      "jsd_3d_macro": 0.4100653730525332,
+      "jsd_bev_macro": 0.3077436007387077,
+      "mean_candidate_parents": 122914.2181372549,
+      "mean_predicted_fine_voxels": 607422.0833333334,
+      "mean_raw_gt_points": 1303455.6078431373,
+      "stage1_nfe": 2,
+      "stage2_nfe": 4
+    }
+  ]
+}

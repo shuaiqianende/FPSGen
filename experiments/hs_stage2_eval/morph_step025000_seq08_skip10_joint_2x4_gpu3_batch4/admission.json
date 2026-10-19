@@ -1,0 +1,6 @@
+{
+  "compute_processes": [],
+  "free_mib_at_admission": 24106.0,
+  "physical_gpu": 3,
+  "utilization_percent_at_admission": 0.0
+}
