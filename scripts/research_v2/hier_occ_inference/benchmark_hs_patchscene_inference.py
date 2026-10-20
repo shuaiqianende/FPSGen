@@ -22,6 +22,7 @@ sys.path.insert(0, str(HERE))
 from fpsgen.hier_occ_flow.dataset import input_xyz
 from fpsgen.hier_occ_flow.storage import atomic_json, file_sha
 from fpsgen.hier_occ_flow.stage1_occ_adapter import FrozenStage1OccupancyAdapter
+from fpsgen.hier_occ_flow.stage1_layout import enable_channels_last_3d, remove_layout_hooks
 from fpsgen.hier_occ_flow.stage2_runtime import load_stage2_config
 from fpsgen.hier_occ_flow.stage2_model import Stage2OccupancyModel
 from fpsgen.hier_occ_flow.stage2_condition import scene_seed
@@ -48,7 +49,7 @@ def _sha_array(arr):
     return hashlib.sha256(np.ascontiguousarray(arr).view(np.uint8)).hexdigest()
 
 
-def _admit(gpu):
+def _admit(gpu, allow_idle_service_context=False):
     q = subprocess.check_output([
         "nvidia-smi", f"--id={gpu}", "--query-gpu=name,memory.free,memory.total,utilization.gpu,temperature.gpu,power.draw,clocks.sm",
         "--format=csv,noheader,nounits"], text=True).strip().split(",")
@@ -56,11 +57,29 @@ def _admit(gpu):
         "nvidia-smi", f"--id={gpu}", "--query-compute-apps=pid,process_name,used_memory",
         "--format=csv,noheader,nounits"], text=True)
     processes = [x.strip() for x in p.splitlines() if x.strip()]
+    process_mib = []
+    for line in processes:
+        fields = [part.strip() for part in line.split(",")]
+        try:
+            process_mib.append(int(fields[-1]))
+        except (ValueError, IndexError):
+            process_mib.append(10**9)
     info = {"physical_gpu": gpu, "name": q[0].strip(), "memory_free_mib": int(q[1]),
             "memory_total_mib": int(q[2]), "utilization_percent": int(q[3]),
             "temperature_c": int(q[4]), "power_w": float(q[5]), "sm_clock_mhz": int(q[6]),
             "compute_processes": processes}
-    if processes or info["memory_free_mib"] < 18000 or info["utilization_percent"] > 10:
+    # GPU0 may host the idle local inference API (observed holding one 346 MiB
+    # CUDA context at 0% utilization). Allow that specific low-footprint case
+    # only when explicitly requested; never relax admission for GPUs 2/3.
+    idle_service_context = (
+        allow_idle_service_context and gpu == 0 and processes
+        and sum(process_mib) <= 512 and info["memory_free_mib"] >= 18000
+        and info["utilization_percent"] <= 1
+    )
+    if idle_service_context:
+        info["admission_note"] = "explicitly allowed idle GPU0 service context; no process was stopped"
+    if ((processes and not idle_service_context) or info["memory_free_mib"] < 18000
+            or info["utilization_percent"] > 10):
         raise RuntimeError(f"GPU{gpu} admission rejected: {info}")
     return info
 
@@ -298,7 +317,9 @@ def _write_rows(output, rows, summary):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--model", choices=("hs_occflow", "patchscene"), required=True)
-    p.add_argument("--physical-gpu", choices=(2, 3), type=int, default=2)
+    p.add_argument("--physical-gpu", choices=(0, 2, 3), type=int, default=2)
+    p.add_argument("--allow-idle-gpu0-service-context", action="store_true",
+                   help="Allow GPU0's observed <=512 MiB idle service context when utilization is <=1%%; never terminates it")
     p.add_argument("--data-root", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--config", type=Path)
@@ -340,6 +361,8 @@ def main():
     p.add_argument("--jitter-backend", choices=("cpu_reference", "cuda"), default="cpu_reference")
     p.add_argument("--parity-reference-dir", type=Path,
                    help="Optional directory containing baseline frame_XXXXXX.npz predictions")
+    p.add_argument("--quality-reference-dir", type=Path,
+                   help="Optional numerical-variant reference; records score/candidate/occupancy deltas without enforcing exact parity")
     p.add_argument("--smoke-one-frame", action="store_true",
                    help="Engineering smoke only: run frame 100 once, without warmup; never a benchmark result")
     a = p.parse_args()
@@ -356,7 +379,7 @@ def main():
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA unavailable")
     device = torch.device("cuda:0")
-    admission = _admit(a.physical_gpu)
+    admission = _admit(a.physical_gpu, allow_idle_service_context=a.allow_idle_gpu0_service_context)
     torch.backends.cudnn.benchmark = bool(a.stage1_cudnn_benchmark)
     torch.backends.cudnn.allow_tf32 = bool(a.stage1_tf32)
     torch.backends.cuda.matmul.allow_tf32 = bool(a.stage1_tf32)
@@ -393,10 +416,11 @@ def main():
         if saved["successful_updates"] != 25_000 or saved["sampler"]["successful_frame_exposures"] != 100_000:
             raise ValueError("Unexpected Stage2 training state")
         adapter = FrozenStage1OccupancyAdapter(**cfg["stage1"]["adapter"]).to(device).eval()
+        stage1_layout_handles = []
         if a.stage1_encoder_layout == "channels_last_3d":
-            adapter.model.encoder.to(memory_format=torch.channels_last_3d)
+            stage1_layout_handles.extend(enable_channels_last_3d(adapter.model.encoder))
         if a.stage1_flow_layout == "channels_last_3d":
-            adapter.model.flow.to(memory_format=torch.channels_last_3d)
+            stage1_layout_handles.extend(enable_channels_last_3d(adapter.model.flow))
         model = Stage2OccupancyModel(geom, **cfg["model"]).to(device).eval()
         model.load_state_dict(saved["model"], strict=True)
         dtype_audit = {}
@@ -467,11 +491,13 @@ def main():
             "stage1_tf32": a.stage1_tf32,
             "jitter_backend": a.jitter_backend,
             "parity_reference_dir": str(a.parity_reference_dir.resolve()) if a.parity_reference_dir else None,
+            "quality_reference_dir": str(a.quality_reference_dir.resolve()) if a.quality_reference_dir else None,
         }
         save_dir = a.output / "predictions"
         parity_rows = {}
-        if a.parity_reference_dir:
-            reference_run = a.parity_reference_dir.parent.parent
+        reference_dir = a.parity_reference_dir or a.quality_reference_dir
+        if reference_dir:
+            reference_run = reference_dir.parent.parent
             reference_jsonl = reference_run / "per_frame.jsonl"
             if reference_jsonl.is_file():
                 parity_rows = {int(record["frame"]): record for record in
@@ -518,8 +544,8 @@ def main():
                            "jitter_cuda_proposals": jitter_meta.get("cuda_proposals"),
                            "jitter_cuda_rejection_rounds": jitter_meta.get("cuda_rejection_rounds"),
                            "jitter_seed": int(POINT_SEED_BASE + frame), **inputs[frame]})
-            if a.parity_reference_dir and not warmup:
-                ref_path = a.parity_reference_dir / f"frame_{frame:06d}.npz"
+            if reference_dir and not warmup:
+                ref_path = reference_dir / f"frame_{frame:06d}.npz"
                 if not ref_path.is_file():
                     raise FileNotFoundError(f"Missing parity reference for frame {frame}: {ref_path}")
                 with np.load(ref_path) as ref:
@@ -528,14 +554,23 @@ def main():
                 timing["parity_reference"] = str(ref_path.resolve())
                 timing["parity_exact"] = bool(exact)
                 timing["parity_reference_occupied_voxels"] = int(len(ref_coords))
+                nx, ny, nz = geom.fine_resolution
+                ref_ids = np.sort(ref_coords[:, 0].astype(np.int64) + nx * ref_coords[:, 1].astype(np.int64)
+                                  + nx * ny * ref_coords[:, 2].astype(np.int64))
+                cur_ids = np.sort(fine[:, 0].astype(np.int64) + nx * fine[:, 1].astype(np.int64)
+                                  + nx * ny * fine[:, 2].astype(np.int64))
+                overlap = int(np.intersect1d(ref_ids, cur_ids, assume_unique=True).size)
+                timing["occupancy_symmetric_difference_voxels"] = int(len(ref_ids) + len(cur_ids) - 2 * overlap)
                 reference_row = parity_rows.get(frame)
                 if reference_row is not None:
-                    for key in ("stage1_score_sha256", "stage1_candidate_ids_sha256", "candidate_parents"):
-                        if timing.get(key) != reference_row.get(key):
-                            raise RuntimeError(f"Stage1 parity failed at frame {frame}: {key}")
-                    timing["stage1_score_parity_exact"] = True
-                    timing["stage1_candidate_ids_parity_exact"] = True
-                if not exact:
+                    timing["stage1_score_parity_exact"] = timing.get("stage1_score_sha256") == reference_row.get("stage1_score_sha256")
+                    timing["stage1_candidate_ids_parity_exact"] = timing.get("stage1_candidate_ids_sha256") == reference_row.get("stage1_candidate_ids_sha256")
+                    timing["candidate_parent_count_delta"] = int(timing.get("candidate_parents", 0) - reference_row.get("candidate_parents", 0))
+                    if a.parity_reference_dir and not (timing["stage1_score_parity_exact"]
+                                                       and timing["stage1_candidate_ids_parity_exact"]
+                                                       and timing["candidate_parent_count_delta"] == 0):
+                        raise RuntimeError(f"Stage1 parity failed at frame {frame}")
+                if not exact and a.parity_reference_dir:
                     raise RuntimeError(f"Fine occupancy parity failed at frame {frame}")
             # Keep JSON records lean; arrays and paths remain in input identity.
             timing.pop("xyz", None); timing.pop("path", None)
@@ -552,6 +587,7 @@ def main():
         for frame, xyz_np, fine_np, output_geom, jitter_np, jitter_meta in pending_outputs:
             _dump_outputs(save_dir, frame, xyz_np, fine_np, output_geom, jitter_np, jitter_meta)
         for handle in dtype_hook_handles: handle.remove()
+        remove_layout_hooks(stage1_layout_handles)
         if a.dtype_audit:
             protocol["module_dtype_audit"] = {
                 name: {key: sorted(values) for key, values in record.items()}
@@ -621,7 +657,11 @@ def main():
                "benchmark_frames": a.benchmark_frames, "statistics": {k: summarize([r[k] for r in rows]) for k in metric_keys},
                "network_forward_calls_total": int(sum(r.get("stage1_flow_forward_calls", 0) + r.get("stage2_forward_calls", 0) + r.get("unet_forward_calls", 0) for r in rows)),
                "network_forward_calls_per_frame": float(np.mean([r.get("stage1_flow_forward_calls", 0) + r.get("stage2_forward_calls", 0) + r.get("unet_forward_calls", 0) for r in rows]))}
-    protocol.update(status="COMPLETE", timed_frames=len(rows), code_sha256=file_sha(Path(__file__)),
+    protocol.update(status="COMPLETE", timed_frames=len(rows),
+                    git_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+                    code_sha256=file_sha(Path(__file__)),
+                    stage1_network_sha256=file_sha(ROOT / "fpsgen/hier_occ_flow/stage1_network.py"),
+                    stage1_occupancy_sha256=file_sha(ROOT / "fpsgen/hier_occ_flow/stage1_occupancy.py"),
                     timing_util_sha256=file_sha(HERE / "inference_timing_utils.py"))
     atomic_json(a.output / "protocol.json", protocol)
     atomic_json(a.output / "admission.json", admission)

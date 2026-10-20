@@ -1,6 +1,6 @@
 # HS-OccFlow Stage1 V4 Profile
 
-Status: profiling implementation is ready; full module profile is pending a safe GPU2/3 window.
+Status: GPU0 Stage1 profile and a matched 5+20 baseline/cache comparison have completed. Further layout/cuDNN/TF32 trials were stopped after another compute process appeared on GPU0.
 
 ## Frozen system
 
@@ -25,9 +25,64 @@ One registered 5-warmup/20-frame run was completed with V3 features and the V4 r
 
 Raw records: `experiments/hs_inference_opt_v4/baseline/v3_gpu3_5x20/`.
 
+## GPU0 Stage1 profiling (20 October 2026)
+
+The user explicitly authorized GPU0. At admission, it was an RTX 3090 with 23,751 MiB free, 0% utilization and 29 C, while the local inference API held a 346 MiB CUDA context. The benchmark recorded this low-footprint service context and did not stop it. A later attempt at a new channels-last smoke was correctly rejected when GPU0 utilization rose to 12% and another 3,008 MiB process appeared.
+
+The original, non-cached Stage1 path was profiled on Seq08 frames 2300, 700 and 100. The observed scan had 18,000 points in these files; the Stage1 threshold selected 126,466 coarse parents in each frame.
+
+| Module/category (leaf CUDA event sum) | Mean ms | Notes |
+|---|---:|---|
+| Stage1 Encoder total | 203.74 | frame range 203.54–203.99 ms |
+| Encoder Conv3d leaves | 137.13 | largest measured category |
+| Encoder GroupNorm leaves | 19.38 | |
+| Encoder ReLU leaves | 9.66 | |
+| Encoder DensePooling leaves | 5.45 | |
+| Encoder DeformConv2d leaves | 2.67 | |
+| `torch.unique` in tokenizer | 0.44 | not a dominant bottleneck |
+| `scatter_max` in tokenizer | 0.25 | not a dominant bottleneck |
+| Stage1 Flow, 2 NFE | 108.38 | original path; frame range 108.28–108.52 ms |
+| Flow condition projections | 2.94 | three projections called twice per frame |
+| Flow interpolation | 2.14 | two-step total |
+
+The leaf-event categories account for most, but not all, of the Encoder interval; the remaining time includes functional ops and framework/layout overhead. They are profiler diagnostics and not additive replacements for the synchronized full-module measurements. Tokenizer unique/scatter together are below 1 ms here, so a custom tokenizer kernel is not currently justified. Dense Conv3d is the clear Stage1 Encoder target.
+
+Raw profile: `experiments/hs_inference_opt_v4/stage1_profile/gpu0_3scenes_originalflow.json`.
+
+## Matched GPU0 5+20 baseline
+
+The final V3 configuration was rerun on GPU0 with five real-frame warmups and 20 timed frames; only native center point extraction was enabled after generation (`--skip-jitter`).
+
+| Metric | Mean | Std | P95 |
+|---|---:|---:|---:|
+| Stage1 Encoder | 203.73 ms | 0.58 ms | 204.55 ms |
+| Stage1 Flow ×2 | 107.85 ms | 0.22 ms | 108.11 ms |
+| Stage2 PTv3 ×4 | 142.80 ms | 27.00 ms | 178.79 ms |
+| Network CUDA Events | 454.39 ms | 26.76 ms | 490.98 ms |
+| Full generation Wall Time | 479.00 ms | 29.44 ms | 518.13 ms |
+| Peak allocated / reserved | 3.01 / 3.84 GiB | — | — |
+
+Raw records: `experiments/hs_inference_opt_v4/baseline/v3_gpu0_5x20/`.
+
+## Stage1 condition projection cache, GPU0 matched run
+
+The same 5+20 frames, V3 switches, weights and per-frame seeds were rerun with only `--stage1-flow-condition-cache` added. All 20 frames had exact Stage1 score hash, exact candidate ID hash and exact Fine Occupancy coordinate equality. Encoder outputs and Stage2 timing were unchanged within measurement noise.
+
+| Metric | Baseline | Cached | Paired change |
+|---|---:|---:|---:|
+| Stage1 Encoder | 203.73 ms | 203.78 ms | +0.05 ms |
+| Stage1 Flow total incl. cache preparation | 107.85 ms | 106.63 ms | −1.22 ms |
+| Stage2 ×4 | 142.80 ms | 143.04 ms | +0.24 ms |
+| Full generation | 479.00 ms | 476.57 ms | −2.43 ms |
+| Peak allocated / reserved | 3.01 / 3.84 GiB | 3.01 / 3.84 GiB | unchanged |
+
+Cache preparation costs 1.28 ms; the two-step Flow module portion fell by 2.50 ms, yielding about 1.22 ms net Flow savings. The full-generation paired improvement is small (about 0.5%) and comes from a single 20-frame comparison; repeat rounds are still needed before treating it as a stable speedup. It does not approach the 400 ms target by itself.
+
+Raw records: `experiments/hs_inference_opt_v4/flow_condition_cache/gpu0_5x20/`.
+
 ## Profiling breakdown
 
-`scripts/research_v2/hier_occ_inference/profile_stage1_v4.py` measures real Seq08 frames with module-level CUDA events and host submit times. It records tokenizer input feature construction, `torch.unique`, `scatter_max`, Point MLP leaves, dense encoder leaves, Flow leaves, condition projections, interpolation and concatenation. Leaf/module timings are inclusive where modules contain child work; they must not be blindly summed. The full profile has not yet run because GPU2 and GPU3 were occupied by external processes on repeated admission checks. The script applies the existing strict GPU admission policy and does not terminate processes.
+`scripts/research_v2/hier_occ_inference/profile_stage1_v4.py` measures real Seq08 frames with module-level CUDA events and host submit times. It records tokenizer input feature construction, `torch.unique`, `scatter_max`, Point MLP leaves, dense encoder leaves, Flow leaves, condition projections, interpolation and concatenation. The original Flow path is now the default; `--flow-condition-cache` profiles the opt-in cached path. Leaf timings are diagnostic and should not be blindly added to full-module timings. The script applies GPU admission and never terminates other processes.
 
 ## Next result fields
 

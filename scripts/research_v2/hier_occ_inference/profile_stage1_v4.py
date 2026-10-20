@@ -106,19 +106,22 @@ def _time_flow_functional_ops(events, host):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--physical-gpu", type=int, choices=(2, 3), default=2)
+    p.add_argument("--physical-gpu", type=int, choices=(0, 2, 3), default=2)
+    p.add_argument("--allow-idle-gpu0-service-context", action="store_true")
     p.add_argument("--data-root", type=Path, default=Path("/data-12/M2024-HWZ/KITTI_Odometry"))
     p.add_argument("--config", type=Path, default=ROOT / "configs/research_v2/hier_occ_flow/stage2_384_real_score_gt_only_morph_100kframes.yaml")
     p.add_argument("--stage1-checkpoint", type=Path, default=Path("/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt"))
     p.add_argument("--stage2-checkpoint", type=Path, default=Path("/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_384_real_score_gt_only_morph_100kframes/checkpoints/step025000.pt"))
     p.add_argument("--frames", type=int, nargs=3, default=(2300, 700, 100), help="Representative low, mid and high parent-token scenes")
+    p.add_argument("--flow-condition-cache", action="store_true",
+                   help="Profile the inference-only fixed-condition projection cache; default is original flow path")
     p.add_argument("--output", type=Path, required=True)
     a = p.parse_args()
     if os.environ.get("CUDA_VISIBLE_DEVICES") != str(a.physical_gpu):
         raise RuntimeError("Set CUDA_VISIBLE_DEVICES to the selected physical GPU only")
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA unavailable")
-    admission = _admit(a.physical_gpu)
+    admission = _admit(a.physical_gpu, allow_idle_service_context=a.allow_idle_gpu0_service_context)
     if file_sha(a.stage1_checkpoint) != S1_SHA or file_sha(a.stage2_checkpoint) != S2_SHA:
         raise ValueError("Checkpoint SHA does not match frozen V3 baseline")
     cfg, _geometry = load_stage2_config(a.config)
@@ -146,18 +149,28 @@ def main():
             with _time_tokenizer_ops(device, events, host):
                 features = _timed(lambda: adapter.model.encode_condition(xyz), device, timings, "encoder_total")
             observed = _timed(lambda: adapter.model.geometry.observed_mask(xyz), device, timings, "observed_mask")
-            flow_context = adapter.model.flow.prepare_inference_context(observed, features)
             state = torch.randn((1, 1, *adapter.model.geometry.field_shape), device=device,
                                 generator=torch.Generator(device=device).manual_seed(20261019 + frame)) * adapter.model.valid
             flow_timer_start, flow_timer_end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
             flow_timer_start.record()
+            flow_context_ms = 0.0
+            flow_context = None
+            context_events = None
+            if a.flow_condition_cache:
+                context_start, context_end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+                context_start.record()
+                flow_context = adapter.model.flow.prepare_inference_context(observed, features)
+                context_end.record()
+                context_events = (context_start, context_end)
             with _time_flow_functional_ops(events, host):
                 for step in range(2):
-                    velocity = adapter.model.flow(state, observed, None, state.new_tensor(step / 2),
+                    velocity = adapter.model.flow(state, observed, features, state.new_tensor(step / 2),
                                                   inference_context=flow_context)
                     state = state + velocity.float() / 2
             flow_timer_end.record(); torch.cuda.synchronize(device)
             flow_ms = float(flow_timer_start.elapsed_time(flow_timer_end))
+            if context_events is not None:
+                flow_context_ms = float(context_events[0].elapsed_time(context_events[1]))
         stage_events, stage_host = {}, {}
         event_calls = {}
         for name, event_pairs in events.items():
@@ -172,12 +185,29 @@ def main():
                      "encoder_total_cuda_ms": timings["encoder_total"][0]["cuda_ms"],
                      "encoder_total_host_ms_including_sync": timings["encoder_total"][0]["host_ms_including_sync"],
                      "flow_two_steps_cuda_ms": flow_ms,
+                     "flow_condition_cache_cuda_ms": flow_context_ms,
+                     "flow_condition_cache_enabled": bool(a.flow_condition_cache),
                      "module_leaf_cuda_ms_inclusive": stage_events,
                      "module_leaf_host_ms_inclusive": stage_host,
                      "module_leaf_call_count": event_calls,
                      "candidate_parents": int((score[0, 0] >= .5).sum().item())})
         events.clear(); host.clear()
-        print(json.dumps(rows[-1]), flush=True)
+        class_totals = {}
+        for stage, items in stage_events.items():
+            if stage in ("encoder", "flow"):
+                for key, value in items.items():
+                    kind = key.rsplit(":", 1)[-1]
+                    class_totals.setdefault(stage, {}).setdefault(kind, 0.0)
+                    class_totals[stage][kind] += value
+        print(json.dumps({"label": label, "frame": frame, "input_points": len(xyz_np),
+                          "candidate_parents": rows[-1]["candidate_parents"],
+                          "encoder_ms": rows[-1]["encoder_total_cuda_ms"],
+                          "flow_two_steps_ms": flow_ms,
+                          "flow_condition_cache_ms": flow_context_ms,
+                          "leaf_event_sum_by_module_type_ms": class_totals,
+                          "tokenizer_unique_ms": stage_events.get("encoder_irregular_ops", {}).get("tokenizer.torch_unique", 0.0),
+                          "tokenizer_scatter_max_ms": stage_events.get("encoder_irregular_ops", {}).get("tokenizer.scatter_max", 0.0)}),
+              flush=True)
 
     for handle in handles: handle.remove()
     a.output.parent.mkdir(parents=True, exist_ok=True)
