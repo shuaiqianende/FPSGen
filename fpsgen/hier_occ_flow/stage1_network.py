@@ -127,7 +127,23 @@ class OccupancyUNet(nn.Module):
                                  condition_projected=inference_context["condition_projected"])
         return self._forward(state, observed, condition, time)
 
-    def _forward(self,state,observed,condition,time=None,condition_projected=None):
+    def forward_inference_validated(self, state, observed, condition, time):
+        """Inference-only path when the caller already validated the fixed time schedule.
+
+        This keeps all network arithmetic unchanged while avoiding the device
+        tensor-to-Python boolean used only by the ordinary time-range guard.
+        The method is intended for CUDA Graph capture with the fixed [0, 1)
+        Stage1 Euler schedule; training and the default forward are unchanged.
+        """
+        if self.training or torch.is_grad_enabled():
+            raise RuntimeError("Validated Stage1 inference path requires eval and no_grad")
+        if state.ndim != 5 or state.shape[1] != 1 or observed.shape != state.shape:
+            raise ValueError("Scalar ZYX state and matching input-only mask required")
+        if condition is None or len(condition) != 3:
+            raise ValueError("Three VoxDet condition scales required")
+        return self._forward(state, observed, condition, time, validate_time_range=False)
+
+    def _forward(self,state,observed,condition,time=None,condition_projected=None,validate_time_range=True):
         if (state.ndim!=5 or state.shape[1]!=1 or observed.shape!=state.shape
                 or (condition_projected is None and (condition is None or len(condition)!=3))
                 or (condition_projected is not None and len(condition_projected)!=3)):
@@ -135,7 +151,7 @@ class OccupancyUNet(nn.Module):
         if self.objective=='fm':
             if time is None: raise ValueError('FM requires time')
             t=batch_scalar(time,state)
-            if not bool(((t>=0)&(t<=1)).all()): raise ValueError('t outside [0,1]')
+            if validate_time_range and not bool(((t>=0)&(t<=1)).all()): raise ValueError('t outside [0,1]')
             angle=t[:,None]*self.frequencies[None]
             embedding=self.embedding(torch.cat((angle.sin(),angle.cos()),1))
         else:

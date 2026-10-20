@@ -343,6 +343,9 @@ def main():
                    help="V4 inference-only cache of the three fixed Stage1 condition projections")
     p.add_argument("--stage1-encoder-layout", choices=("original", "channels_last_3d"), default="original")
     p.add_argument("--stage1-flow-layout", choices=("original", "channels_last_3d"), default="original")
+    p.add_argument("--stage1-encoder-compile-target",
+                   choices=("none", "voxel_backbone", "voxel_neck", "local_backbone", "classification_neck"),
+                   default="none", help="V5 opt-in compile of one dense Encoder submodule")
     p.add_argument("--stage1-cudnn-benchmark", action="store_true")
     p.add_argument("--stage1-tf32", action="store_true",
                    help="Enable cuDNN and matmul TF32 flags (opt-in numeric variant)")
@@ -464,6 +467,18 @@ def main():
             for name in ("local", "time", "fuse", "decoder"):
                 setattr(model, name, torch.compile(getattr(model, name), dynamic=True))
             compile_seconds = time.perf_counter() - compile_start
+        encoder_compile_setup_seconds = 0.0
+        if a.stage1_encoder_compile_target != "none":
+            if not hasattr(torch, "compile"):
+                raise RuntimeError("torch.compile is unavailable in this PyTorch build")
+            encoder = adapter.model.encoder
+            target = a.stage1_encoder_compile_target
+            compile_start = time.perf_counter()
+            if target == "classification_neck":
+                encoder._classification_neck = torch.compile(encoder._classification_neck, dynamic=False)
+            else:
+                setattr(encoder, target, torch.compile(getattr(encoder, target), dynamic=False))
+            encoder_compile_setup_seconds = time.perf_counter() - compile_start
         protocol.update(stage1_checkpoint_sha256=S1_SHA, stage1_weights="ema", stage1_nfe=2,
                         stage1_checkpoint=cfg["stage1"]["adapter"]["checkpoint"],
                         stage2_checkpoint_sha256=S2_SHA, stage2_weights="online",
@@ -473,6 +488,8 @@ def main():
                         stage1_flow_condition_cache=a.stage1_flow_condition_cache,
                         stage1_encoder_layout=a.stage1_encoder_layout,
                         stage1_flow_layout=a.stage1_flow_layout,
+                        stage1_encoder_compile_target=a.stage1_encoder_compile_target,
+                        stage1_encoder_compile_wrapper_setup_seconds=encoder_compile_setup_seconds,
                         stage1_cudnn_benchmark=a.stage1_cudnn_benchmark,
                         stage1_tf32=a.stage1_tf32,
                         stage1_execution_mode=a.stage1_execution_mode,
@@ -505,9 +522,9 @@ def main():
         pending_outputs = []
         protocol["geometry_sha256"] = geom.sha256
         protocol["model_parameter_forwards"] = "encoder once; Stage1 flow twice; Stage2 model four times"
-        compile_first_call = True
+        compile_first_call = a.compile_target != "none" or a.stage1_encoder_compile_target != "none"
         for warmup, frame in [(True, f) for f in a.warmup_frames] + [(False, f) for f in a.benchmark_frames]:
-            call_start = time.perf_counter() if compile_first_call and a.compile_target != "none" else None
+            call_start = time.perf_counter() if compile_first_call else None
             execution_context = (torch.no_grad() if a.stage1_execution_mode == "no_grad"
                                  else torch.inference_mode())
             with execution_context:
