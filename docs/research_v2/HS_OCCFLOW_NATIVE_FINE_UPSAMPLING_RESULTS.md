@@ -54,7 +54,12 @@ voxels were 805,328; mean retained source-voxel coverage was 0.99627. Mean
 sampling time was 1.64 s and mean jitter metric evaluation time was 3.80 s per
 frame. These early eight frames are ordered and contiguous; do not interpret
 the apparent improvement as a full-sequence estimate. The full 408-frame
-evaluation remains pending.
+HS-OccFlow evaluation is now running on physical GPU2 in tmux session
+`hs_native_408_gpu2`, output
+`experiments/hs_stage2_eval/nativefine_jitter_seq08_skip10_joint2x4_gpu2/`.
+The matching full PatchScene official inference is running on GPU3 in
+`patchscene_native_408_gpu3`; both outputs are independently resumable and
+will be evaluated with the shared raw-map GT / metric code.
 
 ## Artifacts
 
@@ -63,5 +68,9 @@ evaluation remains pending.
 - 8-frame machine summary: `experiments/hs_stage2_eval/nativefine_jitter_smoke_seq08_skip10_first8_2x4/results.json`
 - 408-frame all-scan input provenance audit:
   `experiments/hs_stage2_eval/nativefine_jitter_input_audit_408.json`
+- 408-frame HS run progress:
+  `experiments/hs_stage2_eval/nativefine_jitter_seq08_skip10_joint2x4_gpu2/progress.json`
+- 408-frame PatchScene run progress:
+  `experiments/patchscene_eval/official_seq08_skip10_native_15steps_gpu3_run2/progress.json`
 - Failed initial boundary sampler trials were preserved in separate
   `*_retry1/` outputs; they are not used as results.
