@@ -90,6 +90,7 @@ class Stage1DirectOccupancy(nn.Module):
         self.encoder=OccupancyConditionEncoder(self.geometry,activation_checkpointing)
         self.flow=OccupancyUNet(objective,widths,activation_checkpointing)
         self.register_buffer('valid',self.geometry.field_mask(),persistent=False)
+        self.last_condition_cache_cuda_events=None
 
     def encode_condition(self, lidar_xyz):
         return self.encoder(lidar_xyz)
@@ -110,7 +111,8 @@ class Stage1DirectOccupancy(nn.Module):
         return prediction*self.valid
 
     @torch.no_grad()
-    def sample(self, lidar_xyz, *, generator=None, nfe=1, condition=None):
+    def sample(self, lidar_xyz, *, generator=None, nfe=1, condition=None,
+               condition_cache=False):
         if condition is None:
             condition = self.encode_condition(lidar_xyz)
         if self.objective == "bce":
@@ -122,9 +124,26 @@ class Stage1DirectOccupancy(nn.Module):
             (1, 1, *self.geometry.field_shape), device=lidar_xyz.device,
             dtype=torch.float32, generator=generator) * self.valid
         observed = self.geometry.observed_mask(lidar_xyz)
+        self.last_condition_cache_cuda_events = None
+        if condition_cache:
+            if observed.device.type == "cuda":
+                cache_start, cache_end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+                cache_start.record()
+                inference_context = self.flow.prepare_inference_context(observed, condition)
+                cache_end.record()
+                self.last_condition_cache_cuda_events = (cache_start, cache_end)
+            else:
+                inference_context = self.flow.prepare_inference_context(observed, condition)
+        else:
+            inference_context = None
         current = source
         for step in range(nfe):
-            v=self.flow(current,observed,condition,current.new_tensor(float(step)/nfe))*self.valid
+            if inference_context is None:
+                v=self.flow(current,observed,condition,current.new_tensor(float(step)/nfe))
+            else:
+                v=self.flow(current,observed,None,current.new_tensor(float(step)/nfe),
+                            inference_context=inference_context)
+            v=v*self.valid
             current = current + v.float() / nfe
         # Uncalibrated occupancy score. Final threshold must be chosen on development.
         score = ((current.float() + 1) * 0.5).clamp(0, 1) * self.valid

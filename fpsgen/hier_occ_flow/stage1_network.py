@@ -91,8 +91,46 @@ class OccupancyUNet(nn.Module):
             return checkpoint(block,x,embedding,use_reentrant=False)
         return block(x,embedding)
 
-    def forward(self,state,observed,condition,time=None):
-        if state.ndim!=5 or state.shape[1]!=1 or observed.shape!=state.shape or len(condition)!=3:
+    def prepare_inference_context(self, observed, condition):
+        """Project the fixed condition pyramid once for a multi-step FM sample.
+
+        This inference-only context is deliberately separate from ``forward``:
+        training and the default sampling path retain the original execution.
+        The condition projection input dtype mirrors the first stem output under
+        the active autocast policy (CUDA autocast uses its configured dtype).
+        """
+        if self.training or torch.is_grad_enabled():
+            raise RuntimeError("Stage1 condition caching is inference-only")
+        if observed.ndim != 5 or observed.shape[1] != 1 or len(condition) != 3:
+            raise ValueError("Scalar ZYX mask and three condition scales required")
+        # Under CUDA autocast the stem produces the autocast dtype. Without
+        # autocast (including CPU) it produces FP32 from the FP32 input/weights.
+        if observed.device.type == "cuda" and torch.is_autocast_enabled():
+            projection_input_dtype = torch.get_autocast_gpu_dtype()
+        else:
+            projection_input_dtype = self.stem.weight.dtype
+        projected = tuple(
+            layer(feature.to(projection_input_dtype))
+            for layer, feature in zip(self.condition, condition)
+        )
+        return {"observed": observed, "condition_projected": projected}
+
+    def forward_with_inference_context(self, state, context, time=None):
+        return self(state, context["observed"], None, time,
+                    inference_context=context)
+
+    def forward(self,state,observed,condition,time=None,*,inference_context=None):
+        if inference_context is not None:
+            if inference_context.get("observed") is not observed:
+                raise ValueError("Stage1 inference context belongs to a different observed mask")
+            return self._forward(state, observed, None, time,
+                                 condition_projected=inference_context["condition_projected"])
+        return self._forward(state, observed, condition, time)
+
+    def _forward(self,state,observed,condition,time=None,condition_projected=None):
+        if (state.ndim!=5 or state.shape[1]!=1 or observed.shape!=state.shape
+                or (condition_projected is None and (condition is None or len(condition)!=3))
+                or (condition_projected is not None and len(condition_projected)!=3)):
             raise ValueError('Scalar ZYX state, input-only mask and three conditions required')
         if self.objective=='fm':
             if time is None: raise ValueError('FM requires time')
@@ -106,7 +144,9 @@ class OccupancyUNet(nn.Module):
         x=self.stem(torch.cat((state,observed.float()),1).to(self.stem.weight.dtype)); skips=[]
         for i in range(4):
             if i:
-                x=self.down[i-1](x); c=self.condition[i-1](condition[i-1].to(x.dtype))
+                x=self.down[i-1](x)
+                c=(self.condition[i-1](condition[i-1].to(x.dtype))
+                   if condition_projected is None else condition_projected[i-1])
                 if c.shape!=x.shape: raise ValueError('VoxDet condition ZYX pyramid mismatch')
                 x=x+c
             x=self._block(self.enc[i],x,embedding); skips.append(x)

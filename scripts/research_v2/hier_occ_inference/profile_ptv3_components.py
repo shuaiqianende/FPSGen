@@ -102,13 +102,15 @@ def main():
     rows=[]
     # One untimed real-frame warmup to stabilize kernels and module state.
     warm = input_xyz(a.data_root/'08'/'input_'/'000700.npy').astype(np.float32,copy=False)
-    _run_hs_frame(warm,700,adapter,model,cfg,geom,device,gpu_candidate_selection=True,
-                  gpu_observed_mask=True,gpu_occupancy_decode=True,stage2_static_cache=True)
+    with torch.inference_mode():
+        _run_hs_frame(warm,700,adapter,model,cfg,geom,device,gpu_candidate_selection=True,
+                      gpu_observed_mask=True,gpu_occupancy_decode=True,stage2_static_cache=True)
     torch.cuda.synchronize(device); events.clear(); cpu.clear()
     for frame, label in zip(a.frames, ('low','median','high')):
         arr=input_xyz(a.data_root/'08'/'input_'/f'{frame:06d}.npy').astype(np.float32,copy=False)
-        _, timing = _run_hs_frame(arr,frame,adapter,model,cfg,geom,device,gpu_candidate_selection=True,
-                                  gpu_observed_mask=True,gpu_occupancy_decode=True,stage2_static_cache=True)
+        with torch.inference_mode():
+            _, timing = _run_hs_frame(arr,frame,adapter,model,cfg,geom,device,gpu_candidate_selection=True,
+                                      gpu_observed_mask=True,gpu_occupancy_decode=True,stage2_static_cache=True)
         torch.cuda.synchronize(device)
         grouped={}
         for name,s,e in events:

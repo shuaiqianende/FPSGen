@@ -77,24 +77,29 @@ def _dump_outputs(out_dir, frame, xyz, fine_coords, geometry, jitter=None, jitte
     np.savez_compressed(out / f"frame_{frame:06d}.npz", **payload)
 
 
-@torch.inference_mode()
 def _run_hs_frame(xyz_np, frame, adapter, model, cfg, geom, device, *,
                   gpu_candidate_selection=False, gpu_observed_mask=False,
-                  gpu_occupancy_decode=False, stage2_static_cache=False):
+                  gpu_occupancy_decode=False, stage2_static_cache=False,
+                  stage1_flow_condition_cache=False):
     # Every feature/flow/network event is queued asynchronously and synchronized
     # once after generation, so the measured path retains normal launch behavior.
     torch.cuda.reset_peak_memory_stats(device)
     baseline_alloc = torch.cuda.memory_allocated(device)
     wall0 = time.perf_counter()
+    seed = scene_seed("08", frame, cfg["candidates"]["seed"])
+    # The pinned tokenizer shuffles point order before its voxel max reduction.
+    # Fix that RNG per frame so baseline/cache comparisons consume the same order.
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
     xyz = torch.from_numpy(np.asarray(xyz_np, dtype=np.float32)).to(device)
     encoder_value, encoder_events = timed_cuda_call(lambda: adapter.encode_features(xyz))
     features = encoder_value
     flow_timer = ModuleCudaTimer(adapter.model.flow)
-    seed = scene_seed("08", frame, cfg["candidates"]["seed"])
     with flow_timer, torch.autocast("cuda", dtype=torch.float16):
         score, _state1 = adapter.model.sample(
             xyz, nfe=2, condition=features,
-            generator=torch.Generator(device=device).manual_seed(seed))
+            generator=torch.Generator(device=device).manual_seed(seed),
+            condition_cache=stage1_flow_condition_cache)
     predicted_policy = __import__("export_stage2_snapshot").predicted_policy
     policy = predicted_policy(cfg)
     policy["stage1_nfe"] = 2
@@ -172,13 +177,19 @@ def _run_hs_frame(xyz_np, frame, adapter, model, cfg, geom, device, *,
     if stage2_static_cache:
         static_context_cuda_ms = float(static_cuda_start.elapsed_time(static_cuda_end))
     encoder_ms = event_elapsed_ms([encoder_events])
-    flow_ms = flow_timer.elapsed_ms()
+    flow_module_ms = flow_timer.elapsed_ms()
+    cache_events = adapter.model.last_condition_cache_cuda_events
+    flow_context_ms = float(cache_events[0].elapsed_time(cache_events[1])) if cache_events else 0.0
+    flow_ms = flow_module_ms + flow_context_ms
     stage2_ms = s2_timer.elapsed_ms()
     row = {
         "stage1_encoder_ms": encoder_ms,
         "stage1_flow_total_ms": flow_ms,
+        "stage1_flow_module_ms": flow_module_ms,
+        "stage1_flow_condition_projection_cache_ms": flow_context_ms,
         "stage1_flow_ms_per_step": flow_ms / 2,
         "stage1_flow_forward_calls": flow_timer.calls,
+        "stage1_flow_condition_cache": bool(stage1_flow_condition_cache),
         "candidate_selection_submit_wall_ms": candidate_selection_submit_ms,
         "candidate_selection_cuda_event_ms": candidate_selection_cuda_ms,
         "stage2_condition_submit_wall_ms": stage2_condition_submit_ms,
@@ -192,6 +203,8 @@ def _run_hs_frame(xyz_np, frame, adapter, model, cfg, geom, device, *,
         "generation_wall_ms": generation_wall_ms,
         "occupied_voxels": int(len(fine)),
         "candidate_parents": int(len(ids)),
+        "stage1_score_sha256": _sha_array(score[0, 0].detach().float().cpu().numpy()),
+        "stage1_candidate_ids_sha256": _sha_array(ids.detach().cpu().numpy()),
         "peak_allocated_gib": torch.cuda.max_memory_allocated(device) / 1024**3,
         "peak_reserved_gib": torch.cuda.max_memory_reserved(device) / 1024**3,
         "incremental_peak_allocated_gib": max(0, torch.cuda.max_memory_allocated(device) - baseline_alloc) / 1024**3,
@@ -305,6 +318,13 @@ def main():
     p.add_argument("--gpu-observed-mask", action="store_true")
     p.add_argument("--gpu-occupancy-decode", action="store_true")
     p.add_argument("--stage2-static-cache", action="store_true")
+    p.add_argument("--stage1-flow-condition-cache", action="store_true",
+                   help="V4 inference-only cache of the three fixed Stage1 condition projections")
+    p.add_argument("--stage1-encoder-layout", choices=("original", "channels_last_3d"), default="original")
+    p.add_argument("--stage1-flow-layout", choices=("original", "channels_last_3d"), default="original")
+    p.add_argument("--stage1-cudnn-benchmark", action="store_true")
+    p.add_argument("--stage1-tf32", action="store_true",
+                   help="Enable cuDNN and matmul TF32 flags (opt-in numeric variant)")
     p.add_argument("--ptv3-topology-cache", choices=("none", "serialization", "multilevel"), default="none",
                    help="V3 inference-only cache: top-level serialization or serialization+attention+pooling maps")
     p.add_argument("--ptv3-precision", choices=("original", "amp_fp16", "selective_fp16"), default="original",
@@ -313,6 +333,8 @@ def main():
                    help="Use validated single-scene norm/sparsify metadata fast paths")
     p.add_argument("--compile-target", choices=("none", "stage2_mlp", "stage1_flow"), default="none",
                    help="V3 opt-in torch.compile target; compile cold-start is recorded on first warmup")
+    p.add_argument("--stage1-execution-mode", choices=("inference_mode", "no_grad"), default="inference_mode",
+                   help="Use no_grad only for the Stage1 torch.compile compatibility experiment")
     p.add_argument("--dtype-audit", action="store_true",
                    help="Diagnostic only: record leaf-module input/output dtypes; do not use timings")
     p.add_argument("--jitter-backend", choices=("cpu_reference", "cuda"), default="cpu_reference")
@@ -335,6 +357,9 @@ def main():
         raise RuntimeError("CUDA unavailable")
     device = torch.device("cuda:0")
     admission = _admit(a.physical_gpu)
+    torch.backends.cudnn.benchmark = bool(a.stage1_cudnn_benchmark)
+    torch.backends.cudnn.allow_tf32 = bool(a.stage1_tf32)
+    torch.backends.cuda.matmul.allow_tf32 = bool(a.stage1_tf32)
     inputs = {}
     for frame in a.warmup_frames + a.benchmark_frames:
         path = a.data_root / "08" / "input_" / f"{frame:06d}.npy"
@@ -368,6 +393,10 @@ def main():
         if saved["successful_updates"] != 25_000 or saved["sampler"]["successful_frame_exposures"] != 100_000:
             raise ValueError("Unexpected Stage2 training state")
         adapter = FrozenStage1OccupancyAdapter(**cfg["stage1"]["adapter"]).to(device).eval()
+        if a.stage1_encoder_layout == "channels_last_3d":
+            adapter.model.encoder.to(memory_format=torch.channels_last_3d)
+        if a.stage1_flow_layout == "channels_last_3d":
+            adapter.model.flow.to(memory_format=torch.channels_last_3d)
         model = Stage2OccupancyModel(geom, **cfg["model"]).to(device).eval()
         model.load_state_dict(saved["model"], strict=True)
         dtype_audit = {}
@@ -417,6 +446,12 @@ def main():
                         stage2_nfe=4, stage2_checkpoint=str(a.stage2_checkpoint.resolve()),
                         candidate_selection="predicted Stage1 threshold .5; original policy",
                         amp="original fp16 autocast", stage2_condition_encoding="same single Stage1 feature encode",
+                        stage1_flow_condition_cache=a.stage1_flow_condition_cache,
+                        stage1_encoder_layout=a.stage1_encoder_layout,
+                        stage1_flow_layout=a.stage1_flow_layout,
+                        stage1_cudnn_benchmark=a.stage1_cudnn_benchmark,
+                        stage1_tf32=a.stage1_tf32,
+                        stage1_execution_mode=a.stage1_execution_mode,
                         ptv3_topology_cache=a.ptv3_topology_cache, ptv3_precision=a.ptv3_precision,
                         compile_target=a.compile_target, compile_wrapper_setup_seconds=compile_seconds)
         protocol["dtype_audit_enabled"] = bool(a.dtype_audit)
@@ -425,22 +460,38 @@ def main():
             "gpu_observed_mask": a.gpu_observed_mask,
             "gpu_occupancy_decode": a.gpu_occupancy_decode,
             "stage2_static_cache": a.stage2_static_cache,
+            "stage1_flow_condition_cache": a.stage1_flow_condition_cache,
+            "stage1_encoder_layout": a.stage1_encoder_layout,
+            "stage1_flow_layout": a.stage1_flow_layout,
+            "stage1_cudnn_benchmark": a.stage1_cudnn_benchmark,
+            "stage1_tf32": a.stage1_tf32,
             "jitter_backend": a.jitter_backend,
             "parity_reference_dir": str(a.parity_reference_dir.resolve()) if a.parity_reference_dir else None,
         }
         save_dir = a.output / "predictions"
+        parity_rows = {}
+        if a.parity_reference_dir:
+            reference_run = a.parity_reference_dir.parent.parent
+            reference_jsonl = reference_run / "per_frame.jsonl"
+            if reference_jsonl.is_file():
+                parity_rows = {int(record["frame"]): record for record in
+                               (json.loads(line) for line in reference_jsonl.read_text().splitlines() if line)}
         pending_outputs = []
         protocol["geometry_sha256"] = geom.sha256
         protocol["model_parameter_forwards"] = "encoder once; Stage1 flow twice; Stage2 model four times"
         compile_first_call = True
         for warmup, frame in [(True, f) for f in a.warmup_frames] + [(False, f) for f in a.benchmark_frames]:
             call_start = time.perf_counter() if compile_first_call and a.compile_target != "none" else None
-            fine, timing = _run_hs_frame(
-                inputs[frame]["xyz"], frame, adapter, model, cfg, geom, device,
-                gpu_candidate_selection=a.gpu_candidate_selection,
-                gpu_observed_mask=a.gpu_observed_mask,
-                gpu_occupancy_decode=a.gpu_occupancy_decode,
-                stage2_static_cache=a.stage2_static_cache)
+            execution_context = (torch.no_grad() if a.stage1_execution_mode == "no_grad"
+                                 else torch.inference_mode())
+            with execution_context:
+                fine, timing = _run_hs_frame(
+                    inputs[frame]["xyz"], frame, adapter, model, cfg, geom, device,
+                    gpu_candidate_selection=a.gpu_candidate_selection,
+                    gpu_observed_mask=a.gpu_observed_mask,
+                    gpu_occupancy_decode=a.gpu_occupancy_decode,
+                    stage2_static_cache=a.stage2_static_cache,
+                    stage1_flow_condition_cache=a.stage1_flow_condition_cache)
             if call_start is not None:
                 torch.cuda.synchronize(device)
                 protocol["compile_first_call_wall_ms"] = (time.perf_counter() - call_start) * 1000.0
@@ -477,6 +528,13 @@ def main():
                 timing["parity_reference"] = str(ref_path.resolve())
                 timing["parity_exact"] = bool(exact)
                 timing["parity_reference_occupied_voxels"] = int(len(ref_coords))
+                reference_row = parity_rows.get(frame)
+                if reference_row is not None:
+                    for key in ("stage1_score_sha256", "stage1_candidate_ids_sha256", "candidate_parents"):
+                        if timing.get(key) != reference_row.get(key):
+                            raise RuntimeError(f"Stage1 parity failed at frame {frame}: {key}")
+                    timing["stage1_score_parity_exact"] = True
+                    timing["stage1_candidate_ids_parity_exact"] = True
                 if not exact:
                     raise RuntimeError(f"Fine occupancy parity failed at frame {frame}")
             # Keep JSON records lean; arrays and paths remain in input identity.
