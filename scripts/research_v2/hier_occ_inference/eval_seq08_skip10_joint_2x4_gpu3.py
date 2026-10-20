@@ -39,15 +39,17 @@ from native_voxel_point_sampling import sample_native_occupied_voxels
 from unified_pointcloud_metrics import evaluate_prediction
 
 
-def admit_gpu3(*, startup=True):
-    if os.environ.get('CUDA_VISIBLE_DEVICES') != '3':
-        raise RuntimeError('Set CUDA_VISIBLE_DEVICES=3 for this evaluation')
+def admit_gpu(physical_gpu, *, startup=True):
+    if physical_gpu not in (2, 3):
+        raise ValueError('This evaluation is restricted to physical GPU2 or GPU3')
+    if os.environ.get('CUDA_VISIBLE_DEVICES') != str(physical_gpu):
+        raise RuntimeError(f'Set CUDA_VISIBLE_DEVICES={physical_gpu} for this evaluation')
     out = subprocess.check_output([
-        'nvidia-smi', '--id=3', '--query-gpu=memory.free,utilization.gpu',
+        'nvidia-smi', f'--id={physical_gpu}', '--query-gpu=memory.free,utilization.gpu',
         '--format=csv,noheader,nounits'], text=True)
     free, util = map(float, out.strip().split(','))
     ps = subprocess.check_output([
-        'nvidia-smi', '--id=3', '--query-compute-apps=pid,used_memory',
+        'nvidia-smi', f'--id={physical_gpu}', '--query-compute-apps=pid,used_memory',
         '--format=csv,noheader,nounits'], text=True)
     procs = [line.strip() for line in ps.splitlines()
              if line.strip() and int(line.split(',', 1)[0].strip()) != os.getpid()]
@@ -55,8 +57,8 @@ def admit_gpu3(*, startup=True):
     # this process itself retains model/allocator memory; subsequent pack
     # checks only reject external compute processes.
     if (startup and (free < 18000 or util > 10)) or procs:
-        raise RuntimeError(f'GPU3 admission failed: startup={startup} free={free}MiB util={util}% processes={procs}')
-    return {'physical_gpu': 3, 'free_mib_at_admission': free,
+        raise RuntimeError(f'GPU{physical_gpu} admission failed: startup={startup} free={free}MiB util={util}% processes={procs}')
+    return {'physical_gpu': physical_gpu, 'free_mib_at_admission': free,
             'utilization_percent_at_admission': util, 'compute_processes': procs}
 
 
@@ -116,6 +118,7 @@ def main():
     p.add_argument('--config', type=Path, required=True)
     p.add_argument('--checkpoint', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--physical-gpu', type=int, choices=(2, 3), default=3)
     p.add_argument('--max-frames', type=int, default=408)
     p.add_argument('--resume', action='store_true')
     p.add_argument('--stage1-nfe', type=int, default=2,
@@ -135,7 +138,7 @@ def main():
     if a.stage1_nfe < 1 or a.stage2_nfe < 1:
         raise ValueError('Stage1 and Stage2 NFE must be positive integers')
 
-    admission = admit_gpu3()
+    admission = admit_gpu(a.physical_gpu)
     cfg, g = load_stage2_config(a.config)
     saved = torch.load(a.checkpoint, map_location='cpu')
     validate_snapshot(saved, cfg, g)
@@ -172,7 +175,8 @@ def main():
         'jsd_3d': '3D point-count histogram',
         'jsd_bev': 'binary 3D voxel histogram summed over Z (occupied-height-bin count per XY cell)',
         'jsd_sparse_implementation_checked_against_existing_dense_helper': True,
-        'metric_device': 'physical GPU3 for model and exact CD; CPU sparse histogram JSD; CPU support IoU cross-check',
+        'physical_gpu': a.physical_gpu,
+        'metric_device': f'physical GPU{a.physical_gpu} for model and exact CD; CPU sparse histogram JSD; CPU support IoU cross-check',
         'stage2_batch': 4, 'stage2_batching': 'ragged variable-length parent tokens, no padding or truncation; FP16 approximate batch equivalence',
         'metric_filter': 'NONE', 'source_downsampling': 'NONE',
         'config_sha256': file_sha(a.config), 'evaluator_sha256': file_sha(Path(__file__)),
@@ -220,7 +224,7 @@ def main():
         raise RuntimeError('Duplicate completed frame/config rows')
 
     torch.set_num_threads(4)
-    device = torch.device('cuda:0')  # CUDA_VISIBLE_DEVICES=3 maps physical GPU3 here
+    device = torch.device('cuda:0')  # CUDA_VISIBLE_DEVICES maps the selected physical GPU here
     adapter = FrozenStage1OccupancyAdapter(**cfg['stage1']['adapter']).to(device).eval()
     model = Stage2OccupancyModel(g, **cfg['model']).to(device).eval()
     model.load_state_dict(saved['model'], strict=True)
@@ -252,7 +256,7 @@ def main():
                     pending.pop(f, None)
                 prefetch_targets()
                 continue
-            admit_gpu3(startup=False)
+            admit_gpu(a.physical_gpu, startup=False)
             xyzs = [torch.from_numpy(input_xyz(path)).to(device) for path in paths]
             features = [adapter.encode_features(xyz) for xyz in xyzs]
             targets = [pending.pop(f).result() for f in batch_frames]
