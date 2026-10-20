@@ -114,7 +114,10 @@ def _run_hs_frame(xyz_np, frame, adapter, model, cfg, geom, device, *,
     encoder_value, encoder_events = timed_cuda_call(lambda: adapter.encode_features(xyz))
     features = encoder_value
     flow_timer = ModuleCudaTimer(adapter.model.flow)
-    with flow_timer, torch.autocast("cuda", dtype=torch.float16):
+    flow_context = (torch.autocast("cuda", enabled=False)
+                    if getattr(adapter.model.flow, "_v6_explicit_fp16", False)
+                    else torch.autocast("cuda", dtype=torch.float16))
+    with flow_timer, flow_context:
         score, _state1 = adapter.model.sample(
             xyz, nfe=2, condition=features,
             generator=torch.Generator(device=device).manual_seed(seed),
@@ -163,13 +166,16 @@ def _run_hs_frame(xyz_np, frame, adapter, model, cfg, geom, device, *,
     state = source
     context = None
     static_context_cuda_ms = 0.0
+    stage2_context = (torch.autocast("cuda", enabled=False)
+                      if model.ptv3_precision == "explicit_fp16"
+                      else torch.autocast("cuda", dtype=torch.float16))
     if stage2_static_cache:
         static_cuda_start, static_cuda_end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
         static_cuda_start.record()
-        with torch.autocast("cuda", dtype=torch.float16):
+        with stage2_context:
             context = model.prepare_inference_context(ids, **cond)
         static_cuda_end.record()
-    with s2_timer, torch.autocast("cuda", dtype=torch.float16):
+    with s2_timer, stage2_context:
         for step in range(4):
             t = state.new_tensor(step / 4)
             if context is None:
@@ -346,6 +352,9 @@ def main():
     p.add_argument("--stage1-encoder-compile-target",
                    choices=("none", "voxel_backbone", "voxel_neck", "local_backbone", "classification_neck"),
                    default="none", help="V5 opt-in compile of one dense Encoder submodule")
+    p.add_argument("--stage1-encoder-precision", choices=("amp_original", "fp16_full", "fp16_selective_norm"), default="amp_original")
+    p.add_argument("--stage1-flow-precision", choices=("amp_original", "fp16_full", "fp16_selective_norm"), default="amp_original")
+    p.add_argument("--stage2-weight-precision", choices=("amp_original", "fp16_full", "fp16_selective_norm"), default="amp_original")
     p.add_argument("--stage1-cudnn-benchmark", action="store_true")
     p.add_argument("--stage1-tf32", action="store_true",
                    help="Enable cuDNN and matmul TF32 flags (opt-in numeric variant)")
@@ -419,6 +428,19 @@ def main():
         if saved["successful_updates"] != 25_000 or saved["sampler"]["successful_frame_exposures"] != 100_000:
             raise ValueError("Unexpected Stage2 training state")
         adapter = FrozenStage1OccupancyAdapter(**cfg["stage1"]["adapter"]).to(device).eval()
+        from fpsgen.hier_occ_flow.full_fp16_inference import explicit_fp16_copy, parameter_dtype_audit
+        precision_audits = {}
+        precision_hooks = []
+        if a.stage1_encoder_precision != "amp_original":
+            precision_audits["stage1_encoder"], hooks = explicit_fp16_copy(
+                adapter.model.encoder, selective_norm=a.stage1_encoder_precision == "fp16_selective_norm")
+            precision_hooks.extend(hooks)
+            adapter.model.encoder._v6_explicit_fp16 = True
+        if a.stage1_flow_precision != "amp_original":
+            precision_audits["stage1_flow"], hooks = explicit_fp16_copy(
+                adapter.model.flow, selective_norm=a.stage1_flow_precision == "fp16_selective_norm")
+            precision_hooks.extend(hooks)
+            adapter.model.flow._v6_explicit_fp16 = True
         stage1_layout_handles = []
         if a.stage1_encoder_layout == "channels_last_3d":
             stage1_layout_handles.extend(enable_channels_last_3d(adapter.model.encoder))
@@ -426,6 +448,11 @@ def main():
             stage1_layout_handles.extend(enable_channels_last_3d(adapter.model.flow))
         model = Stage2OccupancyModel(geom, **cfg["model"]).to(device).eval()
         model.load_state_dict(saved["model"], strict=True)
+        if a.stage2_weight_precision != "amp_original":
+            precision_audits["stage2"], hooks = explicit_fp16_copy(
+                model, selective_norm=a.stage2_weight_precision == "fp16_selective_norm")
+            precision_hooks.extend(hooks)
+            model.set_ptv3_precision("explicit_fp16")
         dtype_audit = {}
         dtype_hook_handles = []
         if a.dtype_audit:
@@ -448,7 +475,10 @@ def main():
                         dtype_audit[_key]["output"].add(dtype_name(output))
                     dtype_hook_handles.append(module.register_forward_hook(record_dtype))
         model.ptv3_topology_cache = a.ptv3_topology_cache
-        model.set_ptv3_precision(a.ptv3_precision)
+        model.set_ptv3_precision("explicit_fp16" if a.stage2_weight_precision != "amp_original"
+                                  else a.ptv3_precision)
+        if a.stage2_weight_precision != "amp_original":
+            model.set_explicit_fp16_norm_policy(a.stage2_weight_precision == "fp16_selective_norm")
         model.ptv3_batch1_fastpath = a.ptv3_batch1_fastpath
         compile_seconds = 0.0
         if a.compile_target != "none":
@@ -484,7 +514,11 @@ def main():
                         stage2_checkpoint_sha256=S2_SHA, stage2_weights="online",
                         stage2_nfe=4, stage2_checkpoint=str(a.stage2_checkpoint.resolve()),
                         candidate_selection="predicted Stage1 threshold .5; original policy",
-                        amp="original fp16 autocast", stage2_condition_encoding="same single Stage1 feature encode",
+                        amp="per-module; explicit modules run with autocast disabled",
+                        stage1_encoder_precision=a.stage1_encoder_precision,
+                        stage1_flow_precision=a.stage1_flow_precision,
+                        stage2_weight_precision=a.stage2_weight_precision,
+                        stage2_condition_encoding="same single Stage1 feature encode",
                         stage1_flow_condition_cache=a.stage1_flow_condition_cache,
                         stage1_encoder_layout=a.stage1_encoder_layout,
                         stage1_flow_layout=a.stage1_flow_layout,
@@ -495,6 +529,12 @@ def main():
                         stage1_execution_mode=a.stage1_execution_mode,
                         ptv3_topology_cache=a.ptv3_topology_cache, ptv3_precision=a.ptv3_precision,
                         compile_target=a.compile_target, compile_wrapper_setup_seconds=compile_seconds)
+        protocol.update(explicit_precision_audit=precision_audits,
+                        parameter_dtype_audits={
+                            "stage1_encoder": parameter_dtype_audit(adapter.model.encoder),
+                            "stage1_flow": parameter_dtype_audit(adapter.model.flow),
+                            "stage2": parameter_dtype_audit(model),
+                        })
         protocol["dtype_audit_enabled"] = bool(a.dtype_audit)
         protocol["optimization_flags"] = {
             "gpu_candidate_selection": a.gpu_candidate_selection,

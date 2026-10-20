@@ -66,7 +66,7 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
                 if isinstance(module,SerializedPooling):module.shuffle_orders=False
 
     def set_ptv3_precision(self, mode):
-        if mode not in ('original','amp_fp16','selective_fp16'):
+        if mode not in ('original','amp_fp16','selective_fp16','explicit_fp16'):
             raise ValueError(f'Unknown PTv3 precision mode: {mode}')
         self.ptv3_precision=mode
         if self.backbone_kind=='ptv3':
@@ -74,6 +74,13 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
             for module in self.trunk.modules():
                 if isinstance(module,PointInstanceNorm):
                     module._v3_fp32_stats=(mode=='selective_fp16')
+
+    def set_explicit_fp16_norm_policy(self, selective):
+        """Set the custom per-scene norm's reduction precision for V6 copies."""
+        if self.backbone_kind=='ptv3':
+            from fpsgen.voxel_point.vendor.pwm.ptv3_reference.model import PointInstanceNorm
+            for module in self.trunk.modules():
+                if isinstance(module,PointInstanceNorm):module._v3_fp32_stats=bool(selective)
 
     def prepare_inference_context(self,parent_ids,*,batch=None,lidar_features=None,parent_score=None,
                                   observed_child=None,valid_child_mask=None):
@@ -96,13 +103,21 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
         position=2*(centers-centers.new_tensor(self.geometry.origin))/centers.new_tensor([b-a for a,b in zip(self.geometry.origin,self.geometry.maximum)])-1
         if parent_score is None or valid_child_mask is None:raise ValueError('Explicit parent score and valid mask required')
         if valid_child_mask.shape!=(len(parent_ids),self.geometry.k):raise ValueError('Valid child mask shape mismatch')
-        static_parts=[self.position(position),self.score(parent_score[order].float().reshape(-1,1))]
+        explicit=self.ptv3_precision=='explicit_fp16'
+        def cast_for(module,value):
+            if explicit:
+                parameter=next(module.parameters(),None)
+                if parameter is not None:return value.to(parameter.dtype)
+            return value
+        static_parts=[self.position(cast_for(self.position,position)),
+                      self.score(cast_for(self.score,parent_score[order].float().reshape(-1,1)))]
         if hasattr(self,'lidar'):
             if lidar_features is None or lidar_features.shape[0]!=len(parent_ids):raise ValueError('Actual LiDAR pyramid required')
-            static_parts.append(self.lidar(lidar_features[order].float()))
+            static_parts.append(self.lidar(cast_for(self.lidar,lidar_features[order].float())))
         if hasattr(self,'observed'):
             if observed_child is None or observed_child.shape!=(len(parent_ids),self.geometry.k):raise ValueError('Input-only observed mask required')
-            static_parts.append(self.observed(observed_child[order].float()))
+            static_parts.append(self.observed(cast_for(self.observed,observed_child[order].float())))
+        if explicit:static_parts=[part.to(torch.float16) for part in static_parts]
         context={'scenes':scenes,'order':order,'inverse':inverse,'parent_ids':sorted_ids,
                 'batch':sorted_batch,'coords':coords,'centers':centers,
                 'static_parts':static_parts,'valid_child_mask':valid_child_mask[order],
@@ -124,16 +139,23 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
         if state.shape!=(len(parent_ids),self.geometry.k):raise ValueError('FM state must be [M,K]')
         if time.numel()!=scenes:raise ValueError('One flow time per scene required')
         state=state[order]
-        angle=time.float().reshape(scenes,1)*self.frequencies[None]
-        embedding=self.time(torch.cat((angle.sin(),angle.cos()),-1))
+        angle=time.float().reshape(scenes,1)*self.frequencies.float()[None]
+        time_features=torch.cat((angle.sin(),angle.cos()),-1)
+        if self.ptv3_precision=='explicit_fp16':time_features=time_features.to(next(self.time.parameters()).dtype)
+        embedding=self.time(time_features)
         parts=list(context['static_parts'])
-        parts.extend((self.local(state.float()),embedding[batch]))
-        features=self.fuse(torch.cat(parts,-1))
+        local_input=state.float()
+        if self.ptv3_precision=='explicit_fp16':local_input=local_input.to(next(self.local.parameters()).dtype)
+        parts.extend((self.local(local_input),embedding[batch]))
+        fused_input=torch.cat(parts,-1)
+        if self.ptv3_precision=='explicit_fp16':fused_input=fused_input.to(next(self.fuse.parameters()).dtype)
+        features=self.fuse(fused_input)
         if self.backbone_kind=='ptv3':
             from fpsgen.voxel_point.vendor.pwm.ptv3_reference.model import Point
-            data={'feat':features.float(),'coord':centers,'grid_coord':coords.int(),'batch':batch.long(),
-                  'sparse_shape':[n+1 for n in self.geometry.parent_resolution], 'context':embedding.float()}
             net=self.trunk.net
+            feat_dtype=next(net.embedding.parameters()).dtype if self.ptv3_precision=='explicit_fp16' else torch.float32
+            data={'feat':features.to(feat_dtype),'coord':centers,'grid_coord':coords.int(),'batch':batch.long(),
+                  'sparse_shape':[n+1 for n in self.geometry.parent_resolution], 'context':embedding.to(feat_dtype)}
             topology=context.get('ptv3_topology')
             if topology is None:
                 point=Point(data)
@@ -152,11 +174,15 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
             elif self.ptv3_precision in ('amp_fp16','selective_fp16'):
                 with torch.autocast(features.device.type,dtype=torch.float16,enabled=features.device.type=='cuda'):
                     point=net.embedding(point);point=net.enc(point);point=net.dec(point)
+            elif self.ptv3_precision=='explicit_fp16':
+                with torch.autocast(features.device.type,enabled=False):
+                    point=net.embedding(point);point=net.enc(point);point=net.dec(point)
             else:
                 raise ValueError(f'Unknown PTv3 precision mode: {self.ptv3_precision}')
             features=point.feat
         else:features=features+self.trunk(features)
         decoded=torch.cat((features,state.float(),embedding[batch]),-1)
+        if self.ptv3_precision=='explicit_fp16':decoded=decoded.to(next(self.decoder.parameters()).dtype)
         return (self.decoder(decoded)*context['valid_child_mask'])[inverse]
 
     def forward(self,parent_ids,*,batch=None,state=None,time=None,lidar_features=None,parent_score=None,observed_child=None,valid_child_mask=None,inference_context=None):

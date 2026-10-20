@@ -55,7 +55,17 @@ class OccupancyConditionEncoder(VoxDetDensity):
 
     def forward(self,lidar_xyz):
         scenes=[lidar_xyz] if isinstance(lidar_xyz,torch.Tensor) else list(lidar_xyz)
-        token=torch.cat([self.lidar_tokenizer(*occupancy_lidar_features(x,self.spec)) for x in scenes],0)
+        token_rows=[]
+        for x in scenes:
+            point_features, indices = occupancy_lidar_features(x,self.spec)
+            # Geometry and voxelization above remain FP32/FP64. Explicit model
+            # precision begins only after the six LiDAR features are formed.
+            if getattr(self, "_v6_explicit_fp16", False):
+                first_linear=next(m for m in self.lidar_tokenizer.point_mlp.modules()
+                                  if isinstance(m,nn.Linear))
+                point_features=point_features.to(first_linear.weight.dtype)
+            token_rows.append(self.lidar_tokenizer(point_features, indices))
+        token=torch.cat(token_rows,0)
         pyramid=self._run(self.voxel_backbone,token)
         voxel=self._run(self.voxel_neck,pyramid)[0]
         local=self._run(self.local_backbone,voxel)
@@ -153,7 +163,8 @@ class OccupancyUNet(nn.Module):
             t=batch_scalar(time,state)
             if validate_time_range and not bool(((t>=0)&(t<=1)).all()): raise ValueError('t outside [0,1]')
             angle=t[:,None]*self.frequencies[None]
-            embedding=self.embedding(torch.cat((angle.sin(),angle.cos()),1))
+            time_features=torch.cat((angle.sin(),angle.cos()),1)
+            embedding=self.embedding(time_features.to(self.embedding[0].weight.dtype))
         else:
             if time is not None: raise ValueError('BCE does not accept time')
             embedding=self.constant_embedding.expand(len(state),-1)

@@ -74,7 +74,10 @@ class FrozenStage1OccupancyAdapter(nn.Module):
     @torch.no_grad()
     def encode_features(self,xyz):
         if xyz.ndim!=2 or xyz.shape[1]!=3 or not bool(torch.isfinite(xyz).all()):raise ValueError('Finite partial XYZ only')
-        with torch.autocast(xyz.device.type,dtype=torch.float16,enabled=xyz.device.type=='cuda'):
+        explicit = getattr(self.model.encoder, "_v6_explicit_fp16", False)
+        precision_context = (torch.autocast(xyz.device.type, enabled=False) if explicit else
+                             torch.autocast(xyz.device.type,dtype=torch.float16,enabled=xyz.device.type=='cuda'))
+        with precision_context:
             pyramid=self.model.encode_condition(xyz)
         self.encoder_forward_count+=1;self.last_feature_shapes=tuple(tuple(t.shape) for t in pyramid)
         if tuple(tuple(t.shape) for t in pyramid)!=self.feature_shapes:raise ValueError('Stage1 pyramid geometry/layout mismatch')
@@ -86,7 +89,10 @@ class FrozenStage1OccupancyAdapter(nn.Module):
         features=self.encode_features(partial_lidar)
         if not with_scores:return features,None
         generator=torch.Generator(device=partial_lidar.device).manual_seed(seed)
-        with torch.autocast(partial_lidar.device.type,dtype=torch.float16,enabled=partial_lidar.device.type=='cuda'):
+        explicit = getattr(self.model.flow, "_v6_explicit_fp16", False)
+        precision_context = (torch.autocast(partial_lidar.device.type, enabled=False) if explicit else
+                             torch.autocast(partial_lidar.device.type,dtype=torch.float16,enabled=partial_lidar.device.type=='cuda'))
+        with precision_context:
             score,state=self.model.sample(partial_lidar,nfe=nfe,generator=generator,condition=features)
         if not bool(torch.isfinite(state).all() and torch.isfinite(score).all()):raise ValueError('Nonfinite Stage1 occupancy')
         return features,score[0,0].detach().float()
