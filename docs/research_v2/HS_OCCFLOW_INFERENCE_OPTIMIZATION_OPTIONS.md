@@ -4,7 +4,7 @@
 
 基准：[`HS_OCCFLOW_VS_PATCHSCENE_INFERENCE_SPEED_20FRAMES.md`](HS_OCCFLOW_VS_PATCHSCENE_INFERENCE_SPEED_20FRAMES.md)。物理 GPU2、RTX 3090、batch=1，Stage1 2 NFE、Stage2 4 NFE。完整生成均值 838.9 ms，网络 CUDA Event 累计 645.1 ms，整帧峰值 3.01 GiB allocated / 3.84 GiB reserved。
 
-**精度审计更正：**这次 Stage1 Flow 和 Stage2 模型处于 FP16 autocast；Stage1 Encoder 的调用位于 autocast 区域外，实际是 FP32。故“整套模型都在 FP16 推理”不成立。Stage1 Encoder FP16 是尚未测量的优化候选。
+**精度审计更正：**Stage1 Encoder 的 `encode_features()` 内部已经启用 FP16 autocast，输出金字塔为混合 dtype（实测 `[FP32, FP16, FP16]`），因此不能把 Encoder 描述为 FP32，也不能将现有 autocast 当作新优化。Stage1 Flow 在 FP16 autocast 下运行。Stage2 的输入投影/融合与速度解码器在外层 autocast 中，但 PTv3 主干显式关闭 autocast并以 FP32 特征运行。详见 `HS_OCCFLOW_ACTUAL_PRECISION_AUDIT.md`。本文件下方原先“Encoder FP32→FP16”的建议应理解为对比 `original`、`force_fp32`、`autocast_fp16` 三种真实执行路径，而非从默认 FP32 开启半精度。
 
 ## 当前耗时构成
 
@@ -36,7 +36,7 @@
 
 ## 优先级 3：混合精度和 GPU 执行优化
 
-1. **Stage1 Encoder FP16 autocast。** 这是明确可试的候选：目前 Encoder 是 FP32，且占网络 CUDA 时间约三分之一。对同一帧比较 FP32/FP16 特征、Stage1 scores、候选 Parent、Fine Occupancy、CD/IoU；记录 encoder latency 和端到端延迟。优先用 autocast，而不是直接把整个模型参数永久 `.half()`；若特定归约/归一化不稳定，保留该小段 FP32。
+1. **Stage1 Encoder 精度对照。** 默认 `original` 已为 FP16 autocast；比较 `force_fp32` 与 `autocast_fp16`，并确认 `original` 与 autocast 参考路径一致。对比金字塔、Stage1 scores、候选 Parent、Fine Occupancy、CD/IoU及耗时。若原始与 autocast 一致，不得将其报告为新增优化。
 2. **Stage2 条件采样精度。** 当前 `sample_pyramid()` 对每层 `feature.float()` 后调用 3D `grid_sample`，最终再 `.half()`。测 PyTorch/CUDA 对 half grid_sample 的支持和误差；若半精度路径可用，可减少 FP32 临时拷贝/带宽。另可把三层特征在通道维合并后单次采样，再按通道切分，降低三次 launch，但需对比内存峰值和采样 parity。
 3. **`channels_last_3d`。** 对 VoxDet 3D Conv 与 Stage1 Flow U-Net 分别测试 `torch.channels_last_3d`，配合 FP16/cuDNN；检查所有插值、拼接、GroupNorm、自定义模块是否触发昂贵 layout 转换。只保留端到端确实变快的格式。
 4. **cuDNN benchmark / TF32。** 固定 shape 的 Conv3d 可试 `torch.backends.cudnn.benchmark=True`；若保留 FP32 Encoder，可测 TF32。每项单独开关，检查精度及稳定性。

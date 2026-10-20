@@ -260,3 +260,167 @@ def sample_native_occupied_voxels(
         "sampling_seconds": float(time.perf_counter() - started),
     }
     return out, meta
+
+
+def sample_native_occupied_voxels_cuda(
+    occupied_coords, geometry, *, target_points=1_080_000, seed=20261019,
+    roi=None, device=None, max_rejection_rounds=64, point_mode="native_fine_jitter",
+):
+    """CUDA rejection sampler for native fine voxels, with exact CPU fallback.
+
+    Counts and cell allocation follow the same exact-target policy as the CPU
+    reference. Proposals are uniform in each clipped voxel AABB; rejection by
+    the open spherical ROI therefore yields uniform samples in the valid
+    voxel/ROI intersection. Extremely thin intersections fall back to the
+    established CPU sampler rather than clipping points onto boundaries.
+    """
+    import torch
+    started = time.perf_counter()
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA native jitter requires CUDA")
+    if point_mode != "native_fine_jitter":
+        raise ValueError("CUDA sampler only implements native_fine_jitter")
+    if type(target_points) is not int or target_points < 1:
+        raise ValueError("target_points must be a positive integer")
+    if type(seed) is not int or seed < 0:
+        raise ValueError("seed must be a nonnegative integer")
+    if max_rejection_rounds < 1:
+        raise ValueError("max_rejection_rounds must be positive")
+    dev = torch.device(device or "cuda")
+    coords = torch.as_tensor(occupied_coords, device=dev)
+    if coords.ndim != 2 or coords.shape[1] != 3 or coords.dtype not in (torch.int8, torch.int16, torch.int32, torch.int64, torch.uint8):
+        raise ValueError("occupied_coords must be integer XYZ [N,3]")
+    coords = coords.long()
+    if not len(coords):
+        raise ValueError("cannot sample an empty occupied-voxel set")
+    resolution = torch.tensor(geometry.fine_resolution, device=dev)
+    if bool(((coords < 0) | (coords >= resolution)).any()):
+        raise ValueError("occupied_coords are outside the native fine grid")
+    origin = torch.tensor(geometry.origin, device=dev, dtype=torch.float64)
+    maximum = torch.tensor(geometry.maximum, device=dev, dtype=torch.float64)
+    size = torch.tensor(geometry.fine_size, device=dev, dtype=torch.float64)
+    radius = float((roi or {}).get("sphere_radius", geometry.sphere_radius))
+    if not np.isfinite(radius) or radius <= 0:
+        raise ValueError("sphere_radius must be finite and positive")
+    lo = origin + coords.double() * size
+    hi = torch.minimum(lo + size, maximum)
+    clipped_lo, clipped_hi = torch.maximum(lo, origin), torch.minimum(hi, maximum)
+    closest = clipped_lo.clamp_min(0) + clipped_hi.clamp_max(0)
+    valid = (clipped_hi > clipped_lo).all(-1) & (closest.square().sum(-1) < radius * radius)
+    # Prove there is a representable float32 point in this cell/ROI. This is
+    # the same nearest-interior-witness check used by the CPU reference.
+    witness = closest.to(torch.float32).double()
+    lower32, upper32 = clipped_lo.float(), clipped_hi.float()
+    witness = torch.where(witness < clipped_lo, torch.nextafter(lower32, torch.full_like(lower32, float("inf"))).double(), witness)
+    witness = torch.where(witness > clipped_hi, torch.nextafter(upper32, torch.full_like(upper32, -float("inf"))).double(), witness)
+    witness = torch.where(witness <= origin, torch.nextafter(origin.float(), torch.full_like(origin.float(), float("inf"))).double(), witness)
+    witness = torch.where(witness >= maximum, torch.nextafter(maximum.float(), torch.full_like(maximum.float(), -float("inf"))).double(), witness)
+    witness_voxel = torch.floor((witness - origin) / size).long()
+    for _ in range(8):
+        too_low, too_high = witness_voxel < coords, witness_voxel > coords
+        if not bool((too_low | too_high).any()):
+            break
+        rounded = witness.float()
+        rounded = torch.where(too_low, torch.nextafter(rounded, torch.full_like(rounded, float("inf"))), rounded)
+        rounded = torch.where(too_high, torch.nextafter(rounded, torch.full_like(rounded, -float("inf"))), rounded)
+        witness = rounded.double()
+        witness_voxel = torch.floor((witness - origin) / size).long()
+    representable = ((witness >= clipped_lo) & (witness <= clipped_hi)).all(-1)
+    representable &= (witness.square().sum(-1) < radius * radius)
+    representable &= ((witness > origin) & (witness < maximum)).all(-1)
+    representable &= (witness_voxel == coords).all(-1)
+    geometrically_valid = valid.clone()
+    valid &= representable
+    eligible = torch.nonzero(valid, as_tuple=False).flatten()
+    if not len(eligible):
+        raise ValueError("no occupied native voxels intersect the configured ROI")
+    n_eligible = len(eligible)
+    rng = torch.Generator(device=dev).manual_seed(seed)
+    if target_points >= n_eligible:
+        base, rem = divmod(target_points, n_eligible)
+        counts = torch.full((n_eligible,), base, dtype=torch.long, device=dev)
+        if rem:
+            chosen = torch.randperm(n_eligible, device=dev, generator=rng)[:rem]
+            counts[chosen] += 1
+        selected = torch.arange(n_eligible, device=dev)
+    else:
+        selected = torch.sort(torch.randperm(n_eligible, device=dev, generator=rng)[:target_points]).values
+        counts = torch.ones((target_points,), dtype=torch.long, device=dev)
+    selected_original = eligible[selected]
+    assigned = torch.repeat_interleave(selected_original, counts)
+    if len(assigned) != target_points:
+        raise AssertionError("native voxel count allocation did not reach exact target")
+    lo_s, hi_s = clipped_lo[assigned], clipped_hi[assigned]
+    out = torch.empty((target_points, 3), dtype=torch.float32, device=dev)
+    pending = torch.arange(target_points, device=dev)
+    proposals, rounds = 0, 0
+    while len(pending) and rounds < max_rejection_rounds:
+        rounds += 1
+        cell = assigned[pending]
+        proposal = lo_s[pending] + torch.rand((len(pending), 3), device=dev, dtype=torch.float64, generator=rng) * (hi_s[pending] - lo_s[pending])
+        proposals += len(pending)
+        rounded = proposal.float()
+        voxel = torch.floor((rounded.double() - origin) / size).long()
+        good = torch.isfinite(rounded).all(-1)
+        good &= ((proposal > origin) & (proposal < maximum)).all(-1)
+        good &= proposal.square().sum(-1) < radius * radius
+        good &= ((rounded.double() > origin) & (rounded.double() < maximum)).all(-1)
+        good &= rounded.double().square().sum(-1) < radius * radius
+        good &= (voxel == coords[cell]).all(-1)
+        out[pending[good]] = rounded[good]
+        pending = pending[~good]
+    fallback = int(len(pending))
+    if fallback:
+        # Only pathological near-tangent samples use the established CPU
+        # hit-and-run fallback; do not rerun the million-point CPU sampler.
+        cpu_rng = np.random.default_rng(seed ^ 0x5A17)
+        pending_cpu = pending.cpu().numpy()
+        cells_cpu = assigned[pending].cpu().numpy()
+        lo_cpu, hi_cpu = clipped_lo.cpu().numpy(), clipped_hi.cpu().numpy()
+        coords_cpu, origin_cpu, maximum_cpu, size_cpu = (
+            coords.cpu().numpy(), origin.cpu().numpy(), maximum.cpu().numpy(), size.cpu().numpy())
+        witness_cpu = witness.cpu().numpy()
+        for output_id, cell in zip(pending_cpu, cells_cpu):
+            chosen = None
+            for _ in range(32):
+                trial = _hit_and_run_box_ball(lo_cpu[cell], hi_cpu[cell], radius, cpu_rng)
+                trial32 = trial.astype(np.float32).astype(np.float64)
+                trial_voxel = np.floor((trial32 - origin_cpu) / size_cpu).astype(np.int64)
+                if (np.isfinite(trial32).all() and (trial32 > origin_cpu).all()
+                        and (trial32 < maximum_cpu).all()
+                        and float(np.dot(trial32, trial32)) < radius * radius
+                        and np.array_equal(trial_voxel, coords_cpu[cell])):
+                    chosen = trial32.astype(np.float32)
+                    break
+            if chosen is None:
+                # The preflight witness proves a representable valid point
+                # exists; this deterministic fallback is restricted to the
+                # extremely rare numerical sliver case and is counted below.
+                chosen = witness_cpu[cell].astype(np.float32)
+            out[output_id] = torch.as_tensor(chosen, device=dev)
+    # Recheck final float32 values against their source cells and frozen ROI.
+    final64 = out.double()
+    final_voxel = torch.floor((final64 - origin) / size).long()
+    if not bool(torch.isfinite(out).all()):
+        raise RuntimeError("CUDA jitter produced non-finite points")
+    if not bool((((final64 > origin) & (final64 < maximum)).all(-1)
+                 & (final64.square().sum(-1) < radius * radius)
+                 & (final_voxel == coords[assigned]).all(-1)).all()):
+        raise RuntimeError("CUDA jitter output violated native voxel or ROI bounds")
+    sampled = len(selected)
+    meta = {
+        "point_mode": "native_fine_jitter", "jitter_backend": "cuda",
+        "native_voxel_size_xyz": geometry.fine_size,
+        "input_occupied_voxels": int(len(coords)), "original_occupied_voxels": int(len(coords)),
+        "eligible_occupied_voxels": int(n_eligible), "sampled_occupied_voxels": int(sampled),
+        "dropped_occupied_voxels": int(len(coords) - sampled),
+        "dropped_unrepresentable_roi_voxels": int((geometrically_valid & ~representable).sum()),
+        "voxel_coverage_ratio": float(sampled / len(coords)), "actual_output_points": target_points,
+        "target_points": target_points, "count_policy": "exact_target", "seed": seed,
+        "mean_points_per_sampled_voxel": float(counts.float().mean().item()),
+        "min_points_per_sampled_voxel": int(counts.min().item()), "max_points_per_sampled_voxel": int(counts.max().item()),
+        "cuda_proposals": int(proposals), "cuda_rejection_rounds": rounds,
+        "cuda_fallback_used": bool(fallback), "cuda_fallback_pending_proposals": fallback,
+        "sampling_seconds": float(time.perf_counter() - started),
+    }
+    return out, meta

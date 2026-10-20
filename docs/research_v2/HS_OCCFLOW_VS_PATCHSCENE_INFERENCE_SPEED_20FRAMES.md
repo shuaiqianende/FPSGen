@@ -33,7 +33,7 @@ PatchScene 相对 HS-OccFlow 的平均时延比：网络 CUDA Event **23.66×**�
 - GPU：物理 GPU2，NVIDIA GeForce RTX 3090；PyTorch `2.0.1+cu117`，CUDA `11.7`。
 - HS Stage1 SHA256：`b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2`；Stage2 SHA256：`4279a1f334cb924b3d9b12a5b6ccafb482f25016b0e1266bbd6ef838e6fdfafe`。
 - PatchScene 上游 Commit：`49de6d848663956e57cdd2f95d3b364e7a7afbe6`；EMA 权重 SHA256：`f50bf65f419c32bb40afa14e30440e1c4ea839dd92c678f8b4487e0d2b36140a`。
-- 精度：Stage1 Encoder 实际为 FP32；Stage1 Flow 和 Stage2 模型在 FP16 autocast 下运行。此前协议中的笼统 AMP 字段已修正。
+- 精度审计更正：Stage1 Encoder 调用内部启用 FP16 autocast；其三层条件金字塔实际输出为混合 dtype（FP32、FP16、FP16）。Stage1 Flow 在 FP16 autocast 中运行；Stage2 输入投影/融合与速度解码器处于外层 autocast，而 PTv3 主干显式禁用 autocast、输入转 FP32。旧报告中的“Encoder 实际为 FP32”描述有误；本文原始时延数值未作修改。
 - 两种方法的平均原生占用体素数：HS 601,539；PatchScene 297,220。
 - PatchScene Ring_Spread_V2 在帧间独立；没有跨帧状态条件。
 

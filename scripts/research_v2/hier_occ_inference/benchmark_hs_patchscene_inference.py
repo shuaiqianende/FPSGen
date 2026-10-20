@@ -27,10 +27,11 @@ from fpsgen.hier_occ_flow.stage2_model import Stage2OccupancyModel
 from fpsgen.hier_occ_flow.stage2_condition import scene_seed
 from fpsgen.hier_occ_flow.stage2_candidates import select_occupancy_candidates
 from fpsgen.hier_occ_flow.condition import sample_pyramid, observed_children
+from fpsgen.hier_occ_flow.inference_fast import gpu_select_occupancy_candidates, gpu_observed_children, gpu_occupied_fine_coords
 from fpsgen.hier_occ_flow.inference import sample as sample_stage2
 from fpsgen.hier_occ_flow.voxelization import occupied_fine_coords, pack_children
 from fpsgen.hier_occ_flow.geometry import SparseHierarchyGeometry
-from native_voxel_point_sampling import sample_native_occupied_voxels
+from native_voxel_point_sampling import sample_native_occupied_voxels, sample_native_occupied_voxels_cuda
 from inference_timing_utils import ModuleCudaTimer, event_elapsed_ms, summarize, timed_cuda_call
 
 WARMUP_FRAMES = [0, 800, 1600, 2400, 3200]
@@ -75,7 +76,9 @@ def _dump_outputs(out_dir, frame, xyz, fine_coords, geometry, jitter, jitter_met
 
 
 @torch.inference_mode()
-def _run_hs_frame(xyz_np, frame, adapter, model, cfg, geom, device):
+def _run_hs_frame(xyz_np, frame, adapter, model, cfg, geom, device, *,
+                  gpu_candidate_selection=False, gpu_observed_mask=False,
+                  gpu_occupancy_decode=False, stage2_static_cache=False):
     # Every feature/flow/network event is queued asynchronously and synchronized
     # once after generation, so the measured path retains normal launch behavior.
     torch.cuda.reset_peak_memory_stats(device)
@@ -94,43 +97,78 @@ def _run_hs_frame(xyz_np, frame, adapter, model, cfg, geom, device):
     policy = predicted_policy(cfg)
     policy["stage1_nfe"] = 2
     selection_started = time.perf_counter()
-    ids_np, scores_np, provenance = select_occupancy_candidates(
-        score[0, 0].float().cpu().numpy(), geom, **policy["selection"])
-    candidate_selection_ms = (time.perf_counter() - selection_started) * 1000.0
-    ids = torch.as_tensor(ids_np, device=device)
+    candidate_cuda_start, candidate_cuda_end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+    candidate_cuda_start.record()
+    if gpu_candidate_selection:
+        ids, scores, provenance = gpu_select_occupancy_candidates(score, geom, **policy["selection"])
+        ids_np = None
+    else:
+        ids_np, scores_np, provenance = select_occupancy_candidates(
+            score[0, 0].float().cpu().numpy(), geom, **policy["selection"])
+        ids = torch.as_tensor(ids_np, device=device)
+        scores = torch.as_tensor(scores_np, device=device)
+    candidate_cuda_end.record()
+    candidate_selection_submit_ms = (time.perf_counter() - selection_started) * 1000.0
     condition_started = time.perf_counter()
+    condition_cuda_start, condition_cuda_end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+    condition_cuda_start.record()
     centers_xyz = geom.centers(geom.unflatten(ids)).float()
+    if gpu_observed_mask:
+        observed = gpu_observed_children(xyz, ids, geom)
+    else:
+        if ids_np is None:
+            ids_np = ids.cpu().numpy()
+        observed = torch.as_tensor(observed_children(xyz, ids_np, geom), device=device)
     cond = {
         "lidar_features": sample_pyramid(features, centers_xyz, geom.origin, geom.maximum).detach().half(),
-        "parent_score": torch.as_tensor(scores_np, device=device),
-        "observed_child": torch.as_tensor(observed_children(xyz, ids_np, geom), device=device),
-        "valid_child_mask": torch.as_tensor(geom.valid_children(ids_np), device=device),
+        "parent_score": scores,
+        "observed_child": observed,
+        "valid_child_mask": torch.as_tensor(geom.valid_children(ids), device=device),
     }
     if cond["lidar_features"].shape != (len(ids), 384):
         raise RuntimeError("Stage2 condition sampling shape mismatch")
-    stage2_condition_ms = (time.perf_counter() - condition_started) * 1000.0
+    condition_cuda_end.record()
+    stage2_condition_submit_ms = (time.perf_counter() - condition_started) * 1000.0
     noise = torch.randn((geom.num_parents, geom.k), device=device,
                         generator=torch.Generator(device=device).manual_seed(cfg["validation"]["seed"] + frame))
     source = noise[ids] * cond["valid_child_mask"]
     del noise
     s2_timer = ModuleCudaTimer(model)
     state = source
+    context = None
+    static_context_cuda_ms = 0.0
+    if stage2_static_cache:
+        static_cuda_start, static_cuda_end = torch.cuda.Event(enable_timing=True), torch.cuda.Event(enable_timing=True)
+        static_cuda_start.record()
+        with torch.autocast("cuda", dtype=torch.float16):
+            context = model.prepare_inference_context(ids, **cond)
+        static_cuda_end.record()
     with s2_timer, torch.autocast("cuda", dtype=torch.float16):
         for step in range(4):
             t = state.new_tensor(step / 4)
-            velocity = model(ids, state=state, time=t, **cond)
+            if context is None:
+                velocity = model(ids, state=state, time=t, **cond)
+            else:
+                velocity = model(ids, state=state, time=t, inference_context=context)
             state = state + velocity.float() / 4
     if not bool(torch.isfinite(score).all() and torch.isfinite(state).all()):
         raise RuntimeError(f"Non-finite HS endpoint at frame {frame}")
     decode_started = time.perf_counter()
     occupancy = (state > 0) & cond["valid_child_mask"]
-    fine = occupied_fine_coords(ids.cpu().numpy(),
-                                pack_children(occupancy.cpu().numpy(), geom), geom)
+    if gpu_occupancy_decode:
+        fine = gpu_occupied_fine_coords(ids, occupancy, cond["valid_child_mask"], geom).cpu().numpy()
+    else:
+        fine = occupied_fine_coords(ids.cpu().numpy(),
+                                    pack_children(occupancy.cpu().numpy(), geom), geom)
     if not len(fine):
         raise RuntimeError(f"Empty HS occupancy at frame {frame}")
     decode_wall_ms = (time.perf_counter() - decode_started) * 1000.0
     torch.cuda.synchronize(device)
     generation_wall_ms = (time.perf_counter() - wall0) * 1000.0
+    candidate_selection_cuda_ms = float(candidate_cuda_start.elapsed_time(candidate_cuda_end))
+    stage2_condition_cuda_ms = float(condition_cuda_start.elapsed_time(condition_cuda_end))
+    if stage2_static_cache:
+        static_context_cuda_ms = float(static_cuda_start.elapsed_time(static_cuda_end))
     encoder_ms = event_elapsed_ms([encoder_events])
     flow_ms = flow_timer.elapsed_ms()
     stage2_ms = s2_timer.elapsed_ms()
@@ -139,8 +177,11 @@ def _run_hs_frame(xyz_np, frame, adapter, model, cfg, geom, device):
         "stage1_flow_total_ms": flow_ms,
         "stage1_flow_ms_per_step": flow_ms / 2,
         "stage1_flow_forward_calls": flow_timer.calls,
-        "candidate_selection_ms": candidate_selection_ms,
-        "stage2_condition_ms": stage2_condition_ms,
+        "candidate_selection_submit_wall_ms": candidate_selection_submit_ms,
+        "candidate_selection_cuda_event_ms": candidate_selection_cuda_ms,
+        "stage2_condition_submit_wall_ms": stage2_condition_submit_ms,
+        "stage2_condition_cuda_event_ms": stage2_condition_cuda_ms,
+        "stage2_static_context_cuda_event_ms": static_context_cuda_ms,
         "stage2_network_total_ms": stage2_ms,
         "stage2_network_ms_per_step": stage2_ms / 4,
         "stage2_forward_calls": s2_timer.calls,
@@ -153,6 +194,10 @@ def _run_hs_frame(xyz_np, frame, adapter, model, cfg, geom, device):
         "peak_reserved_gib": torch.cuda.max_memory_reserved(device) / 1024**3,
         "incremental_peak_allocated_gib": max(0, torch.cuda.max_memory_allocated(device) - baseline_alloc) / 1024**3,
         "provenance": provenance,
+        "gpu_candidate_selection": bool(gpu_candidate_selection),
+        "gpu_observed_mask": bool(gpu_observed_mask),
+        "gpu_occupancy_decode": bool(gpu_occupancy_decode),
+        "stage2_static_cache": bool(stage2_static_cache),
     }
     return np.asarray(fine), row
 
@@ -201,14 +246,17 @@ class _PatchGeometry:
         return np.asarray(self.origin) + (c + 0.5) * np.asarray(self.fine_size)
 
 
-def _postprocess(fine, geometry, frame):
+def _postprocess(fine, geometry, frame, *, jitter_backend="cpu_reference", device="cuda:0"):
     started = time.perf_counter()
     centers, _ = sample_native_occupied_voxels(fine, geometry, point_mode="voxel_center")
     center_ms = (time.perf_counter() - started) * 1000.0
     started = time.perf_counter()
-    jitter, meta = sample_native_occupied_voxels(
-        fine, geometry, point_mode="native_fine_jitter", target_points=1_080_000,
-        seed=POINT_SEED_BASE + frame)
+    sampler = sample_native_occupied_voxels_cuda if jitter_backend == "cuda" else sample_native_occupied_voxels
+    kwargs = {"device": device} if jitter_backend == "cuda" else {}
+    jitter, meta = sampler(fine, geometry, point_mode="native_fine_jitter", target_points=1_080_000,
+                           seed=POINT_SEED_BASE + frame, **kwargs)
+    if isinstance(jitter, torch.Tensor):
+        jitter = jitter.detach().cpu().numpy()
     jitter_ms = (time.perf_counter() - started) * 1000.0
     if len(jitter) != 1_080_000 or not np.isfinite(jitter).all():
         raise RuntimeError("Native jitter did not emit exactly 1,080,000 finite points")
@@ -247,6 +295,13 @@ def main():
     p.add_argument("--benchmark-frames", nargs="+", type=int, default=BENCHMARK_FRAMES)
     p.add_argument("--seed-base", type=int, default=20261019)
     p.add_argument("--no-save-predictions", action="store_true")
+    p.add_argument("--gpu-candidate-selection", action="store_true")
+    p.add_argument("--gpu-observed-mask", action="store_true")
+    p.add_argument("--gpu-occupancy-decode", action="store_true")
+    p.add_argument("--stage2-static-cache", action="store_true")
+    p.add_argument("--jitter-backend", choices=("cpu_reference", "cuda"), default="cpu_reference")
+    p.add_argument("--parity-reference-dir", type=Path,
+                   help="Optional directory containing baseline frame_XXXXXX.npz predictions")
     p.add_argument("--smoke-one-frame", action="store_true",
                    help="Engineering smoke only: run frame 100 once, without warmup; never a benchmark result")
     a = p.parse_args()
@@ -305,19 +360,50 @@ def main():
                         stage2_nfe=4, stage2_checkpoint=str(a.stage2_checkpoint.resolve()),
                         candidate_selection="predicted Stage1 threshold .5; original policy",
                         amp="original fp16 autocast", stage2_condition_encoding="same single Stage1 feature encode")
+        protocol["optimization_flags"] = {
+            "gpu_candidate_selection": a.gpu_candidate_selection,
+            "gpu_observed_mask": a.gpu_observed_mask,
+            "gpu_occupancy_decode": a.gpu_occupancy_decode,
+            "stage2_static_cache": a.stage2_static_cache,
+            "jitter_backend": a.jitter_backend,
+            "parity_reference_dir": str(a.parity_reference_dir.resolve()) if a.parity_reference_dir else None,
+        }
         save_dir = a.output / "predictions"
         pending_outputs = []
         protocol["geometry_sha256"] = geom.sha256
         protocol["model_parameter_forwards"] = "encoder once; Stage1 flow twice; Stage2 model four times"
         for warmup, frame in [(True, f) for f in a.warmup_frames] + [(False, f) for f in a.benchmark_frames]:
-            fine, timing = _run_hs_frame(inputs[frame]["xyz"], frame, adapter, model, cfg, geom, device)
-            centers, jitter, center_ms, jitter_ms, jitter_meta = _postprocess(fine, geom, frame)
+            fine, timing = _run_hs_frame(
+                inputs[frame]["xyz"], frame, adapter, model, cfg, geom, device,
+                gpu_candidate_selection=a.gpu_candidate_selection,
+                gpu_observed_mask=a.gpu_observed_mask,
+                gpu_occupancy_decode=a.gpu_occupancy_decode,
+                stage2_static_cache=a.stage2_static_cache)
+            centers, jitter, center_ms, jitter_ms, jitter_meta = _postprocess(
+                fine, geom, frame, jitter_backend=a.jitter_backend, device=device)
             timing.update({"model": a.model, "frame": frame, "warmup": warmup, "batch_size": 1,
                            "voxel_center_ms": center_ms, "native_jitter_ms": jitter_ms,
                            "generation_plus_jitter_ms": timing["generation_wall_ms"] + jitter_ms,
                            "jitter_output_points": int(len(jitter)),
+                           "jitter_backend": a.jitter_backend,
                            "jitter_occupied_voxels": jitter_meta["original_occupied_voxels"],
+                           "jitter_cuda_fallback_used": jitter_meta.get("cuda_fallback_used"),
+                           "jitter_cuda_fallback_points": jitter_meta.get("cuda_fallback_pending_proposals"),
+                           "jitter_cuda_proposals": jitter_meta.get("cuda_proposals"),
+                           "jitter_cuda_rejection_rounds": jitter_meta.get("cuda_rejection_rounds"),
                            "jitter_seed": int(POINT_SEED_BASE + frame), **inputs[frame]})
+            if a.parity_reference_dir and not warmup:
+                ref_path = a.parity_reference_dir / f"frame_{frame:06d}.npz"
+                if not ref_path.is_file():
+                    raise FileNotFoundError(f"Missing parity reference for frame {frame}: {ref_path}")
+                with np.load(ref_path) as ref:
+                    ref_coords = ref["occupied_coords_xyz"]
+                exact = np.array_equal(fine, ref_coords)
+                timing["parity_reference"] = str(ref_path.resolve())
+                timing["parity_exact"] = bool(exact)
+                timing["parity_reference_occupied_voxels"] = int(len(ref_coords))
+                if not exact:
+                    raise RuntimeError(f"Fine occupancy parity failed at frame {frame}")
             # Keep JSON records lean; arrays and paths remain in input identity.
             timing.pop("xyz", None); timing.pop("path", None)
             if not warmup:
@@ -363,12 +449,18 @@ def main():
         for warmup, frame in [(True, f) for f in a.warmup_frames] + [(False, f) for f in a.benchmark_frames]:
             torch.manual_seed(a.seed_base + frame); torch.cuda.manual_seed_all(a.seed_base + frame)
             fine, timing = _run_patchscene_frame(inputs[frame]["xyz"], frame, generator, grid, a.patchscene_steps, device)
-            centers, jitter, center_ms, jitter_ms, jitter_meta = _postprocess(fine, native_geom, frame)
+            centers, jitter, center_ms, jitter_ms, jitter_meta = _postprocess(
+                fine, native_geom, frame, jitter_backend=a.jitter_backend, device=device)
             timing.update({"model": a.model, "frame": frame, "warmup": warmup, "batch_size": 1,
                            "voxel_center_ms": center_ms, "native_jitter_ms": jitter_ms,
                            "generation_plus_jitter_ms": timing["generation_wall_ms"] + jitter_ms,
                            "jitter_output_points": int(len(jitter)),
+                           "jitter_backend": a.jitter_backend,
                            "jitter_occupied_voxels": jitter_meta["original_occupied_voxels"],
+                           "jitter_cuda_fallback_used": jitter_meta.get("cuda_fallback_used"),
+                           "jitter_cuda_fallback_points": jitter_meta.get("cuda_fallback_pending_proposals"),
+                           "jitter_cuda_proposals": jitter_meta.get("cuda_proposals"),
+                           "jitter_cuda_rejection_rounds": jitter_meta.get("cuda_rejection_rounds"),
                            "jitter_seed": int(POINT_SEED_BASE + frame), **inputs[frame]})
             timing.pop("xyz", None); timing.pop("path", None)
             if not warmup:
