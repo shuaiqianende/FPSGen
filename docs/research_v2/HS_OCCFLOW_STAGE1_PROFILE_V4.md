@@ -1,6 +1,6 @@
 # HS-OccFlow Stage1 V4 Profile
 
-Status: GPU0 Stage1 profile and a matched 5+20 baseline/cache comparison have completed. Further layout/cuDNN/TF32 trials were stopped after another compute process appeared on GPU0.
+Status: Stage1 profiling and condition-cache implementation completed. Additional GPU2 layout/cuDNN/TF32 and Flow compile runs completed. GPU3 was busy during these runs, so all new GPU tests used the available GPU2 and no existing task was interrupted.
 
 ## Frozen system
 
@@ -48,6 +48,23 @@ The original, non-cached Stage1 path was profiled on Seq08 frames 2300, 700 and 
 The leaf-event categories account for most, but not all, of the Encoder interval; the remaining time includes functional ops and framework/layout overhead. They are profiler diagnostics and not additive replacements for the synchronized full-module measurements. Tokenizer unique/scatter together are below 1 ms here, so a custom tokenizer kernel is not currently justified. Dense Conv3d is the clear Stage1 Encoder target.
 
 Raw profile: `experiments/hs_inference_opt_v4/stage1_profile/gpu0_3scenes_originalflow.json`.
+
+## Follow-up V4 experiments on GPU2 (20 October 2026)
+
+Three same-GPU 5+20 V3 baselines measured `478.066`, `478.288`, and `478.010 ms` mean generation wall time. Stage1 Encoder was `203.59–203.92 ms`, Stage1 Flow was `107.92–108.08 ms`, Stage2 was `143.05–143.23 ms`, and peak allocated memory was `3.011 GiB`.
+
+| Variant | Encoder ms | Flow ×2 ms | Stage2 ×4 ms | Generation ms | Peak allocated GiB | Output status |
+|---|---:|---:|---:|---:|---:|---|
+| V3 baseline (3 runs) | 203.71 mean | 107.99 mean | 143.13 mean | 478.12 mean | 3.011 | reference |
+| Encoder `channels_last_3d` | 294.24 | 107.45 | 142.95 | 569.12 | 3.152 | slower; candidate IDs changed |
+| Flow `channels_last_3d` | 204.33 | 99.66 | 144.28 | 474.01 | 3.011 | small/noisy gain; score/candidate/occupancy changed |
+| `cudnn.benchmark=True` | 211.03 | 108.76 | 144.22 | 488.19 | 3.011 | slower; score/candidate changed |
+| Stage1 TF32 flags | 204.47 | 108.46 | 144.24 | 482.80 | 3.011 | slower; score/candidate changed |
+| Stage1 Flow `torch.compile`, `no_grad` | 204.57 mean | 61.01 mean | 144.51 mean | 435.78 mean | 3.334 | repeatable speedup; numerical variant, 41-frame quality passed initial thresholds |
+
+The Flow layout’s paired single-run improvement was only about `4.06 ms` end-to-end, below the observed frame-to-frame spread; its 41-frame quality was essentially unchanged (CD `+0.000067 m`, IoU deltas within `0.002 pp`). It is not selected as a default optimization. Encoder channels-last is a clear regression. cuDNN benchmarking and TF32 did not speed up the full path and changed the Stage1 score/candidate hashes, so neither is selected.
+
+The largest opportunity from this phase is compiling the fixed-shape Stage1 Flow. See `HS_OCCFLOW_STAGE1_COMPILE_GRAPH_V4.md` for three repeated timing rounds, compile cold-start, exact output differences, and 41-frame quality metrics.
 
 ## Matched GPU0 5+20 baseline
 

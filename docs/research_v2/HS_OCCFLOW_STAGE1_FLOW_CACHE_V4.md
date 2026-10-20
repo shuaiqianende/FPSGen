@@ -23,7 +23,7 @@ The inference benchmark reports the condition-projection cache CUDA time separat
 
 ## GPU status
 
-The first V4 cold-start one-frame baseline smoke succeeded on GPU2 (frame 100, 3.01 GiB peak allocation), but its 3.51 s latency is a cold-start smoke and is not a performance result. A cache smoke attempt was rejected by GPU admission after an external process appeared. The formal V3 baseline 5+20 run completed on GPU3 and is recorded in `HS_OCCFLOW_STAGE1_PROFILE_V4.md`. Subsequent checks found external compute processes on both permitted GPUs (GPU2 around 15–59% utilization; GPU3 around 30–91%), so cache GPU parity, detailed Stage1 profiling, layout/TF32/cuDNN, CUDA Graph and compiled GPU tests remain `NOT RUN` until an admission-safe window.
+The first V4 cold-start one-frame baseline smoke on GPU2 (frame 100, 3.01 GiB peak allocation) is not a performance result. Later GPU2 idle windows were used for the further V4 tests documented below. GPU3 remained busy with an unrelated LiDiff process (around 7.5 GiB and 91–98% utilization in the latest checks); it was not interrupted.
 
 ## GPU0 measured result
 
@@ -48,4 +48,9 @@ Raw runs:
 
 CPU test suite: 28 passed after adding the opt-in Stage1 memory-layout helper tests. Detailed GPU Encoder profiling also found the fixed condition projections total about 2.94 ms when recomputed twice; the cache setup costs 1.28 ms, which explains the measured ~1.2 ms net Flow reduction.
 
-The channels-last experiment initially exposed that `Module.to(memory_format=channels_last_3d)` fails on non-5D parameters. A rank-safe experiment helper and tests are now in place. The first model smoke then showed a non-bitwise Stage1 score hash, so the result is treated as a numerical variant. Its follow-up was blocked when a separate LiDiff task appeared on GPU3 (about 6.8 GiB, 97% utilization); no process was stopped. A new `--quality-reference-dir` comparison path records score, candidate and voxel differences for numerical variants without falsely requiring exact hashes. A 41-frame quality test and a full timing run remain pending an idle GPU.
+
+## GPU2 repeat check for the condition cache
+
+The cache was tested on GPU2 with the V3 configuration. One 5+20 run completed with exact score, candidate-ID and Fine Occupancy hashes and mean generation `503.57 ms`, but it had substantial Stage2 timing outliers and is not a valid speed comparison. A second 5+20 attempt failed Fine Occupancy parity on frame 100 after Stage1 score and candidate parity had passed. Separate baseline and cache one-frame smokes each matched. This means exact parity across repeated full runs is **not established**; Stage2's sparse backend also has run-to-run variability. The cache remains opt-in.
+
+The GPU0 matched result remains a single-round engineering measurement: about `1.22 ms` net Flow saving after `1.28 ms` static projection preparation, and `2.43 ms` full-generation saving. Three-round cache timing and robust repeated exact parity have not been established. Do not describe this as a major speedup.
