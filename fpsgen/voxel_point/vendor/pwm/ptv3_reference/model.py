@@ -188,13 +188,16 @@ class Point(Dict):
             sparse_shape = torch.add(
                 torch.max(self.grid_coord, dim=0).values, pad
             ).tolist()
+        validated_batch_size = self.get("_validated_batch_size")
+        batch_size = (int(validated_batch_size) if validated_batch_size is not None
+                      else self.batch[-1].tolist() + 1)
         sparse_conv_feat = spconv.SparseConvTensor(
             features=self.feat,
             indices=torch.cat(
                 [self.batch.unsqueeze(-1).int(), self.grid_coord.int()], dim=1
             ).contiguous(),
             spatial_shape=sparse_shape,
-            batch_size=self.batch[-1].tolist() + 1,
+            batch_size=batch_size,
         )
         self["sparse_shape"] = sparse_shape
         self["sparse_conv_feat"] = sparse_conv_feat
@@ -482,6 +485,13 @@ class SerializedAttention(PointModule):
         pad_key = "pad"
         unpad_key = "unpad"
         cu_seqlens_key = "cu_seqlens_key"
+        topology = point.get("_v3_topology")
+        cache_key = id(self)
+        if topology is not None and topology.level == "multilevel":
+            cached = topology.attention.get(cache_key)
+            if cached is not None:
+                point[pad_key], point[unpad_key], point[cu_seqlens_key] = cached
+                return cached
         if (
             pad_key not in point.keys()
             or unpad_key not in point.keys()
@@ -533,6 +543,10 @@ class SerializedAttention(PointModule):
             point[cu_seqlens_key] = nn.functional.pad(
                 torch.concat(cu_seqlens), (0, 1), value=_offset_pad[-1]
             )
+            if topology is not None and topology.level == "multilevel":
+                topology.attention[cache_key] = (
+                    point[pad_key], point[unpad_key], point[cu_seqlens_key]
+                )
         return point[pad_key], point[unpad_key], point[cu_seqlens_key]
 
     def forward(self, point):
@@ -747,56 +761,59 @@ class SerializedPooling(PointModule):
             point.keys()
         ), "Run point.serialization() point cloud before SerializedPooling"
 
-        code = point.serialized_code >> pooling_depth * 3
-        code_, cluster, counts = torch.unique(
-            code[0],
-            sorted=True,
-            return_inverse=True,
-            return_counts=True,
-        )
-        # indices of point sorted by cluster, for torch_scatter.segment_csr
-        _, indices = torch.sort(cluster)
-        # index pointer for sorted point, for torch_scatter.segment_csr
-        idx_ptr = torch.cat([counts.new_zeros(1), torch.cumsum(counts, dim=0)])
-        # head_indices of each cluster, for reduce attr e.g. code, batch
-        head_indices = indices[idx_ptr[:-1]]
-        # generate down code, order, inverse
-        code = code[:, head_indices]
-        order = torch.argsort(code)
-        inverse = torch.zeros_like(order).scatter_(
-            dim=1,
-            index=order,
-            src=torch.arange(0, code.shape[1], device=order.device).repeat(
-                code.shape[0], 1
-            ),
-        )
-
-        if self.shuffle_orders:
-            perm = torch.randperm(code.shape[0])
-            code = code[perm]
-            order = order[perm]
-            inverse = inverse[perm]
+        topology = point.get("_v3_topology")
+        cache_key = id(self)
+        cached = (topology.pooling.get(cache_key)
+                  if topology is not None and topology.level == "multilevel" else None)
+        if cached is None:
+            code = point.serialized_code >> pooling_depth * 3
+            _, cluster, counts = torch.unique(
+                code[0], sorted=True, return_inverse=True, return_counts=True)
+            _, indices = torch.sort(cluster)
+            idx_ptr = torch.cat([counts.new_zeros(1), torch.cumsum(counts, dim=0)])
+            head_indices = indices[idx_ptr[:-1]]
+            code = code[:, head_indices]
+            order = torch.argsort(code)
+            inverse = torch.zeros_like(order).scatter_(
+                dim=1, index=order,
+                src=torch.arange(0, code.shape[1], device=order.device).repeat(code.shape[0], 1))
+            if self.shuffle_orders:
+                perm = torch.randperm(code.shape[0])
+                code, order, inverse = code[perm], order[perm], inverse[perm]
+            grid_coord = point.grid_coord[head_indices] >> pooling_depth
+            batch = point.batch[head_indices]
+            serialized_depth = point.serialized_depth - pooling_depth
+            coord = torch_scatter.segment_csr(point.coord[indices], idx_ptr, reduce="mean")
+            if topology is not None and topology.level == "multilevel":
+                cached = (cluster, indices, idx_ptr, head_indices, code, order, inverse,
+                          grid_coord, batch, serialized_depth, coord)
+                topology.pooling[cache_key] = cached
+        else:
+            (cluster, indices, idx_ptr, head_indices, code, order, inverse,
+             grid_coord, batch, serialized_depth, coord) = cached
 
         # collect information
         point_dict = Dict(
             feat=torch_scatter.segment_csr(
                 self.proj(point.feat)[indices], idx_ptr, reduce=self.reduce
             ),
-            coord=torch_scatter.segment_csr(
-                point.coord[indices], idx_ptr, reduce="mean"
-            ),
-            grid_coord=point.grid_coord[head_indices] >> pooling_depth,
+            coord=coord,
+            grid_coord=grid_coord,
             serialized_code=code,
             serialized_order=order,
             serialized_inverse=inverse,
-            serialized_depth=point.serialized_depth - pooling_depth,
-            batch=point.batch[head_indices],
+            serialized_depth=serialized_depth,
+            batch=batch,
         )
 
         if "condition" in point.keys():
             point_dict["condition"] = point.condition
         if "context" in point.keys():
             point_dict["context"] = point.context
+        if "_validated_batch_size" in point.keys():
+            point_dict["_validated_batch_size"] = point._validated_batch_size
+        if topology is not None:
+            point_dict["_v3_topology"] = topology
 
         if self.traceable:
             point_dict["pooling_inverse"] = cluster

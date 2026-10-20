@@ -65,14 +65,16 @@ def _admit(gpu):
     return info
 
 
-def _dump_outputs(out_dir, frame, xyz, fine_coords, geometry, jitter, jitter_meta):
+def _dump_outputs(out_dir, frame, xyz, fine_coords, geometry, jitter=None, jitter_meta=None):
     out = Path(out_dir) / "predictions"
     out.mkdir(parents=True, exist_ok=True)
     centers = geometry.centers(fine_coords, fine=True).astype(np.float32)
-    np.savez_compressed(out / f"frame_{frame:06d}.npz",
-                        occupied_coords_xyz=np.asarray(fine_coords, dtype=np.int32),
-                        voxel_center_xyz=centers, jitter_xyz=jitter.astype(np.float32),
-                        input_xyz_sha256=_sha_array(xyz), jitter_metadata=json.dumps(jitter_meta))
+    payload = {"occupied_coords_xyz": np.asarray(fine_coords, dtype=np.int32),
+               "voxel_center_xyz": centers, "input_xyz_sha256": _sha_array(xyz)}
+    if jitter is not None:
+        payload["jitter_xyz"] = jitter.astype(np.float32)
+        payload["jitter_metadata"] = json.dumps(jitter_meta)
+    np.savez_compressed(out / f"frame_{frame:06d}.npz", **payload)
 
 
 @torch.inference_mode()
@@ -295,10 +297,24 @@ def main():
     p.add_argument("--benchmark-frames", nargs="+", type=int, default=BENCHMARK_FRAMES)
     p.add_argument("--seed-base", type=int, default=20261019)
     p.add_argument("--no-save-predictions", action="store_true")
+    p.add_argument("--skip-jitter", action="store_true",
+                   help="Quality-only run: save native occupancy/centers without 1.08M-point jitter")
+    p.add_argument("--allow-custom-frame-counts", action="store_true",
+                   help="Allow a separate quality set; not a registered 5+20 latency benchmark")
     p.add_argument("--gpu-candidate-selection", action="store_true")
     p.add_argument("--gpu-observed-mask", action="store_true")
     p.add_argument("--gpu-occupancy-decode", action="store_true")
     p.add_argument("--stage2-static-cache", action="store_true")
+    p.add_argument("--ptv3-topology-cache", choices=("none", "serialization", "multilevel"), default="none",
+                   help="V3 inference-only cache: top-level serialization or serialization+attention+pooling maps")
+    p.add_argument("--ptv3-precision", choices=("original", "amp_fp16", "selective_fp16"), default="original",
+                   help="V3 opt-in PTv3 precision policy; Euler state remains FP32")
+    p.add_argument("--ptv3-batch1-fastpath", action="store_true",
+                   help="Use validated single-scene norm/sparsify metadata fast paths")
+    p.add_argument("--compile-target", choices=("none", "stage2_mlp", "stage1_flow"), default="none",
+                   help="V3 opt-in torch.compile target; compile cold-start is recorded on first warmup")
+    p.add_argument("--dtype-audit", action="store_true",
+                   help="Diagnostic only: record leaf-module input/output dtypes; do not use timings")
     p.add_argument("--jitter-backend", choices=("cpu_reference", "cuda"), default="cpu_reference")
     p.add_argument("--parity-reference-dir", type=Path,
                    help="Optional directory containing baseline frame_XXXXXX.npz predictions")
@@ -307,9 +323,9 @@ def main():
     a = p.parse_args()
     if a.smoke_one_frame:
         a.warmup_frames, a.benchmark_frames = [], [100]
-    if not a.smoke_one_frame and (len(a.warmup_frames) != 5 or len(a.benchmark_frames) != 20):
+    if not a.smoke_one_frame and not a.allow_custom_frame_counts and (len(a.warmup_frames) != 5 or len(a.benchmark_frames) != 20):
         p.error("This registered run requires exactly 5 warmup and 20 timed frames")
-    expected_unique = 1 if a.smoke_one_frame else 25
+    expected_unique = 1 if a.smoke_one_frame else len(a.warmup_frames) + len(a.benchmark_frames)
     if len(set(a.warmup_frames + a.benchmark_frames)) != expected_unique:
         p.error("Warmup and benchmark frame IDs must be pairwise distinct")
     env_gpu = os.environ.get("CUDA_VISIBLE_DEVICES")
@@ -354,12 +370,56 @@ def main():
         adapter = FrozenStage1OccupancyAdapter(**cfg["stage1"]["adapter"]).to(device).eval()
         model = Stage2OccupancyModel(geom, **cfg["model"]).to(device).eval()
         model.load_state_dict(saved["model"], strict=True)
+        dtype_audit = {}
+        dtype_hook_handles = []
+        if a.dtype_audit:
+            def dtype_name(value):
+                if isinstance(value, torch.Tensor): return str(value.dtype)
+                if hasattr(value, "feat") and isinstance(value.feat, torch.Tensor): return str(value.feat.dtype)
+                if isinstance(value, (tuple, list)):
+                    return "[" + ",".join(dtype_name(v) for v in value[:4]) + (",..." if len(value)>4 else "") + "]"
+                if isinstance(value, dict): return "{" + ",".join(f"{k}:{dtype_name(v)}" for k,v in list(value.items())[:4]) + "}"
+                return type(value).__name__
+            for prefix, root_module in (("stage1_encoder", adapter.model.encoder),
+                                        ("stage1_flow", adapter.model.flow),
+                                        ("stage2_ptv3", model.trunk.net)):
+                for module_name, module in root_module.named_modules():
+                    if module_name and any(module.children()): continue
+                    key = f"{prefix}.{module_name or '<root>'}:{module.__class__.__name__}"
+                    dtype_audit[key] = {"input": set(), "output": set()}
+                    def record_dtype(mod, args, output, _key=key):
+                        dtype_audit[_key]["input"].add(dtype_name(args))
+                        dtype_audit[_key]["output"].add(dtype_name(output))
+                    dtype_hook_handles.append(module.register_forward_hook(record_dtype))
+        model.ptv3_topology_cache = a.ptv3_topology_cache
+        model.set_ptv3_precision(a.ptv3_precision)
+        model.ptv3_batch1_fastpath = a.ptv3_batch1_fastpath
+        compile_seconds = 0.0
+        if a.compile_target != "none":
+            from torch._dynamo.utils import counters
+            counters.clear()
+        if a.compile_target == "stage1_flow":
+            if not hasattr(torch, "compile"):
+                raise RuntimeError("torch.compile is unavailable in this PyTorch build")
+            compile_start = time.perf_counter()
+            adapter.model.flow = torch.compile(adapter.model.flow, dynamic=False)
+            compile_seconds = time.perf_counter() - compile_start
+        elif a.compile_target == "stage2_mlp":
+            if not hasattr(torch, "compile"):
+                raise RuntimeError("torch.compile is unavailable in this PyTorch build")
+            compile_start = time.perf_counter()
+            for name in ("local", "time", "fuse", "decoder"):
+                setattr(model, name, torch.compile(getattr(model, name), dynamic=True))
+            compile_seconds = time.perf_counter() - compile_start
         protocol.update(stage1_checkpoint_sha256=S1_SHA, stage1_weights="ema", stage1_nfe=2,
                         stage1_checkpoint=cfg["stage1"]["adapter"]["checkpoint"],
                         stage2_checkpoint_sha256=S2_SHA, stage2_weights="online",
                         stage2_nfe=4, stage2_checkpoint=str(a.stage2_checkpoint.resolve()),
                         candidate_selection="predicted Stage1 threshold .5; original policy",
-                        amp="original fp16 autocast", stage2_condition_encoding="same single Stage1 feature encode")
+                        amp="original fp16 autocast", stage2_condition_encoding="same single Stage1 feature encode",
+                        ptv3_topology_cache=a.ptv3_topology_cache, ptv3_precision=a.ptv3_precision,
+                        compile_target=a.compile_target, compile_wrapper_setup_seconds=compile_seconds)
+        protocol["dtype_audit_enabled"] = bool(a.dtype_audit)
         protocol["optimization_flags"] = {
             "gpu_candidate_selection": a.gpu_candidate_selection,
             "gpu_observed_mask": a.gpu_observed_mask,
@@ -372,15 +432,30 @@ def main():
         pending_outputs = []
         protocol["geometry_sha256"] = geom.sha256
         protocol["model_parameter_forwards"] = "encoder once; Stage1 flow twice; Stage2 model four times"
+        compile_first_call = True
         for warmup, frame in [(True, f) for f in a.warmup_frames] + [(False, f) for f in a.benchmark_frames]:
+            call_start = time.perf_counter() if compile_first_call and a.compile_target != "none" else None
             fine, timing = _run_hs_frame(
                 inputs[frame]["xyz"], frame, adapter, model, cfg, geom, device,
                 gpu_candidate_selection=a.gpu_candidate_selection,
                 gpu_observed_mask=a.gpu_observed_mask,
                 gpu_occupancy_decode=a.gpu_occupancy_decode,
                 stage2_static_cache=a.stage2_static_cache)
-            centers, jitter, center_ms, jitter_ms, jitter_meta = _postprocess(
-                fine, geom, frame, jitter_backend=a.jitter_backend, device=device)
+            if call_start is not None:
+                torch.cuda.synchronize(device)
+                protocol["compile_first_call_wall_ms"] = (time.perf_counter() - call_start) * 1000.0
+                protocol["compile_first_call_frame"] = frame
+                protocol["compile_first_call_is_warmup"] = bool(warmup)
+                compile_first_call = False
+            if a.skip_jitter:
+                t0 = time.perf_counter()
+                centers, _ = sample_native_occupied_voxels(fine, geom, point_mode="voxel_center")
+                center_ms = (time.perf_counter()-t0)*1000.0
+                jitter = np.empty((0,3),dtype=np.float32); jitter_ms = 0.0
+                jitter_meta = {"original_occupied_voxels": int(len(fine)), "skipped_for_quality_run": True}
+            else:
+                centers, jitter, center_ms, jitter_ms, jitter_meta = _postprocess(
+                    fine, geom, frame, jitter_backend=a.jitter_backend, device=device)
             timing.update({"model": a.model, "frame": frame, "warmup": warmup, "batch_size": 1,
                            "voxel_center_ms": center_ms, "native_jitter_ms": jitter_ms,
                            "generation_plus_jitter_ms": timing["generation_wall_ms"] + jitter_ms,
@@ -409,7 +484,8 @@ def main():
             if not warmup:
                 rows.append(timing)
                 if not a.no_save_predictions:
-                    pending_outputs.append((frame, inputs[frame]["xyz"], fine.copy(), geom, jitter.copy(), jitter_meta))
+                    pending_outputs.append((frame, inputs[frame]["xyz"], fine.copy(), geom,
+                                            None if a.skip_jitter else jitter.copy(), jitter_meta))
             print(f"HS {'warmup' if warmup else 'timed'} frame={frame} gen={timing['generation_wall_ms']:.2f}ms "
                   f"net={timing['network_forward_gpu_ms']:.2f}ms center={center_ms:.2f}ms jitter={jitter_ms:.2f}ms", flush=True)
         expected_encoder_runs = len(a.warmup_frames) + len(a.benchmark_frames)
@@ -417,6 +493,15 @@ def main():
             raise RuntimeError(f"Expected {expected_encoder_runs} encoder runs, got {adapter.encoder_forward_count}")
         for frame, xyz_np, fine_np, output_geom, jitter_np, jitter_meta in pending_outputs:
             _dump_outputs(save_dir, frame, xyz_np, fine_np, output_geom, jitter_np, jitter_meta)
+        for handle in dtype_hook_handles: handle.remove()
+        if a.dtype_audit:
+            protocol["module_dtype_audit"] = {
+                name: {key: sorted(values) for key, values in record.items()}
+                for name, record in dtype_audit.items()
+            }
+        if a.compile_target != "none":
+            from torch._dynamo.utils import counters
+            protocol["dynamo_counters"] = {group: dict(values) for group, values in counters.items()}
     else:
         if not a.patchscene_root or not a.patchscene_checkpoint:
             p.error("PatchScene run requires --patchscene-root and --patchscene-checkpoint")

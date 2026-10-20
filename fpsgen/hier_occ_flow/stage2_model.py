@@ -14,6 +14,17 @@ def single_scene_norm(base):
         def forward(self,point):
             features=point.feat
             if len(features)==0:return point
+            if point.get('_validated_batch_size') == 1:
+                source=features.float() if getattr(self,'_v3_fp32_stats',False) else features
+                if len(source)==1:normalized=source
+                else:
+                    centered=source-source.mean(0,keepdim=True)
+                    normalized=centered*torch.rsqrt(centered.square().mean(0,keepdim=True)+self.eps)
+                normalized=normalized.to(features.dtype)
+                if self.affine:normalized=normalized*self.weight+self.bias
+                point.feat=normalized
+                if 'sparse_conv_feat' in point:point.sparse_conv_feat=point.sparse_conv_feat.replace_feature(normalized)
+                return point
             # Pooling/unpooling preserves contiguous scene groups. Reduce each
             # scene independently without atomic scatter accumulation or padding.
             groups,counts=torch.unique_consecutive(point.batch,return_counts=True)
@@ -22,8 +33,13 @@ def single_scene_norm(base):
             for scene in features.split(counts.tolist()):
                 if len(scene)==1:values.append(scene)
                 else:
-                    centered=scene-scene.mean(0,keepdim=True)
-                    values.append(centered*torch.rsqrt(centered.square().mean(0,keepdim=True)+self.eps))
+                    # Selective FP16 keeps activations in their native dtype,
+                    # but computes the numerically sensitive per-scene moments
+                    # in FP32. The default path preserves the original order.
+                    source=scene.float() if getattr(self,'_v3_fp32_stats',False) else scene
+                    centered=source-source.mean(0,keepdim=True)
+                    normalized=centered*torch.rsqrt(centered.square().mean(0,keepdim=True)+self.eps)
+                    values.append(normalized.to(scene.dtype))
             normalized=torch.cat(values)
             if self.affine:normalized=normalized*self.weight+self.bias
             point.feat=normalized
@@ -35,6 +51,11 @@ def single_scene_norm(base):
 class Stage2OccupancyModel(HierarchicalOccupancyModel):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
+        # V3 inference experiments are opt-in. Training and legacy inference
+        # retain the original PTv3 construction and precision path.
+        self.ptv3_topology_cache='none'
+        self.ptv3_precision='original'
+        self.ptv3_batch1_fastpath=False
         if self.backbone_kind=='ptv3':
             from fpsgen.voxel_point.vendor.pwm.ptv3_reference.model import PointInstanceNorm,SerializedPooling
             norm_type=single_scene_norm(PointInstanceNorm)
@@ -43,6 +64,16 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
                 # Official top-level shuffle_orders=False is NOT forwarded to
                 # SerializedPooling, whose default stays True even in eval.
                 if isinstance(module,SerializedPooling):module.shuffle_orders=False
+
+    def set_ptv3_precision(self, mode):
+        if mode not in ('original','amp_fp16','selective_fp16'):
+            raise ValueError(f'Unknown PTv3 precision mode: {mode}')
+        self.ptv3_precision=mode
+        if self.backbone_kind=='ptv3':
+            from fpsgen.voxel_point.vendor.pwm.ptv3_reference.model import PointInstanceNorm
+            for module in self.trunk.modules():
+                if isinstance(module,PointInstanceNorm):
+                    module._v3_fp32_stats=(mode=='selective_fp16')
 
     def prepare_inference_context(self,parent_ids,*,batch=None,lidar_features=None,parent_score=None,
                                   observed_child=None,valid_child_mask=None):
@@ -72,10 +103,19 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
         if hasattr(self,'observed'):
             if observed_child is None or observed_child.shape!=(len(parent_ids),self.geometry.k):raise ValueError('Input-only observed mask required')
             static_parts.append(self.observed(observed_child[order].float()))
-        return {'scenes':scenes,'order':order,'inverse':inverse,'parent_ids':sorted_ids,
+        context={'scenes':scenes,'order':order,'inverse':inverse,'parent_ids':sorted_ids,
                 'batch':sorted_batch,'coords':coords,'centers':centers,
                 'static_parts':static_parts,'valid_child_mask':valid_child_mask[order],
                 'input_parent_ids_ref':parent_ids}
+        if self.backbone_kind=='ptv3' and self.ptv3_topology_cache!='none':
+            if self.ptv3_topology_cache not in ('serialization','multilevel'):
+                raise ValueError(f'Unsupported PTv3 topology cache: {self.ptv3_topology_cache}')
+            from .ptv3_inference_topology import PTv3InferenceTopology
+            context['ptv3_topology']=PTv3InferenceTopology.build(
+                coords,centers,sorted_batch,[n+1 for n in self.geometry.parent_resolution],
+                self.trunk.net.order,(max(self.geometry.parent_resolution)-1).bit_length(),scene_count=scenes,
+                level=self.ptv3_topology_cache)
+        return context
 
     def forward_with_inference_context(self,context,state, time):
         """Fast repeated-NFE path; all invariant input validation was done once."""
@@ -93,10 +133,27 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
             from fpsgen.voxel_point.vendor.pwm.ptv3_reference.model import Point
             data={'feat':features.float(),'coord':centers,'grid_coord':coords.int(),'batch':batch.long(),
                   'sparse_shape':[n+1 for n in self.geometry.parent_resolution], 'context':embedding.float()}
-            net=self.trunk.net;point=Point(data)
-            point.serialization(order=net.order,depth=(max(self.geometry.parent_resolution)-1).bit_length(),shuffle_orders=False)
+            net=self.trunk.net
+            topology=context.get('ptv3_topology')
+            if topology is None:
+                point=Point(data)
+                if self.ptv3_batch1_fastpath and context['scenes']==1:
+                    point['_validated_batch_size']=1
+                point.serialization(order=net.order,depth=(max(self.geometry.parent_resolution)-1).bit_length(),shuffle_orders=False)
+            else:
+                point=topology.make_point(data['feat'],data['context'],batch1_fastpath=self.ptv3_batch1_fastpath)
+            # Sparse geometry preparation remains in the original dtype. AMP
+            # is an opt-in experiment and does not change FP32 Euler state.
             with torch.autocast(features.device.type,enabled=False):
-                point.sparsify();point=net.embedding(point);point=net.enc(point);point=net.dec(point)
+                point.sparsify()
+            if self.ptv3_precision=='original':
+                with torch.autocast(features.device.type,enabled=False):
+                    point=net.embedding(point);point=net.enc(point);point=net.dec(point)
+            elif self.ptv3_precision in ('amp_fp16','selective_fp16'):
+                with torch.autocast(features.device.type,dtype=torch.float16,enabled=features.device.type=='cuda'):
+                    point=net.embedding(point);point=net.enc(point);point=net.dec(point)
+            else:
+                raise ValueError(f'Unknown PTv3 precision mode: {self.ptv3_precision}')
             features=point.feat
         else:features=features+self.trunk(features)
         decoded=torch.cat((features,state.float(),embedding[batch]),-1)
