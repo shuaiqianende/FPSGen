@@ -67,6 +67,11 @@ inside the common HS evaluation ROI were 408,319. Mean model inference time
 was about 32.7 seconds/frame, with 8.92 GiB peak PyTorch allocated memory
 (approximately 16.6 GiB process-visible GPU memory during the run).
 
+Reproducibility check: frame `000000` was inferred on GPU3 and repeated on
+idle GPU1 with the same checkpoint and seed. Both outputs contained 400,041
+occupied cells, and the native XYZ occupancy-index arrays matched exactly
+(symmetric set difference 0).
+
 The shared metric evaluator used the exact GPU KD-tree Chamfer implementation,
 corrected fixed-physical-grid IoU at 0.5/0.2/0.1 m, and the audited FPSGen
 JSD implementation. Both native centers and 1.08M native-voxel jitter points
