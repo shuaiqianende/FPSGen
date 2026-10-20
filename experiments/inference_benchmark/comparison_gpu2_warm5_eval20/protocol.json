@@ -1,0 +1,40 @@
+{
+  "status": "COMPLETE",
+  "physical_gpu": 2,
+  "warmup_frames": [
+    0,
+    800,
+    1600,
+    2400,
+    3200
+  ],
+  "benchmark_frames": [
+    100,
+    300,
+    500,
+    700,
+    900,
+    1100,
+    1300,
+    1500,
+    1700,
+    1900,
+    2100,
+    2300,
+    2500,
+    2700,
+    2900,
+    3100,
+    3300,
+    3500,
+    3700,
+    3900
+  ],
+  "batch_size": 1,
+  "same_input_hashes": true,
+  "target_jitter_points": 1080000,
+  "hs_protocol": "../hs_occflow_2x4_gpu2_warm5_eval20/protocol.json",
+  "patchscene_protocol": "../patchscene_10step_gpu2_warm5_eval20/protocol.json",
+  "summary": "summary.json",
+  "per_frame": "per_frame.csv"
+}

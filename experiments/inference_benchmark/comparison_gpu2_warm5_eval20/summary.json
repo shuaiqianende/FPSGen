@@ -1,0 +1,225 @@
+{
+  "status": "COMPLETE",
+  "physical_gpu": 2,
+  "warmup_frames": [
+    0,
+    800,
+    1600,
+    2400,
+    3200
+  ],
+  "timed_frames": [
+    100,
+    300,
+    500,
+    700,
+    900,
+    1100,
+    1300,
+    1500,
+    1700,
+    1900,
+    2100,
+    2300,
+    2500,
+    2700,
+    2900,
+    3100,
+    3300,
+    3500,
+    3700,
+    3900
+  ],
+  "frames_completed": {
+    "hs_occflow": 20,
+    "patchscene": 20
+  },
+  "input_hashes_match": true,
+  "target_jitter_points": 1080000,
+  "metrics": {
+    "network_forward_gpu_ms": {
+      "hs_occflow": {
+        "mean": 645.1457406997681,
+        "std": 61.015961680730435,
+        "median": 654.480318069458,
+        "p90": 718.9991592407226,
+        "p95": 727.0283781051636,
+        "min": 535.4033241271973,
+        "max": 736.8863639831543
+      },
+      "patchscene": {
+        "mean": 15264.350213050842,
+        "std": 6.289853140508482,
+        "median": 15265.287439346313,
+        "p90": 15271.332258605957,
+        "p95": 15274.63247756958,
+        "min": 15247.983585357666,
+        "max": 15275.02989578247
+      }
+    },
+    "generation_wall_ms": {
+      "hs_occflow": {
+        "mean": 838.8612194918096,
+        "std": 112.8306833964901,
+        "median": 855.177721939981,
+        "p90": 964.3435772508383,
+        "p95": 970.7188891246915,
+        "min": 642.5965968519449,
+        "max": 1046.3532600551844
+      },
+      "patchscene": {
+        "mean": 24009.425740037113,
+        "std": 1032.0514302167398,
+        "median": 23869.77378372103,
+        "p90": 25214.89331945777,
+        "p95": 25549.501516390592,
+        "min": 21915.024396032095,
+        "max": 26177.17464454472
+      }
+    },
+    "voxel_center_ms": {
+      "hs_occflow": {
+        "mean": 23.74853352084756,
+        "std": 6.462869254940438,
+        "median": 24.87736102193594,
+        "p90": 30.17802964895964,
+        "p95": 33.27000169083477,
+        "min": 13.40417005121708,
+        "max": 38.37384842336178
+      },
+      "patchscene": {
+        "mean": 8.10744846239686,
+        "std": 3.048035897085249,
+        "median": 7.895749993622303,
+        "p90": 11.242172680795198,
+        "p95": 14.184704702347519,
+        "min": 4.377890378236771,
+        "max": 16.289234161376953
+      }
+    },
+    "native_jitter_ms": {
+      "hs_occflow": {
+        "mean": 1764.6937506273389,
+        "std": 428.0253570739452,
+        "median": 1762.9490764811635,
+        "p90": 2268.3487989008427,
+        "p95": 2405.9392125345767,
+        "min": 1000.9386017918587,
+        "max": 2451.898779720068
+      },
+      "patchscene": {
+        "mean": 1289.4314050674438,
+        "std": 411.518176652168,
+        "median": 1160.1081285625696,
+        "p90": 1893.09246186167,
+        "p95": 1916.3909618742766,
+        "min": 686.075571924448,
+        "max": 2153.977634385228
+      }
+    },
+    "generation_plus_jitter_ms": {
+      "hs_occflow": {
+        "mean": 2603.5549701191485,
+        "std": 495.1634787445486,
+        "median": 2640.0363985449076,
+        "p90": 3199.7710863128304,
+        "p95": 3299.507586658001,
+        "min": 1674.6095400303602,
+        "max": 3415.976295247674
+      },
+      "patchscene": {
+        "mean": 25298.857145104557,
+        "std": 1336.246198430669,
+        "median": 25253.88394948095,
+        "p90": 27096.766833774745,
+        "p95": 27256.77006272599,
+        "min": 22973.29086251557,
+        "max": 28331.15227892995
+      }
+    },
+    "peak_allocated_gib": {
+      "hs_occflow": {
+        "mean": 3.00703763961792,
+        "std": 0.0,
+        "median": 3.00703763961792,
+        "p90": 3.00703763961792,
+        "p95": 3.00703763961792,
+        "min": 3.00703763961792,
+        "max": 3.00703763961792
+      },
+      "patchscene": {
+        "mean": 8.91737413406372,
+        "std": 0.0,
+        "median": 8.91737413406372,
+        "p90": 8.91737413406372,
+        "p95": 8.91737413406372,
+        "min": 8.91737413406372,
+        "max": 8.91737413406372
+      }
+    },
+    "peak_reserved_gib": {
+      "hs_occflow": {
+        "mean": 3.837890625,
+        "std": 0.0,
+        "median": 3.837890625,
+        "p90": 3.837890625,
+        "p95": 3.837890625,
+        "min": 3.837890625,
+        "max": 3.837890625
+      },
+      "patchscene": {
+        "mean": 14.587890625,
+        "std": 0.0,
+        "median": 14.587890625,
+        "p90": 14.587890625,
+        "p95": 14.587890625,
+        "min": 14.587890625,
+        "max": 14.587890625
+      }
+    }
+  },
+  "ratios": {
+    "patchscene_over_hs_network_forward_mean": 23.660313089092256,
+    "patchscene_over_hs_generation_mean": 28.621451537099617,
+    "patchscene_over_hs_generation_plus_jitter_mean": 9.717043594415365,
+    "hs_over_patchscene_jitter_mean": 1.3685828836587366
+  },
+  "network_calls": {
+    "hs_flow_evaluations_per_frame": 6,
+    "hs_encoder_calls_per_frame": 1,
+    "hs_learned_module_calls_per_frame": 7,
+    "patchscene_rings_per_frame": 7,
+    "patchscene_steps_per_ring": 10,
+    "patchscene_unet_calls_per_frame": 70
+  },
+  "occupied_voxels_mean": {
+    "hs_occflow": 601538.95,
+    "patchscene": 297219.85
+  },
+  "provenance": {
+    "hs_occflow": {
+      "physical_gpu": 2,
+      "python_torch": "2.0.1+cu117",
+      "torch_cuda": "11.7",
+      "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+      "stage2_checkpoint_sha256": "4279a1f334cb924b3d9b12a5b6ccafb482f25016b0e1266bbd6ef838e6fdfafe",
+      "stage1_nfe": 2,
+      "stage2_nfe": 4,
+      "code_sha256": "66adffa7608e8d08752e297c283026a6c0f1e1eea1728de481ffc96e6d97f736",
+      "timing_util_sha256": "74b0bb62e67729e778d7fe15197d22d9bf2c9e3c07c1d2601e709d9ecd54d317",
+      "target_jitter_points": 1080000
+    },
+    "patchscene": {
+      "physical_gpu": 2,
+      "python_torch": "2.0.1+cu117",
+      "torch_cuda": "11.7",
+      "patchscene_checkpoint_sha256": "f50bf65f419c32bb40afa14e30440e1c4ea839dd92c678f8b4487e0d2b36140a",
+      "patchscene_commit": "49de6d848663956e57cdd2f95d3b364e7a7afbe6",
+      "patchscene_steps": 10,
+      "number_of_rings": 7,
+      "code_sha256": "66adffa7608e8d08752e297c283026a6c0f1e1eea1728de481ffc96e6d97f736",
+      "timing_util_sha256": "74b0bb62e67729e778d7fe15197d22d9bf2c9e3c07c1d2601e709d9ecd54d317",
+      "target_jitter_points": 1080000
+    }
+  }
+}

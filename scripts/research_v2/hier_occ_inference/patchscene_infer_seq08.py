@@ -54,16 +54,20 @@ def _make_inference_grid():
     return obj
 
 
-def _infer_frame(generator, grid, xyz, *, steps, device):
+def _infer_frame(generator, grid, xyz, *, steps, device, profile=None):
     from test_semantickitti import PRE_DEFINE, convert_ring_dict, convert_bev_dict_to_world_bounds_centered
     from tools.helpers import insert_local_occu_to_global, points2occu_torch
 
     # Match the official inference scan filtering and occupancy voxelization.
+    phase_started = time.perf_counter()
     points = torch.from_numpy(np.asarray(xyz, dtype=np.float32))
     keep = (points[:, :2].square().sum(dim=1) < 50.0 ** 2)
     points = points[keep]
     x_cond = points2occu_torch(points, grid.vol_bnds_scene, grid.voxel_size).unsqueeze(0)
+    if profile is not None:
+        profile["input_voxelization_ms"] = (time.perf_counter() - phase_started) * 1000.0
 
+    phase_started = time.perf_counter()
     bev_patch_coords = convert_ring_dict(PRE_DEFINE)
     patch_shape = (128, 128, 48)
     bounds = convert_bev_dict_to_world_bounds_centered(
@@ -88,6 +92,12 @@ def _infer_frame(generator, grid, xyz, *, steps, device):
     }
     last_ring_xs = {}
     entire_xs = []
+    if profile is not None:
+        profile["ring_preparation_ms"] = (time.perf_counter() - phase_started) * 1000.0
+        profile["number_of_rings"] = len(bounds)
+        profile["patch_batch_size_per_ring"] = {k: len(v) for k, v in bounds.items()}
+        profile["ring_generation_wall_ms"] = 0.0
+    phase_started = time.perf_counter()
     for ring, ring_bounds in bounds.items():
         starts = [torch.tensor(x) for x in bev_patch_coords[ring]]
         cfg_data["which_ring"] = ring_masks[ring]
@@ -98,6 +108,9 @@ def _infer_frame(generator, grid, xyz, *, steps, device):
             vol_bnds_scene=grid.vol_bnds_scene, voxel_size=grid.voxel_size,
             CFG_Data=cfg_data, last_ring_xs=last_ring_xs,
             manual_batching_size=16, steps=steps, verbose=False)
+        if profile is not None:
+            profile["ring_generation_wall_ms"] += (time.perf_counter() - phase_started) * 1000.0
+            phase_started = time.perf_counter()
         last_ring_xs["xs"] = xs
         if not entire_xs:
             entire_xs = xs
@@ -107,12 +120,15 @@ def _infer_frame(generator, grid, xyz, *, steps, device):
         last_ring_xs["vol_bnds_list"] = ring_bounds
         last_ring_xs["ring_mask"] = ring_masks[ring]
 
+    phase_started = time.perf_counter()
     prediction = entire_xs[-1][0]
     if not torch.isfinite(prediction).all():
         raise RuntimeError("PatchScene output contains NaN/Inf")
     coords = torch.nonzero(prediction > 0, as_tuple=False).cpu().numpy().astype(np.int32)
     if not len(coords):
         raise RuntimeError("PatchScene produced empty occupancy")
+    if profile is not None:
+        profile["output_occupancy_ms"] = (time.perf_counter() - phase_started) * 1000.0
     return coords
 
 
@@ -137,8 +153,8 @@ def main():
         raise RuntimeError("PatchScene inference requires CUDA")
     if os.environ.get("CUDA_VISIBLE_DEVICES") != str(a.physical_gpu):
         raise RuntimeError("CUDA_VISIBLE_DEVICES must map only the selected physical GPU")
-    if a.steps != 15:
-        raise ValueError("The registered official PatchScene comparison uses 15 denoising steps")
+    if a.steps not in (10, 15):
+        raise ValueError("Supported PatchScene denoising steps are 10 and 15")
 
     official_root = a.patchscene_root.resolve()
     sys.path.insert(0, str(official_root))

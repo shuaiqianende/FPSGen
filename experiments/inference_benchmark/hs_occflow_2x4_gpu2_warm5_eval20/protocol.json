@@ -1,0 +1,202 @@
+{
+  "admission": {
+    "compute_processes": [],
+    "memory_free_mib": 24105,
+    "memory_total_mib": 24576,
+    "name": "NVIDIA GeForce RTX 3090",
+    "physical_gpu": 2,
+    "power_w": 29.1,
+    "sm_clock_mhz": 210,
+    "temperature_c": 35,
+    "utilization_percent": 0
+  },
+  "all_frames_unique": true,
+  "amp": "FP16 autocast for Stage1 Flow and Stage2 model; Stage1 Encoder FP32",
+  "batch_size": 1,
+  "benchmark_frames": [
+    100,
+    300,
+    500,
+    700,
+    900,
+    1100,
+    1300,
+    1500,
+    1700,
+    1900,
+    2100,
+    2300,
+    2500,
+    2700,
+    2900,
+    3100,
+    3300,
+    3500,
+    3700,
+    3900
+  ],
+  "candidate_selection": "predicted Stage1 threshold .5; original policy",
+  "code_sha256": "66adffa7608e8d08752e297c283026a6c0f1e1eea1728de481ffc96e6d97f736",
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "input_disk_read_excluded": true,
+  "input_hashes": {
+    "0": {
+      "input_file_sha256": "b8a06dbd329448f6da2ff26b88b07047958c353eac635777d7acdc784a63f7dc",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "a2a17e3d559fd3bb00dcf2e25b10b6b17a2a327751da9f9695170090a77b44d2"
+    },
+    "100": {
+      "input_file_sha256": "51900c9390a412d4cab123f9345b97453c03df38277a19fd7ab8b6989a5b4403",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "11bbd2313b40f8ff18ca7f7349ec5ec68cadd3fd74d65ab5837bbed39cbcd7a5"
+    },
+    "1100": {
+      "input_file_sha256": "6d770d7d8caaaa4ec6180fec7bdc4f5f3a5ab05b733651fb45c4ba65596e34fb",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "7e113653673b61143f14c219c8e66436939c0d00b742f486fc71c1c66637069e"
+    },
+    "1300": {
+      "input_file_sha256": "faeaeb5c9c852a175e8933db9cd5fa599d3b688df779c927cb38f81098642265",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "8d57b92358fee6d0a162d32de36d4807dde8b2a27f2c051ecb227678ea38d927"
+    },
+    "1500": {
+      "input_file_sha256": "306f7ccd04879a6f00897cbd740809c609af0679b8cb2b721a853a6b00e75247",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "454b7ba1eb96b942db2fbefa699dcc2967c6981ea5282bf4a1196c59d6a9e69e"
+    },
+    "1600": {
+      "input_file_sha256": "b8f6dc22c97baafe777bd275c52d3e5b5cea6cfde496b686e99f89d71fab5657",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "5578b375079601369bd323ec2b842052a4c7799553b12920ba65674156f83cce"
+    },
+    "1700": {
+      "input_file_sha256": "19aaea3e0d858434ac85f7e6700f84c48d0d03416690e49c04321b45985d683b",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "b625241f83cca30a9baf227405d429b666d17c23e31ea1b503cb31b101df86f3"
+    },
+    "1900": {
+      "input_file_sha256": "fb86f47440e920d57510e05da2387dec33d28d7eabaf8306c423a9c79916bc79",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "327f8068860fd1929f1aa5ec9a45a2491eb15ed469fe3beba90bef1e6644ea5d"
+    },
+    "2100": {
+      "input_file_sha256": "7fdb989f234638ddbe5e94ba8d7f4369e4af1427ae5f0d7f56434bd65425ec62",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "dece92cb2c57744a80576ee4aeaf1306a0a15f0e71bd28d36831cd5434785369"
+    },
+    "2300": {
+      "input_file_sha256": "a0a105977d32cced388a53bf8ddb7b90f35306713bb6919afa25bb35858e8856",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "a547cbdf03a848fef38b70baee220b852196ae72346608aa9013010702ecc705"
+    },
+    "2400": {
+      "input_file_sha256": "11249fee64990d7a288f2a29e1a0bca47511680d945aeee7237142a5a1bd506f",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "e19ee165105463a1813b9ab4c934c8a0106ddf677b77d30a5d873e2705de9821"
+    },
+    "2500": {
+      "input_file_sha256": "1bfbc4be3fe929979a52c3950b0d03a5eff35730d71f2e631da6e77171b0b77a",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "b6cf07604c4cb0f4090362d55b57e3a26724245d336c3ad50b914fdbdfe3846a"
+    },
+    "2700": {
+      "input_file_sha256": "04108ddcf22bef1b9b324fa7a923c5b784f628c98bd5fdc1dd6bbd66bef12fa7",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "19b1a5ffc0d856710155137a85299cdcbf25914de7a4f660b7de33e5bf3b9577"
+    },
+    "2900": {
+      "input_file_sha256": "b0e10e3c624e709b5cbc387e7eb789434362c2fb8991e5321082942dec90a98a",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "6d4f97cfe7dee950717d09018bcab9414ec28c63b5702b54079cf42ffd7f3b32"
+    },
+    "300": {
+      "input_file_sha256": "57797d8b3ad3a8f71f323bfdc3d450ba0a2397e79ab824b637b28b144f0a4af2",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "e7c6da96d34b1c4fca56007fa83f98509bd48517557fbf4f2f8a1e3ac663dada"
+    },
+    "3100": {
+      "input_file_sha256": "af5167534ef29d99458c13cf9935b4bd7b917347e45bc9bb26b20b4bba9ebb85",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "5e54bece5ae13f779daef45a93fb1b1e9dca95d5bc7882f35f9157c21d2f02ab"
+    },
+    "3200": {
+      "input_file_sha256": "eadcb6e52f30241fe8cd57adf28b9971c53b66a6924575d566e161935c50de2f",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "c485575ee30a378718d7f39396e1c1be7035446b7131897cfadf79e4e15d2d58"
+    },
+    "3300": {
+      "input_file_sha256": "f221a5b047cb391ebe47dedbe11943970d862f43216d4ba320a54cb388a1bc02",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "b2011c375bc459ec0eeee740173d556779f2447fa3aa9c8e022c0d1dea58c43d"
+    },
+    "3500": {
+      "input_file_sha256": "62b1395fa3a8246a7a95db49bdbda4758912667863277d82e1a2e86f3fdf6c04",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "9b1225d73c7ab6054fb49f1b4fccb31cf7c8d5b22b50c2403faa90a1457f8bb5"
+    },
+    "3700": {
+      "input_file_sha256": "a2cbe20a62f6c5fc5ab7f303534bd17bd2373dfdc437a584350acbdc3a79dc9d",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "b01053e3abda28b27779f62665265522a33aed51b106b14fd3515b88d1e99317"
+    },
+    "3900": {
+      "input_file_sha256": "e2208e313ebe40b223f13b4c3370f8254ca7021f4c9b5284a69179f82d2d36c9",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "ff0a69a9602ece50641d956432cb08e2d3fb615cc48180f8d92212cd0d3abbec"
+    },
+    "500": {
+      "input_file_sha256": "e29bc9357f7b1ff029d3d0146b4034e0141428a8ee737a0484d9d8c5341f5f7d",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "635484ca6d5acd506d5097566980d17eb4f4babc941a5cd4ae85c28001f16858"
+    },
+    "700": {
+      "input_file_sha256": "f46e21a9764ab1a979f4beccc56df97cb17397bdb93139cff22e4a7bf7d74030",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "9110f918a8056fd1e2fcdfb88f3c82fde53add08dba0df2bfbe6fc1ce0aefa8d"
+    },
+    "800": {
+      "input_file_sha256": "779281b3493814740d056f44d115599652dd0c2765499cbb51622e06a69d2efa",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "bcc7443739d6330632f45a9546b70cac8399851fcd3ecee5d9f9c442fa8d7d31"
+    },
+    "900": {
+      "input_file_sha256": "68be9f136cbe780282e94a73e2d0f7a1fede081f9175152aa9ccf485149374d9",
+      "input_point_count": 18000,
+      "input_xyz_sha256": "62eef1c3cb46c0b8d272c6de3e5a035c1581911816e155f08bda89adbfa2df68"
+    }
+  },
+  "metrics_and_file_writes_excluded": true,
+  "model": "hs_occflow",
+  "model_parameter_forwards": "encoder once; Stage1 flow twice; Stage2 model four times",
+  "physical_gpu": 2,
+  "point_seed_base": 20261019,
+  "python_torch": "2.0.1+cu117",
+  "stage1_checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+  "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+  "stage1_nfe": 2,
+  "stage1_weights": "ema",
+  "stage2_checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_384_real_score_gt_only_morph_100kframes/checkpoints/step025000.pt",
+  "stage2_checkpoint_sha256": "4279a1f334cb924b3d9b12a5b6ccafb482f25016b0e1266bbd6ef838e6fdfafe",
+  "stage2_condition_encoding": "same single Stage1 feature encode",
+  "stage2_nfe": 4,
+  "stage2_weights": "online",
+  "status": "COMPLETE",
+  "target_jitter_points": 1080000,
+  "timed_frames": 20,
+  "timing_util_sha256": "74b0bb62e67729e778d7fe15197d22d9bf2c9e3c07c1d2601e709d9ecd54d317",
+  "torch_cuda": "11.7",
+  "warmup_frames": [
+    0,
+    800,
+    1600,
+    2400,
+    3200
+  ],
+  "precision_detail": {
+    "stage1_encoder": "FP32 (encoder call was outside torch.autocast in the benchmark path)",
+    "stage1_flow": "FP16 autocast",
+    "stage2_model": "FP16 autocast",
+    "note": "The prior amp summary field described the flow/model autocast but did not mean the encoder was autocast."
+  }
+}
