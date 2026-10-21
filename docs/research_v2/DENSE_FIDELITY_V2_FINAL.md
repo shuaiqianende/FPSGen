@@ -1,77 +1,47 @@
-# HS-OccFlow Dense Fidelity V2 — Live Research Status
+# HS-OccFlow Dense Fidelity V2 — Results
 
-**Status: E2 complete and promising; E3 training in progress.** This is an
-interim report, not a final architecture selection. E2's trained quality is
-close to R0 at the registered 20K exposure budget, while fixed-K evaluation
-and trained-checkpoint deployment timing remain open gates.
+**Status: 20K training, 900-frame quality evaluation, PyTorch timing, and E3 TensorRT FP16 validation are complete.** No 100K training or Stage2 retraining has started.
 
-## Candidate results
+## Candidate quality at 20K
 
-| Variant | Training | 900-frame threshold-0.5 IoU | F1 | Fine-GT recall ceiling | Encoder timing evidence | Assessment |
-|---|---:|---:|---:|---:|---|---|
-| R0 Original | registered 20K reference | 0.40021 | — | 0.57367 | random-init screen 177.38 ms; prior reference | Quality baseline |
-| E1 Bottleneck-96 | 20K complete | 0.24872 | 0.39418 | 0.46979 | random-init screen 170.35 ms | Rejected on quality |
-| E2 Asymmetric3D rank-64 | 20K complete | **0.39083** | **0.55787** | **0.55613** | random-init screen 157.11 ms | Promising; continue validation |
-| E3 Lightweight Skip | 13,796/20,000 exposures at latest progress check | not run | not run | not run | random-init screen 165.53 ms | Training in progress |
+All candidates used fresh Stage1 initialization and the registered 20,000 successful frame exposures / 5,000 updates. Quality values are macro averages over the same 900-frame development Manifest, with EMA, NFE=2, strict score threshold `> 0.5`, and fixed candidate budgets selected before comparing variants.
 
-E2 is 0.00938 absolute IoU below R0, approximately 2.34% relative. Its
-Fine-GT recall ceiling is 0.01754 absolute below R0. The final E2 validation
-measured 900 frames at threshold 0.5 with EMA and NFE=2. The registered
-screening targets (IoU >= 0.395 and recall ceiling >= 0.563) are narrowly
-missed, so E2 is not yet a passing replacement.
+| Variant | Threshold IoU | Threshold F1 | Fine-GT ceiling | Fixed-K IoU, K=78,694 | K=84,963 | K=94,087 | Decision |
+|---|---:|---:|---:|---:|---:|---:|---|
+| R0 Original | 0.400207 | 0.567894 | 0.573662 | 0.360863 | 0.371353 | 0.382981 | Reference |
+| E1 Bottleneck-96 | 0.24872 | 0.39418 | 0.46979 | Not evaluated | Not evaluated | Not evaluated | Reject: major quality loss |
+| E2 Asymmetric3D rank-64 | 0.390837 | 0.557872 | 0.556141 | 0.358537 | 0.368421 | 0.379314 | Reject: misses registered threshold-IoU and recall-ceiling gates |
+| E3 Lightweight Skip | 0.395728 | 0.563331 | 0.571696 | 0.356640 | 0.367221 | 0.379015 | Passes registered minimum screening gates; retain as speed-quality candidate |
 
-E2's stored validation also reports threshold sweeps, which are not fixed-K
-results: IoU is 0.40613 at threshold 0.25 and 0.34228 at threshold 0.75.
-Do not interpret those rows as the registered fixed candidate budgets. The
-fixed-K evaluation at 78,694 / 84,963 / 94,087 is still pending.
+The preregistered screening floors were threshold IoU >= 0.395, fixed-K IoU at K=84,963 >= 0.365, and Fine-GT ceiling >= 0.563. E3 passes all three. Relative to R0, E3 is lower by 0.00448 threshold IoU and 0.00413 fixed-K IoU at K=84,963; its Fine-GT ceiling is lower by 0.00197. This is a measurable quality tradeoff, not parity with R0.
 
-The 157.11 ms E2 and 177.38 ms R0 Encoder numbers are short random-initialized
-engineering screens, not trained-checkpoint inference benchmarks. They
-suggest a compute reduction but do not establish E2's actual deployment
-speed. PyTorch explicit-FP16 and TensorRT-FP16 timing on the trained E2 model
-has not run.
+## Encoder speed
 
-## Training state
+R0 and E3 trained checkpoints were timed on the same RTX 3090 GPU2, with the same 25-row development input Manifest (5 warmup, 20 timed). The Manifest SHA256 is `224c556d7a8da18e437e53e2e67aa08cf364c909f80fe068dbb813570c7955fe`.
 
-- E1 completed 5,000 updates / 20,000 successful frame exposures, followed by
-  its 900-frame EMA evaluation.
-- E2 completed 5,000 updates / 20,000 exposures. Its final checkpoint and
-  `validation/update_005000.json` are preserved in the experiment directory.
-- E3 is actively training. The latest observed rank record reached 3,449
-  successful updates / 13,796 exposures (69.0% of budget); recent update
-  records show finite losses and gradients. Its 5K-exposure interim evaluation reported
-  IoU 0.03496 and recall ceiling 0.16913, which is weak but is only the
-  registered training-health checkpoint. Prior pilots showed large 5K
-  instability, so this is not used as a candidate-selection result. The final
-  decision remains the 20K evaluation.
+| Variant / backend | Encoder CUDA event mean | Encoder wall mean incl. H2D | P95 wall | Peak allocated |
+|---|---:|---:|---:|---:|
+| R0 Original, PyTorch explicit FP16 | 179.78 ms | 180.14 ms | — | 1.940 GiB |
+| E3 Lightweight Skip, PyTorch explicit FP16 | 167.07 ms | 167.45 ms | — | 1.939 GiB |
+| R0 Original, TensorRT FP16 Local Backbone | 146.97 ms | 147.24 ms | 149.19 ms | 1.923 GiB |
+| E3 Lightweight Skip, TensorRT FP16 Local Backbone | 136.81 ms | 137.09 ms | 138.19 ms | 1.923 GiB |
 
-GPU2/GPU3 are the registered training devices. This shell has not been able
-to query NVIDIA management state, so this report makes no independent claim
-about current utilization. Do not launch another job on those GPUs while E3
-owns the training slot.
+On PyTorch, E3 is 12.70 ms (7.58%) faster than R0. With the same TensorRT backend, E3 is 10.15 ms (6.90%) faster than R0. TensorRT lowered E3's full Encoder time by 30.35 ms (18.1%) relative to PyTorch explicit FP16. These are Encoder-only measurements; no full model generation speedup is claimed because the 20K Stage1 candidates were not adapted with Stage2.
 
-## Next gates
+TensorRT 10.13.3.9 built static FP16 engines for the Local Backbone. The E3 engine build took 67.34 s and measured 32.83 ms for the standalone backbone; R0 took 67.97 s and 36.99 ms. TensorRT Engine Inspector confirmed FP16 `CaskConvolution` tactics on the target 3D convolutions. The E3 outputs differed from PyTorch explicit FP16 by relative L2 0.00326 / 0.00295 / 0.00278 across its three output pyramid levels.
 
-1. Finish E3's registered 20K training and EMA validation on the frozen 900
-   frames.
-2. Run fixed-K curves for E2 and E3 using the registered budgets.
-3. Benchmark trained candidates on the same GPU and precision path; include
-   PyTorch explicit FP16 and TensorRT FP16 where export is supported.
-4. Select a candidate only after both quality and speed evidence are
-   available. No 100K training or Stage2 retraining has started.
+E3's full 900-frame TensorRT quality run and PyTorch explicit-FP16 control used the same development Manifest, same GT, NFE=2, score threshold and fixed candidate budgets. Macro threshold IoU was 0.39573624 for TRT and 0.39572834 for PyTorch; fixed-K IoU at K=84,963 was 0.36722667 versus 0.36722689. The threshold-IoU frame delta ranged from -0.0001221 to +0.0001234. Active-parent counts differed by a mean of 6.96 (range -71 to +67). The outputs are numerically variant, but aggregate geometry metrics are effectively unchanged. Exact per-frame parent-ID symmetric differences were not saved and are not claimed.
+
+Detailed export, engine, and quality provenance is in [DENSE_FIDELITY_V2_TENSORRT.md](DENSE_FIDELITY_V2_TENSORRT.md). Raw machine-readable measurements remain under `experiments/dense_fidelity_v2/` and large checkpoint/engine files are excluded from Git.
+
+## Research decision
+
+E3 is the only new architecture that passes the registered 20K quality screen, and its encoder speedup is reproducible under both PyTorch FP16 and TensorRT FP16. It is a reasonable candidate for a controlled longer-training study, but current evidence does not establish that it is a better final model than R0: R0 retains higher Stage1 geometry quality, and Stage2 has not been retrained for E3. A next study should use a matched longer-training R0 control and E3, then adapt/evaluate Stage2 only after the encoder comparison remains favorable.
 
 ## Provenance
 
-Results are stored under
-`experiments/dense_fidelity_v2/training/`:
-
-- E1: `e1_bottleneck96_20k_gpu23/summary.json` and
-  `validation/update_005000.json`.
-- E2: `e2_asymmetric3d_20k_gpu23/summary.json` and
-  `validation/update_005000.json`.
-- E3: `e3_lightweight_skip_20k_gpu23/train_rank0.jsonl`,
-  `train_rank1.jsonl`, and `checkpoints/`.
-
-Large checkpoints and per-update logs are not included in Git. The E2 final
-quality values above are copied from its frozen JSON result; this report does
-not rewrite the run artifact.
+- E1, E2, E3 checkpoints and training records: `experiments/dense_fidelity_v2/training/`.
+- Registered fixed-K results: `experiments/dense_fidelity_v2/fixed_k/paired_r0_e2_e3_900frames.json`.
+- E3 TensorRT and PyTorch explicit-FP16 quality results, timing outputs, ONNX exports and engine inspector reports: `experiments/dense_fidelity_v2/tensorrt/` (large binaries remain local).
+- R0 20K checkpoint was read from the separate OMD V1 worktree and was not copied into this branch.
+- No checkpoint or historical V4/V5/V6/V7 experiment result was modified.

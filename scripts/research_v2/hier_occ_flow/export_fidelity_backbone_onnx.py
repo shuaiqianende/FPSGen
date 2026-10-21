@@ -73,6 +73,17 @@ def main() -> None:
     module = getattr(model.encoder, args.module)
     captured = {}
 
+    capture_target = module
+    capture_method = "backbone_pre_hook"
+    if model.encoder.encoder_variant in ("bottleneck96", "asymmetric3d", "lightweight_skip"):
+        # Fidelity variants are run by VariantBackboneRunner, which manually
+        # walks the backbone's layers and therefore does not invoke the
+        # backbone module's own forward hooks. The first Stage0 block sees
+        # exactly the backbone input, so capture there while exporting the
+        # complete backbone below.
+        capture_target = module.layers[0][0]
+        capture_method = "first_stage0_block_pre_hook"
+
     def capture_input(_module, inputs):
         if 'features' in captured:
             raise RuntimeError('Backbone was called more than once during input capture')
@@ -80,7 +91,7 @@ def main() -> None:
             raise TypeError('Backbone input is not a Tensor')
         captured['features'] = inputs[0].detach().clone().contiguous()
 
-    handle = module.register_forward_pre_hook(capture_input)
+    handle = capture_target.register_forward_pre_hook(capture_input)
     source = args.data_root / args.sequence / 'input_' / f'{args.frame:06d}.npy'
     xyz_np = input_xyz(source).astype(np.float32, copy=False)
     if not np.isfinite(xyz_np).all():
@@ -99,7 +110,11 @@ def main() -> None:
     if 'features' not in captured:
         raise RuntimeError('Backbone input was not captured')
 
-    sample = captured['features']
+    # A tensor captured inside inference_mode is an inference tensor. PyTorch
+    # 2.0's ONNX tracer may try to save it for backward, so materialize an
+    # ordinary tensor outside inference_mode without changing its values.
+    with torch.no_grad():
+        sample = captured['features'].detach().clone().contiguous()
     if not sample.is_cuda or not sample.is_contiguous():
         raise RuntimeError('Captured feature input must be contiguous and CUDA resident')
     if args.precision == 'explicit_fp16' and sample.dtype != torch.float16:
@@ -107,6 +122,18 @@ def main() -> None:
     wrapper = BackboneExportWrapper(module).eval()
     with torch.inference_mode():
         reference = wrapper(sample)
+        variant_parity = None
+        if model.encoder.encoder_variant in ("bottleneck96", "asymmetric3d", "lightweight_skip"):
+            from fpsgen.hier_occ_flow.dense_encoder_variants import VariantBackboneRunner
+            runner_reference = VariantBackboneRunner(module, None)(sample)
+            variant_parity = []
+            for index, (eager, runner) in enumerate(zip(reference, runner_reference)):
+                delta = (eager.float() - runner.float()).abs()
+                row = {"output_index": index, "bitwise_equal": bool(torch.equal(eager, runner)),
+                       "max_abs": float(delta.max()), "mean_abs": float(delta.mean())}
+                variant_parity.append(row)
+                if not row["bitwise_equal"]:
+                    raise RuntimeError(f"Export forward differs from variant runner: {row}")
     torch.cuda.synchronize()
     if not all(bool(torch.isfinite(value).all()) for value in reference):
         raise RuntimeError('Backbone reference contains non-finite values')
@@ -137,6 +164,7 @@ def main() -> None:
         'successful_updates': int(checkpoint['successful_updates']), 'ema': True,
         'geometry_sha256': geometry.sha256, 'input_shape': list(sample.shape),
         'input_dtype': str(sample.dtype), 'input_stride': list(sample.stride()),
+        'capture_method': capture_method, 'variant_runner_parity': variant_parity,
         'output_shapes': [list(value.shape) for value in reference],
         'output_dtypes': [str(value.dtype) for value in reference],
         'output_names': output_names, 'onnx_opset': args.opset,

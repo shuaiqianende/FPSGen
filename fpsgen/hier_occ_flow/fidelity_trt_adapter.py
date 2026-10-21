@@ -18,13 +18,19 @@ class FidelityTensorRTBackbone(nn.Module):
 
     def __init__(self, engine_path: str | Path, *, device: torch.device | None = None):
         super().__init__()
+        # Stage1's fidelity variants normally use VariantBackboneRunner to
+        # inject optional per-block context. A static TensorRT engine already
+        # contains the complete backbone and must bypass that Python runner.
+        self._fidelity_trt_backbone = True
         import tensorrt as trt
 
         self.engine_path = Path(engine_path).resolve()
         if not self.engine_path.is_file():
             raise FileNotFoundError(self.engine_path)
         self.engine_sha256 = hashlib.sha256(self.engine_path.read_bytes()).hexdigest()
-        self.device = device or torch.device("cuda", torch.cuda.current_device())
+        self.device = torch.device(device) if device is not None else torch.device("cuda", torch.cuda.current_device())
+        if self.device.type == "cuda" and self.device.index is None:
+            self.device = torch.device("cuda", torch.cuda.current_device())
         self._trt = trt
         self._runtime = trt.Runtime(trt.Logger(trt.Logger.ERROR))
         self._engine = self._runtime.deserialize_cuda_engine(self.engine_path.read_bytes())

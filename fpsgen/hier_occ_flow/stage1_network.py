@@ -115,12 +115,18 @@ class OccupancyConditionEncoder(VoxDetDensity):
                     dtype=token.dtype)
             # Stage0 remains at the tokenizer's 192x192x16 shape in both
             # backbones. Context is built once and shared by all five blocks.
-            pyramid=self._run(VariantBackboneRunner(self.voxel_backbone,observation),token)
+            if getattr(self.voxel_backbone, "_fidelity_trt_backbone", False):
+                pyramid=self._run(self.voxel_backbone,token)
+            else:
+                pyramid=self._run(VariantBackboneRunner(self.voxel_backbone,observation),token)
         voxel=self._run(self.voxel_neck,pyramid)[0]
         if self.encoder_variant == "original":
             local=self._run(self.local_backbone,voxel)
         else:
-            local=self._run(VariantBackboneRunner(self.local_backbone,observation),voxel)
+            if getattr(self.local_backbone, "_fidelity_trt_backbone", False):
+                local=self._run(self.local_backbone,voxel)
+            else:
+                local=self._run(VariantBackboneRunner(self.local_backbone,observation),voxel)
         if self.training and self.activation_checkpointing and torch.is_grad_enabled():
             from torch.utils.checkpoint import checkpoint
             cls=checkpoint(self._classification_neck,local,use_reentrant=False)

@@ -15,7 +15,8 @@ from .storage import SparseShardDataset, file_sha
 
 @torch.no_grad()
 def evaluate_stage1_curves(model, cfg, geometry, device, *, candidate_budgets,
-                           max_frames=None, thresholds=None):
+                           max_frames=None, thresholds=None,
+                           encoder_autocast=None):
     was_training = model.training
     model.eval()
     try:
@@ -40,10 +41,12 @@ def evaluate_stage1_curves(model, cfg, geometry, device, *, candidate_budgets,
             gt_digest = hashlib.sha256()
             gt_digest.update(np.ascontiguousarray(record['parent_ids'], dtype='<u4').tobytes())
             gt_digest.update(np.ascontiguousarray(record['child_occ_mask'], dtype=geometry.mask_dtype).tobytes())
-            with torch.autocast(
-                'cuda', dtype=torch.float16,
-                enabled=cfg['training']['precision'] == 'fp16',
-            ):
+            use_encoder_autocast = (cfg['training']['precision'] == 'fp16'
+                                    if encoder_autocast is None else encoder_autocast)
+            if use_encoder_autocast:
+                with torch.autocast('cuda', dtype=torch.float16, enabled=True):
+                    condition = model.encode_condition(xyz)
+            else:
                 condition = model.encode_condition(xyz)
             generator = torch.Generator(device=device).manual_seed(val['seed'] + int(index))
             with torch.autocast(
