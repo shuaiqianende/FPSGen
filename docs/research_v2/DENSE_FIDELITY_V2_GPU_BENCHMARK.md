@@ -63,14 +63,16 @@ local batch 2. All reached update 2, reported finite encoder/flow gradients,
 and confirmed synchronized rank parameters. The data audit verified the
 registered 17,870-frame train split and 900-frame development split.
 
-The full E1/E2/E3 20K runs use independent outputs and are launched
-sequentially. Current live state is recorded in
-`experiments/dense_fidelity_v2/training/` and the per-variant logs. The short
-benchmark JSONs do not replace the formal 20K-trained model comparison.
+E1 and E2 completed their independent 20K runs on GPU2+GPU3. E1's 900-frame
+IoU is 0.24872; E2's is 0.39083, close to but below R0's 0.40021. E3 is now
+the active sequential run. Its most recently checked log showed 645/5,000
+successful updates (2,580/20,000 successful exposures), with finite losses
+and gradients. Current results and next evaluation gates are summarized in
+`DENSE_FIDELITY_V2_FINAL.md` and `DENSE_FIDELITY_V2_TRAINING.md`.
 
-At the 2026-10-21 progress check, E1 had reached 438/5,000 updates (1,752 of
-20,000 successful frame exposures) at approximately 2 seconds/update. E2/E3
-remain queued so the two designated GPUs are not oversubscribed.
+These training jobs are on GPU2+GPU3. The current shell cannot query
+`nvidia-smi`, so consult the run logs and experiment records rather than
+assuming this shell can independently verify live device utilization.
 
 Fidelity-specific TRT tooling is available at
 `export_fidelity_backbone_onnx.py`, `build_fidelity_backbone_trt.py`,

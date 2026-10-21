@@ -1,63 +1,74 @@
-# HS-OccFlow Dense Fidelity V2 — Current Status
+# HS-OccFlow Dense Fidelity V2 — Live Research Status
 
-## Result
+**Status: E2 complete and promising; E3 training in progress.** This is an
+interim report, not a final architecture selection. E2's trained quality is
+close to R0 at the registered 20K exposure budget, while fixed-K evaluation
+and trained-checkpoint deployment timing remain open gates.
 
-The V2 branch is created from the requested OMD V1 commit and contains the
-failure audit, three isolated dense Stage0 candidates, registered 20K
-configs, and CPU tests. GPU access is now confirmed through the host execution
-context. The study is **IN PROGRESS**: real-shape speed screens and all three
-distributed smoke runs passed; sequential registered 20K training has started.
-No new trained quality claim is available yet.
+## Candidate results
 
-## R1/R2 evidence
+| Variant | Training | 900-frame threshold-0.5 IoU | F1 | Fine-GT recall ceiling | Encoder timing evidence | Assessment |
+|---|---:|---:|---:|---:|---|---|
+| R0 Original | registered 20K reference | 0.40021 | — | 0.57367 | random-init screen 177.38 ms; prior reference | Quality baseline |
+| E1 Bottleneck-96 | 20K complete | 0.24872 | 0.39418 | 0.46979 | random-init screen 170.35 ms | Rejected on quality |
+| E2 Asymmetric3D rank-64 | 20K complete | **0.39083** | **0.55787** | **0.55613** | random-init screen 157.11 ms | Promising; continue validation |
+| E3 Lightweight Skip | 2,580/20,000 exposures at latest progress check | not run | not run | not run | random-init screen 165.53 ms | Training in progress |
 
-The 900-frame saved curves show that R1 Bottleneck-64 loses ranking quality:
-at the same K=84,963 its IoU is 0.28637 versus R0's 0.37135, and precision is
-0.58024 versus 0.70837. At threshold 0.5, R1 predicts about 25K more parents
-per frame while macro precision falls by about 19 percentage points. R2 is
-weaker still (fixed-K IoU 0.22953).
+E2 is 0.00938 absolute IoU below R0, approximately 2.34% relative. Its
+Fine-GT recall ceiling is 0.01754 absolute below R0. The final E2 validation
+measured 900 frames at threshold 0.5 with EMA and NFE=2. The registered
+screening targets (IoU >= 0.395 and recall ceiling >= 0.563) are narrowly
+missed, so E2 is not yet a passing replacement.
 
-The static R2 EMA audit finds `context_scale` magnitudes no larger than 0.00560
-and gate-bias sigmoid values between 0.475 and 0.525. This rules out only a
-large scalar gain or strong bias-only axis preference. It does not isolate the
-context branch's causal effect; actual branch activation norms and a
-same-checkpoint context ablation remain scheduled GPU diagnostics.
+E2's stored validation also reports threshold sweeps, which are not fixed-K
+results: IoU is 0.40613 at threshold 0.25 and 0.34228 at threshold 0.75.
+Do not interpret those rows as the registered fixed candidate budgets. The
+fixed-K evaluation at 78,694 / 84,963 / 94,087 is still pending.
 
-## Candidate status
+The 157.11 ms E2 and 177.38 ms R0 Encoder numbers are short random-initialized
+engineering screens, not trained-checkpoint inference benchmarks. They
+suggest a compute reduction but do not establish E2's actual deployment
+speed. PyTorch explicit-FP16 and TensorRT-FP16 timing on the trained E2 model
+has not run.
 
-| Variant | Code/config | CPU shape + backward | GPU timing | 20K training | 900-frame quality | TensorRT FP16 |
-|---|---|---|---|---|---|---|
-| R0 Original | available reference | prior V1 | historical only | prior V1 | prior V1 | not part of this run |
-| E1 Bottleneck-96 | implemented | PASS | 170.35 ms encoder screen | IN PROGRESS (438/5,000 updates at last check) | NOT RUN | NOT RUN |
-| E2 Asymmetric 3D rank-64 | implemented | PASS | 157.11 ms encoder screen | QUEUED | NOT RUN | NOT RUN |
-| E3 Lightweight Skip | implemented | PASS | 165.53 ms encoder screen | QUEUED | NOT RUN | NOT RUN |
+## Training state
 
-CPU tests confirm the candidate blocks preserve tested feature shapes and
-backpropagate finite gradients. Real Encoder outputs retain the registered
-three pyramid shapes and are finite. All three GPU2+GPU3 two-update smokes
-reported finite gradients and synchronized parameters. Initial random-weight
-full Encoder screens show 4.0%/11.4%/6.7% speed gains for E1/E2/E3 over same-run
-R0; this is only a training-entry speed screen. All three registered configs
-retain the fixed 20K exposure/5K update and Stage1 geometry/NFE contract.
+- E1 completed 5,000 updates / 20,000 successful frame exposures, followed by
+  its 900-frame EMA evaluation.
+- E2 completed 5,000 updates / 20,000 exposures. Its final checkpoint and
+  `validation/update_005000.json` are preserved in the experiment directory.
+- E3 is actively training. The latest observed log reached 645 successful
+  updates / 2,580 exposures (12.9% of budget); update records showed finite
+  losses and gradients. Training and validation logs remain the live source
+  of truth and will advance after this report commit.
 
-## Remaining gates
+GPU2/GPU3 are the registered training devices. This shell has not been able
+to query NVIDIA management state, so this report makes no independent claim
+about current utilization. Do not launch another job on those GPUs while E3
+owns the training slot.
 
-The full 20K pilots have not completed. The E1 training job is running on GPU2+GPU3;
-E2 and E3 are queued in the same sequential job. At the observed rate of about
-2 seconds/update, this is a multi-hour queue. After each finishes, evaluate its
-EMA checkpoint on the frozen 900-frame manifest and fixed K values
-`78,694 / 84,963 / 94,087`. Only candidates that preserve the registered
-quality thresholds proceed to same-model PyTorch FP16 versus TensorRT FP16
-comparison. The R2 dynamic branch audit is still pending. 100K training remains
-outside this study's automatic scope.
+## Next gates
 
-The fidelity-specific TensorRT FP16 export, engine-build, and full-Encoder
-benchmark scripts are now prepared and pushed. They have passed Python compile
-and CLI smoke checks; actual engine export/build and timing remain NOT RUN until
-a trained EMA candidate passes the 900-frame quality gate.
+1. Finish E3's registered 20K training and EMA validation on the frozen 900
+   frames.
+2. Run fixed-K curves for E2 and E3 using the registered budgets.
+3. Benchmark trained candidates on the same GPU and precision path; include
+   PyTorch explicit FP16 and TensorRT FP16 where export is supported.
+4. Select a candidate only after both quality and speed evidence are
+   available. No 100K training or Stage2 retraining has started.
 
-E1's registered 12-frame light validation at 2,000 exposures completed and was
-finite, but its threshold-0.5 IoU was only 0.03545 with 1.57M active parents
-per frame. This is an early training-health observation, not a candidate
-quality result or a stopping decision; the registered comparison remains the
-full 20K exposure and frozen 900-frame evaluation.
+## Provenance
+
+Results are stored under
+`experiments/dense_fidelity_v2/training/`:
+
+- E1: `e1_bottleneck96_20k_gpu23/summary.json` and
+  `validation/update_005000.json`.
+- E2: `e2_asymmetric3d_20k_gpu23/summary.json` and
+  `validation/update_005000.json`.
+- E3: `e3_lightweight_skip_20k_gpu23/train_rank0.jsonl`,
+  `train_rank1.jsonl`, and `checkpoints/`.
+
+Large checkpoints and per-update logs are not included in Git. The E2 final
+quality values above are copied from its frozen JSON result; this report does
+not rewrite the run artifact.
