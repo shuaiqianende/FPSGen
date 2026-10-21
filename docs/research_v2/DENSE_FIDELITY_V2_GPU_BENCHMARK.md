@@ -65,9 +65,11 @@ registered 17,870-frame train split and 900-frame development split.
 
 E1 and E2 completed their independent 20K runs on GPU2+GPU3. E1's 900-frame
 IoU is 0.24872; E2's is 0.39083, close to but below R0's 0.40021. E3 is now
-the active sequential run. Its most recently checked log showed 645/5,000
-successful updates (2,580/20,000 successful exposures), with finite losses
-and gradients. Current results and next evaluation gates are summarized in
+the active sequential run. Its most recently checked log showed 1,515/5,000
+successful updates (6,060/20,000 successful exposures), with finite losses
+and gradients. The 5K checkpoint's threshold-0.5 IoU is 0.03496; this early
+value is recorded as a health check, not a selection metric. Current results
+and next evaluation gates are summarized in
 `DENSE_FIDELITY_V2_FINAL.md` and `DENSE_FIDELITY_V2_TRAINING.md`.
 
 These training jobs are on GPU2+GPU3. The current shell cannot query

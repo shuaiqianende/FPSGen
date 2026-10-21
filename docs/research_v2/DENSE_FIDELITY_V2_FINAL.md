@@ -12,7 +12,7 @@ and trained-checkpoint deployment timing remain open gates.
 | R0 Original | registered 20K reference | 0.40021 | — | 0.57367 | random-init screen 177.38 ms; prior reference | Quality baseline |
 | E1 Bottleneck-96 | 20K complete | 0.24872 | 0.39418 | 0.46979 | random-init screen 170.35 ms | Rejected on quality |
 | E2 Asymmetric3D rank-64 | 20K complete | **0.39083** | **0.55787** | **0.55613** | random-init screen 157.11 ms | Promising; continue validation |
-| E3 Lightweight Skip | 2,580/20,000 exposures at latest progress check | not run | not run | not run | random-init screen 165.53 ms | Training in progress |
+| E3 Lightweight Skip | 6,060/20,000 exposures at latest progress check | not run | not run | not run | random-init screen 165.53 ms | Training in progress |
 
 E2 is 0.00938 absolute IoU below R0, approximately 2.34% relative. Its
 Fine-GT recall ceiling is 0.01754 absolute below R0. The final E2 validation
@@ -37,10 +37,13 @@ has not run.
   its 900-frame EMA evaluation.
 - E2 completed 5,000 updates / 20,000 exposures. Its final checkpoint and
   `validation/update_005000.json` are preserved in the experiment directory.
-- E3 is actively training. The latest observed log reached 645 successful
-  updates / 2,580 exposures (12.9% of budget); update records showed finite
-  losses and gradients. Training and validation logs remain the live source
-  of truth and will advance after this report commit.
+- E3 is actively training. The latest observed log reached 1,515 successful
+  updates / 6,060 exposures (30.3% of budget); recent update records show
+  finite losses and gradients. Its 5K-exposure interim evaluation reported
+  IoU 0.03496 and recall ceiling 0.16913, which is weak but is only the
+  registered training-health checkpoint. Prior pilots showed large 5K
+  instability, so this is not used as a candidate-selection result. The final
+  decision remains the 20K evaluation.
 
 GPU2/GPU3 are the registered training devices. This shell has not been able
 to query NVIDIA management state, so this report makes no independent claim
