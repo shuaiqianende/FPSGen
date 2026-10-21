@@ -39,8 +39,30 @@ def validate_config(cfg):
         raise ValueError('World bounds and50m sphere are fixed for this protocol')
     if cfg['model'].get('initialization')!='scratch' or cfg['model'].get('pretrained_encoder') is not None:
         raise ValueError('Scratch only; historical model weights prohibited')
-    allowed={'objective','initialization','pretrained_encoder','widths','activation_checkpointing','input_feature_version'}
+    allowed={'objective','initialization','pretrained_encoder','widths','activation_checkpointing','input_feature_version',
+             'encoder_variant','omd3d'}
     if set(cfg['model'])-allowed:raise ValueError('Unsupported model options; init_cfg/load_from/pretrained adapters are prohibited')
+    variant=cfg['model'].get('encoder_variant','original')
+    if variant not in ('original','bottleneck','omd3d'):raise ValueError('Unknown dense encoder variant')
+    scope=cfg.get('scope')
+    if scope=='architecture_pilot':
+        train=cfg['training']
+        if cfg.get('experiment')!='hs-occflow-dense-omd3d-pilot-v1':
+            raise ValueError('Architecture pilot requires its separately registered identity')
+        if train.get('successful_frame_exposures')!=20000 or train['successful_updates']!=5000:
+            raise ValueError('Architecture pilot is fixed to20K successful exposures / 5K updates')
+        if train['physical_gpus']!=[2,3] or train['batch_per_gpu']!=2:
+            raise ValueError('Architecture pilot fairness requires GPU2+3 with local batch2')
+        if cfg.get('budget_transition') or cfg.get('batch_transition') or cfg.get('engineering_gate'):
+            raise ValueError('Architecture pilot has its own contract; transition and formal-gate configs are rejected')
+        if variant=='omd3d':
+            omd=cfg['model'].get('omd3d',{})
+            if omd.get('internal_channels',64)!=64 or tuple(omd.get('axial_kernels',(7,7,3)))!=(7,7,3):
+                raise ValueError('V1 OMD3D is fixed to width64 and axial kernels [7,7,3]')
+            if omd.get('use_observation_gate',True) is not True:
+                raise ValueError('V1 OMD3D requires the input observation gate')
+    elif variant!='original' or cfg['model'].get('omd3d'):
+        raise ValueError('Architecture variants require architecture_pilot scope')
     if cfg['model'].get('input_feature_version')!='coarse_f64_v1':raise ValueError('Require geometry-audited float64 coarse indexing')
     objective=cfg['model']['objective']
     if objective not in ('fm','bce') or cfg.get('loss')!={objective:1.0}: raise ValueError('Only pure FM or direct BCE loss allowed')
@@ -52,7 +74,7 @@ def validate_config(cfg):
     if cfg['training'].get('optimizer','AdamW')!='AdamW' or cfg['training'].get('scheduler','warmup_cosine')!='warmup_cosine':
         raise ValueError('This runner supports explicitly registered AdamW and warmup_cosine only')
     if cfg['training']['successful_updates']>100000: raise ValueError('Budget exceeds registration')
-    validate_frame_budget(cfg)
+    if scope!='architecture_pilot':validate_frame_budget(cfg)
     return g
 
 
@@ -72,7 +94,12 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if cfg['scope']=='formal' and (steps!=train['successful_updates'] or (steps!=100000 and frame_target!=100000)):
         raise ValueError('Formal scope requires the full100K budget or explicitly registered100K-frame budget')
     if smoke and steps>32: raise ValueError('Smoke is limited to32 successful updates')
-    if steps>1000 or cfg['scope']=='formal':
+    if cfg['scope']=='architecture_pilot' and steps>32:
+        if frame_target!=20000 or steps>5000:
+            raise ValueError('Architecture pilot is capped at20K successful exposures / 5K updates')
+        if steps==train['successful_updates'] and not smoke and train['batch_per_gpu']*len(os.environ.get('CUDA_VISIBLE_DEVICES','').split(','))!=4:
+            raise ValueError('Full architecture pilot requires global batch4 on GPU2+GPU3')
+    elif steps>1000 or cfg['scope']=='formal':
         gate=json.loads(Path(cfg['engineering_gate']).read_text()) if cfg.get('engineering_gate') else {}
         required=('formal_ready','full_preprocessing','gpu_shapes','ddp_resume','fm_bce_overfit','pilot1000')
         if not all(gate.get(k) is True for k in required) or gate.get('geometry_sha256')!=g.sha256:
@@ -90,6 +117,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if visible not in ('2','3','2,3'): raise ValueError('Only physical GPU2/3 allowed')
     rank=int(os.environ.get('RANK',0)); world=int(os.environ.get('WORLD_SIZE',1)); local=int(os.environ.get('LOCAL_RANK',0))
     if world!=len(visible.split(',')): raise ValueError('Use one process per selected physical GPU')
+    if cfg['scope']=='architecture_pilot' and steps<train['successful_updates']:
+        frame_target=steps*world*train['batch_per_gpu']
     # Launcher checks admission before torchrun, avoiding self-PID admission races.
     gate_path=os.environ.get('HS_OCCFLOW_ADMISSION')
     if gate_path:
@@ -112,14 +141,38 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         raise ValueError('Train/development leakage; only labeled overfit scope may evaluate training frames')
     if cfg['scope']=='formal' and (len(ds)!=17870 or len(dev)!=900): raise ValueError('Formal full split incomplete')
     if rank==0:print(f'phase=data_verified train={len(ds)} development={len(dev)} target_updates={steps}',flush=True)
-    identity={'experiment':'hs-occflow-stage1-occ384-v1','objective':cfg['model']['objective'],'geometry_sha256':g.sha256,
+    experiment_identity=(cfg['experiment'] if cfg['scope']=='architecture_pilot'
+                         else 'hs-occflow-stage1-occ384-v1')
+    identity={'experiment':experiment_identity,'objective':cfg['model']['objective'],'geometry_sha256':g.sha256,
         'config_sha256':hashlib.sha256(json.dumps(cfg,sort_keys=True).encode()).hexdigest(),
         'train_manifest_sha256':file_sha(Path(cfg['train_dataset'])/'manifest.json'),
         'development_manifest_sha256':file_sha(Path(cfg['development_dataset'])/'manifest.json'),
         'world_size':world,'output':str(output.resolve())}
     seed_all(train['seed']); torch.set_num_threads(4)
+    model_variant=cfg['model'].get('encoder_variant','original')
+    shared_flow_state=None;shared_flow_sha=None
+    if cfg['scope']=='architecture_pilot':
+        from .stage1_network import OccupancyUNet
+        # Encoder variants consume different RNG amounts. Seed an independent
+        # Flow template so the three pilot arms begin with identical Flow U-Nets.
+        with torch.random.fork_rng(devices=[]):
+            torch.manual_seed(int(train['seed'])+104729)
+            flow_template=OccupancyUNet('fm',widths=tuple(cfg['model']['widths']),
+                                        activation_checkpointing=False)
+            shared_flow_state=copy.deepcopy(flow_template.state_dict())
+        digest=hashlib.sha256()
+        for name,value in sorted(shared_flow_state.items()):
+            digest.update(name.encode());digest.update(str(value.dtype).encode())
+            digest.update(str(tuple(value.shape)).encode())
+            digest.update(value.contiguous().numpy().tobytes())
+        shared_flow_sha=digest.hexdigest()
+        del flow_template
     raw=Stage1DirectOccupancy(g,objective=cfg['model']['objective'],widths=cfg['model']['widths'],
-        activation_checkpointing=cfg['model']['activation_checkpointing']).to(device)
+        activation_checkpointing=cfg['model']['activation_checkpointing'],
+        encoder_variant=model_variant,omd_config=cfg['model'].get('omd3d')).to(device)
+    if shared_flow_state is not None:
+        raw.flow.load_state_dict(shared_flow_state,strict=True)
+        del shared_flow_state
     model=torch.nn.parallel.DistributedDataParallel(raw,device_ids=[local]) if world>1 else raw
     # Initial broadcast precedes EMA construction; no pre-existing EMA is loaded.
     ema=copy.deepcopy(raw).eval().requires_grad_(False) if train.get('ema_decay') else None
@@ -135,7 +188,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     initialization={'initialization_mode':'scratch','pretrained_loaded':False,
         'loaded_pretrained_parameter_count':0,'optimizer_initial_state_entries':len(optimizer.state),
         'successful_updates':0,'initial_model_sha256':state_sha(raw),'ema_initialized_from':'current_random_online',
-        'initial_ema_sha256':state_sha(ema) if ema is not None else None}
+        'initial_ema_sha256':state_sha(ema) if ema is not None else None,
+        'encoder_variant':model_variant,'shared_flow_initialization_sha256':shared_flow_sha}
     if ema is not None and initialization['initial_model_sha256']!=initialization['initial_ema_sha256']: raise RuntimeError('EMA initialization mismatch')
     if world>1:
         hashes=[None]*world; torch.distributed.all_gather_object(hashes,initialization['initial_model_sha256'])
@@ -159,7 +213,10 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if frame_target is not None and final_update_for_frames(successful,successful_frame_exposures,world*train['batch_per_gpu'],frame_target)!=steps:
         raise ValueError('Actual restored exposure counter does not match registered stop update')
     output.mkdir(parents=True,exist_ok=True)
-    code_sha={p.name:file_sha(p) for p in Path(__file__).parent.glob('stage1*.py')}
+    code_files=list(Path(__file__).parent.glob('stage1*.py'))
+    code_files.extend(Path(__file__).parent/name for name in
+                      ('dense_encoder_variants.py','observation_context.py'))
+    code_sha={p.name:file_sha(p) for p in code_files if p.is_file()}
     launch_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     if rank==0:
         atomic_json(output/'config.json',cfg); atomic_json(output/'initialization_audit.json',initialization)
@@ -286,16 +343,27 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         stop=torch.tensor(int(stopped[0]),device=device)
         if world>1: torch.distributed.all_reduce(stop,op=torch.distributed.ReduceOp.MAX)
         stopped[0]=bool(stop)
-        if successful and successful%train['checkpoint_every']==0 or successful==steps or stopped[0]:
+        val=cfg['validation']
+        frame_milestones=set(val.get('frame_milestones',())) if cfg['scope']=='architecture_pilot' else set()
+        is_frame_milestone=frame_target is not None and successful_frame_exposures in frame_milestones
+        if successful and successful%train['checkpoint_every']==0 or successful==steps or stopped[0] or is_frame_milestone:
             save('resume_latest.pt')
             if successful and successful%train['milestone_every']==0: save(f'step{successful:06d}.pt')
             elif successful==steps:save(f'step{successful:06d}.pt')
-        val=cfg['validation']
-        if bool(finite) and (successful%val['light_every']==0 or (frame_target is not None and successful==steps)):
+            if is_frame_milestone:save(f'exposure{successful_frame_exposures:08d}.pt')
+        pilot_partial_final=(cfg['scope']=='architecture_pilot' and not smoke
+                             and steps<train['successful_updates'] and successful==steps)
+        pilot_full_final=(cfg['scope']=='architecture_pilot'
+                          and steps==train['successful_updates']
+                          and frame_target==20000 and successful==steps)
+        registered_frame_final=(cfg['scope']!='architecture_pilot'
+                                and frame_target is not None and successful==steps)
+        if bool(finite) and (successful%val['light_every']==0 or pilot_partial_final
+                             or pilot_full_final or registered_frame_final or is_frame_milestone):
             state=rng_state(generator,device)
             if rank==0:
                 from .stage1_evaluation import evaluate_stage1
-                frames=None if successful%val['full_every']==0 or (frame_target is not None and successful==steps) else val['light_frames']
+                frames=None if successful%val['full_every']==0 or pilot_full_final or registered_frame_final else val['light_frames']
                 print(f'phase=validation update={successful} frames={frames if frames is not None else len(dev)}',flush=True)
                 use_ema=ema is not None and val.get('use_ema',True)
                 sample_dir=output/'validation'/f'update_{successful:06d}_sample' if val.get('save_sample') else None

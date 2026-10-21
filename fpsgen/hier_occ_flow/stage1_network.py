@@ -34,11 +34,33 @@ def occupancy_lidar_features(xyz,spec):
 
 
 class OccupancyConditionEncoder(VoxDetDensity):
-    def __init__(self, geometry, activation_checkpointing=True):
+    def __init__(self, geometry, activation_checkpointing=True, *,
+                 encoder_variant="original", omd_config=None):
         super().__init__(geometry, activation_checkpointing=activation_checkpointing)
         del self.main_head, self.aux_head
         for name in ('lateral_convs_reg','fpn_convs_reg','sp_tpvs_reg'):
             delattr(self.local_neck,name)
+        if encoder_variant not in ("original", "bottleneck", "omd3d"):
+            raise ValueError("encoder_variant must be original, bottleneck, or omd3d")
+        self.encoder_variant = encoder_variant
+        self.observation_grid_shape = tuple(self.lidar_tokenizer.grid_size)
+        self.omd_replaced_blocks = {"voxel_backbone": 0, "local_backbone": 0}
+        if encoder_variant != "original":
+            from .dense_encoder_variants import replace_stage0_blocks
+            options = dict(omd_config or {})
+            if options.pop("use_observation_gate", True) is not True:
+                raise ValueError("V1 OMD3D requires the observation gate")
+            if "context_scale_init" in options:
+                if "gamma_init" in options:
+                    raise ValueError("Specify only one OMD context scale initialization")
+                options["gamma_init"] = options.pop("context_scale_init")
+            allowed = {"internal_channels", "axial_kernels", "gamma_init"}
+            if set(options) - allowed:
+                raise ValueError(f"unsupported dense encoder options: {set(options)-allowed}")
+            self.omd_replaced_blocks["voxel_backbone"] = replace_stage0_blocks(
+                self.voxel_backbone, encoder_variant, **options)
+            self.omd_replaced_blocks["local_backbone"] = replace_stage0_blocks(
+                self.local_backbone, encoder_variant, **options)
 
     def _run(self,module,*args):
         if self.training and self.activation_checkpointing and torch.is_grad_enabled():
@@ -55,7 +77,7 @@ class OccupancyConditionEncoder(VoxDetDensity):
 
     def forward(self,lidar_xyz):
         scenes=[lidar_xyz] if isinstance(lidar_xyz,torch.Tensor) else list(lidar_xyz)
-        token_rows=[]
+        token_rows=[];index_rows=[]
         for x in scenes:
             point_features, indices = occupancy_lidar_features(x,self.spec)
             # Geometry and voxelization above remain FP32/FP64. Explicit model
@@ -65,10 +87,24 @@ class OccupancyConditionEncoder(VoxDetDensity):
                                   if isinstance(m,nn.Linear))
                 point_features=point_features.to(first_linear.weight.dtype)
             token_rows.append(self.lidar_tokenizer(point_features, indices))
+            index_rows.append(indices[0][0])
         token=torch.cat(token_rows,0)
-        pyramid=self._run(self.voxel_backbone,token)
+        if self.encoder_variant == "original":
+            pyramid=self._run(self.voxel_backbone,token)
+        else:
+            from .observation_context import build_observation_context
+            from .dense_encoder_variants import VariantBackboneRunner
+            observation = build_observation_context(
+                index_rows, self.observation_grid_shape, device=token.device,
+                dtype=token.dtype)
+            # Stage0 remains at the tokenizer's 192x192x16 shape in both
+            # backbones. Context is built once and shared by all five blocks.
+            pyramid=self._run(VariantBackboneRunner(self.voxel_backbone,observation),token)
         voxel=self._run(self.voxel_neck,pyramid)[0]
-        local=self._run(self.local_backbone,voxel)
+        if self.encoder_variant == "original":
+            local=self._run(self.local_backbone,voxel)
+        else:
+            local=self._run(VariantBackboneRunner(self.local_backbone,observation),voxel)
         if self.training and self.activation_checkpointing and torch.is_grad_enabled():
             from torch.utils.checkpoint import checkpoint
             cls=checkpoint(self._classification_neck,local,use_reentrant=False)

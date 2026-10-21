@@ -1,0 +1,51 @@
+experiment: hs-occflow-dense-omd3d-pilot-v1
+scope: architecture_pilot
+geometry: geometry_384_8way.yaml
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/train
+development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development
+engineering_gate: null
+model:
+  objective: fm
+  initialization: scratch
+  pretrained_encoder: null
+  widths: [8, 16, 32, 64]
+  activation_checkpointing: true
+  input_feature_version: coarse_f64_v1
+  encoder_variant: bottleneck
+loss: {fm: 1.0}
+flow: {source: gaussian, sigma: 1.0, target: binary_symmetric}
+training:
+  successful_updates: 5000
+  successful_frame_exposures: 20000
+  seed: 20261021
+  batch_per_gpu: 2
+  physical_gpus: [2, 3]
+  lr_encoder: 0.0001
+  lr_flow: 0.0002
+  precision: fp16
+  weight_decay: 0.01
+  grad_clip: 1.0
+  warmup_updates: 500
+  optimizer: AdamW
+  scheduler: warmup_cosine
+  checkpoint_every: 500
+  milestone_every: 1250
+  ema_decay: 0.999
+  gradient_audit_every: 50
+  amp_initial_scale: 16384.0
+validation:
+  nfes: [2]
+  light_every: 5000
+  full_every: 1250
+  light_frames: 12
+  seed: 20261022
+  threshold: 0.5
+  threshold_sweep: [0.25, 0.5, 0.75]
+  target_definition: raw_pre_poisson_surface_hit
+  no_seq08_tuning: true
+  use_ema: true
+  train_eval_at_end: false
+  save_sample: false
+  sample_nfe: 2
+  frame_milestones: [2000, 5000, 10000, 20000]
