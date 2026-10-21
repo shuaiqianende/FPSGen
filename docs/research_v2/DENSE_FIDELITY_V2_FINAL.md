@@ -55,3 +55,9 @@ The fidelity-specific TensorRT FP16 export, engine-build, and full-Encoder
 benchmark scripts are now prepared and pushed. They have passed Python compile
 and CLI smoke checks; actual engine export/build and timing remain NOT RUN until
 a trained EMA candidate passes the 900-frame quality gate.
+
+E1's registered 12-frame light validation at 2,000 exposures completed and was
+finite, but its threshold-0.5 IoU was only 0.03545 with 1.57M active parents
+per frame. This is an early training-health observation, not a candidate
+quality result or a stopping decision; the registered comparison remains the
+full 20K exposure and frozen 900-frame evaluation.
