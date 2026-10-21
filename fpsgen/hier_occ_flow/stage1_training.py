@@ -24,6 +24,8 @@ from .stage1_batch_transition import batch_indices,verify_batch_transition
 from .stage1_frame_budget import validate_frame_budget,verify_budget_transition,learning_rate_multiplier,final_update_for_frames
 
 PILOT_SCOPES = ('architecture_pilot', 'architecture_fidelity_pilot')
+LONGRUN_SCOPE = 'architecture_fidelity_longrun'
+LONGRUN_EXPERIMENT = 'hs-occflow-dense-fidelity-v2-longrun'
 
 
 def state_sha(model):
@@ -86,20 +88,37 @@ def validate_config(cfg):
             raise ValueError('E1 is registered with internal width 96')
         if variant=='asymmetric3d' and fidelity.get('asymmetric_rank',64) not in (64,96):
             raise ValueError('E2 rank screening is limited to 64 or 96')
+    elif scope==LONGRUN_SCOPE:
+        train=cfg['training']
+        if cfg.get('experiment')!=LONGRUN_EXPERIMENT:
+            raise ValueError('Long-run comparison requires its separately registered identity')
+        if variant not in ('original','lightweight_skip'):
+            raise ValueError('Long-run comparison is limited to the matched R0/E3 pair')
+        if train.get('successful_frame_exposures')!=100000 or train.get('successful_updates')!=25000:
+            raise ValueError('Long-run comparison is fixed to100K exposures /25K updates at global batch4')
+        if train.get('batch_per_gpu')!=4 or len(train.get('physical_gpus',[]))!=1 or train['physical_gpus'][0] not in (2,3):
+            raise ValueError('Long-run arms use one physical GPU with local/global batch4')
+        if cfg.get('budget_transition') or cfg.get('batch_transition') or cfg.get('engineering_gate'):
+            raise ValueError('Long-run arms are fresh scratch runs, not budget transitions')
+        if cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
+            raise ValueError('R0/E3 architecture settings are fixed by encoder_variant')
     elif variant!='original' or cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
-        raise ValueError('Architecture variants require architecture_pilot or architecture_fidelity_pilot scope')
+        raise ValueError('Architecture variants require a registered architecture scope')
     if cfg['model'].get('input_feature_version')!='coarse_f64_v1':raise ValueError('Require geometry-audited float64 coarse indexing')
     objective=cfg['model']['objective']
     if objective not in ('fm','bce') or cfg.get('loss')!={objective:1.0}: raise ValueError('Only pure FM or direct BCE loss allowed')
     if objective=='fm' and cfg.get('flow')!={'source':'gaussian','sigma':1.0,'target':'binary_symmetric'}:
         raise ValueError('Unit Gaussian to binary -1/+1 occupancy required')
-    if cfg['training']['physical_gpus']!=[2,3] or cfg['training']['batch_per_gpu'] not in (1,2):
-        raise ValueError('Supported configuration is GPU2/3 B1 or B2/rank')
+    if scope==LONGRUN_SCOPE:
+        if cfg['training']['batch_per_gpu']!=4 or len(cfg['training']['physical_gpus'])!=1:
+            raise ValueError('Long-run arms require one GPU with global batch4')
+    elif cfg['training']['physical_gpus']!=[2,3] or cfg['training']['batch_per_gpu'] not in (1,2):
+        raise ValueError('Supported pilot configuration is GPU2/3 B1 or B2/rank')
     if cfg['training']['precision'] not in ('fp16','fp32'): raise ValueError('Unsupported precision')
     if cfg['training'].get('optimizer','AdamW')!='AdamW' or cfg['training'].get('scheduler','warmup_cosine')!='warmup_cosine':
         raise ValueError('This runner supports explicitly registered AdamW and warmup_cosine only')
     if cfg['training']['successful_updates']>100000: raise ValueError('Budget exceeds registration')
-    if scope not in PILOT_SCOPES:validate_frame_budget(cfg)
+    if scope not in PILOT_SCOPES and scope!=LONGRUN_SCOPE:validate_frame_budget(cfg)
     return g
 
 
@@ -124,6 +143,9 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             raise ValueError('Architecture pilot is capped at20K successful exposures / 5K updates')
         if steps==train['successful_updates'] and not smoke and train['batch_per_gpu']*len(os.environ.get('CUDA_VISIBLE_DEVICES','').split(','))!=4:
             raise ValueError('Full architecture pilot requires global batch4 on GPU2+GPU3')
+    elif cfg['scope']==LONGRUN_SCOPE:
+        if steps>32 and (steps!=train['successful_updates'] or frame_target!=100000):
+            raise ValueError('Long-run arms require the registered full100K frame budget')
     elif steps>1000 or cfg['scope']=='formal':
         gate=json.loads(Path(cfg['engineering_gate']).read_text()) if cfg.get('engineering_gate') else {}
         required=('formal_ready','full_preprocessing','gpu_shapes','ddp_resume','fm_bce_overfit','pilot1000')
@@ -139,10 +161,17 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             if gate.get(split+'_manifest_sha256')!=file_sha(Path(cfg[key])/'manifest.json'):
                 raise ValueError('Formal dataset manifest changed after gate freeze')
     visible=os.environ.get('CUDA_VISIBLE_DEVICES','')
-    if visible not in ('2','3','2,3'): raise ValueError('Only physical GPU2/3 allowed')
+    allowed_visible=('2','3') if cfg['scope']==LONGRUN_SCOPE else ('2','3','2,3')
+    if visible not in allowed_visible: raise ValueError('Physical GPU selection is outside this experiment contract')
+    if list(map(int,visible.split(',')))!=train['physical_gpus']:
+        raise ValueError('CUDA_VISIBLE_DEVICES does not match the registered physical GPU list')
     rank=int(os.environ.get('RANK',0)); world=int(os.environ.get('WORLD_SIZE',1)); local=int(os.environ.get('LOCAL_RANK',0))
     if world!=len(visible.split(',')): raise ValueError('Use one process per selected physical GPU')
     if cfg['scope'] in PILOT_SCOPES and steps<train['successful_updates']:
+        frame_target=steps*world*train['batch_per_gpu']
+    elif cfg['scope']==LONGRUN_SCOPE and smoke and steps<train['successful_updates']:
+        # Smoke runs have a deliberately shortened exposure budget. Keep the
+        # same frame/update accounting invariant as the registered full run.
         frame_target=steps*world*train['batch_per_gpu']
     # Launcher checks admission before torchrun, avoiding self-PID admission races.
     gate_path=os.environ.get('HS_OCCFLOW_ADMISSION')
@@ -153,7 +182,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         if gate.get('physical_ids')!=list(map(int,visible.split(','))): raise ValueError('GPU admission identity mismatch')
     else:
         from .resources import gpu_preflight
-        gate=gpu_preflight(tuple(map(int,visible.split(','))))
+        allow_shared=(cfg['scope']==LONGRUN_SCOPE and os.environ.get('HS_OCCFLOW_ALLOW_SHARED_GPU')=='1')
+        gate=gpu_preflight(tuple(map(int,visible.split(','))),allow_shared_compute=allow_shared)
         if gate['status']!='AVAILABLE': raise RuntimeError('Allowed GPUs busy; existing training preserved')
     torch.cuda.set_device(local); device=torch.device('cuda',local)
     if world>1: torch.distributed.init_process_group('nccl')
@@ -166,7 +196,9 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         raise ValueError('Train/development leakage; only labeled overfit scope may evaluate training frames')
     if cfg['scope']=='formal' and (len(ds)!=17870 or len(dev)!=900): raise ValueError('Formal full split incomplete')
     if rank==0:print(f'phase=data_verified train={len(ds)} development={len(dev)} target_updates={steps}',flush=True)
-    experiment_identity=(cfg['experiment'] if cfg['scope'] in PILOT_SCOPES
+    if cfg['scope']==LONGRUN_SCOPE and (len(ds)!=17870 or len(dev)!=900):
+        raise ValueError('Long-run matched comparison requires the complete registered 17,870/900 splits')
+    experiment_identity=(cfg['experiment'] if cfg['scope'] in PILOT_SCOPES or cfg['scope']==LONGRUN_SCOPE
                          else 'hs-occflow-stage1-occ384-v1')
     identity={'experiment':experiment_identity,'objective':cfg['model']['objective'],'geometry_sha256':g.sha256,
         'config_sha256':hashlib.sha256(json.dumps(cfg,sort_keys=True).encode()).hexdigest(),
@@ -176,7 +208,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     seed_all(train['seed']); torch.set_num_threads(4)
     model_variant=cfg['model'].get('encoder_variant','original')
     shared_flow_state=None;shared_flow_sha=None
-    if cfg['scope'] in ('architecture_pilot','architecture_fidelity_pilot'):
+    if cfg['scope'] in ('architecture_pilot','architecture_fidelity_pilot',LONGRUN_SCOPE):
         from .stage1_network import OccupancyUNet
         # Encoder variants consume different RNG amounts. Seed an independent
         # Flow template so the three pilot arms begin with identical Flow U-Nets.
@@ -192,10 +224,50 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             digest.update(value.contiguous().numpy().tobytes())
         shared_flow_sha=digest.hexdigest()
         del flow_template
-    raw=Stage1DirectOccupancy(g,objective=cfg['model']['objective'],widths=cfg['model']['widths'],
-        activation_checkpointing=cfg['model']['activation_checkpointing'],
-        encoder_variant=model_variant,omd_config=cfg['model'].get('omd3d'),
-        dense_fidelity_config=cfg['model'].get('dense_fidelity')).to(device)
+    matched_init_audit=None
+    if cfg['scope']==LONGRUN_SCOPE:
+        # Build one canonical scratch R0 initialization for the pair. E3 copies
+        # every same-name/same-shape tensor; only architecture-specific 3x3 vs
+        # 1x1 skip kernels retain their own deterministic scratch initialization.
+        with torch.random.fork_rng(devices=[]):
+            torch.manual_seed(int(train['seed']))
+            init_template=Stage1DirectOccupancy(g,objective=cfg['model']['objective'],
+                widths=cfg['model']['widths'],activation_checkpointing=False,
+                encoder_variant='original')
+            template_state={k:v.detach().cpu().clone() for k,v in init_template.state_dict().items()}
+        template_digest=hashlib.sha256()
+        for name,value in sorted(template_state.items()):
+            template_digest.update(name.encode());template_digest.update(str(value.dtype).encode())
+            template_digest.update(str(tuple(value.shape)).encode());template_digest.update(value.contiguous().numpy().tobytes())
+        template_sha=template_digest.hexdigest()
+        del init_template
+        with torch.random.fork_rng(devices=[]):
+            torch.manual_seed(int(train['seed'])+1)
+            raw=Stage1DirectOccupancy(g,objective=cfg['model']['objective'],
+                widths=cfg['model']['widths'],activation_checkpointing=cfg['model']['activation_checkpointing'],
+                encoder_variant=model_variant,omd_config=cfg['model'].get('omd3d'),
+                dense_fidelity_config=cfg['model'].get('dense_fidelity'))
+        target_state=raw.state_dict()
+        compatible={k:v for k,v in template_state.items() if k in target_state and target_state[k].shape==v.shape}
+        mismatched={k:{'reference_shape':list(template_state[k].shape),'variant_shape':list(target_state[k].shape)}
+                    for k in template_state.keys() & target_state.keys() if target_state[k].shape!=template_state[k].shape}
+        load_result=raw.load_state_dict(compatible,strict=False)
+        copied_digest=hashlib.sha256()
+        for name,value in sorted(compatible.items()):
+            copied_digest.update(name.encode());copied_digest.update(value.contiguous().numpy().tobytes())
+        matched_init_audit={'reference_r0_template_sha256':template_sha,
+            'copied_compatible_state_sha256':copied_digest.hexdigest(),
+            'copied_tensor_count':len(compatible),'copied_parameter_numel':sum(v.numel() for v in compatible.values()),
+            'missing_variant_keys':list(load_result.missing_keys),'unexpected_keys':list(load_result.unexpected_keys),
+            'shape_mismatch_keys':mismatched,'variant_specific_initialization_seed':int(train['seed'])+1,
+            'policy':'copy all canonical R0 scratch state tensors with matching names/shapes; preserve deterministic scratch values only for E3 shape-mismatch tensors'}
+        del template_state,compatible
+        raw=raw.to(device)
+    else:
+        raw=Stage1DirectOccupancy(g,objective=cfg['model']['objective'],widths=cfg['model']['widths'],
+            activation_checkpointing=cfg['model']['activation_checkpointing'],
+            encoder_variant=model_variant,omd_config=cfg['model'].get('omd3d'),
+            dense_fidelity_config=cfg['model'].get('dense_fidelity')).to(device)
     if shared_flow_state is not None:
         raw.flow.load_state_dict(shared_flow_state,strict=True)
         del shared_flow_state
@@ -215,7 +287,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         'loaded_pretrained_parameter_count':0,'optimizer_initial_state_entries':len(optimizer.state),
         'successful_updates':0,'initial_model_sha256':state_sha(raw),'ema_initialized_from':'current_random_online',
         'initial_ema_sha256':state_sha(ema) if ema is not None else None,
-        'encoder_variant':model_variant,'shared_flow_initialization_sha256':shared_flow_sha}
+        'encoder_variant':model_variant,'shared_flow_initialization_sha256':shared_flow_sha,
+        'matched_pair_initialization':matched_init_audit}
     if ema is not None and initialization['initial_model_sha256']!=initialization['initial_ema_sha256']: raise RuntimeError('EMA initialization mismatch')
     if world>1:
         hashes=[None]*world; torch.distributed.all_gather_object(hashes,initialization['initial_model_sha256'])
@@ -370,7 +443,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         if world>1: torch.distributed.all_reduce(stop,op=torch.distributed.ReduceOp.MAX)
         stopped[0]=bool(stop)
         val=cfg['validation']
-        frame_milestones=set(val.get('frame_milestones',())) if cfg['scope'] in PILOT_SCOPES else set()
+        frame_milestones=set(val.get('frame_milestones',())) if cfg['scope'] in PILOT_SCOPES or cfg['scope']==LONGRUN_SCOPE else set()
         is_frame_milestone=frame_target is not None and successful_frame_exposures in frame_milestones
         if successful and successful%train['checkpoint_every']==0 or successful==steps or stopped[0] or is_frame_milestone:
             save('resume_latest.pt')
@@ -389,7 +462,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             state=rng_state(generator,device)
             if rank==0:
                 from .stage1_evaluation import evaluate_stage1
-                frames=None if successful%val['full_every']==0 or pilot_full_final or registered_frame_final else val['light_frames']
+                frames=None if (successful%val['full_every']==0 or pilot_full_final
+                                or (registered_frame_final and not smoke)) else val['light_frames']
                 print(f'phase=validation update={successful} frames={frames if frames is not None else len(dev)}',flush=True)
                 use_ema=ema is not None and val.get('use_ema',True)
                 sample_dir=output/'validation'/f'update_{successful:06d}_sample' if val.get('save_sample') else None
