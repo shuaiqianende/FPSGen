@@ -11,7 +11,7 @@ geometry, target generation, and Flow initialization policy remain fixed.
 |---|---|---|---|
 | E1 Bottleneck-96 | `configs/research_v2/hier_occ_flow/fidelity_v2_e1_bottleneck96.yaml` | Complete: 5,000 updates / 20,000 exposures | IoU 0.24872, F1 0.39418, recall ceiling 0.46979 |
 | E2 Asymmetric3D rank-64 | `configs/research_v2/hier_occ_flow/fidelity_v2_e2_asymmetric3d.yaml` | Complete: 5,000 updates / 20,000 exposures | IoU 0.39083, F1 0.55787, recall ceiling 0.55613 |
-| E3 Lightweight Skip | `configs/research_v2/hier_occ_flow/fidelity_v2_e3_lightweight_skip.yaml` | Active; latest observed 2,394 updates / 9,576 exposures | Pending |
+| E3 Lightweight Skip | `configs/research_v2/hier_occ_flow/fidelity_v2_e3_lightweight_skip.yaml` | Active; latest observed 3,449 updates / 13,796 exposures | Pending |
 
 All candidates passed the two-update DDP smoke. E1 and E2 completed their
 registered 20K runs. E3 update records currently show finite loss and
