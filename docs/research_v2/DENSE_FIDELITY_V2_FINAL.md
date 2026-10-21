@@ -4,8 +4,10 @@
 
 The V2 branch is created from the requested OMD V1 commit and contains the
 failure audit, three isolated dense Stage0 candidates, registered 20K
-configs, and CPU tests. The study is **PARTIAL / GPU-BLOCKED**. No candidate has
-been trained or benchmarked on GPU, so no new speed or quality claim is made.
+configs, and CPU tests. GPU access is now confirmed through the host execution
+context. The study is **IN PROGRESS**: real-shape speed screens and all three
+distributed smoke runs passed; sequential registered 20K training has started.
+No new trained quality claim is available yet.
 
 ## R1/R2 evidence
 
@@ -19,38 +21,30 @@ The static R2 EMA audit finds `context_scale` magnitudes no larger than 0.00560
 and gate-bias sigmoid values between 0.475 and 0.525. This rules out only a
 large scalar gain or strong bias-only axis preference. It does not isolate the
 context branch's causal effect; actual branch activation norms and a
-same-checkpoint context ablation remain unmeasured.
+same-checkpoint context ablation remain scheduled GPU diagnostics.
 
 ## Candidate status
 
 | Variant | Code/config | CPU shape + backward | GPU timing | 20K training | 900-frame quality | TensorRT FP16 |
 |---|---|---|---|---|---|---|
 | R0 Original | available reference | prior V1 | historical only | prior V1 | prior V1 | not part of this run |
-| E1 Bottleneck-96 | implemented | PASS | NOT RUN | NOT RUN | NOT RUN | NOT RUN |
-| E2 Asymmetric 3D rank-64 | implemented | PASS | NOT RUN | NOT RUN | NOT RUN | NOT RUN |
-| E3 Lightweight Skip | implemented | PASS | NOT RUN | NOT RUN | NOT RUN | NOT RUN |
+| E1 Bottleneck-96 | implemented | PASS | 170.35 ms encoder screen | IN PROGRESS | NOT RUN | NOT RUN |
+| E2 Asymmetric 3D rank-64 | implemented | PASS | 157.11 ms encoder screen | QUEUED | NOT RUN | NOT RUN |
+| E3 Lightweight Skip | implemented | PASS | 165.53 ms encoder screen | QUEUED | NOT RUN | NOT RUN |
 
 CPU tests confirm the candidate blocks preserve tested feature shapes and
-backpropagate finite gradients. All three registered configs pass the fixed
-20K exposure/5K update, GPU2+3 global-batch-4 and Stage1 NFE/threshold contract.
-The targeted suite reports 8 passed. Python compilation passes.
+backpropagate finite gradients. Real Encoder outputs retain the registered
+three pyramid shapes and are finite. All three GPU2+GPU3 two-update smokes
+reported finite gradients and synchronized parameters. Initial random-weight
+full Encoder screens show 4.0%/11.4%/6.7% speed gains for E1/E2/E3 over same-run
+R0; this is only a training-entry speed screen. All three registered configs
+retain the fixed 20K exposure/5K update and Stage1 geometry/NFE contract.
 
-## Blocker
+## Remaining gates
 
-The current execution environment has no `/dev/nvidia*`; `nvidia-smi` cannot
-connect to the driver and the Stage1 environment reports CUDA unavailable.
-The installed Stage1 environment also lacks `torch_scatter`, preventing an
-actual VoxDet construction smoke. Consequently the mandated RTX 3090 block
-microbenchmark, full Encoder test, 20K training, 900-frame PR/fixed-K
-validation, and TensorRT FP16 comparison were not started. No process was
-preempted.
-
-## Next valid gate
-
-Restore the existing Stage1 CUDA runtime and its pinned `torch_scatter` build,
-then run the real-shape block and full-Encoder tests on admitted GPU2/3. Train
-only candidates with measured compute benefit and a successful full Encoder
-smoke. Evaluate the resulting EMA checkpoints against the same 900-frame
-manifest and fixed K values `78,694 / 84,963 / 94,087`. Only quality-qualified
-candidates proceed to same-model PyTorch FP16 versus TensorRT FP16 comparison.
-100K training remains outside this study's automatic scope.
+The full 20K pilots have not completed. After each finishes, evaluate its EMA
+checkpoint on the frozen 900-frame manifest and fixed K values
+`78,694 / 84,963 / 94,087`. Only candidates that preserve the registered
+quality thresholds proceed to same-model PyTorch FP16 versus TensorRT FP16
+comparison. The R2 dynamic branch audit is still pending. 100K training remains
+outside this study's automatic scope.

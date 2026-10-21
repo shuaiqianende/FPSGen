@@ -16,8 +16,10 @@ Three isolated configs and a dedicated launcher are present:
 | E2 Asymmetric 3D rank-64 | `configs/research_v2/hier_occ_flow/fidelity_v2_e2_asymmetric3d.yaml` |
 | E3 Lightweight Skip | `configs/research_v2/hier_occ_flow/fidelity_v2_e3_lightweight_skip.yaml` |
 
-Training status for all three: `NOT RUN`. GPU admission cannot pass in the
-current runtime because the NVIDIA driver/device nodes are unavailable. The
-runner enforces 20K exposures and GPU2+GPU3; it does not permit a smaller run to
-be relabeled as the registered full pilot. The 2K/5K/10K/20K checkpoints and
-900-frame validation therefore remain future work.
+Each candidate passed a two-update GPU2+GPU3 DDP smoke with finite encoder/flow
+gradients and synchronized parameters. Full 20K runs are now scheduled
+sequentially in `experiments/dense_fidelity_v2/training/`; E1 Bottleneck-96 is
+currently running, with E2 and E3 queued. The runner enforces 20K exposures and
+GPU2+GPU3; a shorter run cannot be relabeled as the registered full pilot. The
+2K/5K/10K/20K checkpoints and 900-frame evaluation will be recorded as each
+run reaches them.

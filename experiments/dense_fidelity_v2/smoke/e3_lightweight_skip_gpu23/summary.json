@@ -1,0 +1,10 @@
+{
+  "attempts": 2,
+  "formal_training_complete": false,
+  "seconds": 10.900611128658056,
+  "status": "COMPLETE_REQUESTED_BUDGET",
+  "successful_frame_exposures": 8,
+  "successful_updates": 2,
+  "target_successful_frame_exposures": 8,
+  "target_successful_updates": 2
+}

@@ -5,9 +5,10 @@
 This audit reads the immutable V1 20K EMA checkpoints and their registered
 900-frame curve artifacts. The checkpoint and curve SHA256 values are saved in
 `dense_fidelity_v2_static_audit.json`. It does not infer unmeasured activation
-behavior from final metrics. The current runtime has no `/dev/nvidia*` devices;
-per-block activation norms and controlled activation perturbation runs are
-therefore `NOT RUN`.
+behavior from final metrics. The ordinary sandbox shell lacks NVIDIA device
+nodes, but host-level GPU2/3 execution is now available and validated. Dynamic
+branch measurements and controlled activation perturbations remain pending;
+GPU2/3 are allocated to the registered E1/E2/E3 training sequence.
 
 ## What the saved 900-frame results establish
 
@@ -57,14 +58,17 @@ between the width-64 bottleneck and added context plausible, but it does not
 establish causality. A gamma-zero or context-branch ablation using the same
 checkpoint and input/noise is still required to isolate that mechanism.
 
-## Sensitivity tests to run when CUDA is available
+## Remaining sensitivity tests
 
 The planned perturbation audit uses the R0 EMA on the frozen Development
 Manifest. For each of the two Voxel and three Local Stage0 outputs, it adds
 fixed-seed zero-mean perturbations at 1% and 5% of that activation's RMS. It
-records score error and threshold-margin flips, threshold IoU/precision/recall,
-fixed-K IoU at 78,694/84,963/94,087, and Fine-GT Recall Ceiling. These are local
-sensitivity proxies only; they cannot predict a separately trained block.
+will record score error and threshold-margin flips, threshold
+IoU/precision/recall, fixed-K IoU at 78,694/84,963/94,087, and Fine-GT Recall
+Ceiling. These are local sensitivity proxies only; they cannot predict a
+separately trained block. The same R2 checkpoint/input will also be evaluated
+with its learned context scale and with context contribution disabled to test
+the causal effect of the added branch.
 
 The V1 stored PR/fixed-K artifacts are complete and comparable across all 900
 frames (manifest SHA256 `6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53`).

@@ -1,59 +1,69 @@
 # Dense Fidelity V2 GPU Benchmark Status
 
-## Admission result
+## Runtime and admission
 
-No GPU benchmark was started. In the current shell:
+The host has four RTX 3090 cards. GPU2 and GPU3 were admitted idle for the
+pilot (about 24 GiB free each, no compute PIDs). The ordinary sandbox shell
+does not expose `/dev/nvidia*`, but an approved host-level execution context
+does. The correct pinned runtime is
+`/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python` (PyTorch
+2.0.1+cu117, CUDA 11.7, torch-scatter 2.1.2, MMCV 1.7.2, SpConv 2.3.6).
 
-- `nvidia-smi --query-gpu=...` fails because it cannot communicate with the NVIDIA driver.
-- `/dev/nvidia*` does not exist.
-- The project Stage1 environment reports PyTorch `1.13.0`, CUDA build `11.7`, and `torch.cuda.is_available() == False`.
-- That environment also lacks `torch_scatter`, so importing the real VoxDet ResNet3D module fails before model construction.
+This environment prepends a system CUDA library directory containing cuDNN
+8.4, while the PyTorch wheel expects cuDNN 8.5. Running with
+`env -u LD_LIBRARY_PATH` selects the bundled cuDNN 8.5.0 and allows the model
+and benchmark to run. The previous `/FPSGen/.conda-envs/fpsgen` environment
+(PyTorch 1.13, missing model dependencies) is not the Stage1 runtime.
 
-This is a runtime environment block, not a model or kernel failure. No GPU task
-was launched or interrupted.
+## Stage0 block benchmark
 
-## Recorded versus new performance
+Physical GPU2, explicit FP16, batch 1, production Stage0 shape
+`[1,128,192,192,16]`, two warmups and five timed samples. These are short
+engineering screens, not the registered 20/100-iteration final microbench.
 
-The V1 historical Encoder-only timings remain reference values and are not
-measurements of E1/E2/E3:
+| Stage0 first block | BN mean (ms) | GN mean (ms) | Parameters |
+|---|---:|---:|---:|
+| R0 Original | 30.13 | 30.08 | 1,327,872 |
+| E1 Bottleneck-96 | 28.44 | 29.29 | 965,696 |
+| E2 Asymmetric rank-64 | 24.84 | 25.83 | 1,012,480 |
+| E3 Lightweight Skip | 22.60 | 23.45 | 901,888 |
 
-| Variant | Historical Encoder mean |
-|---|---:|
-| R0 Original | 178.26 ms |
-| R1 Bottleneck-64 | 138.37 ms |
-| R2 OMD-3D | 173.58 ms |
-| E1 Bottleneck-96 | NOT TESTED |
-| E2 Asymmetric 3D rank-64 | NOT TESTED |
-| E3 Lightweight Skip | NOT TESTED |
+The regular R0 block measured 20.89 ms (BN). Peak allocated memory for these
+single-block runs was 1.28–1.78 GiB. E3 is fastest in this isolated first-block
+screen; E2 is fastest among E1/E2/E3 in the full Encoder screen below. Neither
+result establishes trained quality.
 
-The earlier random-weight microbenchmark is also not a substitute for new
-measurements. It reported R0 203.78 ms, R1 160.14 ms, and R2 195.16 ms at
-batch 1 in AMP on physical GPU2. No E1/E2/E3 timing is inferred from these
-values.
+## Full random-initialized Encoder screen
 
-## Ready-to-run GPU commands
+Physical GPU2, real input `/KITTI_Odometry/00/input_/000100.npy` (18,000
+points), explicit-FP16 inference, two warmups and five timed repeats. It runs
+the actual tokenizer, both backbones, necks, and the three output pyramids,
+but uses fresh random model weights and is therefore only an engineering
+speed screen.
 
-Once the Stage1 Python environment has its pinned dependencies and GPU2/3 are
-admitted, use the existing microbenchmark with real frame 00/000100 and the
-registered batch/precision protocol:
+| Variant | Encoder mean (ms) | Median (ms) | Peak allocated (GiB) | Pyramid output |
+|---|---:|---:|---:|---|
+| R0 Original | 177.38 | 177.11 | 1.660 | `[1,128,16,192,192]`, `[1,128,8,96,96]`, `[1,128,4,48,48]` |
+| E1 Bottleneck-96 | 170.35 | 170.26 | 1.656 | same |
+| E2 Asymmetric rank-64 | 157.11 | 156.98 | 1.658 | same |
+| E3 Lightweight Skip | 165.53 | 165.47 | 1.659 | same |
 
-```bash
-cd /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-dense-fidelity-v2
-CUDA_VISIBLE_DEVICES=2,3 /data-12/M2024-HWZ/FPSGen/.conda-envs/fpsgen/bin/python \
-  scripts/research_v2/hier_occ_flow/benchmark_dense_encoder_variants.py \
-  --physical-gpu 2 --batches 1 2 \
-  --variants r0_original e1_bottleneck96 e2_asymmetric3d e3_lightweight_skip \
-  --precisions amp_fp16 explicit_fp16 --warmups 20 --repeats 100 \
-  --backward --output experiments/dense_fidelity_v2/block_microbench_gpu2.json
+All outputs were finite and FP16. Relative to this same-run R0 screen, E1/E2/E3
+were about 4.0%/11.4%/6.7% faster. This is not a trained-model quality or
+deployment result.
 
-CUDA_VISIBLE_DEVICES=2,3 /data-12/M2024-HWZ/FPSGen/.conda-envs/fpsgen/bin/python \
-  scripts/research_v2/hier_occ_flow/profile_random_dense_encoder.py \
-  --physical-gpu 2 --input-npy /data-12/M2024-HWZ/KITTI_Odometry/00/input_/000100.npy \
-  --variants original bottleneck96 asymmetric3d lightweight_skip \
-  --precision explicit_fp16 --warmups 20 --repeats 100 \
-  --output experiments/dense_fidelity_v2/random_encoder_gpu2.json
-```
+The two machine-readable artifacts are
+`experiments/dense_fidelity_v2/gpu_benchmark/gpu2_stage0_smoke.json` and
+`experiments/dense_fidelity_v2/gpu_benchmark/gpu2_full_encoder_smoke.json`.
 
-These commands should only be run after resolving the runtime issue and
-checking GPU admission. Training remains a separate gate after the full
-Encoder benchmark; do not launch the 20K arms based on CPU toy results.
+## Distributed training smoke and current full pilots
+
+E1, E2, and E3 each passed a two-update DDP smoke on physical GPU2+GPU3 with
+local batch 2. All reached update 2, reported finite encoder/flow gradients,
+and confirmed synchronized rank parameters. The data audit verified the
+registered 17,870-frame train split and 900-frame development split.
+
+The full E1/E2/E3 20K runs use independent outputs and are launched
+sequentially. Current live state is recorded in
+`experiments/dense_fidelity_v2/training/` and the per-variant logs. The short
+benchmark JSONs do not replace the formal 20K-trained model comparison.

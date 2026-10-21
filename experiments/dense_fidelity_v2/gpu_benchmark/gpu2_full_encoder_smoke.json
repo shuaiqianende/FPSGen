@@ -1,0 +1,187 @@
+{
+  "physical_gpu": 2,
+  "device_name": "NVIDIA GeForce RTX 3090",
+  "torch": "2.0.1+cu117",
+  "cuda": "11.7",
+  "cudnn": 8500,
+  "warmups": 2,
+  "repeats": 5,
+  "results": [
+    {
+      "variant": "original",
+      "precision": "explicit_fp16",
+      "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000100.npy",
+      "input_points": 18000,
+      "pyramid_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "pyramid_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "encoder_wall_mean_ms": 177.38107033073902,
+      "encoder_wall_median_ms": 177.11321264505386,
+      "encoder_wall_p95_ms": 178.1575858592987,
+      "encoder_cuda_event_mean_ms": 177.05372009277343,
+      "encoder_cuda_event_median_ms": 177.0474853515625,
+      "encoder_cuda_event_p95_ms": 177.17759399414064,
+      "peak_allocated_gib": 1.6597132682800293,
+      "peak_reserved_gib": 1.98046875,
+      "parameters": 19056568,
+      "floating_parameter_bytes": 38113136
+    },
+    {
+      "variant": "bottleneck96",
+      "precision": "explicit_fp16",
+      "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000100.npy",
+      "input_points": 18000,
+      "pyramid_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "pyramid_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "encoder_wall_mean_ms": 170.34664414823055,
+      "encoder_wall_median_ms": 170.25925405323505,
+      "encoder_wall_p95_ms": 170.73173485696316,
+      "encoder_cuda_event_mean_ms": 170.27493591308593,
+      "encoder_cuda_event_median_ms": 170.17958068847656,
+      "encoder_cuda_event_p95_ms": 170.67174072265624,
+      "peak_allocated_gib": 1.6563611030578613,
+      "peak_reserved_gib": 2.349609375,
+      "parameters": 17245688,
+      "floating_parameter_bytes": 34491376
+    },
+    {
+      "variant": "asymmetric3d",
+      "precision": "explicit_fp16",
+      "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000100.npy",
+      "input_points": 18000,
+      "pyramid_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "pyramid_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "encoder_wall_mean_ms": 157.11329877376556,
+      "encoder_wall_median_ms": 156.97830729186535,
+      "encoder_wall_p95_ms": 157.5708094984293,
+      "encoder_cuda_event_mean_ms": 157.05450744628905,
+      "encoder_cuda_event_median_ms": 156.9372100830078,
+      "encoder_cuda_event_p95_ms": 157.49691467285157,
+      "peak_allocated_gib": 1.657630443572998,
+      "peak_reserved_gib": 1.95703125,
+      "parameters": 17479608,
+      "floating_parameter_bytes": 34959216
+    },
+    {
+      "variant": "lightweight_skip",
+      "precision": "explicit_fp16",
+      "input": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000100.npy",
+      "input_points": 18000,
+      "pyramid_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "pyramid_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "encoder_wall_mean_ms": 165.5286055058241,
+      "encoder_wall_median_ms": 165.4709316790104,
+      "encoder_wall_p95_ms": 165.7677497714758,
+      "encoder_cuda_event_mean_ms": 165.45626220703124,
+      "encoder_cuda_event_median_ms": 165.3994598388672,
+      "encoder_cuda_event_p95_ms": 165.70614013671874,
+      "peak_allocated_gib": 1.6590418815612793,
+      "peak_reserved_gib": 1.978515625,
+      "parameters": 18204600,
+      "floating_parameter_bytes": 36409200
+    }
+  ]
+}
