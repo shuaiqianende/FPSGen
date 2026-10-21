@@ -20,6 +20,9 @@ from torch import nn
 from fpsgen.hier_occ_flow.dense_encoder_variants import (
     DenseBottleneck3D, ObservationModulatedDense3D,
 )
+from fpsgen.hier_occ_flow.fidelity_dense_blocks import (
+    AsymmetricFactorized3D, LightweightSkip3D,
+)
 from fpsgen.hier_occ_flow.observation_context import build_observation_context
 
 
@@ -36,12 +39,21 @@ def original_block(norm_kind, *, first, drop_path_rate):
 
 
 def blocks_for(norm_kind, first):
-    original = original_block(norm_kind, first=first,
+    def fresh():
+        return original_block(norm_kind, first=first,
                               drop_path_rate=0.05 if not first else 0.)
-    bottleneck = DenseBottleneck3D.from_original(original)
-    omd = ObservationModulatedDense3D.from_original(original)
-    return {"r0_original": original, "r1_bottleneck": bottleneck,
-            "r2_omd3d": omd}
+    original = fresh()
+    bottleneck = DenseBottleneck3D.from_original(fresh())
+    omd = ObservationModulatedDense3D.from_original(fresh())
+    result = {"r0_original": original, "r1_bottleneck": bottleneck,
+              "r1_bottleneck64": bottleneck,
+              "r2_omd3d": omd}
+    if first:
+        result["e1_bottleneck96"] = DenseBottleneck3D.from_original(
+            fresh(), internal_channels=96)
+        result["e2_asymmetric3d"] = AsymmetricFactorized3D(fresh(), rank=64)
+        result["e3_lightweight_skip"] = LightweightSkip3D(fresh())
+    return result
 
 
 def make_context(batch, device, dtype, input_path):
@@ -66,7 +78,8 @@ def main():
     parser.add_argument("--physical-gpu", type=int, required=True)
     parser.add_argument("--input-npy", type=Path, default=Path("/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000100.npy"))
     parser.add_argument("--batches", type=int, nargs="+", default=[1, 2])
-    parser.add_argument("--variants", nargs="+", default=["r0_original", "r1_bottleneck", "r2_omd3d"])
+    parser.add_argument("--variants", nargs="+", default=["r0_original", "r1_bottleneck64", "r2_omd3d",
+        "e1_bottleneck96", "e2_asymmetric3d", "e3_lightweight_skip"])
     parser.add_argument("--precisions", nargs="+", choices=["amp_fp16", "explicit_fp16"],
                         default=["amp_fp16", "explicit_fp16"])
     parser.add_argument("--warmups", type=int, default=20)
@@ -102,6 +115,8 @@ def main():
                     first = True
                 blocks = blocks_for(norm_kind, first)
                 for variant in args.variants:
+                    if variant not in blocks:
+                        continue
                     for precision in args.precisions:
                         module = blocks[variant].to(device).train()
                         if precision == "explicit_fp16":

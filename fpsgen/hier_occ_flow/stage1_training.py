@@ -23,6 +23,8 @@ from .stage1_monitoring import module_grad_norm,gradient_stats,sample_parameters
 from .stage1_batch_transition import batch_indices,verify_batch_transition
 from .stage1_frame_budget import validate_frame_budget,verify_budget_transition,learning_rate_multiplier,final_update_for_frames
 
+PILOT_SCOPES = ('architecture_pilot', 'architecture_fidelity_pilot')
+
 
 def state_sha(model):
     h=hashlib.sha256()
@@ -40,10 +42,11 @@ def validate_config(cfg):
     if cfg['model'].get('initialization')!='scratch' or cfg['model'].get('pretrained_encoder') is not None:
         raise ValueError('Scratch only; historical model weights prohibited')
     allowed={'objective','initialization','pretrained_encoder','widths','activation_checkpointing','input_feature_version',
-             'encoder_variant','omd3d'}
+             'encoder_variant','omd3d','dense_fidelity'}
     if set(cfg['model'])-allowed:raise ValueError('Unsupported model options; init_cfg/load_from/pretrained adapters are prohibited')
     variant=cfg['model'].get('encoder_variant','original')
-    if variant not in ('original','bottleneck','omd3d'):raise ValueError('Unknown dense encoder variant')
+    fidelity_variants=('bottleneck96','asymmetric3d','lightweight_skip')
+    if variant not in ('original','bottleneck','omd3d',*fidelity_variants):raise ValueError('Unknown dense encoder variant')
     scope=cfg.get('scope')
     if scope=='architecture_pilot':
         train=cfg['training']
@@ -61,8 +64,30 @@ def validate_config(cfg):
                 raise ValueError('V1 OMD3D is fixed to width64 and axial kernels [7,7,3]')
             if omd.get('use_observation_gate',True) is not True:
                 raise ValueError('V1 OMD3D requires the input observation gate')
-    elif variant!='original' or cfg['model'].get('omd3d'):
-        raise ValueError('Architecture variants require architecture_pilot scope')
+    elif scope=='architecture_fidelity_pilot':
+        train=cfg['training']
+        if cfg.get('experiment')!='hs-occflow-dense-fidelity-v2':
+            raise ValueError('Fidelity pilot requires its separately registered identity')
+        if variant not in fidelity_variants:
+            raise ValueError('Fidelity pilot accepts only bottleneck96, asymmetric3d, or lightweight_skip')
+        if train.get('successful_frame_exposures')!=20000 or train['successful_updates']!=5000:
+            raise ValueError('Fidelity pilot is fixed to20K successful exposures / 5K updates')
+        if train['physical_gpus']!=[2,3] or train['batch_per_gpu']!=2:
+            raise ValueError('Fidelity pilot fairness requires GPU2+3 with local batch2')
+        if cfg.get('budget_transition') or cfg.get('batch_transition') or cfg.get('engineering_gate'):
+            raise ValueError('Fidelity pilot has its own contract; transitions and formal gates are rejected')
+        if cfg['model'].get('omd3d'):
+            raise ValueError('OMD configuration is not permitted in fidelity variants')
+        fidelity=cfg['model'].get('dense_fidelity',{})
+        allowed_fidelity={'internal_channels','asymmetric_rank'}
+        if set(fidelity)-allowed_fidelity:
+            raise ValueError('Unsupported dense fidelity block settings')
+        if variant=='bottleneck96' and fidelity.get('internal_channels',96)!=96:
+            raise ValueError('E1 is registered with internal width 96')
+        if variant=='asymmetric3d' and fidelity.get('asymmetric_rank',64) not in (64,96):
+            raise ValueError('E2 rank screening is limited to 64 or 96')
+    elif variant!='original' or cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
+        raise ValueError('Architecture variants require architecture_pilot or architecture_fidelity_pilot scope')
     if cfg['model'].get('input_feature_version')!='coarse_f64_v1':raise ValueError('Require geometry-audited float64 coarse indexing')
     objective=cfg['model']['objective']
     if objective not in ('fm','bce') or cfg.get('loss')!={objective:1.0}: raise ValueError('Only pure FM or direct BCE loss allowed')
@@ -74,7 +99,7 @@ def validate_config(cfg):
     if cfg['training'].get('optimizer','AdamW')!='AdamW' or cfg['training'].get('scheduler','warmup_cosine')!='warmup_cosine':
         raise ValueError('This runner supports explicitly registered AdamW and warmup_cosine only')
     if cfg['training']['successful_updates']>100000: raise ValueError('Budget exceeds registration')
-    if scope!='architecture_pilot':validate_frame_budget(cfg)
+    if scope not in PILOT_SCOPES:validate_frame_budget(cfg)
     return g
 
 
@@ -94,7 +119,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if cfg['scope']=='formal' and (steps!=train['successful_updates'] or (steps!=100000 and frame_target!=100000)):
         raise ValueError('Formal scope requires the full100K budget or explicitly registered100K-frame budget')
     if smoke and steps>32: raise ValueError('Smoke is limited to32 successful updates')
-    if cfg['scope']=='architecture_pilot' and steps>32:
+    if cfg['scope'] in PILOT_SCOPES and steps>32:
         if frame_target!=20000 or steps>5000:
             raise ValueError('Architecture pilot is capped at20K successful exposures / 5K updates')
         if steps==train['successful_updates'] and not smoke and train['batch_per_gpu']*len(os.environ.get('CUDA_VISIBLE_DEVICES','').split(','))!=4:
@@ -117,7 +142,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if visible not in ('2','3','2,3'): raise ValueError('Only physical GPU2/3 allowed')
     rank=int(os.environ.get('RANK',0)); world=int(os.environ.get('WORLD_SIZE',1)); local=int(os.environ.get('LOCAL_RANK',0))
     if world!=len(visible.split(',')): raise ValueError('Use one process per selected physical GPU')
-    if cfg['scope']=='architecture_pilot' and steps<train['successful_updates']:
+    if cfg['scope'] in PILOT_SCOPES and steps<train['successful_updates']:
         frame_target=steps*world*train['batch_per_gpu']
     # Launcher checks admission before torchrun, avoiding self-PID admission races.
     gate_path=os.environ.get('HS_OCCFLOW_ADMISSION')
@@ -141,7 +166,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         raise ValueError('Train/development leakage; only labeled overfit scope may evaluate training frames')
     if cfg['scope']=='formal' and (len(ds)!=17870 or len(dev)!=900): raise ValueError('Formal full split incomplete')
     if rank==0:print(f'phase=data_verified train={len(ds)} development={len(dev)} target_updates={steps}',flush=True)
-    experiment_identity=(cfg['experiment'] if cfg['scope']=='architecture_pilot'
+    experiment_identity=(cfg['experiment'] if cfg['scope'] in PILOT_SCOPES
                          else 'hs-occflow-stage1-occ384-v1')
     identity={'experiment':experiment_identity,'objective':cfg['model']['objective'],'geometry_sha256':g.sha256,
         'config_sha256':hashlib.sha256(json.dumps(cfg,sort_keys=True).encode()).hexdigest(),
@@ -151,7 +176,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     seed_all(train['seed']); torch.set_num_threads(4)
     model_variant=cfg['model'].get('encoder_variant','original')
     shared_flow_state=None;shared_flow_sha=None
-    if cfg['scope']=='architecture_pilot':
+    if cfg['scope'] in ('architecture_pilot','architecture_fidelity_pilot'):
         from .stage1_network import OccupancyUNet
         # Encoder variants consume different RNG amounts. Seed an independent
         # Flow template so the three pilot arms begin with identical Flow U-Nets.
@@ -169,7 +194,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         del flow_template
     raw=Stage1DirectOccupancy(g,objective=cfg['model']['objective'],widths=cfg['model']['widths'],
         activation_checkpointing=cfg['model']['activation_checkpointing'],
-        encoder_variant=model_variant,omd_config=cfg['model'].get('omd3d')).to(device)
+        encoder_variant=model_variant,omd_config=cfg['model'].get('omd3d'),
+        dense_fidelity_config=cfg['model'].get('dense_fidelity')).to(device)
     if shared_flow_state is not None:
         raw.flow.load_state_dict(shared_flow_state,strict=True)
         del shared_flow_state
@@ -215,7 +241,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     output.mkdir(parents=True,exist_ok=True)
     code_files=list(Path(__file__).parent.glob('stage1*.py'))
     code_files.extend(Path(__file__).parent/name for name in
-                      ('dense_encoder_variants.py','observation_context.py'))
+                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py'))
     code_sha={p.name:file_sha(p) for p in code_files if p.is_file()}
     launch_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     if rank==0:
@@ -344,19 +370,19 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         if world>1: torch.distributed.all_reduce(stop,op=torch.distributed.ReduceOp.MAX)
         stopped[0]=bool(stop)
         val=cfg['validation']
-        frame_milestones=set(val.get('frame_milestones',())) if cfg['scope']=='architecture_pilot' else set()
+        frame_milestones=set(val.get('frame_milestones',())) if cfg['scope'] in PILOT_SCOPES else set()
         is_frame_milestone=frame_target is not None and successful_frame_exposures in frame_milestones
         if successful and successful%train['checkpoint_every']==0 or successful==steps or stopped[0] or is_frame_milestone:
             save('resume_latest.pt')
             if successful and successful%train['milestone_every']==0: save(f'step{successful:06d}.pt')
             elif successful==steps:save(f'step{successful:06d}.pt')
             if is_frame_milestone:save(f'exposure{successful_frame_exposures:08d}.pt')
-        pilot_partial_final=(cfg['scope']=='architecture_pilot' and not smoke
+        pilot_partial_final=(cfg['scope'] in PILOT_SCOPES and not smoke
                              and steps<train['successful_updates'] and successful==steps)
-        pilot_full_final=(cfg['scope']=='architecture_pilot'
+        pilot_full_final=(cfg['scope'] in PILOT_SCOPES
                           and steps==train['successful_updates']
                           and frame_target==20000 and successful==steps)
-        registered_frame_final=(cfg['scope']!='architecture_pilot'
+        registered_frame_final=(cfg['scope'] not in PILOT_SCOPES
                                 and frame_target is not None and successful==steps)
         if bool(finite) and (successful%val['light_every']==0 or pilot_partial_final
                              or pilot_full_final or registered_frame_final or is_frame_milestone):

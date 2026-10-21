@@ -134,12 +134,18 @@ def replace_stage0_blocks(backbone, variant, *, internal_channels=64,
 
 def forward_variant_backbone(backbone, x, observation_context):
     """Run a variant backbone, supplying context only to its Stage0 blocks."""
-    if not isinstance(backbone.layers[0][0], DenseBottleneck3D):
+    first = backbone.layers[0][0]
+    if not (isinstance(first, DenseBottleneck3D) or
+            getattr(first, "_fidelity_dense_block", False)):
         return backbone(x)
     features = []
     value = x
     for block in backbone.layers[0]:
-        value = block(value, observation_context)
+        if (isinstance(block, DenseBottleneck3D) or
+                getattr(block, "_fidelity_dense_block", False)):
+            value = block(value, observation_context)
+        else:
+            value = block(value)
     if 0 in backbone.backbone_output_ids:
         features.append(value)
     for level, layer in enumerate(backbone.layers[1:], start=1):

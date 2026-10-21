@@ -13,14 +13,15 @@ from fpsgen.hier_occ_flow.storage import atomic_json,file_sha
 
 def load_model(config,checkpoint,device,use_ema=False):
     g=validate_config(config); value=torch.load(checkpoint,map_location='cpu')
-    expected_experiment=(config['experiment'] if config.get('scope')=='architecture_pilot'
+    expected_experiment=(config['experiment'] if config.get('scope') in ('architecture_pilot','architecture_fidelity_pilot')
                          else 'hs-occflow-stage1-occ384-v1')
     if value['identity'].get('experiment')!=expected_experiment or value['identity']['geometry_sha256']!=g.sha256 or value['identity']['objective']!=config['model']['objective']:
         raise ValueError('Checkpoint is not the matching384 occupancy experiment')
     model=Stage1DirectOccupancy(g,objective=config['model']['objective'],widths=config['model']['widths'],
         activation_checkpointing=False,
         encoder_variant=config['model'].get('encoder_variant','original'),
-        omd_config=config['model'].get('omd3d'))
+        omd_config=config['model'].get('omd3d'),
+        dense_fidelity_config=config['model'].get('dense_fidelity'))
     state=value['ema'] if use_ema else value['model']
     if state is None: raise ValueError('No EMA saved')
     model.load_state_dict(state,strict=True)

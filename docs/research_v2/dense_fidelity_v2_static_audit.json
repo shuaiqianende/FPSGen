@@ -1,0 +1,336 @@
+{
+  "checkpoints": {
+    "R0": {
+      "context_scale": {},
+      "gate_bias": {},
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-dense-omd3d-v1/experiments/omd3d_v1/r0_original/formal20k/checkpoints/exposure00020000.pt",
+      "sha256": "77ef88676eaaad0122947a4763c0e79dcab33064fd7ff2e1de73ee3d442cfe5f",
+      "successful_frame_exposures": 20000,
+      "successful_updates": 5000
+    },
+    "R1": {
+      "context_scale": {},
+      "gate_bias": {},
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-dense-omd3d-v1/experiments/omd3d_v1/r1_bottleneck/formal20k/checkpoints/exposure00020000.pt",
+      "sha256": "4cfaae1189f1fc29109ec05a1536031ba16b3c92a3173e386b6ab01774a5b755",
+      "successful_frame_exposures": 20000,
+      "successful_updates": 5000
+    },
+    "R2": {
+      "context_scale": {
+        "encoder.local_backbone.layers.0.0.context_scale": {
+          "max": -0.00135261588729918,
+          "mean": -0.00135261588729918,
+          "min": -0.00135261588729918,
+          "shape": [],
+          "std": 0.0
+        },
+        "encoder.local_backbone.layers.0.1.context_scale": {
+          "max": -0.004272804129868746,
+          "mean": -0.004272804129868746,
+          "min": -0.004272804129868746,
+          "shape": [],
+          "std": 0.0
+        },
+        "encoder.local_backbone.layers.0.2.context_scale": {
+          "max": 0.0035441210493445396,
+          "mean": 0.0035441210493445396,
+          "min": 0.0035441210493445396,
+          "shape": [],
+          "std": 0.0
+        },
+        "encoder.voxel_backbone.layers.0.0.context_scale": {
+          "max": 0.005598432384431362,
+          "mean": 0.005598432384431362,
+          "min": 0.005598432384431362,
+          "shape": [],
+          "std": 0.0
+        },
+        "encoder.voxel_backbone.layers.0.1.context_scale": {
+          "max": -0.0014676310820505023,
+          "mean": -0.0014676310820505023,
+          "min": -0.0014676310820505023,
+          "shape": [],
+          "std": 0.0
+        }
+      },
+      "gate_bias": {
+        "encoder.local_backbone.layers.0.0.gate.bias": {
+          "max": -0.00940774753689766,
+          "mean": -0.04026860371232033,
+          "min": -0.09015005826950073,
+          "shape": [
+            3
+          ],
+          "std": 0.03560119494795799
+        },
+        "encoder.local_backbone.layers.0.1.gate.bias": {
+          "max": -0.0055379969999194145,
+          "mean": -0.05603939667344093,
+          "min": -0.09861239045858383,
+          "shape": [
+            3
+          ],
+          "std": 0.03840881213545799
+        },
+        "encoder.local_backbone.layers.0.2.gate.bias": {
+          "max": 0.09817539900541306,
+          "mean": 0.06635535508394241,
+          "min": 0.004376748111099005,
+          "shape": [
+            3
+          ],
+          "std": 0.0438307449221611
+        },
+        "encoder.voxel_backbone.layers.0.0.gate.bias": {
+          "max": 0.040893860161304474,
+          "mean": -0.009579640813171864,
+          "min": -0.050334736704826355,
+          "shape": [
+            3
+          ],
+          "std": 0.037872590124607086
+        },
+        "encoder.voxel_backbone.layers.0.1.gate.bias": {
+          "max": 0.09146437048912048,
+          "mean": 0.06279728561639786,
+          "min": 0.026484290137887,
+          "shape": [
+            3
+          ],
+          "std": 0.02707332745194435
+        }
+      },
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-dense-omd3d-v1/experiments/omd3d_v1/r2_omd3d/formal20k/checkpoints/exposure00020000.pt",
+      "sha256": "915ec529dd5fc49cbe202304d63d300c23d5d0c556211ba269fa262aa52ee051",
+      "successful_frame_exposures": 20000,
+      "successful_updates": 5000
+    }
+  },
+  "curves": {
+    "R0": {
+      "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+      "fixed_budget": {
+        "78694": {
+          "frames": 900,
+          "macro": {
+            "actual_k": 78694.0,
+            "f1": 0.52602090316649,
+            "fine_recall_ceiling": 0.5069617380993059,
+            "iou": 0.36086311031199064,
+            "precision": 0.7251859523385942,
+            "recall": 0.43151071885917824
+          },
+          "micro": {
+            "f1": 0.514976452470634,
+            "iou": 0.34677999101590024,
+            "precision": 0.7251859523385942,
+            "recall": 0.39924685141017896
+          }
+        },
+        "84963": {
+          "frames": 900,
+          "macro": {
+            "actual_k": 84963.0,
+            "f1": 0.5375717200640447,
+            "fine_recall_ceiling": 0.5289387955334472,
+            "iou": 0.37135312880627824,
+            "precision": 0.7083702055927613,
+            "recall": 0.4536596583368191
+          },
+          "micro": {
+            "f1": 0.5281688196865709,
+            "iou": 0.3588514951654282,
+            "precision": 0.7083702055927613,
+            "recall": 0.4210567375420124
+          }
+        },
+        "94087": {
+          "frames": 900,
+          "macro": {
+            "actual_k": 94087.0,
+            "f1": 0.5502645057976262,
+            "fine_recall_ceiling": 0.5575419255235254,
+            "iou": 0.3829809934339879,
+            "precision": 0.6841097778297391,
+            "recall": 0.4830959709441961
+          },
+          "micro": {
+            "f1": 0.5431129673507269,
+            "iou": 0.3727900346282198,
+            "precision": 0.6841097778297391,
+            "recall": 0.45030411427489914
+          }
+        }
+      },
+      "frames": 900,
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-dense-omd3d-v1/experiments/omd3d_v1/curves/r0_original_20k.json",
+      "sha256": "4ddc1bfaef5817bba9cc37cedaada676d84120b0a6aa5ddf3ab611e3de447dbc",
+      "threshold": 0.5,
+      "threshold_macro": {
+        "active_parents": 99669.59666666666,
+        "f1": 0.5678943526568239,
+        "fine_recall_ceiling": 0.5736615999243183,
+        "iou": 0.4002070206349971,
+        "precision": 0.68235418773801,
+        "recall": 0.4986627197598965
+      },
+      "threshold_micro": {
+        "f1": 0.5663936846759653,
+        "iou": 0.39508314006550993,
+        "precision": 0.6893363235241345,
+        "recall": 0.4806670594071888
+      }
+    },
+    "R1": {
+      "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+      "fixed_budget": {
+        "78694": {
+          "frames": 900,
+          "macro": {
+            "actual_k": 78694.0,
+            "f1": 0.42968805202092836,
+            "fine_recall_ceiling": 0.42891020965175414,
+            "iou": 0.2791384887069398,
+            "precision": 0.595341731545254,
+            "recall": 0.3515235104367523
+          },
+          "micro": {
+            "f1": 0.4227701487186998,
+            "iou": 0.2680459974652727,
+            "precision": 0.595341731545254,
+            "recall": 0.3277618810265487
+          }
+        },
+        "84963": {
+          "frames": 900,
+          "macro": {
+            "actual_k": 84963.0,
+            "f1": 0.43836835272798996,
+            "fine_recall_ceiling": 0.447277303340216,
+            "iou": 0.28636758108288923,
+            "precision": 0.5802387836796932,
+            "recall": 0.3689964208802544
+          },
+          "micro": {
+            "f1": 0.43263258546571326,
+            "iou": 0.2760249967262856,
+            "precision": 0.5802387836796933,
+            "recall": 0.3448951513242664
+          }
+        },
+        "94087": {
+          "frames": 900,
+          "macro": {
+            "actual_k": 94087.0,
+            "f1": 0.4473987487629907,
+            "fine_recall_ceiling": 0.47073840195582267,
+            "iou": 0.29391103185875195,
+            "precision": 0.558381745972699,
+            "recall": 0.3918727700227752
+          },
+          "micro": {
+            "f1": 0.44329781096212983,
+            "iou": 0.2847672561160288,
+            "precision": 0.5583817459726991,
+            "recall": 0.36754568593534503
+          }
+        }
+      },
+      "frames": 900,
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-dense-omd3d-v1/experiments/omd3d_v1/curves/r1_bottleneck_20k.json",
+      "sha256": "913f8bb28e4d199379597e89b0c164b2b0df04ad086ea015f0f7e2d8396f3c14",
+      "threshold": 0.5,
+      "threshold_macro": {
+        "active_parents": 124802.43111111112,
+        "f1": 0.46281130820531224,
+        "fine_recall_ceiling": 0.5309872253108554,
+        "iou": 0.3071626975652472,
+        "precision": 0.49195972167945795,
+        "recall": 0.4528079908972643
+      },
+      "threshold_micro": {
+        "f1": 0.46290963537310736,
+        "iou": 0.301159675466102,
+        "precision": 0.4965444138249871,
+        "recall": 0.4335424643188271
+      }
+    },
+    "R2": {
+      "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+      "fixed_budget": {
+        "78694": {
+          "frames": 900,
+          "macro": {
+            "actual_k": 78694.0,
+            "f1": 0.35873125500746134,
+            "fine_recall_ceiling": 0.36498867649272515,
+            "iou": 0.22230290122063784,
+            "precision": 0.498115132312784,
+            "recall": 0.2930966075444241
+          },
+          "micro": {
+            "f1": 0.3537266034086222,
+            "iou": 0.21486504255065772,
+            "precision": 0.498115132312784,
+            "recall": 0.27423434992683027
+          }
+        },
+        "84963": {
+          "frames": 900,
+          "macro": {
+            "actual_k": 84963.0,
+            "f1": 0.3682289710983481,
+            "fine_recall_ceiling": 0.3831352655560304,
+            "iou": 0.22953393236683042,
+            "precision": 0.48817736347978924,
+            "recall": 0.3096587346919166
+          },
+          "micro": {
+            "f1": 0.36399055159450544,
+            "iou": 0.2224868272914083,
+            "precision": 0.48817736347978924,
+            "recall": 0.29017364985962035
+          }
+        },
+        "94087": {
+          "frames": 900,
+          "macro": {
+            "actual_k": 94087.0,
+            "f1": 0.3789996504669374,
+            "fine_recall_ceiling": 0.4068807758166221,
+            "iou": 0.23780736128986288,
+            "precision": 0.47341679037014206,
+            "recall": 0.3318094322823239
+          },
+          "micro": {
+            "f1": 0.375844354435724,
+            "iou": 0.23140907428557772,
+            "precision": 0.47341679037014206,
+            "recall": 0.3116188883409717
+          }
+        }
+      },
+      "frames": 900,
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-dense-omd3d-v1/experiments/omd3d_v1/curves/r2_omd3d_20k.json",
+      "sha256": "3c775f7d0a33da6b532bd4c8f971573ec15e065386320f90ae340506edbffcf7",
+      "threshold": 0.5,
+      "threshold_macro": {
+        "active_parents": 156516.5888888889,
+        "f1": 0.4030894794284222,
+        "fine_recall_ceiling": 0.5194646497490117,
+        "iou": 0.2564270124516554,
+        "precision": 0.3862176274859031,
+        "recall": 0.4437854152608473
+      },
+      "threshold_micro": {
+        "f1": 0.40464499261889175,
+        "iou": 0.25363946629229944,
+        "precision": 0.3870932814860306,
+        "recall": 0.4238639725431746
+      }
+    }
+  },
+  "runtime_forward_activation_analysis": "NOT_RUN_NO_CUDA_DEVICE",
+  "scope": "static_checkpoint_and_saved_metric_audit"
+}

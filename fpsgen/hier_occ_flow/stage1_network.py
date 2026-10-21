@@ -35,17 +35,19 @@ def occupancy_lidar_features(xyz,spec):
 
 class OccupancyConditionEncoder(VoxDetDensity):
     def __init__(self, geometry, activation_checkpointing=True, *,
-                 encoder_variant="original", omd_config=None):
+                 encoder_variant="original", omd_config=None,
+                 dense_fidelity_config=None):
         super().__init__(geometry, activation_checkpointing=activation_checkpointing)
         del self.main_head, self.aux_head
         for name in ('lateral_convs_reg','fpn_convs_reg','sp_tpvs_reg'):
             delattr(self.local_neck,name)
-        if encoder_variant not in ("original", "bottleneck", "omd3d"):
-            raise ValueError("encoder_variant must be original, bottleneck, or omd3d")
+        fidelity_variants = ("bottleneck96", "asymmetric3d", "lightweight_skip")
+        if encoder_variant not in ("original", "bottleneck", "omd3d", *fidelity_variants):
+            raise ValueError("Unknown dense encoder variant")
         self.encoder_variant = encoder_variant
         self.observation_grid_shape = tuple(self.lidar_tokenizer.grid_size)
         self.omd_replaced_blocks = {"voxel_backbone": 0, "local_backbone": 0}
-        if encoder_variant != "original":
+        if encoder_variant in ("bottleneck", "omd3d"):
             from .dense_encoder_variants import replace_stage0_blocks
             options = dict(omd_config or {})
             if options.pop("use_observation_gate", True) is not True:
@@ -60,6 +62,18 @@ class OccupancyConditionEncoder(VoxDetDensity):
             self.omd_replaced_blocks["voxel_backbone"] = replace_stage0_blocks(
                 self.voxel_backbone, encoder_variant, **options)
             self.omd_replaced_blocks["local_backbone"] = replace_stage0_blocks(
+                self.local_backbone, encoder_variant, **options)
+        elif encoder_variant in fidelity_variants:
+            if omd_config:
+                raise ValueError("OMD configuration is invalid for fidelity variants")
+            options = dict(dense_fidelity_config or {})
+            allowed = {"internal_channels", "asymmetric_rank"}
+            if set(options) - allowed:
+                raise ValueError(f"unsupported fidelity options: {set(options)-allowed}")
+            from .fidelity_dense_blocks import replace_fidelity_stage0
+            self.omd_replaced_blocks["voxel_backbone"] = replace_fidelity_stage0(
+                self.voxel_backbone, encoder_variant, **options)
+            self.omd_replaced_blocks["local_backbone"] = replace_fidelity_stage0(
                 self.local_backbone, encoder_variant, **options)
 
     def _run(self,module,*args):
@@ -92,11 +106,13 @@ class OccupancyConditionEncoder(VoxDetDensity):
         if self.encoder_variant == "original":
             pyramid=self._run(self.voxel_backbone,token)
         else:
-            from .observation_context import build_observation_context
             from .dense_encoder_variants import VariantBackboneRunner
-            observation = build_observation_context(
-                index_rows, self.observation_grid_shape, device=token.device,
-                dtype=token.dtype)
+            observation = None
+            if self.encoder_variant not in ("bottleneck96", "asymmetric3d", "lightweight_skip"):
+                from .observation_context import build_observation_context
+                observation = build_observation_context(
+                    index_rows, self.observation_grid_shape, device=token.device,
+                    dtype=token.dtype)
             # Stage0 remains at the tokenizer's 192x192x16 shape in both
             # backbones. Context is built once and shared by all five blocks.
             pyramid=self._run(VariantBackboneRunner(self.voxel_backbone,observation),token)

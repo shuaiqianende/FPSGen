@@ -73,7 +73,7 @@ class Stage1DirectOccupancy(nn.Module):
 
     def __init__(self, geometry, *, objective="fm", widths=(8, 16, 32, 64),
                  activation_checkpointing=True, encoder_variant="original",
-                 omd_config=None):
+                 omd_config=None, dense_fidelity_config=None):
         super().__init__()
         if objective not in {"fm", "bce"}:
             raise ValueError("objective must be fm or bce")
@@ -90,7 +90,8 @@ class Stage1DirectOccupancy(nn.Module):
             sphere_radius=geometry.sphere_radius)
         self.encoder=OccupancyConditionEncoder(
             self.geometry,activation_checkpointing,
-            encoder_variant=encoder_variant,omd_config=omd_config)
+            encoder_variant=encoder_variant,omd_config=omd_config,
+            dense_fidelity_config=dense_fidelity_config)
         self.flow=OccupancyUNet(objective,widths,activation_checkpointing)
         self.register_buffer('valid',self.geometry.field_mask(),persistent=False)
         self.last_condition_cache_cuda_events=None

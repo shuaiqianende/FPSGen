@@ -19,7 +19,8 @@ def main():
     p.add_argument('--physical-gpu',type=int,required=True)
     p.add_argument('--device',default='cuda:0')
     p.add_argument('--input-npy',type=Path,required=True)
-    p.add_argument('--variants',nargs='+',default=['original','bottleneck','omd3d'])
+    p.add_argument('--variants',nargs='+',default=['original','bottleneck','omd3d',
+        'bottleneck96','asymmetric3d','lightweight_skip'])
     p.add_argument('--precision',choices=['amp','explicit_fp16'],default='amp')
     p.add_argument('--warmups',type=int,default=20)
     p.add_argument('--repeats',type=int,default=100)
@@ -41,7 +42,10 @@ def main():
             activation_checkpointing=False,encoder_variant=variant,
             omd_config=({'internal_channels':64,'axial_kernels':(7,7,3),
                          'context_scale_init':1e-3,'use_observation_gate':True}
-                        if variant=='omd3d' else None)).to(device).eval()
+                        if variant=='omd3d' else None),
+            dense_fidelity_config=({'internal_channels':96} if variant=='bottleneck96'
+                                   else {'asymmetric_rank':64} if variant=='asymmetric3d'
+                                   else None)).to(device).eval()
         if a.precision=='explicit_fp16':
             model.encoder.half();model.encoder._v6_explicit_fp16=True
         amp=a.precision=='amp'
