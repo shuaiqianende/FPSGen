@@ -11,7 +11,7 @@ import numpy as np
 import torch
 
 from eval_stage1_occ import load_model
-from train_dense_encoder_pilot import load_config
+from train_stage1_occ import load_config
 from fpsgen.hier_occ_flow.full_fp16_inference import explicit_fp16_copy, parameter_dtype_audit
 from fpsgen.hier_occ_flow.resources import gpu_preflight
 from fpsgen.hier_occ_flow.stage1_curve_evaluation import evaluate_stage1_curves

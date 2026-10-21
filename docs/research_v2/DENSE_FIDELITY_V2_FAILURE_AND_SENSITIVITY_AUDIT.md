@@ -60,15 +60,16 @@ checkpoint and input/noise is still required to isolate that mechanism.
 
 ## Remaining sensitivity tests
 
-The planned perturbation audit uses the R0 EMA on the frozen Development
-Manifest. For each of the two Voxel and three Local Stage0 outputs, it adds
-fixed-seed zero-mean perturbations at 1% and 5% of that activation's RMS. It
-will record score error and threshold-margin flips, threshold
-IoU/precision/recall, fixed-K IoU at 78,694/84,963/94,087, and Fine-GT Recall
-Ceiling. These are local sensitivity proxies only; they cannot predict a
-separately trained block. The same R2 checkpoint/input will also be evaluated
-with its learned context scale and with context contribution disabled to test
-the causal effect of the added branch.
+`scripts/research_v2/hier_occ_flow/audit_dense_fidelity_dynamics.py` implements
+the audit on a registered Development subset. For each of the two Voxel and
+three Local Stage0 outputs, it adds fixed-seed zero-mean perturbations at 1%
+and 5% of that activation's RMS, then records score errors, threshold-margin
+flips, threshold metrics, fixed-K IoU at 78,694/84,963/94,087, and Fine-GT
+Recall Ceiling. It also captures R2's local/axial/context activation norms and
+gate averages and compares its EMA prediction with all learned context scales
+set to zero under the same source noise. The run is queued until the current
+GPU2/3 training sequence releases the cards. These remain sensitivity proxies;
+they cannot predict a separately trained block.
 
 The V1 stored PR/fixed-K artifacts are complete and comparable across all 900
 frames (manifest SHA256 `6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53`).

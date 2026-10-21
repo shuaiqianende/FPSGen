@@ -6,7 +6,7 @@ from pathlib import Path
 import torch
 
 from eval_stage1_occ import load_model
-from train_dense_encoder_pilot import load_config
+from train_stage1_occ import load_config
 from fpsgen.hier_occ_flow.resources import gpu_preflight
 from fpsgen.hier_occ_flow.stage1_curve_evaluation import evaluate_stage1_curves
 from fpsgen.hier_occ_flow.storage import atomic_json, file_sha
