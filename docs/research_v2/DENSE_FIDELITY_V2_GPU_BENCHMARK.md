@@ -67,3 +67,14 @@ The full E1/E2/E3 20K runs use independent outputs and are launched
 sequentially. Current live state is recorded in
 `experiments/dense_fidelity_v2/training/` and the per-variant logs. The short
 benchmark JSONs do not replace the formal 20K-trained model comparison.
+
+At the 2026-10-21 progress check, E1 had reached 438/5,000 updates (1,752 of
+20,000 successful frame exposures) at approximately 2 seconds/update. E2/E3
+remain queued so the two designated GPUs are not oversubscribed.
+
+Fidelity-specific TRT tooling is available at
+`export_fidelity_backbone_onnx.py`, `build_fidelity_backbone_trt.py`,
+`benchmark_fidelity_trt_encoder.py`, and `fpsgen/hier_occ_flow/fidelity_trt_adapter.py`.
+They compile and expose CLI help in the Stage1 environment. No TensorRT engine
+has yet been built for a fidelity checkpoint; that gate follows trained-model
+quality evaluation.

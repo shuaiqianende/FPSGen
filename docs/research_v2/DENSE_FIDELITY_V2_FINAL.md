@@ -28,7 +28,7 @@ same-checkpoint context ablation remain scheduled GPU diagnostics.
 | Variant | Code/config | CPU shape + backward | GPU timing | 20K training | 900-frame quality | TensorRT FP16 |
 |---|---|---|---|---|---|---|
 | R0 Original | available reference | prior V1 | historical only | prior V1 | prior V1 | not part of this run |
-| E1 Bottleneck-96 | implemented | PASS | 170.35 ms encoder screen | IN PROGRESS | NOT RUN | NOT RUN |
+| E1 Bottleneck-96 | implemented | PASS | 170.35 ms encoder screen | IN PROGRESS (438/5,000 updates at last check) | NOT RUN | NOT RUN |
 | E2 Asymmetric 3D rank-64 | implemented | PASS | 157.11 ms encoder screen | QUEUED | NOT RUN | NOT RUN |
 | E3 Lightweight Skip | implemented | PASS | 165.53 ms encoder screen | QUEUED | NOT RUN | NOT RUN |
 
@@ -42,9 +42,16 @@ retain the fixed 20K exposure/5K update and Stage1 geometry/NFE contract.
 
 ## Remaining gates
 
-The full 20K pilots have not completed. After each finishes, evaluate its EMA
-checkpoint on the frozen 900-frame manifest and fixed K values
+The full 20K pilots have not completed. The E1 training job is running on GPU2+GPU3;
+E2 and E3 are queued in the same sequential job. At the observed rate of about
+2 seconds/update, this is a multi-hour queue. After each finishes, evaluate its
+EMA checkpoint on the frozen 900-frame manifest and fixed K values
 `78,694 / 84,963 / 94,087`. Only candidates that preserve the registered
 quality thresholds proceed to same-model PyTorch FP16 versus TensorRT FP16
 comparison. The R2 dynamic branch audit is still pending. 100K training remains
 outside this study's automatic scope.
+
+The fidelity-specific TensorRT FP16 export, engine-build, and full-Encoder
+benchmark scripts are now prepared and pushed. They have passed Python compile
+and CLI smoke checks; actual engine export/build and timing remain NOT RUN until
+a trained EMA candidate passes the 900-frame quality gate.
