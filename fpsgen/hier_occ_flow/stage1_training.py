@@ -25,7 +25,53 @@ from .stage1_frame_budget import validate_frame_budget,verify_budget_transition,
 
 PILOT_SCOPES = ('architecture_pilot', 'architecture_fidelity_pilot')
 LONGRUN_SCOPE = 'architecture_fidelity_longrun'
+SINGLE_GPU_20K_SCOPE = 'architecture_fidelity_single_gpu_20k'
 LONGRUN_EXPERIMENT = 'hs-occflow-dense-fidelity-v2-longrun'
+SINGLE_GPU_20K_EXPERIMENT = 'hs-occflow-dense-fidelity-v2-single-gpu-20k'
+SINGLE_GPU_CANDIDATE_EXPERIMENT = 'hs-occflow-dense-fidelity-v2-candidate-single-gpu-20k'
+
+
+def _verified_smoke_data_audit(path, cfg):
+    """Validate a recent completed smoke audit before reusing its shard hashes.
+
+    SparseShardDataset still checks manifest/version, index structure, shard
+    lengths, and all sampled records. This opt-in only avoids rereading every
+    immutable shard byte after both matched smoke runs already verified them.
+    """
+    path = Path(path).resolve()
+    audit = json.loads(path.read_text())
+    if audit.get('schema') != 'hs-occflow-verified-smoke-data-v1':
+        raise ValueError('Unsupported verified-data audit schema')
+    expected_roots = {
+        'train': str(Path(cfg['train_dataset']).resolve()),
+        'development': str(Path(cfg['development_dataset']).resolve()),
+    }
+    if audit.get('roots') != expected_roots:
+        raise ValueError('Verified-data audit roots do not match this run')
+    current_manifests = {
+        'train': file_sha(Path(expected_roots['train']) / 'manifest.json'),
+        'development': file_sha(Path(expected_roots['development']) / 'manifest.json'),
+    }
+    if audit.get('manifest_sha256') != current_manifests:
+        raise ValueError('Dataset manifest changed after the smoke audit')
+    sources = audit.get('source_smokes', [])
+    if len(sources) != 2:
+        raise ValueError('Verified-data audit must cite both matched smoke runs')
+    for source in sources:
+        root = Path(source).resolve()
+        smoke_cfg = json.loads((root / 'config.json').read_text())
+        summary = json.loads((root / 'summary.json').read_text())
+        if (str(Path(smoke_cfg['train_dataset']).resolve()) != expected_roots['train'] or
+                str(Path(smoke_cfg['development_dataset']).resolve()) != expected_roots['development']):
+            raise ValueError('Smoke run used different dataset roots')
+        if (summary.get('status') != 'COMPLETE_REQUESTED_BUDGET' or
+                summary.get('successful_updates') != 2 or
+                summary.get('successful_frame_exposures') != 4):
+            raise ValueError('Smoke run did not complete the registered verified-data check')
+        rows = (root / 'train_rank0.jsonl').read_text().splitlines()
+        if len(rows) != 2 or any(not json.loads(row).get('finite', False) for row in rows):
+            raise ValueError('Smoke run lacks two finite training updates')
+    return file_sha(path)
 
 
 def state_sha(model):
@@ -102,6 +148,36 @@ def validate_config(cfg):
             raise ValueError('Long-run arms are fresh scratch runs, not budget transitions')
         if cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
             raise ValueError('R0/E3 architecture settings are fixed by encoder_variant')
+    elif scope==SINGLE_GPU_20K_SCOPE:
+        train=cfg['training']
+        experiment=cfg.get('experiment')
+        if experiment==SINGLE_GPU_20K_EXPERIMENT:
+            if variant not in ('original','lightweight_skip'):
+                raise ValueError('Registered R0/E3 comparison is limited to the matched R0/E3 arms')
+            if cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
+                raise ValueError('R0/E3 architecture settings are fixed by encoder_variant')
+        elif experiment==SINGLE_GPU_CANDIDATE_EXPERIMENT:
+            if variant not in ('bottleneck96','asymmetric3d'):
+                raise ValueError('Candidate single-GPU comparison accepts only registered E1/E2 variants')
+            if cfg['model'].get('omd3d'):
+                raise ValueError('OMD configuration is not permitted in E1/E2 candidates')
+            fidelity=cfg['model'].get('dense_fidelity',{})
+            if set(fidelity)-{'internal_channels','asymmetric_rank'}:
+                raise ValueError('Unsupported dense fidelity block settings')
+            if variant=='bottleneck96' and fidelity.get('internal_channels',96)!=96:
+                raise ValueError('E1 is registered with internal width 96')
+            if variant=='asymmetric3d' and fidelity.get('asymmetric_rank',64) not in (64,96):
+                raise ValueError('E2 rank is registered at 64 or 96')
+        else:
+            raise ValueError('Single-GPU 20K experiment requires a registered R0/E3 or E1/E2 identity')
+        if train.get('successful_frame_exposures')!=20000 or train.get('successful_updates')!=10000:
+            raise ValueError('Single-GPU comparison is fixed to20K exposures /10K updates at batch2')
+        if train.get('batch_per_gpu')!=2 or len(train.get('physical_gpus',[]))!=1 or train['physical_gpus'][0] not in (2,3):
+            raise ValueError('Single-GPU comparison requires batch2 on physical GPU2 or GPU3')
+        if train.get('warmup_updates')!=1000:
+            raise ValueError('Single-GPU comparison preserves the 2K-exposure warmup')
+        if cfg.get('budget_transition') or cfg.get('batch_transition') or cfg.get('engineering_gate'):
+            raise ValueError('Single-GPU comparison is a fresh scratch pair, not a continuation')
     elif variant!='original' or cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
         raise ValueError('Architecture variants require a registered architecture scope')
     if cfg['model'].get('input_feature_version')!='coarse_f64_v1':raise ValueError('Require geometry-audited float64 coarse indexing')
@@ -112,13 +188,16 @@ def validate_config(cfg):
     if scope==LONGRUN_SCOPE:
         if cfg['training']['batch_per_gpu']!=4 or len(cfg['training']['physical_gpus'])!=1:
             raise ValueError('Long-run arms require one GPU with global batch4')
+    elif scope==SINGLE_GPU_20K_SCOPE:
+        if cfg['training']['batch_per_gpu']!=2 or len(cfg['training']['physical_gpus'])!=1:
+            raise ValueError('Single-GPU 20K arms require one GPU with batch2')
     elif cfg['training']['physical_gpus']!=[2,3] or cfg['training']['batch_per_gpu'] not in (1,2):
         raise ValueError('Supported pilot configuration is GPU2/3 B1 or B2/rank')
     if cfg['training']['precision'] not in ('fp16','fp32'): raise ValueError('Unsupported precision')
     if cfg['training'].get('optimizer','AdamW')!='AdamW' or cfg['training'].get('scheduler','warmup_cosine')!='warmup_cosine':
         raise ValueError('This runner supports explicitly registered AdamW and warmup_cosine only')
     if cfg['training']['successful_updates']>100000: raise ValueError('Budget exceeds registration')
-    if scope not in PILOT_SCOPES and scope!=LONGRUN_SCOPE:validate_frame_budget(cfg)
+    if scope not in PILOT_SCOPES and scope not in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE):validate_frame_budget(cfg)
     return g
 
 
@@ -146,6 +225,9 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     elif cfg['scope']==LONGRUN_SCOPE:
         if steps>32 and (steps!=train['successful_updates'] or frame_target!=100000):
             raise ValueError('Long-run arms require the registered full100K frame budget')
+    elif cfg['scope']==SINGLE_GPU_20K_SCOPE:
+        if steps>32 and (steps!=train['successful_updates'] or frame_target!=20000):
+            raise ValueError('Single-GPU arms require the registered full20K frame budget')
     elif steps>1000 or cfg['scope']=='formal':
         gate=json.loads(Path(cfg['engineering_gate']).read_text()) if cfg.get('engineering_gate') else {}
         required=('formal_ready','full_preprocessing','gpu_shapes','ddp_resume','fm_bce_overfit','pilot1000')
@@ -161,7 +243,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             if gate.get(split+'_manifest_sha256')!=file_sha(Path(cfg[key])/'manifest.json'):
                 raise ValueError('Formal dataset manifest changed after gate freeze')
     visible=os.environ.get('CUDA_VISIBLE_DEVICES','')
-    allowed_visible=('2','3') if cfg['scope']==LONGRUN_SCOPE else ('2','3','2,3')
+    allowed_visible=('2','3') if cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) else ('2','3','2,3')
     if visible not in allowed_visible: raise ValueError('Physical GPU selection is outside this experiment contract')
     if list(map(int,visible.split(',')))!=train['physical_gpus']:
         raise ValueError('CUDA_VISIBLE_DEVICES does not match the registered physical GPU list')
@@ -169,7 +251,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if world!=len(visible.split(',')): raise ValueError('Use one process per selected physical GPU')
     if cfg['scope'] in PILOT_SCOPES and steps<train['successful_updates']:
         frame_target=steps*world*train['batch_per_gpu']
-    elif cfg['scope']==LONGRUN_SCOPE and smoke and steps<train['successful_updates']:
+    elif cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and smoke and steps<train['successful_updates']:
         # Smoke runs have a deliberately shortened exposure budget. Keep the
         # same frame/update accounting invariant as the registered full run.
         frame_target=steps*world*train['batch_per_gpu']
@@ -182,33 +264,47 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         if gate.get('physical_ids')!=list(map(int,visible.split(','))): raise ValueError('GPU admission identity mismatch')
     else:
         from .resources import gpu_preflight
-        allow_shared=(cfg['scope']==LONGRUN_SCOPE and os.environ.get('HS_OCCFLOW_ALLOW_SHARED_GPU')=='1')
-        gate=gpu_preflight(tuple(map(int,visible.split(','))),allow_shared_compute=allow_shared)
+        allow_shared=(cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE)
+                      and os.environ.get('HS_OCCFLOW_ALLOW_SHARED_GPU')=='1')
+        minimum_free=14.5 if allow_shared else 16.
+        gate=gpu_preflight(tuple(map(int,visible.split(','))),minimum_free_gib=minimum_free,
+                           allow_shared_compute=allow_shared)
         if gate['status']!='AVAILABLE': raise RuntimeError('Allowed GPUs busy; existing training preserved')
     torch.cuda.set_device(local); device=torch.device('cuda',local)
     if world>1: torch.distributed.init_process_group('nccl')
-    if rank==0:print('phase=data_verify: checking sparse dataset versions and checksums',flush=True)
-    ds=SparseShardDataset(cfg['train_dataset'],g,verify=True)
-    dev=SparseShardDataset(cfg['development_dataset'],g,verify=True)
+    data_audit_sha = None
+    audit_path = os.environ.get('HS_OCCFLOW_VERIFIED_DATA_AUDIT')
+    if audit_path:
+        if cfg['scope'] != SINGLE_GPU_20K_SCOPE:
+            raise ValueError('Verified smoke-data reuse is limited to the registered single-GPU 20K scope')
+        data_audit_sha = _verified_smoke_data_audit(audit_path, cfg)
+        if rank == 0:
+            print(f'phase=data_verify: reusing completed smoke audit sha256={data_audit_sha}; checking manifests/index/shard sizes', flush=True)
+    elif rank==0:
+        print('phase=data_verify: checking sparse dataset versions and checksums',flush=True)
+    verify_shard_hashes = data_audit_sha is None
+    ds=SparseShardDataset(cfg['train_dataset'],g,verify=verify_shard_hashes)
+    dev=SparseShardDataset(cfg['development_dataset'],g,verify=verify_shard_hashes)
     train_keys={(r['sequence'].decode(),int(r['frame'])) for r in ds.index}
     dev_keys={(r['sequence'].decode(),int(r['frame'])) for r in dev.index}
     if (train_keys&dev_keys and cfg['scope']!='overfit') or any(s=='08' for s,f in train_keys|dev_keys):
         raise ValueError('Train/development leakage; only labeled overfit scope may evaluate training frames')
     if cfg['scope']=='formal' and (len(ds)!=17870 or len(dev)!=900): raise ValueError('Formal full split incomplete')
     if rank==0:print(f'phase=data_verified train={len(ds)} development={len(dev)} target_updates={steps}',flush=True)
-    if cfg['scope']==LONGRUN_SCOPE and (len(ds)!=17870 or len(dev)!=900):
-        raise ValueError('Long-run matched comparison requires the complete registered 17,870/900 splits')
-    experiment_identity=(cfg['experiment'] if cfg['scope'] in PILOT_SCOPES or cfg['scope']==LONGRUN_SCOPE
+    if cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and (len(ds)!=17870 or len(dev)!=900):
+        raise ValueError('Matched comparison requires the complete registered 17,870/900 splits')
+    experiment_identity=(cfg['experiment'] if cfg['scope'] in PILOT_SCOPES or cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE)
                          else 'hs-occflow-stage1-occ384-v1')
     identity={'experiment':experiment_identity,'objective':cfg['model']['objective'],'geometry_sha256':g.sha256,
         'config_sha256':hashlib.sha256(json.dumps(cfg,sort_keys=True).encode()).hexdigest(),
         'train_manifest_sha256':file_sha(Path(cfg['train_dataset'])/'manifest.json'),
         'development_manifest_sha256':file_sha(Path(cfg['development_dataset'])/'manifest.json'),
+        'verified_smoke_data_audit_sha256':data_audit_sha,
         'world_size':world,'output':str(output.resolve())}
     seed_all(train['seed']); torch.set_num_threads(4)
     model_variant=cfg['model'].get('encoder_variant','original')
     shared_flow_state=None;shared_flow_sha=None
-    if cfg['scope'] in ('architecture_pilot','architecture_fidelity_pilot',LONGRUN_SCOPE):
+    if cfg['scope'] in ('architecture_pilot','architecture_fidelity_pilot',LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE):
         from .stage1_network import OccupancyUNet
         # Encoder variants consume different RNG amounts. Seed an independent
         # Flow template so the three pilot arms begin with identical Flow U-Nets.
@@ -225,7 +321,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         shared_flow_sha=digest.hexdigest()
         del flow_template
     matched_init_audit=None
-    if cfg['scope']==LONGRUN_SCOPE:
+    if cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE):
         # Build one canonical scratch R0 initialization for the pair. E3 copies
         # every same-name/same-shape tensor; only architecture-specific 3x3 vs
         # 1x1 skip kernels retain their own deterministic scratch initialization.
@@ -260,7 +356,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             'copied_tensor_count':len(compatible),'copied_parameter_numel':sum(v.numel() for v in compatible.values()),
             'missing_variant_keys':list(load_result.missing_keys),'unexpected_keys':list(load_result.unexpected_keys),
             'shape_mismatch_keys':mismatched,'variant_specific_initialization_seed':int(train['seed'])+1,
-            'policy':'copy all canonical R0 scratch state tensors with matching names/shapes; preserve deterministic scratch values only for E3 shape-mismatch tensors'}
+            'policy':'copy all canonical R0 scratch state tensors with matching names/shapes; preserve deterministic scratch values for architecture-specific shape-mismatch tensors'}
         del template_state,compatible
         raw=raw.to(device)
     else:
@@ -443,7 +539,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         if world>1: torch.distributed.all_reduce(stop,op=torch.distributed.ReduceOp.MAX)
         stopped[0]=bool(stop)
         val=cfg['validation']
-        frame_milestones=set(val.get('frame_milestones',())) if cfg['scope'] in PILOT_SCOPES or cfg['scope']==LONGRUN_SCOPE else set()
+        frame_milestones=set(val.get('frame_milestones',())) if cfg['scope'] in PILOT_SCOPES or cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) else set()
         is_frame_milestone=frame_target is not None and successful_frame_exposures in frame_milestones
         if successful and successful%train['checkpoint_every']==0 or successful==steps or stopped[0] or is_frame_milestone:
             save('resume_latest.pt')

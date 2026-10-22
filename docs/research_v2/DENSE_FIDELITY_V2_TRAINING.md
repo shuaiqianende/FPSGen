@@ -38,3 +38,14 @@ PyTorch explicit-FP16 control. Full results are in
 No 100K training, Stage2 retraining, or final architecture replacement has
 started. E3 is a candidate for a matched longer-training study, not a
 production replacement claim.
+
+## Separate single-GPU follow-up cohort
+
+A later matched cohort uses batch 2 on one physical GPU, 10,000 successful
+updates / 20,000 successful frame exposures, with its own R0/E3 comparison and
+subsequent E1/E2 candidates. Do not mix those results with the earlier global
+batch-4 / 5,000-update cohort described above. R0/E3 have completed their
+900-frame EMA evaluation; E2 Asymmetric3D rank-64 and E1 Bottleneck-96 are
+currently training. The dated snapshot, paired metrics, checkpoint hashes,
+config hashes, and live progress are in
+[`DENSE_FIDELITY_V2_SINGLE_GPU_20K_UPDATE_RESULTS.md`](DENSE_FIDELITY_V2_SINGLE_GPU_20K_UPDATE_RESULTS.md).

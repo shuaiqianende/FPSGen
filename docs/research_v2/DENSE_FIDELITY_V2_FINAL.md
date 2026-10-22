@@ -1,5 +1,7 @@
 # HS-OccFlow Dense Fidelity V2 — Results
 
+> **Follow-up cohort:** The single-GPU, batch-2, 20K-exposure / 10K-update R0/E3 comparison and live E1/E2 runs are reported separately in [DENSE_FIDELITY_V2_SINGLE_GPU_20K_UPDATE_RESULTS.md](DENSE_FIDELITY_V2_SINGLE_GPU_20K_UPDATE_RESULTS.md). Those measurements use a different training protocol and must not be merged into the results below.
+
 **Status: 20K training, 900-frame quality evaluation, PyTorch timing, and E3 TensorRT FP16 validation are complete.** No 100K training or Stage2 retraining has started.
 
 ## Candidate quality at 20K
