@@ -1,0 +1,106 @@
+geometry:
+  parent_resolution:
+  - 384
+  - 384
+  - 32
+  child_split:
+  - 2
+  - 2
+  - 2
+  origin:
+  - -50.0
+  - -50.0
+  - -4.0
+  maximum:
+  - 50.0
+  - 50.0
+  - 4.4
+  sphere_radius: 50.0
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/train
+development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development
+stage1:
+  type: occupancy384
+  checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+  adapter:
+    checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt
+    config: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4/config.json
+    checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+    weights: ema
+candidates:
+  mode: predicted
+  stage1_nfe: 2
+  seed: 20261018
+  negative_fraction: 0.25
+  oracle_score: neutral
+  neutral_score: 1.0
+  selection:
+    strategy: threshold
+    threshold: 0.5
+    expansion: 0
+    budget: 500000
+    overflow: error
+  calibration_status: frozen_uncalibrated_threshold_0.5
+model:
+  objective: fm
+  backbone: ptv3
+  width: 64
+  lidar_channels: 384
+  condition_mode: pyramid_observed
+  checkpointing: true
+  patch_sizes:
+  - 64
+  - 128
+  context_strategy: dynamic
+  state_condition_interaction: none
+training:
+  scope: engineering_smoke
+  successful_updates: 32
+  successful_frame_exposures: 64
+  batch_per_gpu: 2
+  batching: packed_variable_length
+  precision: fp16
+  seed: 20261035
+  lr: 0.0002
+  weight_decay: 0.01
+  grad_clip: 1.0
+  warmup_updates: 8
+  checkpoint_every: 32
+  milestone_every: 32
+  max_parent_tokens: 500000
+  max_batch_parent_tokens: 1000000
+  ema_decay: 0.999
+  cpu_threads: 4
+flow:
+  source: gaussian
+  sigma: 1.0
+  target_mapping: binary_symmetric
+loss:
+  fm: 1.0
+cache:
+  enabled: false
+  root: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_cache/desescene
+  max_bytes: 8589934592
+validation:
+  enabled: false
+  every_updates: 10000
+  max_frames: 900
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  threshold: 0.0
+  seed: 20261031
+  sampling_seeds:
+  - 20261031
+  - 20261032
+  - 20261033
+  structural_metrics: true
+engineering_gate: experiments/desescene_state_condition_v1/gate.json
+research_protocol: desescene_sci_dynamic_b0_v1
+initialization:
+  type: paired_finetune
+  checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt
+  checkpoint_sha256: eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c
+  weights: model

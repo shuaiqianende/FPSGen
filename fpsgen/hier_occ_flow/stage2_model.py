@@ -170,7 +170,10 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
         parts=list(context['static_parts'])
         local_input=state.float()
         if self.ptv3_precision=='explicit_fp16':local_input=local_input.to(next(self.local.parameters()).dtype)
-        parts.extend((self.local(local_input),embedding[batch]))
+        dynamic=(self.local(local_input),embedding[batch])
+        parts.extend(dynamic)
+        interaction_residual=(self.interaction(torch.cat(context['static_parts'],-1),torch.cat(dynamic,-1))
+                              if hasattr(self,'interaction') else None)
         fused_input=torch.cat(parts,-1)
         if self.ptv3_precision=='explicit_fp16':fused_input=fused_input.to(next(self.fuse.parameters()).dtype)
         features=self.fuse(fused_input)
@@ -188,6 +191,7 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
                 point.serialization(order=net.order,depth=(max(self.geometry.parent_resolution)-1).bit_length(),shuffle_orders=False)
             else:
                 point=topology.make_point(data['feat'],data['context'],batch1_fastpath=self.ptv3_batch1_fastpath)
+            if interaction_residual is not None:point['state_condition_residual']=interaction_residual
             # Sparse geometry preparation remains in the original dtype. AMP
             # is an opt-in experiment and does not change FP32 Euler state.
             with torch.autocast(features.device.type,enabled=False):
@@ -238,12 +242,18 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
             if observed_child is None:raise ValueError('Input-only observed mask required')
             parts.append(self.observed(observed_child[order].float()))
         embedding=None
+        interaction_residual=None
+        static_parts=tuple(parts)
         if self.objective=='fm':
             if state is None or state.shape!=(len(parent_ids),self.geometry.k):raise ValueError('FM state must be [sum M,K]')
             if time is None or time.numel()!=scenes or not bool(((time>=0)&(time<=1)).all()):raise ValueError('One flow time per scene required')
             state=state[order];angle=time.float().reshape(scenes,1)*self.frequencies[None]
             embedding=self.time(torch.cat((angle.sin(),angle.cos()),-1))
-            if self.context_strategy=='dynamic':parts.extend((self.local(state.float()),embedding[batch]))
+            if self.context_strategy=='dynamic':
+                dynamic=(self.local(state.float()),embedding[batch])
+                parts.extend(dynamic)
+                if hasattr(self,'interaction'):
+                    interaction_residual=self.interaction(torch.cat(static_parts,-1),torch.cat(dynamic,-1))
         elif state is not None or time is not None:raise ValueError('BCE has no source or time')
         features=self.fuse(torch.cat(parts,-1))
         if self.backbone_kind=='ptv3':
@@ -251,6 +261,7 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
             data={'feat':features.float(),'coord':centers,'grid_coord':coords.int(),'batch':batch.long(),
                   'sparse_shape':[n+1 for n in self.geometry.parent_resolution]}
             if embedding is not None:data['context']=embedding.float()
+            if interaction_residual is not None:data['state_condition_residual']=interaction_residual
             # Fixed geometry depth avoids a different scene changing Hilbert
             # orientation. Batch bits keep serialization and pooling disjoint.
             net=self.trunk.net;point=Point(data)

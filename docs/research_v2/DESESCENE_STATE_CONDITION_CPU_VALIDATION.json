@@ -1,0 +1,133 @@
+{
+  "cuda_build": "11.7",
+  "cuda_forward": "NOT TESTED",
+  "model_files_sha256": {
+    "fpsgen/hier_occ_flow/model.py": "477180109775e2cdeaf06f451ee2fbe7931b3449d3c73e0df302218fd92ccd98",
+    "fpsgen/hier_occ_flow/ptv3_backbone.py": "840295c80e8d497c6602a0e2f9e5720d432996167572e258c8cf6e2dfdc22814",
+    "fpsgen/hier_occ_flow/stage2_initialization.py": "2aa203a0324d10714767cb126579d07559462f304bd51baafd9808f52ed2bda6",
+    "fpsgen/hier_occ_flow/stage2_model.py": "7e2bfbc322b1e2b548e87d78b2e4c22f0e4cc16057af21f44101b178362d080b",
+    "fpsgen/hier_occ_flow/state_condition_interaction.py": "a450c297e78f06473d460aabc00b5b3680bd74cf8c4d67c10ee8439840df13a2"
+  },
+  "pytest": {
+    "log_sha256": "dc6a5a08ba29111d6504017e9bfd9559c00e59ea6015a513bc9f5cbd0b762356",
+    "passed": 51,
+    "warnings": 1
+  },
+  "runs": [
+    {
+      "arm": "b0",
+      "initialization": {
+        "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt",
+        "checkpoint_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+        "claim": "20K additional matched adaptation, not 20K total scratch training",
+        "loaded": {
+          "new_keys": [],
+          "shared_tensors": 169
+        },
+        "new_successful_frame_exposures": 20000,
+        "optimizer_ema_scheduler_restarted": true,
+        "source_candidates": {
+          "calibration_status": "not_applicable_oracle",
+          "mode": "oracle",
+          "negative_fraction": 0.25,
+          "neutral_score": 1.0,
+          "oracle_score": "neutral",
+          "seed": 20261018,
+          "selection": {
+            "budget": 500000,
+            "expansion": 0,
+            "overflow": "error",
+            "strategy": "threshold",
+            "threshold": 0.5
+          },
+          "stage1_nfe": 4
+        },
+        "source_identity": {
+          "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+          "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+          "experiment": "hs-occflow-stage2-384-v1",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+          "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+          "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+          "world_size": 2
+        },
+        "source_successful_frame_exposures": 99520,
+        "source_successful_updates": 25000,
+        "type": "paired_finetune",
+        "weights": "model"
+      },
+      "parameters": 2677128
+    },
+    {
+      "arm": "m1",
+      "initialization": {
+        "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt",
+        "checkpoint_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+        "claim": "20K additional matched adaptation, not 20K total scratch training",
+        "loaded": {
+          "new_keys": [
+            "interaction.condition_gate.bias",
+            "interaction.condition_gate.weight",
+            "interaction.dynamic_encoder.0.bias",
+            "interaction.dynamic_encoder.0.weight",
+            "interaction.dynamic_encoder.2.bias",
+            "interaction.dynamic_encoder.2.weight",
+            "interaction.projections.0.bias",
+            "interaction.projections.0.weight",
+            "interaction.projections.1.bias",
+            "interaction.projections.1.weight",
+            "interaction.residual.bias",
+            "interaction.residual.weight",
+            "interaction.scales.0",
+            "interaction.scales.1",
+            "interaction.static_encoder.0.bias",
+            "interaction.static_encoder.0.weight",
+            "interaction.static_encoder.2.bias",
+            "interaction.static_encoder.2.weight"
+          ],
+          "shared_tensors": 169
+        },
+        "new_successful_frame_exposures": 20000,
+        "optimizer_ema_scheduler_restarted": true,
+        "source_candidates": {
+          "calibration_status": "not_applicable_oracle",
+          "mode": "oracle",
+          "negative_fraction": 0.25,
+          "neutral_score": 1.0,
+          "oracle_score": "neutral",
+          "seed": 20261018,
+          "selection": {
+            "budget": 500000,
+            "expansion": 0,
+            "overflow": "error",
+            "strategy": "threshold",
+            "threshold": 0.5
+          },
+          "stage1_nfe": 4
+        },
+        "source_identity": {
+          "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+          "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+          "experiment": "hs-occflow-stage2-384-v1",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+          "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+          "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+          "world_size": 2
+        },
+        "source_successful_frame_exposures": 99520,
+        "source_successful_updates": 25000,
+        "type": "paired_finetune",
+        "weights": "model"
+      },
+      "parameters": 2717578
+    }
+  ],
+  "shared_tensors_exact": 169,
+  "source_sha256": "a871165e01d1c3b27bc64cf36c9a443dc98a6173a52dc059c4c181cee1e7cbfb",
+  "status": "PASS_CPU_CONSTRUCTOR_AND_SOURCE_LOADING",
+  "torch": "2.0.1+cu117"
+}

@@ -22,7 +22,7 @@ from .stage2_batching import pack_scenes,packed_training_pair,scene_mean_mse
 
 
 def own_resume(value,identity):
-    if value.get('identity')!=identity or value.get('initialization')!='scratch_stage2':raise ValueError('Not this384 Stage2 run')
+    if value.get('identity')!=identity or value.get('initialization') not in ('scratch_stage2','paired_finetune_stage2'):raise ValueError('Not this384 Stage2 run')
     if value.get('parameter_sync_pass') is not True:raise ValueError('Unsynchronized checkpoint rejected')
     return value
 
@@ -57,6 +57,13 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
     if train['scope']=='formal' and not adapter.provenance['stage1_final_100k_frames']:
         raise ValueError('Formal Stage2 requires a fixed final Stage1, not the development intermediate checkpoint')
     seed_all(train['seed']);raw=HierarchicalOccupancyModel(g,**cfg['model']).to(device)
+    initialization='paired_finetune_stage2' if cfg.get('initialization') else 'scratch_stage2'
+    initialization_audit=None
+    if cfg.get('initialization') and not resume:
+        from .stage2_initialization import initialize_matched_finetune
+        initialization_audit=initialize_matched_finetune(raw,cfg,g,manifests)
+        # M1 adds parameters, so restore the same global stream for both arms.
+        seed_all(train['seed'])
     model=torch.nn.parallel.DistributedDataParallel(raw,device_ids=[local]) if world>1 else raw
     ema=copy.deepcopy(raw).eval().requires_grad_(False) if train.get('ema_decay') else None
     optimizer=torch.optim.AdamW(raw.parameters(),lr=train['lr'],weight_decay=train['weight_decay'])
@@ -70,6 +77,8 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
     successful=attempts=failures=amp_skips=sample_cursor=successful_frames=0;transition_audit=None
     if resume:
         value=own_resume(torch.load(resume,map_location='cpu'),identity)
+        if value['initialization']!=initialization:raise ValueError('Resume initialization policy differs')
+        initialization_audit=value.get('initialization_audit')
         raw.load_state_dict(value['model'],strict=True);optimizer.load_state_dict(value['optimizer'])
         scheduler.load_state_dict(value['scheduler']);scaler.load_state_dict(value['scaler'])
         if ema is not None:ema.load_state_dict(value['ema'],strict=True)
@@ -126,7 +135,7 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
     if rank==0:
         atomic_json(output/'config.json',cfg)
         atomic_json(output/'launch.json',{'rank0_pid':os.getpid(),'parent_pid':os.getppid(),'physical_gpus':list(map(int,visible.split(','))),
-            'identity':identity,'stage1':adapter.provenance,'initialization':'scratch_stage2','starting_updates':successful,
+            'identity':identity,'stage1':adapter.provenance,'initialization':initialization,'initialization_audit':initialization_audit,'starting_updates':successful,
             'optimizer_entries':len(optimizer.state),'initial_model_sha256':state_sha(raw),'initial_ema_sha256':state_sha(ema) if ema else None,
             'trainable_parameter_names':[name for name,p in raw.named_parameters() if p.requires_grad],
             'batch_per_gpu':batch_per_gpu,'global_batch':global_batch,'batching':'packed_variable_length','transition':transition_audit})
@@ -146,7 +155,7 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
         synced=len({r['online'] for r in hashes})==1 and len({r['ema'] for r in hashes})==1
         if not synced:stopped[0]=True
         if rank==0:
-            atomic_checkpoint(output/'checkpoints'/name,{'identity':identity,'initialization':'scratch_stage2',
+            atomic_checkpoint(output/'checkpoints'/name,{'identity':identity,'initialization':initialization,'initialization_audit':initialization_audit,
                 'model':raw.state_dict(),'ema':ema.state_dict() if ema else None,'optimizer':optimizer.state_dict(),
                 'scheduler':scheduler.state_dict(),'scaler':scaler.state_dict(),'successful_updates':successful,
                 'attempts':attempts,'amp_skips':amp_skips,'consecutive_failures':failures,'rank_rng':states,

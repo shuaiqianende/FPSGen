@@ -1,5 +1,6 @@
 """Fine metrics include all missed parents; same immutable raw-map labels."""
 import time
+import hashlib
 from pathlib import Path
 import numpy as np
 import torch
@@ -7,7 +8,7 @@ from .stage2_dataset import assemble_stage2_scene
 from .dataset import input_xyz
 from .voxelization import voxelize_surface
 from .inference import sample
-from .evaluation import fine_metrics,aggregate_frames
+from .evaluation import fine_metrics,aggregate_frames,rates
 from .storage import SparseShardDataset,file_sha
 from .morphology import MORPH_DATA_VERSION
 
@@ -27,7 +28,8 @@ def evaluation_ground_truth(dataset,cfg,g):
 
 
 @torch.no_grad()
-def evaluate_stage2(model,cfg,g,device,adapter,dataset,*,indices=None,cache=None,visualization_root=None):
+def evaluate_stage2(model,cfg,g,device,adapter,dataset,*,indices=None,cache=None,visualization_root=None,
+                    continuous_metrics=None,progress_callback=None):
     primary_gt=evaluation_ground_truth(dataset,cfg,g)
     indices=indices if indices is not None else np.linspace(0,len(dataset)-1,cfg['validation']['max_frames'],dtype=int).tolist()
     was_training=model.training;model.eval();rows={str(n):[] for n in cfg['validation']['nfes'] if model.objective=='fm' or n==1}
@@ -39,9 +41,11 @@ def evaluate_stage2(model,cfg,g,device,adapter,dataset,*,indices=None,cache=None
                 or not np.array_equal(target['child_occ_mask']&record['child_occ_mask'],target['child_occ_mask'])):
                 raise ValueError('Augmented labels changed raw parents or removed original hits')
             ids,condition,_,source=assemble_stage2_scene(record,cfg,g,device,adapter,cache)
+            parent_ids_sha=hashlib.sha256(ids.cpu().numpy().tobytes()).hexdigest()
             if device.type=='cuda':torch.cuda.synchronize(device)
             condition_seconds=time.perf_counter()-tick
-            xyz=input_xyz(Path(cfg['data_root'])/record['sequence']/'input_'/f"{record['frame']:06d}.npy")
+            input_path=Path(cfg['data_root'])/record['sequence']/'input_'/f"{record['frame']:06d}.npy"
+            xyz=input_xyz(input_path);input_sha=file_sha(input_path)
             observed_ids,observed_masks,_=voxelize_surface(xyz,g)
             for nfe in rows:
                 for seed in cfg['validation'].get('sampling_seeds',[cfg['validation']['seed']]):
@@ -55,17 +59,24 @@ def evaluate_stage2(model,cfg,g,device,adapter,dataset,*,indices=None,cache=None
                     tick=time.perf_counter()
                     metric=fine_metrics(ids.cpu().numpy(),occupancy.cpu().numpy(),target['parent_ids'],target['child_occ_mask'],g,
                         observed_parent_ids=observed_ids,observed_masks=observed_masks,structural=cfg['validation'].get('structural_metrics',True))
+                    inside={k:metric['fine'][k] for k in ('tp','fp','fn')}
+                    inside['fn']-=metric['missed_parent_fine_false_negatives']
+                    metric['support_only_fine']=rates(inside)
+                    if continuous_metrics is not None:
+                        metric['continuous']=continuous_metrics(record,ids,occupancy)
                     if primary_gt is not dataset:
                         metric['augmented_target_fine']=fine_metrics(ids.cpu().numpy(),occupancy.cpu().numpy(),
                             record['parent_ids'],record['child_occ_mask'],g,structural=False)['fine']
                     gt_positive=metric['fine']['tp']+metric['fine']['fn']
                     candidate_positive=gt_positive-metric['missed_parent_fine_false_negatives']
                     rows[nfe].append({'sequence':record['sequence'],'frame':record['frame'],'seed':seed,**metric,
+                        'input_sha256':input_sha,'parent_ids_sha256':parent_ids_sha,
                         'actual_stage2_nfe':calls,'condition_seconds':condition_seconds,'stage2_seconds':inference_seconds,
                         'metrics_seconds':time.perf_counter()-tick,
                         'valid_child_count':int(condition['valid_child_mask'].sum()),
                         'all_candidate_children_occupied_f1':2*candidate_positive/max(int(condition['valid_child_mask'].sum())+gt_positive,1),
                         'candidate_source':source})
+                    if progress_callback is not None:progress_callback(nfe,rows[nfe][-1])
                     # Optional one real scene, first fixed source seed, all NFE.
                     # Large diagnostic PLYs never enter the Git report directory.
                     if visualization_root is not None and index==indices[0] and seed==cfg['validation'].get('sampling_seeds',[cfg['validation']['seed']])[0]:
@@ -74,6 +85,10 @@ def evaluate_stage2(model,cfg,g,device,adapter,dataset,*,indices=None,cache=None
                             xyz,ids.cpu().numpy(),occupancy.cpu().numpy(),target['parent_ids'],target['child_occ_mask'],g)
             print(f'Stage2 evaluation {record["sequence"]}/{record["frame"]:06d} tokens={len(ids)}',flush=True)
         summaries={key:{'summary':aggregate_frames(value),'rows':value} for key,value in rows.items()}
+        if continuous_metrics is not None:
+            for key,value in rows.items():
+                summaries[key]['continuous_macro']={name:float(np.mean([r['continuous'][name] for r in value]))
+                    for name in ('cd_m','iou05','iou02','iou01','jsd_bev','jsd_3d')}
         return {'geometry_sha256':g.sha256,'scope':cfg['training']['scope'],'candidate_mode':cfg['candidates']['mode'],
             'oracle_is_deployable':False,'gt_is_condition':False,'gt_target':'fixed raw-map fine surface-hit occupancy',
             'training_target_version':cfg.get('target_data_version','hs-occ-surface-hit-v1'),

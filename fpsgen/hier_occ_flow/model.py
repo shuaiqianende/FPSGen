@@ -11,7 +11,7 @@ class HierarchicalOccupancyModel(nn.Module):
     def __init__(self,geometry,*,objective='fm',backbone='ptv3',width=64,lidar_channels=384,
                  condition_mode='pyramid_observed',checkpointing=True,patch_sizes=(64,128),
                  child_bridge='none',child_input='geometry_stats',child_feature_width=24,
-                 context_strategy='dynamic'):
+                 context_strategy='dynamic',state_condition_interaction='none'):
         super().__init__()
         if objective not in ('fm','bce') or backbone not in ('local','ptv3'): raise ValueError('Unknown model')
         if condition_mode not in ('none','observed','pyramid','pyramid_observed'): raise ValueError('Unknown condition')
@@ -19,6 +19,12 @@ class HierarchicalOccupancyModel(nn.Module):
         if context_strategy not in ('dynamic','static'):raise ValueError('Unknown Stage2 context strategy')
         if context_strategy=='static' and backbone!='ptv3':raise ValueError('Static serialized context requires PTv3')
         self.context_strategy=context_strategy
+        if state_condition_interaction not in ('none','residual_v1'):
+            raise ValueError('Unknown state-condition interaction policy')
+        self.state_condition_interaction=state_condition_interaction
+        if state_condition_interaction!='none' and (objective!='fm' or backbone!='ptv3'
+                or context_strategy!='dynamic' or child_bridge!='none'):
+            raise ValueError('M1 requires original dynamic FM/PTv3 without a Child bridge')
         if child_bridge not in ('none','child_conditioned') or child_input not in ('geometry_stats','position_only'):
             raise ValueError('Unknown child-aware bridge policy')
         self.child_bridge=child_bridge;self.child_input=child_input;self.child_feature_width=int(child_feature_width)
@@ -54,6 +60,10 @@ class HierarchicalOccupancyModel(nn.Module):
             decoder_in=width+self.child_feature_width+(1+32 if objective=='fm' else 0)
             self.child_decoder=nn.Sequential(nn.LayerNorm(decoder_in),nn.Linear(decoder_in,width),nn.SiLU(),nn.Linear(width,1))
             nn.init.normal_(self.child_decoder[-1].weight,std=.001);nn.init.zeros_(self.child_decoder[-1].bias)
+        if state_condition_interaction=='residual_v1':
+            from .state_condition_interaction import StateConditionInteraction
+            self.interaction=StateConditionInteraction(fusion_inputs-width-32,width+32,width)
+            self.interaction.install(self.trunk.net)
 
     def decode_children(self,features,state,embedding,batch,valid_child_mask,child_geometry):
         if self.child_bridge=='none':
@@ -87,16 +97,23 @@ class HierarchicalOccupancyModel(nn.Module):
             if observed_child is None: raise ValueError('Input-only observed child mask required')
             parts.append(self.observed(observed_child.float()))
         embedding=None
+        interaction_residual=None
+        static_parts=tuple(parts)
         if self.objective=='fm':
             if state is None or state.shape!=(len(parent_ids),self.geometry.k): raise ValueError('FM state must be [M,K]')
             if time is None or time.numel()!=1 or not 0<=float(time)<=1: raise ValueError('One common t in [0,1] per scene')
             angle=time.float().reshape(1,1)*self.frequencies[None]
             embedding=self.time(torch.cat((angle.sin(),angle.cos()),-1))
             if self.context_strategy=='dynamic':
-                parts.extend((self.local(state.float()),embedding.expand(len(parent_ids),-1)))
+                dynamic=(self.local(state.float()),embedding.expand(len(parent_ids),-1))
+                parts.extend(dynamic)
+                if hasattr(self,'interaction'):
+                    interaction_residual=self.interaction(torch.cat(static_parts,-1),torch.cat(dynamic,-1))
         elif state is not None or time is not None: raise ValueError('Direct BCE has neither noise nor time')
         features=self.fuse(torch.cat(parts,-1))
-        if self.backbone_kind=='ptv3': features=self.trunk(features,coords,centers,embedding,self.geometry.parent_resolution)
+        if self.backbone_kind=='ptv3':
+            extra={'interaction_residual':interaction_residual} if interaction_residual is not None else {}
+            features=self.trunk(features,coords,centers,embedding,self.geometry.parent_resolution,**extra)
         else: features=features+self.trunk(features)
         if valid_child_mask is None: raise ValueError('Valid-child ROI mask required')
         if self.child_bridge=='none':

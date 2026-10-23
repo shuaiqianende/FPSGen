@@ -45,7 +45,7 @@ class ParentPTv3(nn.Module):
         if checkpointing:
             checkpoint_parent_blocks(self.net)
 
-    def forward(self,features,parent_coords,world_centers,scene_time,parent_resolution):
+    def forward(self,features,parent_coords,world_centers,scene_time,parent_resolution,*,interaction_residual=None):
         if len(parent_coords)!=len(features) or len(features)==0: raise ValueError('Nonempty parent tokens required')
         ids=parent_coords[:,0]+parent_resolution[0]*(parent_coords[:,1]+parent_resolution[1]*parent_coords[:,2])
         order=torch.argsort(ids)
@@ -56,6 +56,8 @@ class ParentPTv3(nn.Module):
               'grid_coord':parent_coords[order].int(),'batch':torch.zeros(len(ids),device=ids.device,dtype=torch.long),
               'sparse_shape':[n+1 for n in parent_resolution]}
         if scene_time is not None: data['context']=scene_time.reshape(1,32).float()
+        if interaction_residual is not None:
+            data['state_condition_residual']=interaction_residual[order]
         # Same proven SpConv eval precision policy as existing PointFlow.
         with torch.autocast(features.device.type,enabled=False): decoded=self.net(data).feat
         inverse=torch.argsort(order)
