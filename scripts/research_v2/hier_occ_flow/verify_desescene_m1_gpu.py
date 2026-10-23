@@ -56,7 +56,7 @@ def main():
     m1=Stage2OccupancyModel(g,**m1cfg['model']).cuda().eval()
     init0=initialize_matched_finetune(b0,cfg,g,manifests)
     init1=initialize_matched_finetune(m1,m1cfg,g,manifests)
-    generator=torch.Generator(device='cuda').manual_seed(20261035)
+    generator=torch.Generator(device='cuda').manual_seed(cfg['training']['seed'])
     pair=packed_training_pair(target,cond['valid_child_mask'],cond['batch'],generator)
     checks={}
     with torch.no_grad(),torch.autocast('cuda',dtype=torch.float16):

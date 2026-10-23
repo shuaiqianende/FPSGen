@@ -59,7 +59,7 @@ The adapter uses per-model forward pre-hooks and a Point field, not global/vendo
 | New exposures | 20,000 | 20,000 |
 | Single-card batch / updates | 2 / 10,000 | 2 / 10,000 |
 | Physical GPU | 2 | 3 |
-| Seed | 20261035 | 20261035 |
+| Seed | 20261032 | 20261032 |
 | Loss | Original Gaussian-to-binary FM MSE | Same |
 | Optimizer/schedule | Fresh AdamW, 2e-4, wd0.01, warmup500/cosine, clip1, EMA0.999 | Same |
 
@@ -107,7 +107,7 @@ cd /data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1
 - The 1K check only rejects numerical/engineering failures, not small-subset IoU fluctuations.
 - Full900 evaluation and same-backend runtime precede any acceptance.
 
-Pre-registered M1 GO: ≥1.0 pp full-GT native Fine IoU gain over B0; grouped paired95% interval lower bound>0; no meaningful CD/fine physical-IoU regression; Stage2 runtime increase≤10%; no B2/AMP failure. Report worst10% and worst individual deltas. <0.3 pp gain with added cost is NO-GO. 0.3–1.0 pp is uncertain and calls for a matched second seed, never automatic100K.
+Pre-registered M1 GO: ≥1.0 pp full-GT native Fine IoU gain over B0; grouped paired95% interval lower bound>0; no meaningful CD/fine physical-IoU regression; Stage2 runtime increase≤10%; no B2/AMP failure. Report worst10% and worst individual deltas. <0.3 pp gain with added cost is NO-GO. 0.3–1.0 pp is uncertain and is reported as such. Per the latest user instruction, no extra training seed or second-seed retraining is scheduled; all new matched arms use the same training seed20261032. No automatic100K.
 
 M3 ranker formal training requires at least2 pp held-out Fine-GT ceiling gain at fixed K. M2/M4 remain diagnostic/design-only. No new100K training is queued.
 

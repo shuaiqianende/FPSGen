@@ -150,6 +150,7 @@ def test_cohort_changes_only_interaction_and_requires_new_evidence(tmp_path):
         value.pop('research_protocol');value['model'].pop('state_condition_interaction')
     assert b0compare==m1compare
     assert b0['candidates']['stage1_nfe']==2
+    assert b0['training']['seed']==m1['training']['seed']==20261032
     assert b0['training']['successful_frame_exposures']==20000
     assert b0['training']['successful_updates']==10000
     gate={key:True for key in ('full_scene_gpu','maximum_scene_gpu','ptv3_permutation',

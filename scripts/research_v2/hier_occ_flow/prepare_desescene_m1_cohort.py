@@ -27,7 +27,7 @@ def main():
         'checkpoint': str(a.source_checkpoint.resolve()), 'checkpoint_sha256': file_sha(a.source_checkpoint),
         'weights': 'model'}
     base['training'].update(scope='research_pilot', successful_updates=10000,
-        successful_frame_exposures=20000, batch_per_gpu=2, seed=20261035, warmup_updates=500)
+        successful_frame_exposures=20000, batch_per_gpu=2, seed=20261032, warmup_updates=500)
     base['engineering_gate'] = 'experiments/desescene_state_condition_v1/gate.json'
     base['research_protocol'] = 'desescene_sci_dynamic_b0_v1'
     base['validation']['enabled'] = False

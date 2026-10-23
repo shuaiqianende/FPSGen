@@ -60,7 +60,7 @@ training:
   batch_per_gpu: 2
   batching: packed_variable_length
   precision: fp16
-  seed: 20261035
+  seed: 20261032
   lr: 0.0002
   weight_decay: 0.01
   grad_clip: 1.0

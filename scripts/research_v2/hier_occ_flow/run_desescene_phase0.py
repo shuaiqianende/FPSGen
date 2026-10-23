@@ -19,6 +19,8 @@ def main():
     p=argparse.ArgumentParser(__doc__)
     p.add_argument('--source-worktree',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--recovery-manifest',type=Path,
+                   help='Read-only PID identity of an explicitly resumed C1 run')
     a=p.parse_args()
     a.output=a.output.resolve();a.output.mkdir(parents=True,exist_ok=True)
     lock=(a.output/'queue.lock').open('a')
@@ -68,8 +70,17 @@ def main():
             launch=folder/'launch.json'
             if launch.exists():
                 pid=json.loads(launch.read_text())['rank0_pid']
-                try:os.kill(pid,0)
-                except ProcessLookupError:raise RuntimeError(name+' stopped before registered budget; no automatic restart')
+                live=False
+                try:os.kill(pid,0);live=True
+                except ProcessLookupError:pass
+                if not live and a.recovery_manifest:
+                    recovery=json.loads(a.recovery_manifest.read_text())
+                    arm='fm' if name=='static_context_fm_20k' else 'bce'
+                    for entry in recovery['runs']:
+                        if entry['arm']==arm:
+                            try:os.kill(entry['launcher_pid'],0);live=True
+                            except ProcessLookupError:pass
+                if not live:raise RuntimeError(name+' stopped before registered budget; no automatic restart')
             atomic_json(a.output/('wait_'+name+'.json'),{'status':'WAITING_EXISTING_TRAINING','physical_gpu':gpu,'epoch':time.time()})
             time.sleep(20)
         output=a.output/'c1'/(name+'_900.json')
