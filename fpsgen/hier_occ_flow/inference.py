@@ -12,9 +12,12 @@ def sample(model,parent_ids,condition,*,nfe=4,generator=None,threshold=0.):
         return endpoint,(endpoint>threshold)&condition['valid_child_mask'],1
     if nfe not in (1,2,4,8) or generator is None: raise ValueError('NFE must be 1/2/4/8 with explicit RNG')
     valid=condition['valid_child_mask']; x=torch.randn(valid.shape,device=valid.device,generator=generator)*valid
+    static_context=(model.prepare_inference_context(parent_ids,**condition)
+                    if getattr(model,'context_strategy','dynamic')=='static' else None)
     for step in range(nfe):
         time=x.new_tensor(step/nfe)
-        velocity=model(parent_ids,state=x,time=time,**condition)
+        if static_context is None:velocity=model(parent_ids,state=x,time=time,**condition)
+        else:velocity=model(parent_ids,state=x,time=time,inference_context=static_context)
         if not bool(torch.isfinite(velocity).all()): raise ValueError('Nonfinite velocity')
         x=x+velocity.float()/nfe
     if not bool(torch.isfinite(x).all()): raise ValueError('Nonfinite endpoint')

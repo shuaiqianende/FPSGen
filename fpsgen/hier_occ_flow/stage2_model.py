@@ -83,7 +83,7 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
                 if isinstance(module,PointInstanceNorm):module._v3_fp32_stats=bool(selective)
 
     def prepare_inference_context(self,parent_ids,*,batch=None,lidar_features=None,parent_score=None,
-                                  observed_child=None,valid_child_mask=None):
+                                  observed_child=None,valid_child_mask=None,child_geometry=None):
         """Validate and cache NFE-invariant token geometry and condition projections.
 
         Call inside the same autocast scope used by the subsequent forwards.
@@ -122,6 +122,10 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
                 'batch':sorted_batch,'coords':coords,'centers':centers,
                 'static_parts':static_parts,'valid_child_mask':valid_child_mask[order],
                 'input_parent_ids_ref':parent_ids}
+        if self.child_bridge!='none':
+            if child_geometry is None or child_geometry.shape!=(len(parent_ids),self.geometry.k,8):
+                raise ValueError('Child-aware bridge requires input-only [M,K,8] geometry evidence')
+            context['child_geometry']=child_geometry[order]
         if self.backbone_kind=='ptv3' and self.ptv3_topology_cache!='none':
             if self.ptv3_topology_cache not in ('serialization','multilevel'):
                 raise ValueError(f'Unsupported PTv3 topology cache: {self.ptv3_topology_cache}')
@@ -130,6 +134,22 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
                 coords,centers,sorted_batch,[n+1 for n in self.geometry.parent_resolution],
                 self.trunk.net.order,(max(self.geometry.parent_resolution)-1).bit_length(),scene_count=scenes,
                 level=self.ptv3_topology_cache)
+        if self.context_strategy=='static':
+            if self.objective!='fm':raise ValueError('Only static FM uses cached dynamic inference context')
+            features=self.fuse(torch.cat(static_parts,-1))
+            from fpsgen.voxel_point.vendor.pwm.ptv3_reference.model import Point
+            net=self.trunk.net
+            data={'feat':features.float(),'coord':centers,'grid_coord':coords.int(),'batch':sorted_batch.long(),
+                  'sparse_shape':[n+1 for n in self.geometry.parent_resolution]}
+            topology=context.get('ptv3_topology')
+            if topology is None:
+                point=Point(data)
+                point.serialization(order=net.order,depth=(max(self.geometry.parent_resolution)-1).bit_length(),shuffle_orders=False)
+            else:
+                point=topology.make_point(data['feat'],None,batch1_fastpath=self.ptv3_batch1_fastpath)
+            with torch.autocast(features.device.type,enabled=False):
+                point.sparsify();point=net.embedding(point);point=net.enc(point);point=net.dec(point)
+            context['static_features']=point.feat
         return context
 
     def forward_with_inference_context(self,context,state, time):
@@ -143,6 +163,10 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
         time_features=torch.cat((angle.sin(),angle.cos()),-1)
         if self.ptv3_precision=='explicit_fp16':time_features=time_features.to(next(self.time.parameters()).dtype)
         embedding=self.time(time_features)
+        if self.context_strategy=='static':
+            dynamic=self.dynamic_fuse(torch.cat((self.local(state.float()),embedding[batch]),-1))
+            output=self.decoder(torch.cat((context['static_features'],dynamic),-1))*context['valid_child_mask']
+            return output[inverse]
         parts=list(context['static_parts'])
         local_input=state.float()
         if self.ptv3_precision=='explicit_fp16':local_input=local_input.to(next(self.local.parameters()).dtype)
@@ -181,15 +205,17 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
                 raise ValueError(f'Unknown PTv3 precision mode: {self.ptv3_precision}')
             features=point.feat
         else:features=features+self.trunk(features)
-        decoded=torch.cat((features,state.float(),embedding[batch]),-1)
-        if self.ptv3_precision=='explicit_fp16':decoded=decoded.to(next(self.decoder.parameters()).dtype)
-        return (self.decoder(decoded)*context['valid_child_mask'])[inverse]
+        if self.ptv3_precision=='explicit_fp16' and self.child_bridge=='none':
+            features=features.to(next(self.decoder.parameters()).dtype)
+        output=self.decode_children(features,state,embedding,batch,context['valid_child_mask'],
+                                    context.get('child_geometry'))
+        return output[inverse]
 
-    def forward(self,parent_ids,*,batch=None,state=None,time=None,lidar_features=None,parent_score=None,observed_child=None,valid_child_mask=None,inference_context=None):
+    def forward(self,parent_ids,*,batch=None,state=None,time=None,lidar_features=None,parent_score=None,observed_child=None,valid_child_mask=None,child_geometry=None,inference_context=None):
         if inference_context is not None:
             if parent_ids is not inference_context['input_parent_ids_ref']:
                 raise ValueError('Cached context must be reused with the identical Parent ID tensor object')
-            if batch is not None or any(x is not None for x in (lidar_features,parent_score,observed_child,valid_child_mask)):
+            if batch is not None or any(x is not None for x in (lidar_features,parent_score,observed_child,valid_child_mask,child_geometry)):
                 raise ValueError('A cached inference context replaces batch and static condition inputs')
             if state is None or time is None:raise ValueError('Cached inference requires dynamic state and time')
             return self.forward_with_inference_context(inference_context,state,time)
@@ -200,6 +226,7 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
         keys=batch*self.geometry.num_parents+parent_ids;order=torch.argsort(keys);inverse=torch.argsort(order)
         if len(keys)>1 and bool((keys[order][1:]==keys[order][:-1]).any()):raise ValueError('Duplicate parent tokens within a scene')
         parent_ids=parent_ids[order];batch=batch[order]
+        if child_geometry is not None:child_geometry=child_geometry[order]
         coords=self.geometry.unflatten(parent_ids);centers=self.geometry.centers(coords).float()
         position=2*(centers-centers.new_tensor(self.geometry.origin))/centers.new_tensor([b-a for a,b in zip(self.geometry.origin,self.geometry.maximum)])-1
         if parent_score is None or valid_child_mask is None:raise ValueError('Explicit parent score and valid mask required')
@@ -216,7 +243,7 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
             if time is None or time.numel()!=scenes or not bool(((time>=0)&(time<=1)).all()):raise ValueError('One flow time per scene required')
             state=state[order];angle=time.float().reshape(scenes,1)*self.frequencies[None]
             embedding=self.time(torch.cat((angle.sin(),angle.cos()),-1))
-            parts.extend((self.local(state.float()),embedding[batch]))
+            if self.context_strategy=='dynamic':parts.extend((self.local(state.float()),embedding[batch]))
         elif state is not None or time is not None:raise ValueError('BCE has no source or time')
         features=self.fuse(torch.cat(parts,-1))
         if self.backbone_kind=='ptv3':
@@ -232,6 +259,9 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
                 point.sparsify();point=net.embedding(point);point=net.enc(point);point=net.dec(point)
             features=point.feat
         else:features=features+self.trunk(features)
-        decoded=[features]
-        if self.objective=='fm':decoded.extend((state.float(),embedding[batch]))
-        return (self.decoder(torch.cat(decoded,-1))*valid_child_mask[order])[inverse]
+        if self.ptv3_precision=='explicit_fp16' and self.child_bridge=='none':
+            features=features.to(next(self.decoder.parameters()).dtype)
+        if self.context_strategy=='static' and self.objective=='fm' and self.child_bridge=='none':
+            dynamic=self.dynamic_fuse(torch.cat((self.local(state.float()),embedding[batch]),-1))
+            return (self.decoder(torch.cat((features,dynamic),-1))*valid_child_mask[order])[inverse]
+        return self.decode_children(features,state,embedding,batch,valid_child_mask[order],child_geometry)[inverse]

@@ -39,7 +39,9 @@ def load_model(config,checkpoint,device,use_ema=False):
         # Older PyTorch versions lack the restricted-unpickler allowlist API;
         # preserve their pre-2.6 checkpoint-loading behavior for this local run.
         value = torch.load(checkpoint, map_location='cpu')
-    expected_experiment=(config['experiment'] if config.get('scope') in ('architecture_pilot','architecture_fidelity_pilot')
+    expected_experiment=(config['experiment'] if config.get('scope') in (
+        'architecture_pilot', 'architecture_fidelity_pilot',
+        'architecture_fidelity_single_gpu_20k')
                          else 'hs-occflow-stage1-occ384-v1')
     if value['identity'].get('experiment')!=expected_experiment or value['identity']['geometry_sha256']!=g.sha256 or value['identity']['objective']!=config['model']['objective']:
         raise ValueError('Checkpoint is not the matching384 occupancy experiment')

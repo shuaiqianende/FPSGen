@@ -34,6 +34,8 @@ class ConditionCache:
                'lidar_features':torch.from_numpy(data['features']).to(device),
                'observed_child':torch.from_numpy(unpack_children(data['observed'],geometry)).to(device),
                'valid_child_mask':torch.from_numpy(geometry.valid_children(ids)).to(device)}
+            if 'child_geometry' in data:
+                c['child_geometry']=torch.from_numpy(data['child_geometry']).to(device)
         return torch.from_numpy(ids).to(device),c,saved['provenance']
 
     def write(self,identity,ids,condition,provenance,geometry):
@@ -42,6 +44,8 @@ class ConditionCache:
         arrays={'ids':ids.cpu().numpy().astype('<u4'),'scores':condition['parent_score'].cpu().numpy().astype('<f4'),
             'features':condition['lidar_features'].cpu().numpy().astype('<f2'),
             'observed':pack_children(condition['observed_child'].cpu().numpy(),geometry)}
+        if 'child_geometry' in condition:
+            arrays['child_geometry']=condition['child_geometry'].cpu().numpy().astype('<f2')
         required=sum(a.nbytes for a in arrays.values())
         if sum(f.stat().st_size for f in self.root.glob('*.npz'))+required>self.max_bytes:
             raise RuntimeError('Condition cache budget exceeded; disable cache or explicitly register more disk space')
@@ -52,10 +56,13 @@ class ConditionCache:
 
 
 def assemble_stage2_scene(record,cfg,geometry,device,adapter,cache=None):
+    model_cfg=cfg.get('model',{})
     path=Path(cfg['data_root'])/record['sequence']/'input_'/f"{record['frame']:06d}.npy"
     seed=scene_seed(record['sequence'],record['frame'],cfg['candidates']['seed'])
-    identity={'version':'stage2_384_parent_condition_v1','geometry_sha256':geometry.sha256,
-        'stage1':adapter.provenance,'input_sha256':file_sha(path),'candidate_policy':cfg['candidates'],'seed':seed}
+    identity={'version':'stage2_384_parent_condition_v2','geometry_sha256':geometry.sha256,
+        'stage1':adapter.provenance,'input_sha256':file_sha(path),'candidate_policy':cfg['candidates'],'seed':seed,
+        'child_bridge':model_cfg.get('child_bridge','none'),
+        'child_input':model_cfg.get('child_input','geometry_stats')}
     if cfg['candidates']['mode']=='oracle':
         # Support identity belongs in the cache key, but never in model features.
         identity['oracle_support_sha256']=hashlib.sha256(record['parent_ids'].tobytes()).hexdigest()
@@ -63,7 +70,8 @@ def assemble_stage2_scene(record,cfg,geometry,device,adapter,cache=None):
     if assembled is None:
         xyz=torch.from_numpy(input_xyz(path)).to(device)
         ids,c,source=input_conditions(xyz,geometry,adapter,cfg['candidates'],seed=seed,
-            oracle_ids=record['parent_ids'] if cfg['candidates']['mode']=='oracle' else None)
+            oracle_ids=record['parent_ids'] if cfg['candidates']['mode']=='oracle' else None,
+            include_child_geometry=model_cfg.get('child_bridge','none')!='none')
         # Both cached and uncached paths use exactly the same feature precision.
         c['lidar_features']=c['lidar_features'].half()
         if cache:cache.write(identity,ids,c,source,geometry)

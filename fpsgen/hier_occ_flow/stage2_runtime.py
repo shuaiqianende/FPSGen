@@ -22,8 +22,30 @@ def load_stage2_config(path):
     if cfg['training']['successful_updates']>100000 or cfg['training']['batch_per_gpu'] not in (1,2):raise ValueError('Register<=100K updates, one or two full scenes/rank')
     if cfg['training']['batch_per_gpu']==2 and cfg['training'].get('batching')!='packed_variable_length':raise ValueError('B2 requires actual packed variable-length scenes')
     if cfg['training']['precision'] not in ('fp16','bf16','fp32'):raise ValueError('Unknown precision')
-    if cfg['training']['scope'] not in ('engineering_smoke','overfit','pilot1000','pilot5000','formal'):raise ValueError('Explicit experimental phase required')
+    if cfg['training']['scope'] not in ('engineering_smoke','overfit','pilot1000','pilot5000','formal','research_pilot'):raise ValueError('Explicit experimental phase required')
     if cfg['training']['scope']=='engineering_smoke' and cfg['training']['successful_updates']>32:raise ValueError('Engineering smoke<=32 updates')
+    if cfg['training']['scope']=='research_pilot':
+        protocol=cfg.get('research_protocol')
+        research_protocols=('desescene_child_bridge_geometry_v1','desescene_child_bridge_position_control_v1',
+                            'desescene_static_context_fm_v1','desescene_static_context_bce_v1')
+        if protocol not in research_protocols:
+            raise ValueError('Research pilot requires a registered DeSeScene architecture protocol')
+        t,c=cfg['training'],cfg['candidates']
+        if (t.get('successful_frame_exposures')!=20000 or t['successful_updates']!=10000
+            or t['batch_per_gpu']!=2 or t.get('batching')!='packed_variable_length'
+            or c['mode']!='predicted' or c.get('stage1_nfe')!=4
+            or c.get('selection',{}).get('strategy')!='threshold'
+            or c.get('selection',{}).get('threshold')!=0.5 or cfg.get('cohort_indices') is not None):
+            raise ValueError('Research pilot requires predicted support and exact registered20K exposure protocol')
+        if protocol in ('desescene_child_bridge_geometry_v1','desescene_child_bridge_position_control_v1'):
+            if cfg['model'].get('child_bridge')!='child_conditioned':raise ValueError('Child bridge protocol/config mismatch')
+            expected='geometry_stats' if protocol.endswith('geometry_v1') else 'position_only'
+            if cfg['model'].get('child_input')!=expected:raise ValueError('Child bridge control/config mismatch')
+        if protocol in ('desescene_static_context_fm_v1','desescene_static_context_bce_v1'):
+            expected='fm' if protocol.endswith('_fm_v1') else 'bce'
+            if (cfg['model'].get('context_strategy')!='static' or cfg['model']['objective']!=expected
+                or cfg['model'].get('child_bridge','none')!='none'):
+                raise ValueError('Static-context FM/BCE protocol/config mismatch')
     if cfg['candidates']['mode'] not in ('oracle','predicted'):raise ValueError('Explicit support source required')
     if cfg.get('research_protocol')=='fm_real_stage1_score_gt_parents_only_v1':
         c=cfg['candidates']
@@ -135,13 +157,15 @@ def require_training_gate(cfg,g):
     scope=cfg['training']['scope'];path=cfg.get('engineering_gate')
     gate=json.loads(Path(path).read_text()) if path and Path(path).exists() else {}
     required=['full_scene_gpu','maximum_scene_gpu','ptv3_permutation','checkpointing_parity']
-    if scope!='engineering_smoke':required+=['ddp_resume']
-    if cfg['training']['batch_per_gpu']==2:
+    if scope=='research_pilot':
+        required+=['packed_batch2_gpu','research_model_smoke']
+    elif scope!='engineering_smoke':required+=['ddp_resume']
+    if cfg['training']['batch_per_gpu']==2 and scope!='research_pilot':
         required+=['packed_batch2_gpu']
         if scope!='engineering_smoke':required+=['packed_batch2_ddp_resume']
     fm_only=cfg.get('research_protocol')=='fm_only_user_requested' and cfg['model']['objective']=='fm'
     direct=direct_full_train_policy(cfg,g)
-    if not direct:
+    if not direct and scope!='research_pilot':
         if scope not in ('overfit','engineering_smoke'):required+=['oracle_fm_overfit'] if fm_only else ['oracle_bce_overfit','oracle_fm_overfit']
         if scope in ('pilot5000','formal'):required+=['fm_pilot_1k'] if fm_only else ['matched_bce_fm_1k']
         if scope=='formal':required+=['pilot5000','stage1_final_checkpoint','development_candidate_calibration','formal_budget_registered']

@@ -14,7 +14,11 @@ from fpsgen.hier_occ_flow.storage import atomic_json,file_sha
 def main():
     p=argparse.ArgumentParser();p.add_argument('--config',type=Path,required=True);p.add_argument('--checkpoint',type=Path,required=True)
     p.add_argument('--output',type=Path,required=True);p.add_argument('--ema',action='store_true')
-    p.add_argument('--visualization-output',type=Path);args=p.parse_args()
+    p.add_argument('--visualization-output',type=Path);p.add_argument('--max-frames',type=int,
+        help='Limit diagnostic evaluation after exact training-config identity validation')
+    p.add_argument('--sampling-seeds',type=int,nargs='+',
+        help='Use a paired diagnostic RNG subset after exact training-config identity validation')
+    args=p.parse_args()
     visible=os.environ.get('CUDA_VISIBLE_DEVICES','')
     if visible not in ('2','3'):raise ValueError('Select only physical GPU2 or3')
     admission=gpu_preflight((int(visible),))
@@ -28,6 +32,12 @@ def main():
     state=saved['ema'] if args.ema else saved['model']
     if state is None:raise ValueError('Requested EMA absent')
     model.load_state_dict(state,strict=True)
+    if args.max_frames is not None:
+        if args.max_frames<=0:raise ValueError('--max-frames must be positive')
+        cfg['validation']['max_frames']=args.max_frames
+    if args.sampling_seeds is not None:
+        if not args.sampling_seeds:raise ValueError('At least one sampling seed is required')
+        cfg['validation']['sampling_seeds']=args.sampling_seeds
     result=evaluate_stage2(model,cfg,g,torch.device('cuda'),adapter,dev,visualization_root=args.visualization_output)
     result.update(successful_updates=saved['successful_updates'],checkpoint_sha256=file_sha(args.checkpoint),ema=args.ema)
     atomic_json(args.output,result)

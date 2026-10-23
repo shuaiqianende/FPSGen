@@ -119,6 +119,7 @@ def test_predicted_conditions_unchanged_when_gt_labels_change(g,tmp_path):
     ids=center_ids(g,2);directory=tmp_path/'00/input_';directory.mkdir(parents=True)
     np.save(directory/'000000.npy',g.centers(g.unflatten(ids)).astype(np.float32))
     cfg={'data_root':str(tmp_path),'candidates':{'mode':'predicted','stage1_nfe':4,'seed':1,'selection':{'threshold':.5}},
+         'model':{'child_bridge':'child_conditioned','child_input':'geometry_stats'},
          'training':{'max_parent_tokens':100}}
     a={'sequence':'00','frame':0,'parent_ids':ids[:1].astype(np.uint32),'child_occ_mask':np.array([1],np.uint8)}
     b={**a,'parent_ids':ids[1:].astype(np.uint32),'child_occ_mask':np.array([2],np.uint8)}
@@ -126,6 +127,7 @@ def test_predicted_conditions_unchanged_when_gt_labels_change(g,tmp_path):
     second=assemble_stage2_scene(b,cfg,g,torch.device('cpu'),FakeAdapter(g,ids))
     assert torch.equal(first[0],second[0])
     assert all(torch.equal(first[1][k],second[1][k]) for k in first[1])
+    assert first[1]['child_geometry'].shape==(2,g.k,8)
     assert not torch.equal(first[2],second[2])
 
 

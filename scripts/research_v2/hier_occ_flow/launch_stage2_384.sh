@@ -16,7 +16,8 @@ from fpsgen.hier_occ_flow.resources import gpu_preflight
 from fpsgen.hier_occ_flow.storage import atomic_json
 ids=list(map(int,os.environ['CUDA_VISIBLE_DEVICES'].split(',')))
 for attempt in range(16):
- gate=gpu_preflight(ids)
+ allow_shared=os.environ.get('HS_STAGE2_ALLOW_SHARED_COMPUTE','0')=='1'
+ gate=gpu_preflight(ids,allow_shared_compute=allow_shared)
  if gate['status']=='AVAILABLE':break
  rows=gate.get('gpus',[])
  # NVML utilization can describe the previous interval after our own ranks
