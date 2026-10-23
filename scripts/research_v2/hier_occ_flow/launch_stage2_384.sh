@@ -5,7 +5,7 @@ cd "$task_root"
 task_main=$(dirname "$(git rev-parse --git-common-dir)")
 task_python=${HS_STAGE2_PYTHON:-$task_main/env/voxdet_density_py39/bin/python}
 export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-2,3}
-case "$CUDA_VISIBLE_DEVICES" in 2|3|2,3) ;; *) exit 2;; esac
+case "$CUDA_VISIBLE_DEVICES" in 1|2|3|2,3) ;; *) exit 2;; esac
 export OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 OPENBLAS_NUM_THREADS=2
 export TMPDIR="$task_main/env/tmp" TORCH_EXTENSIONS_DIR="$task_main/env/voxel_point_cache/torch_extensions"
 mkdir -p experiments/hier_occ_flow/stage2_384_admission

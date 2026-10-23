@@ -34,7 +34,7 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
     if resume and transition:raise ValueError('Exact resume and explicit batch transition are mutually exclusive')
     if not resume and any((output/'checkpoints').glob('*.pt')):raise FileExistsError('Fresh Stage2 output contains checkpoints')
     visible=os.environ.get('CUDA_VISIBLE_DEVICES','')
-    if visible not in ('2','3','2,3'):raise ValueError('Only physical GPU2/3')
+    if visible not in ('1','2','3','2,3'):raise ValueError('Only single physical GPU1/2/3 or original GPU2,3 DDP')
     rank=int(os.environ.get('RANK',0));world=int(os.environ.get('WORLD_SIZE',1));local=int(os.environ.get('LOCAL_RANK',0))
     batch_per_gpu=train['batch_per_gpu'];global_batch=world*batch_per_gpu
     if world!=len(visible.split(',')):raise ValueError('One rank per physical GPU')

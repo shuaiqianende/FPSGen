@@ -1,6 +1,6 @@
 # DeSeScene experiment evidence audit
 
-2026-10-23T04:38:47.607953+00:00
+2026-10-23T20:05:40.855946+00:00
 
 All values below are read from saved run artifacts. Existing runs and artifacts are unchanged.
 
@@ -8,8 +8,8 @@ All values below are read from saved run artifacts. Existing runs and artifacts 
 |---|---|---:|---:|---|
 | child_bridge_geometry_20k | COMPLETE_REQUESTED_BUDGET | 10000 | 20000 | 900-frame result present |
 | child_bridge_position_20k | COMPLETE_REQUESTED_BUDGET | 10000 | 20000 | 900-frame result present |
-| static_context_fm_20k | RUNNING_OR_INTERRUPTED_CHECK_LIVE_PID | 5128 | 10256 | NOT COMPLETE |
-| static_context_bce_20k | RUNNING_OR_INTERRUPTED_CHECK_LIVE_PID | 5128 | 10256 | NOT COMPLETE |
+| static_context_fm_20k | COMPLETE_REQUESTED_BUDGET | 10000 | 20000 | 900-frame result present |
+| static_context_bce_20k | COMPLETE_REQUESTED_BUDGET | 10000 | 20000 | 900-frame result present |
 
 | B1 variant | NFE | Fine IoU | F1 |
 |---|---:|---:|---:|
@@ -41,9 +41,9 @@ These are single-training-seed results. E1 recovered by the final milestone and 
 
 ## Protocol limits
 
-- C1 static FM and BCE: frozen mature Stage1 EMA, predicted support, Stage1 NFE4, strict score >0.5, batch2, scratch 20K. C1 final results are pending.
+- C1 static FM and BCE: frozen mature Stage1 EMA, predicted support, Stage1 NFE4, strict score >0.5, batch2, scratch 20K. C1 final 900-frame primary evaluations are complete; see DESESCENE_STATE_CONDITION_PHASE0_RESULTS.md for continuous metrics and the paired comparison.
 - No strictly matched original dynamic FM 20K control was found. B1 child-conditioned models cannot fill that role.
 - Old mature dynamic FM uses Oracle support with 25% empty neighbors and constant score1. Its source weights may initialize a separately identified matched fine-tuning cohort; its old metrics are not a predicted-support control.
-- Existing native reports do not contain CD, 0.5/0.2/0.1m physical IoU, or JSD. Those are NOT TESTED here.
+- The older B1/Encoder native reports omit continuous metrics. C1 has now been re-evaluated with CD, corrected physical IoU and JSD; the separate Phase0 results report contains those actual values.
 - Saved evaluation stage times are diagnostic and were partly collected during authorized GPU sharing; they are not dedicated performance benchmarks.
 - No new 100K training or M2/M3/M4 formal training is authorized by this audit.

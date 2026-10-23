@@ -27,7 +27,7 @@ def main():
     args=p.parse_args()
     if args.output.exists():raise FileExistsError('Preserve previous evaluation output')
     visible=os.environ.get('CUDA_VISIBLE_DEVICES','')
-    if visible not in ('2','3'):raise ValueError('Select only physical GPU2 or3')
+    if visible not in ('1','2','3'):raise ValueError('Select only authorized physical GPU1/2/3')
     admission=gpu_preflight((int(visible),))
     if admission['status']!='AVAILABLE':atomic_json(args.output,{'status':'BLOCKED','gpu':admission});return
     cfg,g=load_stage2_config(args.config);_,dev,manifests=dataset_identity(cfg,g,verify=True)

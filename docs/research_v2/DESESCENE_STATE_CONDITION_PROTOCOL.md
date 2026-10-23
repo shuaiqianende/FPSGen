@@ -11,7 +11,7 @@ See [the generated evidence report](DESESCENE_STATE_CONDITION_EVIDENCE.md) and [
 - The completed single-GPU Stage1 cohort is R0 0.420339, E3 0.420464, E1 0.425641, E2 0.422217 Parent IoU. E1's paired IoU improvement is +0.5302 percentage points, with a grouped 95% bootstrap interval [+0.3402,+0.6913]. This is one training seed; it does not include training-seed uncertainty.
 - E1/E2 must not be rejected using an earlier 12-frame milestone or a different training cohort. Their final Fine-GT ceilings are 0.598639 and 0.598900, versus R0 0.590896.
 - No exactly matched original Dynamic FM 20K arm was found. B1 changes the Child decoder; C1 compares Static FM with BCE.
-- C1 is still running at the report snapshot. Its current weights are not substituted for a final checkpoint.
+- C1 completed both 20K runs and the 900-frame primary evaluations on October24. See [the current Phase0 results](DESESCENE_STATE_CONDITION_PHASE0_RESULTS.md): BCE wins native IoU, while Static FM wins CD, coarse physical IoU and JSD. Neither dominates.
 
 ## Audited computation
 
@@ -58,7 +58,7 @@ The adapter uses per-model forward pre-hooks and a Point field, not global/vendo
 | Stage2 evaluation | Primary NFE4; diagnostics1/2/4/8 | Same |
 | New exposures | 20,000 | 20,000 |
 | Single-card batch / updates | 2 / 10,000 | 2 / 10,000 |
-| Physical GPU | 2 | 3 |
+| Physical GPU | 1 (latest explicit user authorization) | 3 |
 | Seed | 20261032 | 20261032 |
 | Loss | Original Gaussian-to-binary FM MSE | Same |
 | Optimizer/schedule | Fresh AdamW, 2e-4, wd0.01, warmup500/cosine, clip1, EMA0.999 | Same |
@@ -83,7 +83,9 @@ Source identity validation checks geometry, Frozen Stage1 SHA, manifests, raw su
 6. M1 GPU verification uses the two largest threshold-support scenes in that complete 900-frame NFE2 census. It checks zero-output/endpoint parity, sorting, cached path, B2 gradients, AMP and local optimizer/checkpoint replay.
 7. B0/M1 each run a separate 32-update engineering smoke. No engineering weights are inherited into formal training.
 8. D4 benchmarks the actual trained R0/E1/E2/E3 checkpoints with explicit FP16 on one physical GPU, 5+20 frames, three alternating rounds.
-9. Results are summarized for a research GO/HOLD decision. **This queue does not launch new 20K training.**
+9. Results are summarized for a research GO/HOLD decision. **This original Phase0 queue does not launch new 20K training.** It stopped at the original strict bitwise resume gate; retained follow-up checks and the independent B0 control are documented in [the Phase0 results](DESESCENE_STATE_CONDITION_PHASE0_RESULTS.md).
+
+On October24, `run_desescene_m1_matched_queue.py` was added for the explicitly authorized GPU1/GPU3 matched 20K pair. It runs both engineering smokes, validates the actual GPU report and evidence-backed research review, then trains each arm in 100→500→10,000-update stages and automatically evaluates it. It does not schedule other training arms or additional training seeds.
 
 All scheduled GPU tasks use idle-card admission, never shared-compute admission. B1/C1 timing collected during previous authorized sharing is not a performance baseline.
 
@@ -100,7 +102,7 @@ cd /data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1
 ## Conditions for formal B0/M1 training
 
 - C1 and D1/D2 evidence reviewed together. Static FM versus BCE alone does not establish whether dynamic PTv3 is useful.
-- Both 32-update smokes and real GPU checks pass on this exact source SHA.
+- Both 32-successful-update smokes and real GPU checks pass on this exact source SHA. Up to two isolated AMP overflow attempts are recorded separately, with a stable final window required; skipped attempts never count as successful exposures.
 - Register a machine-readable research decision `PROCEED_M1_MATCHED20K`, with rationale and hashes of actual reviewed evidence, using `register_desescene_m1_gate.py`.
 - Training rejects a gate with a different source SHA, source checkpoint or missing C1 review.
 - Use the full 10K-update horizon from the start: first stop at100 successful updates, then resume to500 (1K exposures), inspect learning health, then resume to10000. Optimizer, EMA, scaler, scheduler and RNG persist within that formal run.
@@ -115,5 +117,6 @@ M3 ranker formal training requires at least2 pp held-out Fine-GT ceiling gain at
 
 - CPU: 51 relevant tests passed; actual PTv3 constructors and strict source-weight compatibility were inspected without GPU forward.
 - All169 baseline state tensors are equal after shared-source loading. M1's initial scalar gates are zero.
-- GPU forward, numerical quality, stress/resume, learned gains and speed remain **NOT TESTED** until the idle-card queue runs.
+- Real packed GPU checks pass zero-initialization output, endpoint, Occupancy, sorting, cached conditions and gradients. Training resume is **NUMERICAL_EMBEDDING_WGRAD**, with the same tiny SparseConv-gradient discrepancy present in B0; it is not bitwise exact. Full diagnostics and tolerances are in the Phase0 report.
+- Learned M1 gains, final numerical quality and dedicated runtime remain **NOT TESTED** until the new matched pilot and evaluation finish.
 - Complete checkpoints, raw predictions and caches remain server-local under ignored experiment paths.

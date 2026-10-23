@@ -46,7 +46,7 @@ def main():
     p.add_argument('--skip-continuous',action='store_true',help='Mark CD/physical IoU/JSD NOT TESTED explicitly')
     a=p.parse_args()
     physical=os.environ.get('CUDA_VISIBLE_DEVICES','')
-    if physical not in ('2','3'):raise ValueError('One physical GPU2/3 required')
+    if physical not in ('1','2','3'):raise ValueError('One authorized physical GPU1/2/3 required')
     admission=gpu_preflight((int(physical),))
     if admission['status']!='AVAILABLE':raise RuntimeError(json.dumps(admission))
     if a.output.exists():raise FileExistsError(a.output)
