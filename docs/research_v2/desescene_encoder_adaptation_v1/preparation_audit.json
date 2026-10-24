@@ -1,0 +1,125 @@
+{
+  "timestamp": "2026-10-24T23:32:21.843469+08:00",
+  "branch": "research/desescene-encoder-adaptation-v1",
+  "base_commit": "601d1154b71ef65c6246ecdcbe7d330b1912e48d",
+  "source_sha256": "2fa3470a1f74bd63e345bf57425afd69dfe9a4631f7fbc8b107079e1b81cdb3d",
+  "private_remote": "https://github.com/shuaiqianende/FPSGen-private.git",
+  "checkpoint_sources": {
+    "stage1": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+      "bytes": 313965815,
+      "sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+      "expected_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+      "match": true
+    },
+    "stage2": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt",
+      "bytes": 43139611,
+      "sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+      "expected_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+      "match": true
+    }
+  },
+  "cpu_strict_loading": {
+    "ef1": {
+      "strict_source_loading": "PASS",
+      "encoder_initial_parameter_sha256": "7cd298c4555030ee02bfa8c141dfded579c6045b7d491e976aff6b8083dd422b",
+      "flow_initial_state_sha256": "16b378481f4f96bbf881913573f69d805f955ca2825d5a66cf95e621655ea598",
+      "trainable_tensors": 198,
+      "frozen_tensors": 96
+    },
+    "ef2": {
+      "strict_source_loading": "PASS",
+      "encoder_initial_parameter_sha256": "7cd298c4555030ee02bfa8c141dfded579c6045b7d491e976aff6b8083dd422b",
+      "flow_initial_state_sha256": "16b378481f4f96bbf881913573f69d805f955ca2825d5a66cf95e621655ea598",
+      "trainable_tensors": 294,
+      "frozen_tensors": 0
+    },
+    "s2_e0": {
+      "strict_source_loading": "PASS",
+      "encoder_initial_parameter_sha256": "7cd298c4555030ee02bfa8c141dfded579c6045b7d491e976aff6b8083dd422b",
+      "flow_initial_state_sha256": "16b378481f4f96bbf881913573f69d805f955ca2825d5a66cf95e621655ea598",
+      "trainable_tensors": 169,
+      "frozen_tensors": 294
+    },
+    "s2_e1": {
+      "strict_source_loading": "PASS",
+      "encoder_initial_parameter_sha256": "7cd298c4555030ee02bfa8c141dfded579c6045b7d491e976aff6b8083dd422b",
+      "flow_initial_state_sha256": "16b378481f4f96bbf881913573f69d805f955ca2825d5a66cf95e621655ea598",
+      "trainable_tensors": 198,
+      "frozen_tensors": 265
+    },
+    "s2_e2": {
+      "strict_source_loading": "PASS",
+      "encoder_initial_parameter_sha256": "7cd298c4555030ee02bfa8c141dfded579c6045b7d491e976aff6b8083dd422b",
+      "flow_initial_state_sha256": "16b378481f4f96bbf881913573f69d805f955ca2825d5a66cf95e621655ea598",
+      "trainable_tensors": 367,
+      "frozen_tensors": 96
+    }
+  },
+  "data_access": {
+    "development_frames": 900,
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "missing_original_inputs": [],
+    "raw_gt_first_development_frame": {
+      "frame": 500,
+      "sequence": "00",
+      "shape": [
+        1079847,
+        3
+      ]
+    },
+    "seconds": 283.46029182709754,
+    "shard_hashes_verified": true,
+    "status": "PASS",
+    "train_frames": 17870,
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+  },
+  "cpu_tests": {
+    "passed": 52,
+    "warnings": 1,
+    "gpu_tests": "NOT TESTED",
+    "command": "CUDA_VISIBLE_DEVICES='' OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 /data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -m pytest -q tests/test_encoder_adaptation.py tests/test_encoder_adaptation_gates.py tests/test_encoder_retraining_preparation.py tests/test_stage2_batching.py tests/test_stage1_occ_runner.py tests/test_stage1_occ384.py"
+  },
+  "P0": {
+    "position": {
+      "successful_updates": 6347,
+      "successful_frame_exposures": 12694,
+      "attempts": 6351,
+      "amp_skips": 4,
+      "checkpoint_successful_updates": 6000,
+      "checkpoint_sha256": "c8bc0c1e11f2851088271d91af31ce9f6fe6c5b336d432cdde1190354017fe36",
+      "checkpoint_source_matches_worktree": true,
+      "checkpoint_optimizer_entries": 179,
+      "ema_present": true,
+      "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+      "checkpoint_config_sha256": "468311e81f4c7ed6a241bab623a02e2975a031b94f4a663591ec6a000a42ba60",
+      "recent200_mean_update_seconds": 2.1673247729938234,
+      "remaining_training_hours_estimate": 2.199232609929566,
+      "primary900_complete": false,
+      "mechanisms64_complete": false
+    },
+    "attention": {
+      "successful_updates": 5713,
+      "successful_frame_exposures": 11426,
+      "attempts": 5716,
+      "amp_skips": 3,
+      "checkpoint_successful_updates": 5500,
+      "checkpoint_sha256": "5aa9d9b6aea6fbb600479e4a9f827b6d4bfe93d98f7ce8474e58cffc899eca06",
+      "checkpoint_source_matches_worktree": true,
+      "checkpoint_optimizer_entries": 185,
+      "ema_present": true,
+      "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+      "checkpoint_config_sha256": "e83077f363c0b4c2230f4e5d6308f4b3468a0c868a368bc93e9076bafc6ece38",
+      "recent200_mean_update_seconds": 1.906438726466149,
+      "remaining_training_hours_estimate": 2.2702507834334393,
+      "primary900_complete": false,
+      "mechanisms64_complete": false
+    }
+  },
+  "P1": "NOT STARTED; engineering code and gated queue prepared",
+  "P2": "NOT STARTED; GPU memory/gradient gates pending",
+  "P3": "Engineering-only adapter; no formal training GO",
+  "eta_scope": "Training remainder only; full900/64diagnostics and new GPU engineering not included",
+  "preparation_finalized_at": "2026-10-24T23:45:17.362822+08:00"
+}

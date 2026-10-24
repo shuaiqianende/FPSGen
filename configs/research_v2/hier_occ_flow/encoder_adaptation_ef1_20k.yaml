@@ -1,0 +1,66 @@
+experiment: desescene-encoder-adaptation-v1
+phase: P1
+arm: EF1
+initialization_mode: pretrained_ema_adaptation
+geometry:
+  child_split:
+  - 2
+  - 2
+  - 2
+  maximum:
+  - 50.0
+  - 50.0
+  - 4.4
+  origin:
+  - -50.0
+  - -50.0
+  - -4.0
+  parent_resolution:
+  - 384
+  - 384
+  - 32
+  sphere_radius: 50.0
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/train
+development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development
+source_stage1:
+  checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt
+  checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+  config: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4/config.json
+  weights: ema
+source_stage2:
+  checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt
+  checkpoint_sha256: eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c
+reference_stage2_config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/config.json
+condition_cache: false
+training:
+  successful_frame_exposures: 20000
+  successful_updates: 10000
+  batch_per_gpu: 2
+  seed: 20261032
+  precision: fp16
+  optimizer: AdamW
+  lr_encoder: 2.0e-05
+  lr_flow: 1.0e-05
+  lr_stage2: 0.0002
+  weight_decay: 0.01
+  warmup_updates: 500
+  grad_clip: 1.0
+  ema_decay: 0.999
+  amp_initial_scale: 16384.0
+validation:
+  max_frames: 900
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  stage2_nfe: 4
+  seed: 20261031
+  threshold: 0.5
+  candidate_budgets:
+  - 84963
+  - 120000
+engineering_report: experiments/desescene_encoder_adaptation_v1/engineering/EF1/result.json
+smoke_summary: experiments/desescene_encoder_adaptation_v1/smokes/EF1/summary.json
+reference_stage2_config_sha256: 0ab712bd2bbe1cd6c6da8bea15833b9c4fc2206dab5e0d5ed06f9cef93a9bfff

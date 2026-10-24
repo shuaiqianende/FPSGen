@@ -1,0 +1,45 @@
+experiment: desescene-encoder-adaptation-v1
+initialization_mode: pretrained_ema_adaptation
+private_branch: research/desescene-encoder-adaptation-v1
+formal_seed: 20261032
+batch_per_gpu: 2
+successful_updates: 10000
+successful_frame_exposures: 20000
+physical_gpus: [2, 3]
+one_project_training_per_gpu: true
+phase_order: [P0, P1, P2]
+phase_gates:
+  P0: existing_L0_L1_training_900eval_64diagnostics_complete_then_independent_audit_and_timing
+  P1: both_maximum_real_batch2_checks_and_32successful_smokes_pass_then_100_500_10000
+  P2: P1_900evaluation_and_report_complete_and_both_P2_memory_gradient_smokes_pass
+  P3: analysis_and_engineering_only_no_automatic_formal_training
+arms:
+  EF0: {phase: P1, train: false, encoder: mature_stage1_ema, flow: mature_stage1_ema, stage2: mature_online}
+  EF1: {phase: P1, train: true, trainable: [stage1.encoder], objective: original_stage1_fm}
+  EF2: {phase: P1, train: true, trainable: [stage1.encoder, stage1.flow], objective: original_stage1_fm}
+  S2-E0: {phase: P2, train: conditional_matched_control, trainable: [stage2], objective: original_stage2_fm}
+  S2-E1: {phase: P2, train: true, trainable: [stage1.encoder], objective: original_stage2_fm}
+  S2-E2: {phase: P2, train: true, trainable: [stage1.encoder, stage2], objective: original_stage2_fm}
+  ER-Local: {phase: P3, train: false, design: scratch_E2_only_local_stage0}
+  ER-Voxel: {phase: P3, train: false, design: scratch_E2_only_voxel_stage0}
+  S2-Scratch-Pretrained: {phase: P3, train: false, design: mature_encoder_and_scratch_stage2}
+  S2-Scratch-Random: {phase: P3, train: false, design: scratch_encoder_and_same_scratch_stage2}
+evaluation:
+  development_frames: 900
+  nfes: [1, 2, 4, 8]
+  primary_stage1_nfe: 2
+  primary_stage2_nfe: 4
+  fixed_k: [84963, 120000]
+  stage2_support_modes: [teacher_support_adapted_features, adapted_shared_encoder_deployable_support]
+  point_mode: native_fine_voxel_centers
+  backend: same_PyTorch_original_AMP_for_each_pair
+  timing: three_alternating_rounds_5warmup_20timed_same_physical_gpu
+  confidence: paired_sequence_time_blocks_single_training_seed_only
+prohibited:
+  - extra_training_seed
+  - 100k_training
+  - token_truncation_or_small_scene_substitution
+  - cached_trainable_features
+  - gt_selected_inference_support
+  - vendor_edits_to_bypass_tests
+  - automatic_P3_formal_training
