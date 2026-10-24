@@ -10,7 +10,7 @@ The two new arms are:
 
 | Arm | Additional local computation | GPU preference |
 |---|---|---|
-| L0 / position | Shared1→16 state projection + XYZ3→16 positional projection; per-Child LayerNorm/FFN; ordered8×16→64 output | GPU1, wait if occupied |
+| L0 / position | Shared1→16 state projection + XYZ3→16 positional projection; per-Child LayerNorm/FFN; ordered8×16→64 output | GPU2, newly authorized after GPU1 wait |
 | L1 / attention | Same, plus one16D/two-head self-attention block over exactly eight Children | GPU3 |
 
 Add the64D result to the original state MLP output before the unchanged240D fusion. The new output projection is initialized to zero. The original source weights load strictly, and every old tensor remains present under its original key. The output projection can receive gradients immediately; upstream branch parameters begin receiving gradients after it opens. Do not interpret zero-initialized compatibility as evidence of learned quality.
@@ -39,7 +39,7 @@ L0 versusL1 isolates the extra attention block, with a small parameter-count dif
 2. GPU3: real maximum-support Batch2 using the two largest scenes from the fixed900-frame NFE2 census. Compare initial velocities, four Euler steps and Occupancy exactly; verify sorting/cached paths, AMP gradients, memory and diagnostic one-step time.
 3. Checkpoint replay: report bitwise exactness separately. The original SpConv embedding weight-gradient is nondeterministic; the existing bounded numerical replay check uses an independent unmodified B0 control. Do not claim bitwise training reproducibility.
 4. Both arms receive a separate32-successful-update smoke on GPU3. These engineering weights are discarded. The real evidence gate is tied to the final source/config/checkpoint identities.
-5. Formal L0 waits for GPU1 idle admission; L1 uses GPU3. Neither arm waits for the other's long training to finish.100→500→10,000-update health stages preserve optimizer/EMA/scheduler/scaler/RNG and the original full scheduler horizon.
+5. Formal L0 originally waited for GPU1. After explicit user authorization, the never-started L0 arm moved to idleGPU2; L1 continues its original GPU3 process. Neither arm waits for the other's long training to finish.100→500→10,000-update health stages preserve optimizer/EMA/scheduler/scaler/RNG and the original full scheduler horizon.
 6. Each completed arm automatically runs900-scene primaryNFE4 native/continuous evaluation and64-scene NFE1/2/4/8 and condition diagnostics. GPU admission is repeated between tasks. No existing process is stopped.
 
 Main evaluation: full-GT native Fine IoU/F1, support-only IoU, CD, corrected physical IoU0.5/0.2/0.1m, JSD, occupancy counts and paired per-frame changes. Check Parent-ID hashes and Fine-GT ceiling as invariants. Use native voxel centers for all models. Dedicated same-backend runtime is required before claiming a deployable quality/efficiency gain; isolated one-step timing is diagnostic.
@@ -57,3 +57,9 @@ The persistent backlog is `configs/research_v2/hier_occ_flow/desescene_research_
 The actual largest-scene pair has165,919+165,513 Parent tokens. Both local modes pass exact zero-initialized velocity/endpoint/Occupancy, sorting and cached-path tests, and finite nonzero branch gradients. Checkpoint replay uses the disclosed numerical SpConv-embedding control. Peak allocated memory is8.45GiB. Added parameters are9,376 forPosition and10,496 forPosition+Attention.
 
 Diagnostic maximum-Batch2 one-step CUDA times (three warmed repetitions, physicalGPU3) are198.15ms baseline,211.23ms position and229.69ms position+attention. These are not formal end-to-end timings or evidence of a speed gain. Quality is NOT TESTED until the20K pilot and900-frame evaluation complete. See the retained [GPU report](DESESCENE_CHILD_LOCAL_STATE_GPU_VALIDATION.json).
+
+## Current execution and future readiness
+
+Both32-update smokes and the100/500-update health checks have passed. L0 is now training onGPU2, L1 onGPU3. The replacement supervisor preserves the running L1 PID and original pinned training source hash; only the waiting L0 assignment changed. The actual continuation script and transfer audit are retained with [the latest progress snapshot](desescene_child_local_progress_20261024_2140/README.md).
+
+That snapshot includes200-successful-update mean losses, B0 comparisons, saved checkpoint identities and the actual automatic evaluation schedule. It distinguishes active training from Encoder candidates whose engineering checks and automatic training continuation are not yet implemented. No learned quality gain is claimed while the pilots are incomplete.

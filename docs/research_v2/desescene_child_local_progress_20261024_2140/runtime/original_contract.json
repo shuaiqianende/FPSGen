@@ -1,0 +1,21 @@
+{
+  "batch_per_gpu": 2,
+  "encoder_followups": "Registered separately; not yet engineering-ready",
+  "epoch": 1792839572.3368888,
+  "no_automatic_100k": true,
+  "physical_gpus": {
+    "attention": 3,
+    "position": 1
+  },
+  "smoke_gpu": 3,
+  "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+  "staged_updates": [
+    100,
+    500,
+    10000
+  ],
+  "status": "REGISTERED",
+  "successful_frame_exposures_per_arm": 20000,
+  "supervisor_pid": 3888014,
+  "training_seed": 20261032
+}

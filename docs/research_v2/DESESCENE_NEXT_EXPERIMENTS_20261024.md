@@ -16,7 +16,7 @@ Use the same raw-GT Stage2 source as B0/M1 (SHA `eaf70f8e2cbc068add3b744b1988299
 
 Before training: CPU shape/gradient/Child-order tests; real maximum-scene packedBatch2, AMP, zero-output parity, sorting/cached-path parity, checkpoint resume and module runtime/memory checks;32-update smoke; then100→500→10,000 successful-update health stages. Final evaluation is900 Development scenes, primaryNFE4 plus NFE1/2/4/8 diagnostics and same-backend runtime. Preserve negative results. Do not select a winner from training loss alone.
 
-Card preference follows the latest explicit user instruction: GPU1 andGPU3, one experiment per card. GPU1 was occupied by another task at registration, so its arm must wait for idle admission. GPU3 can run engineering checks first. No existing process is stopped or preempted.
+Initial card preference was GPU1 andGPU3, one experiment per card. The user subsequently explicitly authorized GPU2: the waiting position arm now trains onGPU2, while attention continues onGPU3. Both passed engineering checks and are training; see [the current progress report](desescene_child_local_progress_20261024_2140/README.md). Other users' processes are not stopped or preempted.
 
 ## Encoder studies, separate from the Stage2 pair
 

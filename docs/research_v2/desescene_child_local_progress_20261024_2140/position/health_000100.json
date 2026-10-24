@@ -1,0 +1,19 @@
+{
+  "amp_skips": 2,
+  "checked_update": 100,
+  "checks": {
+    "amp_skip_fraction_below_5pct": true,
+    "batch2": true,
+    "finite_positive_gradients": true,
+    "recent_attempts_finite": true,
+    "successful_exposures": true,
+    "successful_updates": true
+  },
+  "epoch": 1792842460.871624,
+  "recent_mean_loss": 0.6135012110322714,
+  "recent_mean_update_seconds": 2.52386630281806,
+  "scope": "engineering/learning health, not a quality selection",
+  "status": "PASS",
+  "successful_frame_exposures": 200,
+  "successful_updates": 100
+}

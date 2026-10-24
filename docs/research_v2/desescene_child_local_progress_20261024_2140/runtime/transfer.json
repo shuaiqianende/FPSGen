@@ -1,0 +1,33 @@
+{
+  "adopted_attention_pid": 4030332,
+  "epoch": 1792842076.8943667,
+  "gpu2_admission": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24105.0,
+        "physical_gpu": 2,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 16.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "old_supervisor_pid": 3888014,
+  "physical_gpus_after": {
+    "attention": 3,
+    "position": 2
+  },
+  "physical_gpus_before": {
+    "attention": 3,
+    "position": 1
+  },
+  "reason": "User explicitly authorized idle physicalGPU2; move only the never-started position arm fromGPU1 toGPU2.",
+  "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+  "unchanged_training_process": true
+}

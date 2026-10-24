@@ -1,0 +1,10 @@
+{
+  "epoch": 1792842077.2412424,
+  "physical_gpus": {
+    "attention": 3,
+    "position": 2
+  },
+  "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+  "status": "RUNNING",
+  "supervisor_pid": 4041969
+}

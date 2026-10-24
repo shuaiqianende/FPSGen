@@ -1,0 +1,11 @@
+{
+  "output": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1",
+  "reschedule_audit": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/gpu2_transfer/transfer.json",
+  "scheduler_path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/gpu2_transfer/run_transferred_queue.py",
+  "supervisor_pid": 4041969,
+  "training_gpu_map": {
+    "attention": 3,
+    "position": 2
+  },
+  "verification_pid": 3863776
+}

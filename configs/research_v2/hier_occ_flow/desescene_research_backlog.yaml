@@ -1,5 +1,6 @@
 schema: desescene-research-backlog-v1
 registered: '2026-10-24'
+latest_progress_report: docs/research_v2/desescene_child_local_progress_20261024_2140/README.md
 repository: shuaiqianende/FPSGen-private
 training_seed: 20261032
 batch_per_gpu: 2
@@ -8,12 +9,12 @@ automatic_100k: false
 extra_training_seeds: false
 experiments:
   - id: local_state_position
-    status: engineering_validation
+    status: training_in_progress
     config: stage2_384_child_local_position_20k.yaml
-    preferred_gpu: 1
+    preferred_gpu: 2
     prerequisites: [gpu_correctness, branch_gradients, maximum_batch2, checkpoint_resume, smoke32]
   - id: local_state_position_attention
-    status: engineering_validation
+    status: training_in_progress
     config: stage2_384_child_local_attention_20k.yaml
     preferred_gpu: 3
     prerequisites: [gpu_correctness, branch_gradients, maximum_batch2, checkpoint_resume, smoke32]

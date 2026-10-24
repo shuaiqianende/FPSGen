@@ -1,0 +1,284 @@
+{
+  "captured_at": "2026-10-24T21:42:16.516829+08:00",
+  "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+  "training_seed": 20261032,
+  "batch_per_gpu": 2,
+  "budget_per_arm": 20000,
+  "status": "IN_PROGRESS_SNAPSHOT",
+  "runs": {
+    "position": {
+      "status": "RUNNING",
+      "successful_updates": 3287,
+      "successful_frame_exposures": 6574,
+      "attempts": 3289,
+      "amp_skips": 2,
+      "physical_gpu": 2,
+      "recent500_mean_update_seconds": 2.210577446620911,
+      "remaining_training_hours_estimate": 4.122112888657271,
+      "estimated_training_finish": "2026-10-25T01:49:36.123228+08:00",
+      "estimate_excludes_evaluation": true,
+      "log_age_seconds": 1.5960056781768799,
+      "last_log_loss": 0.24553896486759186,
+      "quality_status": "NOT TESTED",
+      "checkpoint_identity": {
+        "config_sha256": "468311e81f4c7ed6a241bab623a02e2975a031b94f4a663591ec6a000a42ba60",
+        "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+        "experiment": "hs-occflow-stage2-384-v1",
+        "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+        "output": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/position_20k",
+        "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+        "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+        "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+        "world_size": 1
+      },
+      "initialization": {
+        "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt",
+        "checkpoint_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+        "claim": "20K additional matched adaptation, not 20K total scratch training",
+        "loaded": {
+          "new_keys": [
+            "child_state_encoder.ffn.0.bias",
+            "child_state_encoder.ffn.0.weight",
+            "child_state_encoder.ffn.2.bias",
+            "child_state_encoder.ffn.2.weight",
+            "child_state_encoder.ffn_norm.bias",
+            "child_state_encoder.ffn_norm.weight",
+            "child_state_encoder.output.weight",
+            "child_state_encoder.position_embedding.weight",
+            "child_state_encoder.relative_centers",
+            "child_state_encoder.state_embedding.bias",
+            "child_state_encoder.state_embedding.weight"
+          ],
+          "shared_tensors": 169
+        },
+        "new_successful_frame_exposures": 20000,
+        "optimizer_ema_scheduler_restarted": true,
+        "source_candidates": {
+          "calibration_status": "not_applicable_oracle",
+          "mode": "oracle",
+          "negative_fraction": 0.25,
+          "neutral_score": 1.0,
+          "oracle_score": "neutral",
+          "seed": 20261018,
+          "selection": {
+            "budget": 500000,
+            "expansion": 0,
+            "overflow": "error",
+            "strategy": "threshold",
+            "threshold": 0.5
+          },
+          "stage1_nfe": 4
+        },
+        "source_identity": {
+          "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+          "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+          "experiment": "hs-occflow-stage2-384-v1",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+          "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+          "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+          "world_size": 2
+        },
+        "source_successful_frame_exposures": 99520,
+        "source_successful_updates": 25000,
+        "type": "paired_finetune",
+        "weights": "model"
+      },
+      "saved_2500_update_checkpoint": {
+        "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/position_20k/checkpoints/step002500.pt",
+        "sha256": "352f033c590b7a30cac75d902f42489b42563b274a1d6fcc81559116381f300c",
+        "exposures": 5000
+      }
+    },
+    "attention": {
+      "status": "RUNNING",
+      "successful_updates": 3284,
+      "successful_frame_exposures": 6568,
+      "attempts": 3286,
+      "amp_skips": 2,
+      "physical_gpu": 3,
+      "recent500_mean_update_seconds": 2.2240043353810908,
+      "remaining_training_hours_estimate": 4.149003643449835,
+      "estimated_training_finish": "2026-10-25T01:51:12.929945+08:00",
+      "estimate_excludes_evaluation": true,
+      "log_age_seconds": 0.8180487155914307,
+      "last_log_loss": 0.5929436087608337,
+      "quality_status": "NOT TESTED",
+      "checkpoint_identity": {
+        "config_sha256": "e83077f363c0b4c2230f4e5d6308f4b3468a0c868a368bc93e9076bafc6ece38",
+        "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+        "experiment": "hs-occflow-stage2-384-v1",
+        "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+        "output": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/attention_20k",
+        "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+        "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+        "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+        "world_size": 1
+      },
+      "initialization": {
+        "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt",
+        "checkpoint_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+        "claim": "20K additional matched adaptation, not 20K total scratch training",
+        "loaded": {
+          "new_keys": [
+            "child_state_encoder.attention_norm.bias",
+            "child_state_encoder.attention_norm.weight",
+            "child_state_encoder.attention_output.bias",
+            "child_state_encoder.attention_output.weight",
+            "child_state_encoder.ffn.0.bias",
+            "child_state_encoder.ffn.0.weight",
+            "child_state_encoder.ffn.2.bias",
+            "child_state_encoder.ffn.2.weight",
+            "child_state_encoder.ffn_norm.bias",
+            "child_state_encoder.ffn_norm.weight",
+            "child_state_encoder.output.weight",
+            "child_state_encoder.position_embedding.weight",
+            "child_state_encoder.qkv.bias",
+            "child_state_encoder.qkv.weight",
+            "child_state_encoder.relative_centers",
+            "child_state_encoder.state_embedding.bias",
+            "child_state_encoder.state_embedding.weight"
+          ],
+          "shared_tensors": 169
+        },
+        "new_successful_frame_exposures": 20000,
+        "optimizer_ema_scheduler_restarted": true,
+        "source_candidates": {
+          "calibration_status": "not_applicable_oracle",
+          "mode": "oracle",
+          "negative_fraction": 0.25,
+          "neutral_score": 1.0,
+          "oracle_score": "neutral",
+          "seed": 20261018,
+          "selection": {
+            "budget": 500000,
+            "expansion": 0,
+            "overflow": "error",
+            "strategy": "threshold",
+            "threshold": 0.5
+          },
+          "stage1_nfe": 4
+        },
+        "source_identity": {
+          "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+          "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+          "experiment": "hs-occflow-stage2-384-v1",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+          "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+          "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+          "world_size": 2
+        },
+        "source_successful_frame_exposures": 99520,
+        "source_successful_updates": 25000,
+        "type": "paired_finetune",
+        "weights": "model"
+      },
+      "saved_2500_update_checkpoint": {
+        "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/attention_20k/checkpoints/step002500.pt",
+        "sha256": "e9ee33649ad24153a7c26c947ddcd1718da0fae7186ff1edbe1a502ae449714a",
+        "exposures": 5000
+      }
+    }
+  },
+  "sampling_seeds_are_not_training_repetitions": true,
+  "step_window_frame_alignment": {
+    "position_vs_attention": {
+      "successful_updates_compared": 3284,
+      "mismatched_batch_count": 0,
+      "first_mismatch": null
+    },
+    "b0_reference_vs_position": {
+      "successful_updates_compared": 3287,
+      "mismatched_batch_count": 0,
+      "first_mismatch": null
+    },
+    "b0_reference_vs_attention": {
+      "successful_updates_compared": 3284,
+      "mismatched_batch_count": 0,
+      "first_mismatch": null
+    }
+  },
+  "after_training_automatic": [
+    "900-frame primary NFE4 native+continuous metrics",
+    "64-frame NFE1/2/4/8 and condition diagnostics"
+  ],
+  "encoder_followups": {
+    "status": "REGISTERED_NOT_ENGINEERING_READY",
+    "automatic_training_queued": false,
+    "candidates": [
+      "encoder-only adaptation with frozen Flow",
+      "matched Encoder+Flow adaptation",
+      "conditional scratch architecture retraining"
+    ]
+  },
+  "artifact_manifest": [
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/latest_queue.json",
+      "artifact": "runtime/latest_queue.json",
+      "sha256": "bd3e560e069928a15157867dab3da654b189885978d8f59705db76959bf98078"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/contract.json",
+      "artifact": "runtime/original_contract.json",
+      "sha256": "eacf102f520cdbad85325e7ced18ce6fd8f2fa8a96f9a3097f23d7432df0ec00"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/gpu2_transfer/transfer.json",
+      "artifact": "runtime/transfer.json",
+      "sha256": "af004881a7bc20a06b7dedc15f5095b92e7f914413294a68d6a66cb50bee8e73"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/gpu2_transfer/scheduler.json",
+      "artifact": "runtime/scheduler.json",
+      "sha256": "6bb3bab03cecc9d34a919da1e170c187e01615d781ab9af71b2c3fd519ebddf5"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/gpu2_transfer/run_transferred_queue.py",
+      "artifact": "runtime/run_transferred_queue.py",
+      "sha256": "1bc463a110231a64299f90d2d09155d7995246e415cd0f1d820a429ecaa5b2d1"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/position_20k/config.json",
+      "artifact": "position/config.json",
+      "sha256": "d384d60eb793a1c1fa75f3290a253c8331012be50b369d4d1cb02a41bd58c03a"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/position_20k/launch.json",
+      "artifact": "position/launch.json",
+      "sha256": "32b9ab4f3647d75692caafe048f1209536678098371867b6f21da446806ae5f5"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/position_20k/health_000100.json",
+      "artifact": "position/health_000100.json",
+      "sha256": "84794862bb7a26de5bf4c7c7d2fe08f2b27c0f0ffb82516d1495393628c8bbb3"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/position_20k/health_000500.json",
+      "artifact": "position/health_000500.json",
+      "sha256": "81e37046fd281ddf145e42bb6b84c3ab223b4818e2ee93ede599ed59fc89ad6f"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/attention_20k/config.json",
+      "artifact": "attention/config.json",
+      "sha256": "449d5323d537298d78caaedf2d220d138223810fd2d8712d1f9430f7934d1cda"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/attention_20k/launch.json",
+      "artifact": "attention/launch.json",
+      "sha256": "862bf3c2560af2dbebf34e3295228b5aa3acec10f94248a2e69c2afc36159055"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/attention_20k/health_000100.json",
+      "artifact": "attention/health_000100.json",
+      "sha256": "c928e224ff656b3dfb42e563a42279ea2ece6ae8af674f2f5b0f613b01281d56"
+    },
+    {
+      "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/attention_20k/health_000500.json",
+      "artifact": "attention/health_000500.json",
+      "sha256": "148ab65328b5a9b2e6ec7221b2e221ccbb89149c567450d789601e7041a36c1c"
+    }
+  ]
+}
