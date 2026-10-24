@@ -1,0 +1,42 @@
+{
+  "pid": 817878,
+  "command": [
+    "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-v1/scripts/research_v2/hier_occ_flow/run_encoder_adaptation_phases.py",
+    "--publish-phases"
+  ],
+  "cwd": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-v1",
+  "timestamp": "2026-10-24T23:46:56.250632+08:00",
+  "gpu_memory_requested_now": false,
+  "phase_policy": "Wait existing P0; P1/P2 engineering gates; no P3 formal training",
+  "private_publication_only": true,
+  "state": {
+    "epoch": 1792856818.1851683,
+    "pid": 817878,
+    "source_sha256": "2fa3470a1f74bd63e345bf57425afd69dfe9a4631f7fbc8b107079e1b81cdb3d",
+    "status": "WAITING_P0_EXISTING_QUEUE"
+  },
+  "registered_configs": {
+    "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-v1/configs/research_v2/hier_occ_flow/encoder_adaptation_ef1_20k.yaml": "df8087159a78185a8b95d7bd91701b67ea6bc6c136c93891818b13619950fb6f",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-v1/configs/research_v2/hier_occ_flow/encoder_adaptation_ef2_20k.yaml": "b9ec243a48284f10954c590e5ef337b3de63d44880e15c6eb21bd1beedc1921a",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-v1/configs/research_v2/hier_occ_flow/encoder_adaptation_s2_e0_20k.yaml": "78d822ec7dc74f8d899cdd9a82fdc58a95436f43f625085c8dd10e37b0ff1583",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-v1/configs/research_v2/hier_occ_flow/encoder_adaptation_s2_e1_20k.yaml": "86521dab53b24eba04ac39497b7aec5ae11717d81e913e4fc39c811f13ce283f",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-v1/configs/research_v2/hier_occ_flow/encoder_adaptation_s2_e2_20k.yaml": "f7f1fff60b9c941edc7f0212f7afb5a45cb2100623f79a08d9c252efc425aaba"
+  },
+  "checked_at": "2026-10-24T23:48:05.995308+08:00",
+  "existing_P0": {
+    "position": {
+      "successful_updates": 6796,
+      "successful_frame_exposures": 13592,
+      "amp_skips": 4
+    },
+    "attention": {
+      "successful_updates": 6204,
+      "successful_frame_exposures": 12408,
+      "amp_skips": 3
+    }
+  },
+  "formal_new_training_started": false,
+  "gpu_checks": "NOT TESTED",
+  "p3_formal_training": "NOT AUTHORIZED BY GO"
+}
