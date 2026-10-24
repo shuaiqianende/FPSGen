@@ -8,7 +8,10 @@ from fpsgen.hier_occ_flow.stage1_training import run_stage1,validate_config
 
 def load_config(path):
     cfg=yaml.safe_load(Path(path).read_text())
-    cfg['geometry']=yaml.safe_load((Path(path).parent/cfg['geometry']).read_text())
+    # Saved run snapshots already contain the resolved geometry mapping.
+    # YAML launch configs may instead reference a geometry file relatively.
+    if isinstance(cfg['geometry'],str):
+        cfg['geometry']=yaml.safe_load((Path(path).parent/cfg['geometry']).read_text())
     validate_config(cfg)
     return cfg
 

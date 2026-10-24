@@ -33,6 +33,22 @@ def test_stage1_config_locks384_occupancy_and_scratch():
     with pytest.raises(ValueError):validate_config(bad)
 
 
+def test_stage1_config_loader_preserves_saved_inline_geometry(tmp_path,monkeypatch):
+    import yaml
+    scripts=Path(__file__).resolve().parents[1]/'scripts/research_v2/hier_occ_flow'
+    monkeypatch.syspath_prepend(str(scripts))
+    from train_stage1_occ import load_config
+    cfg=config()
+    snapshot=tmp_path/'config.json'
+    snapshot.write_text(json.dumps(cfg))
+    assert load_config(snapshot)==cfg
+    geometry_file=tmp_path/'geometry.yaml'
+    geometry_file.write_text(yaml.safe_dump(cfg['geometry']))
+    referenced=copy.deepcopy(cfg);referenced['geometry']='geometry.yaml'
+    launch=tmp_path/'launch.yaml';launch.write_text(yaml.safe_dump(referenced))
+    assert load_config(launch)==cfg
+
+
 @pytest.mark.parametrize('objective',['fm','bce'])
 @pytest.mark.parametrize('batch',[1,2])
 def test_real_unet_unit_grid_gradients_and_no_unused_parameters(objective,batch):

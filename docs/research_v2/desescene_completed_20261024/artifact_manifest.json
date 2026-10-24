@@ -1,0 +1,182 @@
+[
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/config.json",
+    "artifact": "b0/config.json",
+    "sha256": "e5de59d38dfc5a4891521fbd88618f24fd1e050317c098a7b21a0732161daad7",
+    "artifact_sha256": "e5de59d38dfc5a4891521fbd88618f24fd1e050317c098a7b21a0732161daad7"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/summary.json",
+    "artifact": "b0/summary.json",
+    "sha256": "1feab1bd5182f4101b9afe753c87c1a00913faf93f6c622456647ddf0dc778fd",
+    "artifact_sha256": "1feab1bd5182f4101b9afe753c87c1a00913faf93f6c622456647ddf0dc778fd"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/launch.json",
+    "artifact": "b0/launch.json",
+    "sha256": "9a7e519c9002b011546885b86e4a57b020f13119fb5cf13ead834d50fb8696b4",
+    "artifact_sha256": "9a7e519c9002b011546885b86e4a57b020f13119fb5cf13ead834d50fb8696b4"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/evaluation/mechanisms64/summary.json",
+    "artifact": "b0/mechanisms64/summary.json",
+    "sha256": "fadbe3fb88e54179bab7543ec42427149e5f6be3f5ab38c8c2da61f0d0a24950",
+    "artifact_sha256": "fadbe3fb88e54179bab7543ec42427149e5f6be3f5ab38c8c2da61f0d0a24950"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/evaluation/mechanisms64/contract.json",
+    "artifact": "b0/mechanisms64/contract.json",
+    "sha256": "ac1a2f659d3218835724c6741ab1a9d294a5d2a5062b2a4560feffef33c97522",
+    "artifact_sha256": "ac1a2f659d3218835724c6741ab1a9d294a5d2a5062b2a4560feffef33c97522"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/evaluation/mechanisms64/per_frame.csv",
+    "artifact": "b0/mechanisms64/per_frame.csv",
+    "sha256": "e4338f7510ea63ce2e1e54c1e1c018dc922b636ea2943239be4b66fbf49f6936",
+    "artifact_sha256": "66489201b79393614a0f628b86c2f73d28e144bc0275df270c3c9abe87a862cd"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/evaluation/mechanisms64/sensitivity.csv",
+    "artifact": "b0/mechanisms64/sensitivity.csv",
+    "sha256": "698b34b29aed3011fc980f35b7d29bdcee31016c551ff0cf52824d2357f3e2d5",
+    "artifact_sha256": "01e2446d0e856fb6eb237642b48fdc2d830ddcf5f0b1f8f5fdc8cf5832780db4"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/evaluation/primary900_nfe4.protocol.json",
+    "artifact": "b0/evaluation_protocol.json",
+    "sha256": "40d2563b44c9a32bf8199dde88ffcf60705e14e843a831a915f6147eca32e9ce",
+    "artifact_sha256": "40d2563b44c9a32bf8199dde88ffcf60705e14e843a831a915f6147eca32e9ce"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/m1_20k/config.json",
+    "artifact": "m1/config.json",
+    "sha256": "5b51289548b2c308e69307eda8f949423fc2dd30e602ae3b3eba7445bcdf23ea",
+    "artifact_sha256": "5b51289548b2c308e69307eda8f949423fc2dd30e602ae3b3eba7445bcdf23ea"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/m1_20k/summary.json",
+    "artifact": "m1/summary.json",
+    "sha256": "1fd0ba344b35f27c4c3da76f317e48d13c138de1809e6eb02ef093dbf8935f9a",
+    "artifact_sha256": "1fd0ba344b35f27c4c3da76f317e48d13c138de1809e6eb02ef093dbf8935f9a"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/m1_20k/launch.json",
+    "artifact": "m1/launch.json",
+    "sha256": "671d87360e67ac18170bd80283fac8871b061b564108ba6e88294077a54b59e2",
+    "artifact_sha256": "671d87360e67ac18170bd80283fac8871b061b564108ba6e88294077a54b59e2"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/m1_20k/evaluation/mechanisms64/summary.json",
+    "artifact": "m1/mechanisms64/summary.json",
+    "sha256": "2778675bb0cc616afdd49cb14ea9eb17eb29a9f73123716f43b6923222c8b989",
+    "artifact_sha256": "2778675bb0cc616afdd49cb14ea9eb17eb29a9f73123716f43b6923222c8b989"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/m1_20k/evaluation/mechanisms64/contract.json",
+    "artifact": "m1/mechanisms64/contract.json",
+    "sha256": "89cf505a7427134c94533664f9f6afd1c094866b5ae48e931268b3a0fbd5137f",
+    "artifact_sha256": "89cf505a7427134c94533664f9f6afd1c094866b5ae48e931268b3a0fbd5137f"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/m1_20k/evaluation/mechanisms64/per_frame.csv",
+    "artifact": "m1/mechanisms64/per_frame.csv",
+    "sha256": "8a88eab708d138040361c96f54273ea2be4d160f8ad9e03490b8551343f47dd4",
+    "artifact_sha256": "3a7a920ff71214a7cf5e565f93ed5f008c050247035a76aa71817c0ea5feb002"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/m1_20k/evaluation/mechanisms64/sensitivity.csv",
+    "artifact": "m1/mechanisms64/sensitivity.csv",
+    "sha256": "328cb25975b35967b028239b83c6aab2d5092e6a3160fd49b9ad57d7b0eee13a",
+    "artifact_sha256": "d29f450585b23dffcfaa8dc3ee9201aae37ffbd487eef15a7ec43f27a53251ce"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/m1_20k/evaluation/primary900_nfe4.protocol.json",
+    "artifact": "m1/evaluation_protocol.json",
+    "sha256": "f9a6c9b1120174d3359f8795f9b86e059bf002dd5e7d4a132c1cf96462f265e1",
+    "artifact_sha256": "f9a6c9b1120174d3359f8795f9b86e059bf002dd5e7d4a132c1cf96462f265e1"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/matched900_comparison.json",
+    "artifact": "matched900_comparison.json",
+    "sha256": "7a867d3d85dfcf1f7b049ee2e1e60a29cebc950964e37c81db917dd070db95dd",
+    "artifact_sha256": "7a867d3d85dfcf1f7b049ee2e1e60a29cebc950964e37c81db917dd070db95dd"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/e1_gpu3_20k_round1.json",
+    "artifact": "encoder/e1_gpu3_20k_round1.json",
+    "sha256": "159657f55ce58918bce2790a86df50ba27f77025f9c995e4ef91d0a54122427c",
+    "artifact_sha256": "159657f55ce58918bce2790a86df50ba27f77025f9c995e4ef91d0a54122427c"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/e1_gpu3_20k_round2.json",
+    "artifact": "encoder/e1_gpu3_20k_round2.json",
+    "sha256": "5df45c455a9a9d30a40f1d61ae257d554495f32a718449777f51196fd5b62f03",
+    "artifact_sha256": "5df45c455a9a9d30a40f1d61ae257d554495f32a718449777f51196fd5b62f03"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/e1_gpu3_20k_round3.json",
+    "artifact": "encoder/e1_gpu3_20k_round3.json",
+    "sha256": "10169153b7d77d86640c06ac6b50a20eb553ac183039204fd2c053e7d251c9cf",
+    "artifact_sha256": "10169153b7d77d86640c06ac6b50a20eb553ac183039204fd2c053e7d251c9cf"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/e2_gpu2_20k_round1.json",
+    "artifact": "encoder/e2_gpu2_20k_round1.json",
+    "sha256": "c4ad4ade77beca252e134f4503a706e5e1a5eb2b08cbc8201c7891aa92020b7f",
+    "artifact_sha256": "c4ad4ade77beca252e134f4503a706e5e1a5eb2b08cbc8201c7891aa92020b7f"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/e2_gpu2_20k_round2.json",
+    "artifact": "encoder/e2_gpu2_20k_round2.json",
+    "sha256": "843806204cdd7e6131fe1a8f462736837eefc9f4bf4c17c5491307aabe4d3fed",
+    "artifact_sha256": "843806204cdd7e6131fe1a8f462736837eefc9f4bf4c17c5491307aabe4d3fed"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/e2_gpu2_20k_round3.json",
+    "artifact": "encoder/e2_gpu2_20k_round3.json",
+    "sha256": "e3f2634350f4d23bd50d600d4263c57a41d97d37781c1d525c3e25e92810f39c",
+    "artifact_sha256": "e3f2634350f4d23bd50d600d4263c57a41d97d37781c1d525c3e25e92810f39c"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/e3_gpu3_20k_round1.json",
+    "artifact": "encoder/e3_gpu3_20k_round1.json",
+    "sha256": "82f39250a554776c9ce18d6f078cae7644795effc7eb35a3a9699737a359d6c2",
+    "artifact_sha256": "82f39250a554776c9ce18d6f078cae7644795effc7eb35a3a9699737a359d6c2"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/e3_gpu3_20k_round2.json",
+    "artifact": "encoder/e3_gpu3_20k_round2.json",
+    "sha256": "1df71e1d35b1f692c35b02ae9beefd1105c3958be77df7d116c0663bb8817d60",
+    "artifact_sha256": "1df71e1d35b1f692c35b02ae9beefd1105c3958be77df7d116c0663bb8817d60"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/e3_gpu3_20k_round3.json",
+    "artifact": "encoder/e3_gpu3_20k_round3.json",
+    "sha256": "8afbcf5d8d4e7df5c3baed2fc71795d016d9b8b5e62ace6ba9ee84b3e9fb2ed7",
+    "artifact_sha256": "8afbcf5d8d4e7df5c3baed2fc71795d016d9b8b5e62ace6ba9ee84b3e9fb2ed7"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/r0_gpu2_20k_round1.json",
+    "artifact": "encoder/r0_gpu2_20k_round1.json",
+    "sha256": "6f8af673ae952ebcd11200090249f34efc0e39d12620b732540e5ee9c16b4b41",
+    "artifact_sha256": "6f8af673ae952ebcd11200090249f34efc0e39d12620b732540e5ee9c16b4b41"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/r0_gpu2_20k_round2.json",
+    "artifact": "encoder/r0_gpu2_20k_round2.json",
+    "sha256": "83169ccb9a56d6dca016ddc63f544a99f6b30b6c10a70e21a1ec60c7f47e99ef",
+    "artifact_sha256": "83169ccb9a56d6dca016ddc63f544a99f6b30b6c10a70e21a1ec60c7f47e99ef"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/r0_gpu2_20k_round3.json",
+    "artifact": "encoder/r0_gpu2_20k_round3.json",
+    "sha256": "3ec5fb281c3ae8fde90c98c722a4822264a73a9ea45b204c5ab36918f16a33bf",
+    "artifact_sha256": "3ec5fb281c3ae8fde90c98c722a4822264a73a9ea45b204c5ab36918f16a33bf"
+  },
+  {
+    "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d4_encoder_retry_20261024/summary.json",
+    "artifact": "encoder/summary.json",
+    "sha256": "9f15c5d5aad7630aaf716cf5e030afbe147db15a47a7e990cf5d2292807e2053",
+    "artifact_sha256": "9f15c5d5aad7630aaf716cf5e030afbe147db15a47a7e990cf5d2292807e2053"
+  }
+]

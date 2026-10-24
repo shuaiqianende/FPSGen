@@ -1,0 +1,127 @@
+{
+  "cache": {
+    "enabled": false,
+    "max_bytes": 8589934592,
+    "root": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_cache/desescene"
+  },
+  "candidates": {
+    "calibration_status": "frozen_uncalibrated_threshold_0.5",
+    "mode": "predicted",
+    "negative_fraction": 0.25,
+    "neutral_score": 1.0,
+    "oracle_score": "neutral",
+    "seed": 20261018,
+    "selection": {
+      "budget": 500000,
+      "expansion": 0,
+      "overflow": "error",
+      "strategy": "threshold",
+      "threshold": 0.5
+    },
+    "stage1_nfe": 2
+  },
+  "data_root": "/data-12/M2024-HWZ/KITTI_Odometry",
+  "development_dataset": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development",
+  "engineering_gate": "experiments/desescene_state_condition_v1/gate.json",
+  "flow": {
+    "sigma": 1.0,
+    "source": "gaussian",
+    "target_mapping": "binary_symmetric"
+  },
+  "geometry": {
+    "child_split": [
+      2,
+      2,
+      2
+    ],
+    "maximum": [
+      50.0,
+      50.0,
+      4.4
+    ],
+    "origin": [
+      -50.0,
+      -50.0,
+      -4.0
+    ],
+    "parent_resolution": [
+      384,
+      384,
+      32
+    ],
+    "sphere_radius": 50.0
+  },
+  "initialization": {
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt",
+    "checkpoint_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+    "type": "paired_finetune",
+    "weights": "model"
+  },
+  "loss": {
+    "fm": 1.0
+  },
+  "model": {
+    "backbone": "ptv3",
+    "checkpointing": true,
+    "condition_mode": "pyramid_observed",
+    "context_strategy": "dynamic",
+    "lidar_channels": 384,
+    "objective": "fm",
+    "patch_sizes": [
+      64,
+      128
+    ],
+    "state_condition_interaction": "residual_v1",
+    "width": 64
+  },
+  "research_protocol": "desescene_sci_dynamic_m1_v1",
+  "stage1": {
+    "adapter": {
+      "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+      "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+      "config": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4/config.json",
+      "weights": "ema"
+    },
+    "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+    "type": "occupancy384"
+  },
+  "train_dataset": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/train",
+  "training": {
+    "batch_per_gpu": 2,
+    "batching": "packed_variable_length",
+    "checkpoint_every": 500,
+    "cpu_threads": 4,
+    "ema_decay": 0.999,
+    "grad_clip": 1.0,
+    "lr": 0.0002,
+    "max_batch_parent_tokens": 1000000,
+    "max_parent_tokens": 500000,
+    "milestone_every": 2500,
+    "precision": "fp16",
+    "scope": "research_pilot",
+    "seed": 20261032,
+    "successful_frame_exposures": 20000,
+    "successful_updates": 10000,
+    "warmup_updates": 500,
+    "weight_decay": 0.01
+  },
+  "validation": {
+    "enabled": false,
+    "every_updates": 10000,
+    "max_frames": 900,
+    "nfes": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "sampling_seeds": [
+      20261031,
+      20261032,
+      20261033
+    ],
+    "seed": 20261031,
+    "structural_metrics": true,
+    "threshold": 0.0
+  }
+}

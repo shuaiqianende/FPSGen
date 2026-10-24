@@ -1,0 +1,480 @@
+{
+  "status": "COMPLETE_COMPARISON",
+  "frames": 900,
+  "candidate": "M1",
+  "reference": "B0",
+  "same_input_and_support_all900": true,
+  "native_iou_delta": {
+    "metric": "iou",
+    "direction": "candidate_minus_reference",
+    "scenes": 900,
+    "mean": -4.427676434710269e-05,
+    "ci95": [
+      -0.00013332996135667535,
+      4.2171885948869036e-05
+    ],
+    "grouping": "sequence and floor(frame/100)",
+    "groups": 9,
+    "bootstrap_seed": 20261034,
+    "bootstrap_draws": 4000,
+    "worst_decile_mean": -0.000384836132045751,
+    "worst_frames": [
+      {
+        "sequence": "01",
+        "frame": 578,
+        "delta": -0.0007339707862761835
+      },
+      {
+        "sequence": "01",
+        "frame": 509,
+        "delta": -0.0007224982031935334
+      },
+      {
+        "sequence": "01",
+        "frame": 575,
+        "delta": -0.0006482276072053983
+      },
+      {
+        "sequence": "01",
+        "frame": 570,
+        "delta": -0.0006287386367675452
+      },
+      {
+        "sequence": "01",
+        "frame": 576,
+        "delta": -0.0006040293196520885
+      },
+      {
+        "sequence": "01",
+        "frame": 571,
+        "delta": -0.000590632739860153
+      },
+      {
+        "sequence": "01",
+        "frame": 577,
+        "delta": -0.000579125651150314
+      },
+      {
+        "sequence": "01",
+        "frame": 510,
+        "delta": -0.0005307576247071677
+      },
+      {
+        "sequence": "01",
+        "frame": 589,
+        "delta": -0.0005271292146340478
+      },
+      {
+        "sequence": "01",
+        "frame": 521,
+        "delta": -0.0005199409767572827
+      }
+    ]
+  },
+  "metric_deltas": {
+    "cd_m": {
+      "metric": "cd_m",
+      "direction": "candidate_minus_reference",
+      "scenes": 900,
+      "mean": 0.00011182137165154758,
+      "ci95": [
+        5.505844034427532e-05,
+        0.000185043592623165
+      ],
+      "grouping": "sequence and floor(frame/100)",
+      "groups": 9,
+      "bootstrap_seed": 20261034,
+      "bootstrap_draws": 4000,
+      "worst_decile_mean": 0.0012822101781831742,
+      "worst_frames": [
+        {
+          "sequence": "02",
+          "frame": 587,
+          "delta": 0.011803673920333324
+        },
+        {
+          "sequence": "02",
+          "frame": 555,
+          "delta": 0.0066640878226676414
+        },
+        {
+          "sequence": "02",
+          "frame": 541,
+          "delta": 0.005307535000059621
+        },
+        {
+          "sequence": "05",
+          "frame": 558,
+          "delta": 0.004207169762789731
+        },
+        {
+          "sequence": "05",
+          "frame": 524,
+          "delta": 0.0035733188307896513
+        },
+        {
+          "sequence": "05",
+          "frame": 534,
+          "delta": 0.0034116961520447298
+        },
+        {
+          "sequence": "03",
+          "frame": 591,
+          "delta": 0.002804018386024898
+        },
+        {
+          "sequence": "10",
+          "frame": 566,
+          "delta": 0.0028037042256152667
+        },
+        {
+          "sequence": "02",
+          "frame": 554,
+          "delta": 0.0027799342930646675
+        },
+        {
+          "sequence": "10",
+          "frame": 594,
+          "delta": 0.0027462386560738183
+        }
+      ]
+    },
+    "iou05": {
+      "metric": "iou05",
+      "direction": "candidate_minus_reference",
+      "scenes": 900,
+      "mean": -5.1257278293411204e-05,
+      "ci95": [
+        -7.453745901593391e-05,
+        -2.905469069360771e-05
+      ],
+      "grouping": "sequence and floor(frame/100)",
+      "groups": 9,
+      "bootstrap_seed": 20261034,
+      "bootstrap_draws": 4000,
+      "worst_decile_mean": -0.0004475170368642583,
+      "worst_frames": [
+        {
+          "sequence": "01",
+          "frame": 510,
+          "delta": -0.0007700232790908146
+        },
+        {
+          "sequence": "10",
+          "frame": 577,
+          "delta": -0.000667023096957764
+        },
+        {
+          "sequence": "00",
+          "frame": 502,
+          "delta": -0.0006597013532124163
+        },
+        {
+          "sequence": "07",
+          "frame": 599,
+          "delta": -0.0006582230896535757
+        },
+        {
+          "sequence": "05",
+          "frame": 596,
+          "delta": -0.0006422249495821042
+        },
+        {
+          "sequence": "00",
+          "frame": 560,
+          "delta": -0.0006213176218531902
+        },
+        {
+          "sequence": "01",
+          "frame": 506,
+          "delta": -0.0006130092766867268
+        },
+        {
+          "sequence": "06",
+          "frame": 597,
+          "delta": -0.0006032805349232007
+        },
+        {
+          "sequence": "01",
+          "frame": 568,
+          "delta": -0.0005998346524686005
+        },
+        {
+          "sequence": "05",
+          "frame": 588,
+          "delta": -0.0005925427429556707
+        }
+      ]
+    },
+    "iou02": {
+      "metric": "iou02",
+      "direction": "candidate_minus_reference",
+      "scenes": 900,
+      "mean": -2.750634089594457e-05,
+      "ci95": [
+        -0.00010114719286748603,
+        4.871490382271889e-05
+      ],
+      "grouping": "sequence and floor(frame/100)",
+      "groups": 9,
+      "bootstrap_seed": 20261034,
+      "bootstrap_draws": 4000,
+      "worst_decile_mean": -0.0003553389556417782,
+      "worst_frames": [
+        {
+          "sequence": "01",
+          "frame": 570,
+          "delta": -0.0006633212130958688
+        },
+        {
+          "sequence": "01",
+          "frame": 506,
+          "delta": -0.0006520979699569107
+        },
+        {
+          "sequence": "01",
+          "frame": 577,
+          "delta": -0.0005868036963848633
+        },
+        {
+          "sequence": "01",
+          "frame": 553,
+          "delta": -0.0005843957679421141
+        },
+        {
+          "sequence": "01",
+          "frame": 503,
+          "delta": -0.0005826628962209979
+        },
+        {
+          "sequence": "01",
+          "frame": 510,
+          "delta": -0.0005329984168882529
+        },
+        {
+          "sequence": "01",
+          "frame": 509,
+          "delta": -0.0005140990266087053
+        },
+        {
+          "sequence": "01",
+          "frame": 561,
+          "delta": -0.0005063518502246289
+        },
+        {
+          "sequence": "01",
+          "frame": 524,
+          "delta": -0.0005057361105915703
+        },
+        {
+          "sequence": "01",
+          "frame": 511,
+          "delta": -0.0004996406500419326
+        }
+      ]
+    },
+    "iou01": {
+      "metric": "iou01",
+      "direction": "candidate_minus_reference",
+      "scenes": 900,
+      "mean": -1.6801000196669857e-05,
+      "ci95": [
+        -4.860117220824931e-05,
+        1.827449328081071e-05
+      ],
+      "grouping": "sequence and floor(frame/100)",
+      "groups": 9,
+      "bootstrap_seed": 20261034,
+      "bootstrap_draws": 4000,
+      "worst_decile_mean": -0.00014986268000725112,
+      "worst_frames": [
+        {
+          "sequence": "01",
+          "frame": 567,
+          "delta": -0.00025077983305341056
+        },
+        {
+          "sequence": "01",
+          "frame": 578,
+          "delta": -0.0002378305679943682
+        },
+        {
+          "sequence": "01",
+          "frame": 589,
+          "delta": -0.00022431296821964763
+        },
+        {
+          "sequence": "01",
+          "frame": 571,
+          "delta": -0.0002242074611665812
+        },
+        {
+          "sequence": "01",
+          "frame": 522,
+          "delta": -0.00022408644099375374
+        },
+        {
+          "sequence": "01",
+          "frame": 511,
+          "delta": -0.00021944168726534263
+        },
+        {
+          "sequence": "01",
+          "frame": 575,
+          "delta": -0.00021933517435740457
+        },
+        {
+          "sequence": "01",
+          "frame": 500,
+          "delta": -0.00020470023852781072
+        },
+        {
+          "sequence": "01",
+          "frame": 577,
+          "delta": -0.00019247539828623483
+        },
+        {
+          "sequence": "00",
+          "frame": 576,
+          "delta": -0.00019075218673975103
+        }
+      ]
+    },
+    "jsd_3d": {
+      "metric": "jsd_3d",
+      "direction": "candidate_minus_reference",
+      "scenes": 900,
+      "mean": 5.169102366020353e-05,
+      "ci95": [
+        3.5523006272843165e-05,
+        6.755777933260431e-05
+      ],
+      "grouping": "sequence and floor(frame/100)",
+      "groups": 9,
+      "bootstrap_seed": 20261034,
+      "bootstrap_draws": 4000,
+      "worst_decile_mean": 0.0002043868218504,
+      "worst_frames": [
+        {
+          "sequence": "01",
+          "frame": 500,
+          "delta": 0.000360027096538873
+        },
+        {
+          "sequence": "01",
+          "frame": 508,
+          "delta": 0.0003450154821471596
+        },
+        {
+          "sequence": "01",
+          "frame": 512,
+          "delta": 0.00034435153762071846
+        },
+        {
+          "sequence": "01",
+          "frame": 510,
+          "delta": 0.0003423759355989098
+        },
+        {
+          "sequence": "01",
+          "frame": 567,
+          "delta": 0.0003194238104102243
+        },
+        {
+          "sequence": "01",
+          "frame": 507,
+          "delta": 0.0002859832172204535
+        },
+        {
+          "sequence": "05",
+          "frame": 593,
+          "delta": 0.000261709658954945
+        },
+        {
+          "sequence": "06",
+          "frame": 522,
+          "delta": 0.000251162431976093
+        },
+        {
+          "sequence": "05",
+          "frame": 540,
+          "delta": 0.0002497527296084767
+        },
+        {
+          "sequence": "03",
+          "frame": 557,
+          "delta": 0.0002473119087859077
+        }
+      ]
+    },
+    "jsd_bev": {
+      "metric": "jsd_bev",
+      "direction": "candidate_minus_reference",
+      "scenes": 900,
+      "mean": 5.932062834928608e-05,
+      "ci95": [
+        4.168011462041103e-05,
+        7.78066496663712e-05
+      ],
+      "grouping": "sequence and floor(frame/100)",
+      "groups": 9,
+      "bootstrap_seed": 20261034,
+      "bootstrap_draws": 4000,
+      "worst_decile_mean": 0.0004132736365820594,
+      "worst_frames": [
+        {
+          "sequence": "10",
+          "frame": 552,
+          "delta": 0.0008382801855150168
+        },
+        {
+          "sequence": "05",
+          "frame": 596,
+          "delta": 0.0007907051717178093
+        },
+        {
+          "sequence": "02",
+          "frame": 541,
+          "delta": 0.0007791117813508719
+        },
+        {
+          "sequence": "10",
+          "frame": 592,
+          "delta": 0.0006609632016876255
+        },
+        {
+          "sequence": "01",
+          "frame": 512,
+          "delta": 0.0006272007536082258
+        },
+        {
+          "sequence": "10",
+          "frame": 577,
+          "delta": 0.0005987611788308977
+        },
+        {
+          "sequence": "10",
+          "frame": 519,
+          "delta": 0.0005971669301297888
+        },
+        {
+          "sequence": "01",
+          "frame": 563,
+          "delta": 0.0005727274288092887
+        },
+        {
+          "sequence": "09",
+          "frame": 595,
+          "delta": 0.0005605800120877524
+        },
+        {
+          "sequence": "03",
+          "frame": 592,
+          "delta": 0.0005576159182584806
+        }
+      ]
+    }
+  },
+  "decision": "M1_NO_DEMONSTRATED_BENEFIT",
+  "reason": "Native Fine IoU gain fails the registered +1pp gate; observed mean difference is slightly negative. Do not expand M1 training."
+}

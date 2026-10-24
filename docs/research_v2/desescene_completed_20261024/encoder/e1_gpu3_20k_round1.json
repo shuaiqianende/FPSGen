@@ -1,0 +1,2288 @@
+{
+  "benchmark_frame_manifest": [
+    {
+      "frame": 587,
+      "input_sha256": "6cc03aa5c55ebc6e034a896917514746c4fe17636c690aaca008d6751162f156",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/01/input_/000587.npy",
+      "sequence": "01"
+    },
+    {
+      "frame": 524,
+      "input_sha256": "3b472169f167b8c7043622f5005bc1b6dda4d95f90c8d913e4ba29f15290bd60",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/02/input_/000524.npy",
+      "sequence": "02"
+    },
+    {
+      "frame": 562,
+      "input_sha256": "c2f89cb6a30637ab3c6ae026a227ce005525d651a679ea2e624032e0ee223a6b",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/02/input_/000562.npy",
+      "sequence": "02"
+    },
+    {
+      "frame": 599,
+      "input_sha256": "556dc1ec271c62e6b21f9f147724f86e28cab9b47c6cd8fe5194eb32327a99d0",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/02/input_/000599.npy",
+      "sequence": "02"
+    },
+    {
+      "frame": 537,
+      "input_sha256": "be02721ef2140ba46eb397e5fb11eb8f3b5950c8fce98abed29e99e0e1190a5d",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/03/input_/000537.npy",
+      "sequence": "03"
+    },
+    {
+      "frame": 574,
+      "input_sha256": "8b38ae01101c9145dc300545646a1ad0fea53fbeec02b2709cbb5ac61bdde0e6",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/03/input_/000574.npy",
+      "sequence": "03"
+    },
+    {
+      "frame": 512,
+      "input_sha256": "07edf0f52fa816629423c867c37b9088fc4437a7a129f1b7bc9a63b39c5217d4",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/05/input_/000512.npy",
+      "sequence": "05"
+    },
+    {
+      "frame": 549,
+      "input_sha256": "9073bd536bbdb255db726636076b95d5af5d18d6ba86d2fd65dfff40a9e1da4e",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/05/input_/000549.npy",
+      "sequence": "05"
+    },
+    {
+      "frame": 586,
+      "input_sha256": "2de4e2bf05504e7e0bb30457b6665330de5c9065eba48f7f66c53f348ecb071c",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/05/input_/000586.npy",
+      "sequence": "05"
+    },
+    {
+      "frame": 524,
+      "input_sha256": "d0a3f70b4190b7dabe491eea655f1170ddaf51466cbc9c69a9110fb63f3f0511",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/06/input_/000524.npy",
+      "sequence": "06"
+    },
+    {
+      "frame": 561,
+      "input_sha256": "c1c4018c47586b68dfc1e4669c7e3bf524a8435434b13c9a9f679fc97ffb0d69",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/06/input_/000561.npy",
+      "sequence": "06"
+    },
+    {
+      "frame": 599,
+      "input_sha256": "686f5ec3458919f941747b3cbf8d49926a430a20f180a2b66e88a395dce612ae",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/06/input_/000599.npy",
+      "sequence": "06"
+    },
+    {
+      "frame": 536,
+      "input_sha256": "7fda1ab1db606adb1cc8303ef4bb734c1ab18d34781d0eaf40d9b756ecb50f50",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/07/input_/000536.npy",
+      "sequence": "07"
+    },
+    {
+      "frame": 574,
+      "input_sha256": "26e97b70234d759436f9d4fc410d32f69db9a6389fb78c04f3469ee5e4b8aac8",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/07/input_/000574.npy",
+      "sequence": "07"
+    },
+    {
+      "frame": 511,
+      "input_sha256": "5acf94eb8f07f2fab4dce47197947df59905cc9629503a26dfe2b8b242b8acd7",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/09/input_/000511.npy",
+      "sequence": "09"
+    },
+    {
+      "frame": 549,
+      "input_sha256": "cc2e34d44a16317bfc88eb019c166c02520e857663e7dc5e712deea6a8fc9f1d",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/09/input_/000549.npy",
+      "sequence": "09"
+    },
+    {
+      "frame": 586,
+      "input_sha256": "8447993b9028aa3c1b765d78ecdc3dd676b9b7069bfcff5e59eea4b105cb41c5",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/09/input_/000586.npy",
+      "sequence": "09"
+    },
+    {
+      "frame": 524,
+      "input_sha256": "6253718b159ea9f36ecef3c3999e5982db4c57586c9141b43f95ee87dd96fa20",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/10/input_/000524.npy",
+      "sequence": "10"
+    },
+    {
+      "frame": 561,
+      "input_sha256": "efd3bd5b0429b6134f6ec4c158edeaed76e5aacdffd476d78d3b9cf4c028a624",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/10/input_/000561.npy",
+      "sequence": "10"
+    },
+    {
+      "frame": 599,
+      "input_sha256": "35f5704030768d9b8c453b9ef0140c091e7ceef6c91fcc9159ba8c8ecf479496",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/10/input_/000599.npy",
+      "sequence": "10"
+    }
+  ],
+  "benchmark_script_sha256": "d684849eea253a875b840783724166e4449ad7dadb13a1bc9d579a404be00a49",
+  "candidate_budgets_for_separate_evaluation": [
+    78694,
+    84963,
+    94087
+  ],
+  "checkpoint_sha256": "82b34a0c9df593900d46bf2f4484161733ba6e1af1f236501769b89218a7d20e",
+  "config_sha256": "c8c265c929ef119c3619e3d888ebb78fd3bce67791bc3ccc97487f5f317f5d49",
+  "cuda": "11.7",
+  "cudnn_runtime_query_error": "RuntimeError: cuDNN version incompatibility: PyTorch was compiled  against (8, 5, 0) but found runtime version (8, 4, 0). PyTorch already comes bundled with cuDNN. One option to resolving this error is to ensure PyTorch can find the bundled cuDNN.Looks like your LD_LIBRARY_PATH contains incompatible version of cudnnPlease either remove it from the path or install cudnn (8, 5, 0)",
+  "cudnn_runtime_version": null,
+  "device_name": "NVIDIA GeForce RTX 3090",
+  "ema": true,
+  "explicit_precision_audit": {
+    "fp32_frequency_buffers": [],
+    "mode": "fp16_full",
+    "norm_modules_fp32": [],
+    "norm_precision_hooks": 0,
+    "parameter_bytes": 34491376,
+    "parameter_count": 17245688,
+    "parameter_dtypes": {
+      "torch.float16": 17245688
+    }
+  },
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "gpu_admission": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24106.0,
+        "physical_gpu": 3,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 16.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "input_manifest_sha256": "224c556d7a8da18e437e53e2e67aa08cf364c909f80fe068dbb813570c7955fe",
+  "parameter_dtype_audit": {
+    "modules": [
+      {
+        "module": "lidar_tokenizer.point_mlp.0",
+        "parameter_bytes": 24,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm1d"
+      },
+      {
+        "module": "lidar_tokenizer.point_mlp.1",
+        "parameter_bytes": 896,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Linear"
+      },
+      {
+        "module": "lidar_tokenizer.point_mlp.2",
+        "parameter_bytes": 256,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm1d"
+      },
+      {
+        "module": "lidar_tokenizer.point_mlp.4",
+        "parameter_bytes": 16640,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Linear"
+      },
+      {
+        "module": "lidar_tokenizer.point_mlp.5",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm1d"
+      },
+      {
+        "module": "lidar_tokenizer.point_mlp.7",
+        "parameter_bytes": 66048,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Linear"
+      },
+      {
+        "module": "lidar_tokenizer.point_mlp.8",
+        "parameter_bytes": 1024,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm1d"
+      },
+      {
+        "module": "lidar_tokenizer.point_mlp.10",
+        "parameter_bytes": 65792,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Linear"
+      },
+      {
+        "module": "voxel_backbone.layers.0.0.reduce.conv",
+        "parameter_bytes": 24576,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.0.reduce.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.0.local1.conv",
+        "parameter_bytes": 497664,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.0.local1.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.0.local2.conv",
+        "parameter_bytes": 497664,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.0.local2.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.0.expand.conv",
+        "parameter_bytes": 24576,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.0.expand.norm",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.0.skip.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.0.skip.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.1.reduce.conv",
+        "parameter_bytes": 24576,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.1.reduce.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.1.local1.conv",
+        "parameter_bytes": 497664,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.1.local1.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.1.local2.conv",
+        "parameter_bytes": 497664,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.1.local2.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.1.expand.conv",
+        "parameter_bytes": 24576,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.0.1.expand.norm",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.1.0.conv1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.1.0.conv1.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.1.0.conv2.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.1.0.conv2.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.1.0.downsample.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.1.0.downsample.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.1.1.conv1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.1.1.conv1.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.1.1.conv2.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.1.1.conv2.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.2.0.conv1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.2.0.conv1.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.2.0.conv2.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.2.0.conv2.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.2.0.downsample.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.2.0.downsample.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.2.1.conv1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.2.1.conv1.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_backbone.layers.2.1.conv2.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_backbone.layers.2.1.conv2.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "voxel_neck.lateral_convs.0.conv",
+        "parameter_bytes": 65536,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_neck.lateral_convs.0.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "voxel_neck.lateral_convs.1.conv",
+        "parameter_bytes": 65536,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_neck.lateral_convs.1.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "voxel_neck.fpn_convs.0.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_neck.fpn_convs.0.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "voxel_neck.fpn_convs.1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "voxel_neck.fpn_convs.1.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_backbone.layers.0.0.reduce.conv",
+        "parameter_bytes": 24576,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.0.reduce.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.0.local1.conv",
+        "parameter_bytes": 497664,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.0.local1.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.0.local2.conv",
+        "parameter_bytes": 497664,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.0.local2.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.0.expand.conv",
+        "parameter_bytes": 24576,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.0.expand.norm",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.0.skip.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.0.skip.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_backbone.layers.0.1.reduce.conv",
+        "parameter_bytes": 24576,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.1.reduce.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.1.local1.conv",
+        "parameter_bytes": 497664,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.1.local1.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.1.local2.conv",
+        "parameter_bytes": 497664,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.1.local2.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.1.expand.conv",
+        "parameter_bytes": 24576,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.1.expand.norm",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.2.reduce.conv",
+        "parameter_bytes": 24576,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.2.reduce.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.2.local1.conv",
+        "parameter_bytes": 497664,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.2.local1.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.2.local2.conv",
+        "parameter_bytes": 497664,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.2.local2.norm",
+        "parameter_bytes": 384,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.0.2.expand.conv",
+        "parameter_bytes": 24576,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.0.2.expand.norm",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.1.0.conv1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.1.0.conv1.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.1.0.conv2.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.1.0.conv2.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.1.0.downsample.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.1.0.downsample.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_backbone.layers.1.1.conv1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.1.1.conv1.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.1.1.conv2.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.1.1.conv2.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.1.2.conv1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.1.2.conv1.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.1.2.conv2.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.1.2.conv2.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.2.0.conv1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.2.0.conv1.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.2.0.conv2.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.2.0.conv2.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.2.0.downsample.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.2.0.downsample.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_backbone.layers.2.1.conv1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.2.1.conv1.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.2.1.conv2.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.2.1.conv2.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.2.2.conv1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.2.2.conv1.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_backbone.layers.2.2.conv2.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_backbone.layers.2.2.conv2.bn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "BatchNorm3d"
+      },
+      {
+        "module": "local_neck.lateral_convs_cls.0.conv",
+        "parameter_bytes": 65536,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_neck.lateral_convs_cls.0.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.lateral_convs_cls.1.conv",
+        "parameter_bytes": 65536,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_neck.lateral_convs_cls.1.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.fpn_convs_cls.0.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_neck.fpn_convs_cls.0.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.fpn_convs_cls.1.conv",
+        "parameter_bytes": 884736,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_neck.fpn_convs_cls.1.gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.weights_conv",
+        "parameter_bytes": 768,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.conv1x1_xy",
+        "parameter_bytes": 33024,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.conv1x1_yz",
+        "parameter_bytes": 33024,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.conv1x1_zx",
+        "parameter_bytes": 33024,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.offset_xy",
+        "parameter_bytes": 41508,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.offset_yz",
+        "parameter_bytes": 41508,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.offset_zx",
+        "parameter_bytes": 41508,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.defconv_xy",
+        "parameter_bytes": 294912,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "DeformConv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.defconv_yz",
+        "parameter_bytes": 294912,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "DeformConv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.defconv_zx",
+        "parameter_bytes": 294912,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "DeformConv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.gn_xy",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.gn_yz",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.gn_zx",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.fuse_conv",
+        "parameter_bytes": 32768,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.0.fuse_gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.weights_conv",
+        "parameter_bytes": 768,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.conv1x1_xy",
+        "parameter_bytes": 33024,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.conv1x1_yz",
+        "parameter_bytes": 33024,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.conv1x1_zx",
+        "parameter_bytes": 33024,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.offset_xy",
+        "parameter_bytes": 41508,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.offset_yz",
+        "parameter_bytes": 41508,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.offset_zx",
+        "parameter_bytes": 41508,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.defconv_xy",
+        "parameter_bytes": 294912,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "DeformConv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.defconv_yz",
+        "parameter_bytes": 294912,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "DeformConv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.defconv_zx",
+        "parameter_bytes": 294912,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "DeformConv2d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.gn_xy",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.gn_yz",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.gn_zx",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.fuse_conv",
+        "parameter_bytes": 32768,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "Conv3d"
+      },
+      {
+        "module": "local_neck.sp_tpvs_cls.1.fuse_gn",
+        "parameter_bytes": 512,
+        "parameter_dtypes": [
+          "torch.float16"
+        ],
+        "type": "GroupNorm"
+      }
+    ],
+    "parameter_bytes_by_dtype": {
+      "torch.float16": 34491376
+    }
+  },
+  "peak_allocated_gib": 1.9367871284484863,
+  "peak_reserved_gib": 2.349609375,
+  "per_frame": [
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 587,
+      "generation_encoder_wall_ms": 178.48709225654602,
+      "input_sha256": "6cc03aa5c55ebc6e034a896917514746c4fe17636c690aaca008d6751162f156",
+      "network_cuda_event_ms": 176.83737182617188,
+      "round": 1,
+      "sequence": "01"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 524,
+      "generation_encoder_wall_ms": 177.5783710181713,
+      "input_sha256": "3b472169f167b8c7043622f5005bc1b6dda4d95f90c8d913e4ba29f15290bd60",
+      "network_cuda_event_ms": 177.42848205566406,
+      "round": 1,
+      "sequence": "02"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 562,
+      "generation_encoder_wall_ms": 177.1707646548748,
+      "input_sha256": "c2f89cb6a30637ab3c6ae026a227ce005525d651a679ea2e624032e0ee223a6b",
+      "network_cuda_event_ms": 177.03082275390625,
+      "round": 1,
+      "sequence": "02"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 599,
+      "generation_encoder_wall_ms": 177.3310173302889,
+      "input_sha256": "556dc1ec271c62e6b21f9f147724f86e28cab9b47c6cd8fe5194eb32327a99d0",
+      "network_cuda_event_ms": 177.17779541015625,
+      "round": 1,
+      "sequence": "02"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 537,
+      "generation_encoder_wall_ms": 177.4619072675705,
+      "input_sha256": "be02721ef2140ba46eb397e5fb11eb8f3b5950c8fce98abed29e99e0e1190a5d",
+      "network_cuda_event_ms": 177.30796813964844,
+      "round": 1,
+      "sequence": "03"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 574,
+      "generation_encoder_wall_ms": 177.62585543096066,
+      "input_sha256": "8b38ae01101c9145dc300545646a1ad0fea53fbeec02b2709cbb5ac61bdde0e6",
+      "network_cuda_event_ms": 177.48252868652344,
+      "round": 1,
+      "sequence": "03"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 512,
+      "generation_encoder_wall_ms": 177.23714374005795,
+      "input_sha256": "07edf0f52fa816629423c867c37b9088fc4437a7a129f1b7bc9a63b39c5217d4",
+      "network_cuda_event_ms": 177.08409118652344,
+      "round": 1,
+      "sequence": "05"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 549,
+      "generation_encoder_wall_ms": 177.4081252515316,
+      "input_sha256": "9073bd536bbdb255db726636076b95d5af5d18d6ba86d2fd65dfff40a9e1da4e",
+      "network_cuda_event_ms": 177.25967407226562,
+      "round": 1,
+      "sequence": "05"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 586,
+      "generation_encoder_wall_ms": 177.24834941327572,
+      "input_sha256": "2de4e2bf05504e7e0bb30457b6665330de5c9065eba48f7f66c53f348ecb071c",
+      "network_cuda_event_ms": 177.10096740722656,
+      "round": 1,
+      "sequence": "05"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 524,
+      "generation_encoder_wall_ms": 177.1390587091446,
+      "input_sha256": "d0a3f70b4190b7dabe491eea655f1170ddaf51466cbc9c69a9110fb63f3f0511",
+      "network_cuda_event_ms": 176.98255920410156,
+      "round": 1,
+      "sequence": "06"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 561,
+      "generation_encoder_wall_ms": 177.7215339243412,
+      "input_sha256": "c1c4018c47586b68dfc1e4669c7e3bf524a8435434b13c9a9f679fc97ffb0d69",
+      "network_cuda_event_ms": 177.54165649414062,
+      "round": 1,
+      "sequence": "06"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 599,
+      "generation_encoder_wall_ms": 177.13847942650318,
+      "input_sha256": "686f5ec3458919f941747b3cbf8d49926a430a20f180a2b66e88a395dce612ae",
+      "network_cuda_event_ms": 176.9808349609375,
+      "round": 1,
+      "sequence": "06"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 536,
+      "generation_encoder_wall_ms": 177.0846601575613,
+      "input_sha256": "7fda1ab1db606adb1cc8303ef4bb734c1ab18d34781d0eaf40d9b756ecb50f50",
+      "network_cuda_event_ms": 176.92636108398438,
+      "round": 1,
+      "sequence": "07"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 574,
+      "generation_encoder_wall_ms": 177.34716273844242,
+      "input_sha256": "26e97b70234d759436f9d4fc410d32f69db9a6389fb78c04f3469ee5e4b8aac8",
+      "network_cuda_event_ms": 177.19381713867188,
+      "round": 1,
+      "sequence": "07"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 511,
+      "generation_encoder_wall_ms": 177.3610096424818,
+      "input_sha256": "5acf94eb8f07f2fab4dce47197947df59905cc9629503a26dfe2b8b242b8acd7",
+      "network_cuda_event_ms": 177.2203826904297,
+      "round": 1,
+      "sequence": "09"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 549,
+      "generation_encoder_wall_ms": 177.61369980871677,
+      "input_sha256": "cc2e34d44a16317bfc88eb019c166c02520e857663e7dc5e712deea6a8fc9f1d",
+      "network_cuda_event_ms": 177.46774291992188,
+      "round": 1,
+      "sequence": "09"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 586,
+      "generation_encoder_wall_ms": 177.52200737595558,
+      "input_sha256": "8447993b9028aa3c1b765d78ecdc3dd676b9b7069bfcff5e59eea4b105cb41c5",
+      "network_cuda_event_ms": 177.35548400878906,
+      "round": 1,
+      "sequence": "09"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 524,
+      "generation_encoder_wall_ms": 177.63435654342175,
+      "input_sha256": "6253718b159ea9f36ecef3c3999e5982db4c57586c9141b43f95ee87dd96fa20",
+      "network_cuda_event_ms": 177.48428344726562,
+      "round": 1,
+      "sequence": "10"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 561,
+      "generation_encoder_wall_ms": 177.40306444466114,
+      "input_sha256": "efd3bd5b0429b6134f6ec4c158edeaed76e5aacdffd476d78d3b9cf4c028a624",
+      "network_cuda_event_ms": 177.2631072998047,
+      "round": 1,
+      "sequence": "10"
+    },
+    {
+      "condition_dtypes": [
+        "torch.float16",
+        "torch.float16",
+        "torch.float16"
+      ],
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "finite": true,
+      "frame": 599,
+      "generation_encoder_wall_ms": 177.48301662504673,
+      "input_sha256": "35f5704030768d9b8c453b9ef0140c091e7ceef6c91fcc9159ba8c8ecf479496",
+      "network_cuda_event_ms": 177.32662963867188,
+      "round": 1,
+      "sequence": "10"
+    }
+  ],
+  "physical_gpu": 3,
+  "precision": "explicit_fp16",
+  "status": "COMPLETE",
+  "successful_updates": 10000,
+  "summary": {
+    "encoder_wall_including_h2d": {
+      "count": 20,
+      "max_ms": 178.48709225654602,
+      "mean_ms": 177.4498337879777,
+      "median_ms": 177.40559484809637,
+      "min_ms": 177.0846601575613,
+      "p90_ms": 177.6430742815137,
+      "p95_ms": 177.75981184095144,
+      "std_ms": 0.2993034084324839
+    },
+    "network_cuda_event": {
+      "count": 20,
+      "max_ms": 177.54165649414062,
+      "mean_ms": 177.22262802124024,
+      "median_ms": 177.24002838134766,
+      "min_ms": 176.83737182617188,
+      "p90_ms": 177.48270416259766,
+      "p95_ms": 177.48715209960938,
+      "std_ms": 0.20061539016992735
+    }
+  },
+  "torch": "2.0.1+cu117",
+  "variant": "bottleneck96",
+  "warmup_frames": [
+    {
+      "frame": 500,
+      "input_sha256": "acc89da2aab06e530817b853a92a07f67db88def027b514e4407b61b08c9602c",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000500.npy",
+      "sequence": "00"
+    },
+    {
+      "frame": 537,
+      "input_sha256": "da894b3dd52000960093663468f31aa2d6018669aadf762a5b5974d11b12371b",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000537.npy",
+      "sequence": "00"
+    },
+    {
+      "frame": 574,
+      "input_sha256": "bcb6ed9e9c92974fc3778d0b191838b61b3c87b1103c0e747a99ba9bfc12df1c",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/00/input_/000574.npy",
+      "sequence": "00"
+    },
+    {
+      "frame": 512,
+      "input_sha256": "c47db11af2ebb25e7d40dc373e578802a4f7ac1ad104d87363b63d166b567ed3",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/01/input_/000512.npy",
+      "sequence": "01"
+    },
+    {
+      "frame": 549,
+      "input_sha256": "2ff156558e3b49195dfb51ba6cfbd699f51719fb0eb212e27088e66887539497",
+      "path": "/data-12/M2024-HWZ/KITTI_Odometry/01/input_/000549.npy",
+      "sequence": "01"
+    }
+  ],
+  "warmup_repetitions": [
+    {
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "frame": 500,
+      "round": 1,
+      "sequence": "00"
+    },
+    {
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "frame": 537,
+      "round": 1,
+      "sequence": "00"
+    },
+    {
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "frame": 574,
+      "round": 1,
+      "sequence": "00"
+    },
+    {
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "frame": 512,
+      "round": 1,
+      "sequence": "01"
+    },
+    {
+      "condition_shapes": [
+        [
+          1,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          1,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          1,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "frame": 549,
+      "round": 1,
+      "sequence": "01"
+    }
+  ]
+}
