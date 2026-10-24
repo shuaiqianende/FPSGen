@@ -71,7 +71,9 @@ def load_shared_baseline(model, state):
     expected = model.state_dict()
     extra = set(state) - set(expected)
     missing = set(expected) - set(state)
-    if extra or any(not key.startswith('interaction.') for key in missing):
+    allowed=('interaction.',)
+    if hasattr(model,'child_state_encoder'):allowed+=('child_state_encoder.',)
+    if extra or any(not key.startswith(allowed) for key in missing):
         raise ValueError(f'Baseline/model keys differ: extra={sorted(extra)}, missing={sorted(missing)}')
     for key, value in state.items():
         if expected[key].shape != value.shape:
@@ -80,4 +82,6 @@ def load_shared_baseline(model, state):
     # Caller must not feed a previously trained branch as a zero-parity model.
     if hasattr(model, 'interaction') and any(float(x.detach()) != 0 for x in model.interaction.scales):
         raise ValueError('New M1 residual scales must start at zero')
+    if hasattr(model,'child_state_encoder') and bool((model.child_state_encoder.output.weight.detach()!=0).any()):
+        raise ValueError('New local state output projection must start at zero')
     return {'shared_tensors': len(state), 'new_keys': sorted(missing)}

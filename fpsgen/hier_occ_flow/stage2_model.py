@@ -170,7 +170,7 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
         parts=list(context['static_parts'])
         local_input=state.float()
         if self.ptv3_precision=='explicit_fp16':local_input=local_input.to(next(self.local.parameters()).dtype)
-        dynamic=(self.local(local_input),embedding[batch])
+        dynamic=(self.encode_flow_state(local_input,context['valid_child_mask']),embedding[batch])
         parts.extend(dynamic)
         interaction_residual=(self.interaction(torch.cat(context['static_parts'],-1),torch.cat(dynamic,-1))
                               if hasattr(self,'interaction') else None)
@@ -250,7 +250,7 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
             state=state[order];angle=time.float().reshape(scenes,1)*self.frequencies[None]
             embedding=self.time(torch.cat((angle.sin(),angle.cos()),-1))
             if self.context_strategy=='dynamic':
-                dynamic=(self.local(state.float()),embedding[batch])
+                dynamic=(self.encode_flow_state(state.float(),valid_child_mask[order]),embedding[batch])
                 parts.extend(dynamic)
                 if hasattr(self,'interaction'):
                     interaction_residual=self.interaction(torch.cat(static_parts,-1),torch.cat(dynamic,-1))

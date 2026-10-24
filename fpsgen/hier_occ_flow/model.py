@@ -11,7 +11,7 @@ class HierarchicalOccupancyModel(nn.Module):
     def __init__(self,geometry,*,objective='fm',backbone='ptv3',width=64,lidar_channels=384,
                  condition_mode='pyramid_observed',checkpointing=True,patch_sizes=(64,128),
                  child_bridge='none',child_input='geometry_stats',child_feature_width=24,
-                 context_strategy='dynamic',state_condition_interaction='none'):
+                 context_strategy='dynamic',state_condition_interaction='none',local_state_encoding='none'):
         super().__init__()
         if objective not in ('fm','bce') or backbone not in ('local','ptv3'): raise ValueError('Unknown model')
         if condition_mode not in ('none','observed','pyramid','pyramid_observed'): raise ValueError('Unknown condition')
@@ -19,6 +19,12 @@ class HierarchicalOccupancyModel(nn.Module):
         if context_strategy not in ('dynamic','static'):raise ValueError('Unknown Stage2 context strategy')
         if context_strategy=='static' and backbone!='ptv3':raise ValueError('Static serialized context requires PTv3')
         self.context_strategy=context_strategy
+        if local_state_encoding not in ('none','position','position_attention'):
+            raise ValueError('Unknown local Child state encoding')
+        if local_state_encoding!='none' and (objective!='fm' or context_strategy!='dynamic'
+                or child_bridge!='none' or state_condition_interaction!='none'):
+            raise ValueError('Local state study changes only the dynamic FM state encoder')
+        self.local_state_encoding=local_state_encoding
         if state_condition_interaction not in ('none','residual_v1'):
             raise ValueError('Unknown state-condition interaction policy')
         self.state_condition_interaction=state_condition_interaction
@@ -64,6 +70,15 @@ class HierarchicalOccupancyModel(nn.Module):
             from .state_condition_interaction import StateConditionInteraction
             self.interaction=StateConditionInteraction(fusion_inputs-width-32,width+32,width)
             self.interaction.install(self.trunk.net)
+        if local_state_encoding!='none':
+            from .child_local_state import ChildLocalStateEncoder
+            self.child_state_encoder=ChildLocalStateEncoder(geometry,width,mode=local_state_encoding)
+
+    def encode_flow_state(self,state,valid_child_mask):
+        features=self.local(state)
+        if hasattr(self,'child_state_encoder'):
+            features=features+self.child_state_encoder(state,valid_child_mask)
+        return features
 
     def decode_children(self,features,state,embedding,batch,valid_child_mask,child_geometry):
         if self.child_bridge=='none':
@@ -105,7 +120,7 @@ class HierarchicalOccupancyModel(nn.Module):
             angle=time.float().reshape(1,1)*self.frequencies[None]
             embedding=self.time(torch.cat((angle.sin(),angle.cos()),-1))
             if self.context_strategy=='dynamic':
-                dynamic=(self.local(state.float()),embedding.expand(len(parent_ids),-1))
+                dynamic=(self.encode_flow_state(state.float(),valid_child_mask),embedding.expand(len(parent_ids),-1))
                 parts.extend(dynamic)
                 if hasattr(self,'interaction'):
                     interaction_residual=self.interaction(torch.cat(static_parts,-1),torch.cat(dynamic,-1))

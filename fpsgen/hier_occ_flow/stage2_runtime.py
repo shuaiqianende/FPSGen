@@ -28,13 +28,14 @@ def load_stage2_config(path):
         protocol=cfg.get('research_protocol')
         research_protocols=('desescene_child_bridge_geometry_v1','desescene_child_bridge_position_control_v1',
                             'desescene_static_context_fm_v1','desescene_static_context_bce_v1',
-                            'desescene_sci_dynamic_b0_v1','desescene_sci_dynamic_m1_v1')
+                            'desescene_sci_dynamic_b0_v1','desescene_sci_dynamic_m1_v1',
+                            'desescene_local_state_position_v1','desescene_local_state_position_attention_v1')
         if protocol not in research_protocols:
             raise ValueError('Research pilot requires a registered DeSeScene architecture protocol')
         t,c=cfg['training'],cfg['candidates']
         if (t.get('successful_frame_exposures')!=20000 or t['successful_updates']!=10000
             or t['batch_per_gpu']!=2 or t.get('batching')!='packed_variable_length'
-            or c['mode']!='predicted' or c.get('stage1_nfe')!=(2 if protocol.startswith('desescene_sci_') else 4)
+            or c['mode']!='predicted' or c.get('stage1_nfe')!=(2 if protocol.startswith(('desescene_sci_','desescene_local_state_')) else 4)
             or c.get('selection',{}).get('strategy')!='threshold'
             or c.get('selection',{}).get('threshold')!=0.5 or cfg.get('cohort_indices') is not None):
             raise ValueError('Research pilot requires predicted support and exact registered20K exposure protocol')
@@ -52,8 +53,16 @@ def load_stage2_config(path):
             if (m.get('context_strategy')!='dynamic' or m['objective']!='fm'
                 or m.get('state_condition_interaction','none')!=expected
                 or m.get('child_bridge','none')!='none'
+                or m.get('local_state_encoding','none')!='none'
                 or cfg.get('initialization',{}).get('type')!='paired_finetune'):
                 raise ValueError('M1/B0 requires registered dynamic FM and matched source fine-tuning')
+        if protocol.startswith('desescene_local_state_'):
+            expected='position_attention' if protocol.endswith('_position_attention_v1') else 'position'
+            if (m.get('local_state_encoding')!=expected or m.get('context_strategy')!='dynamic'
+                or m['objective']!='fm' or m.get('child_bridge','none')!='none'
+                or m.get('state_condition_interaction','none')!='none'
+                or cfg.get('initialization',{}).get('type')!='paired_finetune'):
+                raise ValueError('Local state pilot must isolate its registered state encoding')
     if cfg['candidates']['mode'] not in ('oracle','predicted'):raise ValueError('Explicit support source required')
     if cfg.get('research_protocol')=='fm_real_stage1_score_gt_parents_only_v1':
         c=cfg['candidates']
@@ -169,6 +178,8 @@ def require_training_gate(cfg,g):
         required+=['packed_batch2_gpu','research_model_smoke']
         if cfg.get('research_protocol','').startswith('desescene_sci_'):
             required+=['state_condition_gpu_verified','c1_review_complete']
+        if cfg.get('research_protocol','').startswith('desescene_local_state_'):
+            required+=['local_state_gpu_verified']
     elif scope!='engineering_smoke':required+=['ddp_resume']
     if cfg['training']['batch_per_gpu']==2 and scope!='research_pilot':
         required+=['packed_batch2_gpu']
@@ -186,6 +197,11 @@ def require_training_gate(cfg,g):
         if (gate.get('source_sha256')!=source_sha()
             or gate.get('initialization_checkpoint_sha256')!=cfg['initialization']['checkpoint_sha256']):
             raise ValueError('M1 engineering source/checkpoint identity differs')
+    if scope=='research_pilot' and cfg.get('research_protocol','').startswith('desescene_local_state_'):
+        if (gate.get('source_sha256')!=source_sha()
+            or gate.get('initialization_checkpoint_sha256')!=cfg['initialization']['checkpoint_sha256']
+            or cfg['model']['local_state_encoding'] not in gate.get('local_state_verified_modes',[])):
+            raise ValueError('Local state engineering source/checkpoint identity differs')
     if cfg.get('target_data_version')=='hs-occ-morph-close-v1':
         if (gate.get('source_sha256')!=source_sha()
             or any(gate.get(k)!=cfg.get(k) for k in ('target_data_version','target_transform_sha256','target_processor_sha256'))):

@@ -1,0 +1,447 @@
+{
+  "baseline_resume": {
+    "bounded_embedding_wgrad_only": true,
+    "endpoint_error": {
+      "max_abs": 0.0208740234375,
+      "mean_abs": 0.00026387881371192634,
+      "relative_l2": 0.0005850857123732567,
+      "sign_flips": 166
+    },
+    "endpoint_exact": false,
+    "gate_gradients_finite_nonzero": false,
+    "gradient_differences": [
+      {
+        "different_elements": 435693,
+        "max_abs": 9.313225746154785e-10,
+        "mean_abs": 1.200063225875736e-11,
+        "name": "trunk.net.embedding.stem.conv.weight",
+        "relative_l2": 1.6428180060756858e-07,
+        "shape": [
+          64,
+          5,
+          5,
+          5,
+          64
+        ],
+        "sign_flips": 0
+      }
+    ],
+    "gradients_exact": false,
+    "interaction_gradient_nonzero": null,
+    "limits": {
+      "allowed_tensor": "trunk.net.embedding.stem.conv.weight",
+      "gradient_max_abs": 1e-07,
+      "parameter_max_abs": 1e-07,
+      "relative_l2": 1e-06
+    },
+    "loss_exact": true,
+    "losses": [
+      0.48854145407676697,
+      0.7909894585609436,
+      0.7909894585609436
+    ],
+    "occupancy_exact": false,
+    "parameter_differences": [
+      {
+        "different_elements": 47140,
+        "max_abs": 7.450580596923828e-09,
+        "mean_abs": 1.7767710913663137e-11,
+        "name": "trunk.net.embedding.stem.conv.weight",
+        "relative_l2": 8.616237501257729e-09,
+        "shape": [
+          64,
+          5,
+          5,
+          5,
+          64
+        ],
+        "sign_flips": 0
+      }
+    ],
+    "parameters_exact": false,
+    "repeated_forward_error": {
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative_l2": 0.0,
+      "sign_flips": 0
+    },
+    "repeated_forward_exact": true
+  },
+  "baseline_timing": {
+    "cuda_ms": 198.153564453125,
+    "repetitions": 3,
+    "scope": "diagnostic one-step max-scene Batch2, not full generation",
+    "wall_ms": 198.6678596585989
+  },
+  "gpu_admission": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24106.0,
+        "physical_gpu": 3,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 16.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "peak_allocated_bytes": 9072392192,
+  "peak_reserved_bytes": 9869197312,
+  "resume_equivalence": "Numerical embedding weight-gradient replay; not bitwise training reproducibility",
+  "scene_tokens": [
+    165919,
+    165513
+  ],
+  "source_initialization": {
+    "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt",
+    "checkpoint_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+    "claim": "20K additional matched adaptation, not 20K total scratch training",
+    "loaded": {
+      "new_keys": [],
+      "shared_tensors": 169
+    },
+    "new_successful_frame_exposures": 20000,
+    "optimizer_ema_scheduler_restarted": true,
+    "source_candidates": {
+      "calibration_status": "not_applicable_oracle",
+      "mode": "oracle",
+      "negative_fraction": 0.25,
+      "neutral_score": 1.0,
+      "oracle_score": "neutral",
+      "seed": 20261018,
+      "selection": {
+        "budget": 500000,
+        "expansion": 0,
+        "overflow": "error",
+        "strategy": "threshold",
+        "threshold": 0.5
+      },
+      "stage1_nfe": 4
+    },
+    "source_identity": {
+      "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+      "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+      "experiment": "hs-occflow-stage2-384-v1",
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+      "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+      "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+      "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+      "world_size": 2
+    },
+    "source_successful_frame_exposures": 99520,
+    "source_successful_updates": 25000,
+    "type": "paired_finetune",
+    "weights": "model"
+  },
+  "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+  "status": "PASS",
+  "stress_source_sha256": "cbf2849d313f68b61ce4046c74fd6842f63d8409adc487775adb89aee1b8e40a",
+  "variants": {
+    "position": {
+      "checks": {
+        "all_outputs_finite": true,
+        "branch_gradients_finite_nonzero": true,
+        "cached_exact": true,
+        "resume_baseline_control": true,
+        "resume_embedding_gradient_bounded": true,
+        "resume_endpoint_within_baseline": true,
+        "resume_loss_exact": true,
+        "same_weights_repeated_forward_exact": true,
+        "sorting_exact": true,
+        "zero_endpoint_exact": true,
+        "zero_occupancy_exact": true,
+        "zero_velocity_exact": true
+      },
+      "config_sha256": "468311e81f4c7ed6a241bab623a02e2975a031b94f4a663591ec6a000a42ba60",
+      "initialization": {
+        "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt",
+        "checkpoint_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+        "claim": "20K additional matched adaptation, not 20K total scratch training",
+        "loaded": {
+          "new_keys": [
+            "child_state_encoder.ffn.0.bias",
+            "child_state_encoder.ffn.0.weight",
+            "child_state_encoder.ffn.2.bias",
+            "child_state_encoder.ffn.2.weight",
+            "child_state_encoder.ffn_norm.bias",
+            "child_state_encoder.ffn_norm.weight",
+            "child_state_encoder.output.weight",
+            "child_state_encoder.position_embedding.weight",
+            "child_state_encoder.relative_centers",
+            "child_state_encoder.state_embedding.bias",
+            "child_state_encoder.state_embedding.weight"
+          ],
+          "shared_tensors": 169
+        },
+        "new_successful_frame_exposures": 20000,
+        "optimizer_ema_scheduler_restarted": true,
+        "source_candidates": {
+          "calibration_status": "not_applicable_oracle",
+          "mode": "oracle",
+          "negative_fraction": 0.25,
+          "neutral_score": 1.0,
+          "oracle_score": "neutral",
+          "seed": 20261018,
+          "selection": {
+            "budget": 500000,
+            "expansion": 0,
+            "overflow": "error",
+            "strategy": "threshold",
+            "threshold": 0.5
+          },
+          "stage1_nfe": 4
+        },
+        "source_identity": {
+          "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+          "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+          "experiment": "hs-occflow-stage2-384-v1",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+          "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+          "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+          "world_size": 2
+        },
+        "source_successful_frame_exposures": 99520,
+        "source_successful_updates": 25000,
+        "type": "paired_finetune",
+        "weights": "model"
+      },
+      "network_timing": {
+        "cuda_ms": 211.2269490559896,
+        "repetitions": 3,
+        "scope": "diagnostic one-step max-scene Batch2, not full generation",
+        "wall_ms": 211.25215912858644
+      },
+      "new_parameters": 9376,
+      "parameters": 2686504,
+      "resume": {
+        "bounded_embedding_wgrad_only": true,
+        "endpoint_error": {
+          "max_abs": 0.0191802978515625,
+          "mean_abs": 0.0002579367719590664,
+          "relative_l2": 0.0005662388866767287,
+          "sign_flips": 169
+        },
+        "endpoint_exact": false,
+        "gate_gradients_finite_nonzero": false,
+        "gradient_differences": [
+          {
+            "different_elements": 428563,
+            "max_abs": 9.313225746154785e-10,
+            "mean_abs": 1.1076800067455483e-11,
+            "name": "trunk.net.embedding.stem.conv.weight",
+            "relative_l2": 1.6429152083219378e-07,
+            "shape": [
+              64,
+              5,
+              5,
+              5,
+              64
+            ],
+            "sign_flips": 0
+          }
+        ],
+        "gradients_exact": false,
+        "interaction_gradient_nonzero": null,
+        "limits": {
+          "allowed_tensor": "trunk.net.embedding.stem.conv.weight",
+          "gradient_max_abs": 1e-07,
+          "parameter_max_abs": 1e-07,
+          "relative_l2": 1e-06
+        },
+        "loss_exact": true,
+        "losses": [
+          0.48854145407676697,
+          0.8348842859268188,
+          0.8348842859268188
+        ],
+        "occupancy_exact": false,
+        "parameter_differences": [
+          {
+            "different_elements": 47234,
+            "max_abs": 6.752088665962219e-09,
+            "mean_abs": 1.7694117004918297e-11,
+            "name": "trunk.net.embedding.stem.conv.weight",
+            "relative_l2": 8.50611403535595e-09,
+            "shape": [
+              64,
+              5,
+              5,
+              5,
+              64
+            ],
+            "sign_flips": 0
+          }
+        ],
+        "parameters_exact": false,
+        "repeated_forward_error": {
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "relative_l2": 0.0,
+          "sign_flips": 0
+        },
+        "repeated_forward_exact": true
+      }
+    },
+    "position_attention": {
+      "checks": {
+        "all_outputs_finite": true,
+        "branch_gradients_finite_nonzero": true,
+        "cached_exact": true,
+        "resume_baseline_control": true,
+        "resume_embedding_gradient_bounded": true,
+        "resume_endpoint_within_baseline": true,
+        "resume_loss_exact": true,
+        "same_weights_repeated_forward_exact": true,
+        "sorting_exact": true,
+        "zero_endpoint_exact": true,
+        "zero_occupancy_exact": true,
+        "zero_velocity_exact": true
+      },
+      "config_sha256": "e83077f363c0b4c2230f4e5d6308f4b3468a0c868a368bc93e9076bafc6ece38",
+      "initialization": {
+        "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt",
+        "checkpoint_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+        "claim": "20K additional matched adaptation, not 20K total scratch training",
+        "loaded": {
+          "new_keys": [
+            "child_state_encoder.attention_norm.bias",
+            "child_state_encoder.attention_norm.weight",
+            "child_state_encoder.attention_output.bias",
+            "child_state_encoder.attention_output.weight",
+            "child_state_encoder.ffn.0.bias",
+            "child_state_encoder.ffn.0.weight",
+            "child_state_encoder.ffn.2.bias",
+            "child_state_encoder.ffn.2.weight",
+            "child_state_encoder.ffn_norm.bias",
+            "child_state_encoder.ffn_norm.weight",
+            "child_state_encoder.output.weight",
+            "child_state_encoder.position_embedding.weight",
+            "child_state_encoder.qkv.bias",
+            "child_state_encoder.qkv.weight",
+            "child_state_encoder.relative_centers",
+            "child_state_encoder.state_embedding.bias",
+            "child_state_encoder.state_embedding.weight"
+          ],
+          "shared_tensors": 169
+        },
+        "new_successful_frame_exposures": 20000,
+        "optimizer_ema_scheduler_restarted": true,
+        "source_candidates": {
+          "calibration_status": "not_applicable_oracle",
+          "mode": "oracle",
+          "negative_fraction": 0.25,
+          "neutral_score": 1.0,
+          "oracle_score": "neutral",
+          "seed": 20261018,
+          "selection": {
+            "budget": 500000,
+            "expansion": 0,
+            "overflow": "error",
+            "strategy": "threshold",
+            "threshold": 0.5
+          },
+          "stage1_nfe": 4
+        },
+        "source_identity": {
+          "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+          "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+          "experiment": "hs-occflow-stage2-384-v1",
+          "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+          "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+          "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+          "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+          "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+          "world_size": 2
+        },
+        "source_successful_frame_exposures": 99520,
+        "source_successful_updates": 25000,
+        "type": "paired_finetune",
+        "weights": "model"
+      },
+      "network_timing": {
+        "cuda_ms": 229.68660481770834,
+        "repetitions": 3,
+        "scope": "diagnostic one-step max-scene Batch2, not full generation",
+        "wall_ms": 229.7165853281816
+      },
+      "new_parameters": 10496,
+      "parameters": 2687624,
+      "resume": {
+        "bounded_embedding_wgrad_only": true,
+        "endpoint_error": {
+          "max_abs": 0.01904296875,
+          "mean_abs": 0.00025801503215916455,
+          "relative_l2": 0.0005661791074089706,
+          "sign_flips": 161
+        },
+        "endpoint_exact": false,
+        "gate_gradients_finite_nonzero": false,
+        "gradient_differences": [
+          {
+            "different_elements": 428766,
+            "max_abs": 9.313225746154785e-10,
+            "mean_abs": 1.11729722696019e-11,
+            "name": "trunk.net.embedding.stem.conv.weight",
+            "relative_l2": 1.658438577578636e-07,
+            "shape": [
+              64,
+              5,
+              5,
+              5,
+              64
+            ],
+            "sign_flips": 0
+          }
+        ],
+        "gradients_exact": false,
+        "interaction_gradient_nonzero": null,
+        "limits": {
+          "allowed_tensor": "trunk.net.embedding.stem.conv.weight",
+          "gradient_max_abs": 1e-07,
+          "parameter_max_abs": 1e-07,
+          "relative_l2": 1e-06
+        },
+        "loss_exact": true,
+        "losses": [
+          0.48854145407676697,
+          0.8326272964477539,
+          0.8326272964477539
+        ],
+        "occupancy_exact": false,
+        "parameter_differences": [
+          {
+            "different_elements": 47135,
+            "max_abs": 7.450580596923828e-09,
+            "mean_abs": 1.7701534682501574e-11,
+            "name": "trunk.net.embedding.stem.conv.weight",
+            "relative_l2": 8.486946256880401e-09,
+            "shape": [
+              64,
+              5,
+              5,
+              5,
+              64
+            ],
+            "sign_flips": 0
+          }
+        ],
+        "parameters_exact": false,
+        "repeated_forward_error": {
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "relative_l2": 0.0,
+          "sign_flips": 0
+        },
+        "repeated_forward_exact": true
+      }
+    }
+  }
+}

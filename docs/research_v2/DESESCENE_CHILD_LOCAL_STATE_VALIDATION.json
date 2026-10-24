@@ -1,0 +1,15 @@
+{
+  "status": "CPU_AND_GPU_ENGINEERING_PASS",
+  "cpu": {
+    "passed": 67,
+    "skipped": 1,
+    "skip_reason": "CPU regression suite hides CUDA; actual CUDA forward/backward was verified independently on GPU3"
+  },
+  "cpu_commands": [
+    "CUDA_VISIBLE_DEVICES= python -m pytest -q tests/test_child_local_state.py tests/test_stage2_384.py tests/test_state_condition_interaction.py tests/test_stage2_batching.py tests/test_desescene_queue.py",
+    "CUDA_VISIBLE_DEVICES= python -m pytest -q tests/test_stage2_child_bridge.py tests/test_full_fp16_inference.py tests/test_ptv3_topology_cache.py"
+  ],
+  "gpu_report_sha256": "4de03bddd4652870077938792ccd8bd6f18289633a1e9b9dbd8ca4aaeca4edd6",
+  "formal_quality": "NOT TESTED",
+  "training_status_at_snapshot": "32-update engineering smokes; formal20K follows only when both pass"
+}
