@@ -7,5 +7,7 @@ if __name__=='__main__':
     p=argparse.ArgumentParser('Independent pretrained-EMA Encoder adaptation')
     p.add_argument('--config',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
     p.add_argument('--resume',type=Path);p.add_argument('--max-updates',type=int,default=10000);p.add_argument('--smoke',action='store_true')
+    p.add_argument('--numerical-pilot-policy',type=Path,help='Explicit user-directed pilot; retains failed strict replay certification')
     a=p.parse_args();cfg,g=load_adaptation_config(a.config)
-    run_adaptation(cfg,g,a.output,resume=a.resume,max_updates=a.max_updates,smoke=a.smoke)
+    run_adaptation(cfg,g,a.output,resume=a.resume,max_updates=a.max_updates,smoke=a.smoke,
+                   numerical_pilot_policy=a.numerical_pilot_policy)

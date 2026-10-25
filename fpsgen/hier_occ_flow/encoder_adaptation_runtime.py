@@ -56,13 +56,17 @@ def load_adaptation_config(path):
     return cfg,g
 
 
-def datasets(cfg,g,verify=True):
-    train=SparseShardDataset(cfg['train_dataset'],g,verify=verify)
-    dev=SparseShardDataset(cfg['development_dataset'],g,verify=verify)
+def datasets(cfg,g,verify=True,*,verified_receipt=None):
+    train=SparseShardDataset(cfg['train_dataset'],g,verify=verify and verified_receipt is None)
+    dev=SparseShardDataset(cfg['development_dataset'],g,verify=verify and verified_receipt is None)
     keys=lambda ds:{(r['sequence'].decode(),int(r['frame'])) for r in ds.index}
     if len(train)!=17870 or len(dev)!=900 or keys(train)&keys(dev) or any(s=='08' for s,f in keys(train)|keys(dev)):
         raise ValueError('Require original disjoint17870/900 raw surface-hit manifests, excluding seq08')
-    return train,dev,{s+'_manifest_sha256':file_sha(Path(cfg[s+'_dataset'])/'manifest.json') for s in ('train','development')}
+    manifests={s+'_manifest_sha256':file_sha(Path(cfg[s+'_dataset'])/'manifest.json') for s in ('train','development')}
+    if verified_receipt:
+        from .verified_adaptation_data import verify_completed_audit
+        train,dev=verify_completed_audit(train,dev,g,manifests,verified_receipt)
+    return train,dev,manifests
 
 
 def verify_adaptation_resume(saved,identity,system):
@@ -90,17 +94,22 @@ def step_loss(system,records,xyz,cfg,g,teacher,generator):
     return stage2_guided_loss(system,records,xyz,cfg,g,teacher,generator)
 
 
-def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False):
+def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False,numerical_pilot_policy=None):
     visible=os.environ.get('CUDA_VISIBLE_DEVICES','')
     if visible not in ('2','3'):raise ValueError('P1/P2 require one admitted GPU2/3')
     admission=adaptation_admission(int(visible), configure_allocator=True)
     if admission['status']!='AVAILABLE':raise RuntimeError(json.dumps(admission))
     if not 0<max_updates<=10000 or smoke and max_updates>32:raise ValueError('No budget extension')
     report=json.loads(Path(cfg['engineering_report']).read_text())
-    if (report.get('status')!='PASS' or report['source_sha256']!=source_sha()
+    direct=None
+    if numerical_pilot_policy:
+        if smoke:raise ValueError('Direct formal pilot uses in-run health, not a relabeled Smoke')
+        from .direct_adaptation_policy import validate_direct_policy
+        direct=validate_direct_policy(numerical_pilot_policy,cfg,report,source_sha(),config_sha(cfg))
+    if direct is None and (report.get('status')!='PASS' or report['source_sha256']!=source_sha()
         or report['config_sha256']!=config_sha(cfg) or report['arm']!=cfg['arm']):
         raise ValueError('Maximum real Batch2/gradient/replay engineering report required')
-    if not smoke:
+    if not smoke and direct is None:
         smoke_summary=json.loads(Path(cfg['smoke_summary']).read_text())
         if (smoke_summary.get('successful_updates')!=32 or smoke_summary.get('successful_frame_exposures')!=64
             or smoke_summary.get('identity',{}).get('source_sha256')!=source_sha()
@@ -111,13 +120,14 @@ def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False):
     output=Path(output).resolve();output.mkdir(parents=True,exist_ok=True)
     if not resume and any((output/'checkpoints').glob('*.pt')):raise FileExistsError('Preserve existing run; use exact resume')
     torch.set_num_threads(4);device=torch.device('cuda')
-    ds,dev,manifests=datasets(cfg,g,verify=True);seed_all(cfg['training']['seed'])
+    ds,dev,manifests=datasets(cfg,g,verify=True,verified_receipt=direct.get('verified_data_receipt') if direct else None);seed_all(cfg['training']['seed'])
     system,_,initial=load_sources(cfg,device);seed_all(cfg['training']['seed']);t=cfg['training']
     identity={'experiment':'desescene-encoder-adaptation-v1','phase':cfg['phase'],'arm':cfg['arm'],
         'initialization_mode':'pretrained_ema_adaptation','source_sha256':source_sha(),'config_sha256':config_sha(cfg),
         'geometry_sha256':g.sha256,**manifests,'stage1_source_sha256':STAGE1_SHA,
         'stage2_source_sha256':STAGE2_SHA,'output':str(output),'world_size':1,
         'execution_scope':'engineering_smoke' if smoke else 'additional20k_adaptation'}
+    if direct is not None:identity['direct_numerical_pilot']=direct
     ema=copy.deepcopy(system).eval().requires_grad_(False);optimizer,scheduler=make_optimizer(system,t)
     scaler=torch.cuda.amp.GradScaler(init_scale=t['amp_initial_scale'])
     generator=torch.Generator(device=device).manual_seed(t['seed']+1000)
@@ -189,7 +199,16 @@ def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False):
             if 'ids' in details:row['parent_ids_sha256']=hashlib.sha256(details['ids'].detach().cpu().numpy().tobytes()).hexdigest();row['scene_tokens']=details['scene_lengths']
             log.write(json.dumps(row,allow_nan=False)+'\n');print(f"{cfg['arm']} update={successful}/{max_updates} exposures={successful*2}/20000 fm={row['loss']} seconds={row['seconds']:.3f}",flush=True)
             del details,loss,xyz
-            if finite and (successful%500==0 or successful==max_updates) or stopped[0] or failures>=3:
+            if direct is not None and finite and successful in (32,100,500,10000):
+                if (frozen_state_sha(system)!=frozen or frozen_state_sha(ema)!=frozen
+                    or skips>max(2,int(attempts*.01))):
+                    raise RuntimeError('Direct-pilot in-run health failed; no budget extension')
+                atomic_json(output/f'health_{successful:06d}.json',dict(
+                    status='PASSED_IN_RUN_HEALTH',successful_updates=successful,
+                    successful_frame_exposures=successful*2,amp_skips=skips,
+                    resume_certification='NOT_CERTIFIED_NUMERICAL_REPLAY',
+                    scheduler_reset=False,optimizer_reset=False))
+            if finite and (successful%500==0 or successful==max_updates or direct is not None and successful in (32,100)) or stopped[0] or failures>=3:
                 save('resume_latest.pt')
                 if successful%2500==0 or successful==max_updates:save(f'step{successful:06d}.pt')
             if stopped[0] or failures>=3:break
