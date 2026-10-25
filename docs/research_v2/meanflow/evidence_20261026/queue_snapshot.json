@@ -1,0 +1,39 @@
+{
+  "snapshot_time": "2026-10-26 01:42:58 +0800",
+  "queue": {
+    "epoch": 1792950173.646456,
+    "pid": 930632,
+    "predecessors": [
+      {
+        "actual_status": "FORMAL_EF1_EF2_LAUNCHING",
+        "name": "EF1_EF2_and_EF0_reference",
+        "status": "WAITING"
+      },
+      {
+        "actual_status": "ENGINEERING_THEN_FORMAL20K_THEN_EVAL900",
+        "name": "S1-FM20K_control",
+        "status": "WAITING"
+      }
+    ],
+    "queue_sha256": "6b3eb2d402b7bbc0d15fd58f74a00c60f2cd1087e2d96917774ffcd4bde0a6b9",
+    "source_sha256": "1293e8bef20b2684859fac32db4b228eaed0b604a93b8143fc6274c1ab617391",
+    "status": "WAITING_PREDECESSOR_EVAL"
+  },
+  "predecessor_training": {
+    "EF1": {
+      "successful_updates": 7311,
+      "successful_frame_exposures": 14622,
+      "amp_skips": 0
+    },
+    "EF2": {
+      "successful_updates": 7305,
+      "successful_frame_exposures": 14610,
+      "amp_skips": 5
+    },
+    "S1-FM20K": {
+      "successful_updates": 7314,
+      "successful_frame_exposures": 14628,
+      "amp_skips": 5
+    }
+  }
+}
