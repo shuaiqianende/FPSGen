@@ -23,7 +23,7 @@ from .geometry import SparseHierarchyGeometry
 from .storage import SparseShardDataset,atomic_json,file_sha
 from .dataset import input_xyz
 from .trainer import seed_all,rng_state,restore_rng,atomic_checkpoint
-from .resources import gpu_preflight
+from .adaptation_gpu_slot import adaptation_admission
 
 
 def config_sha(cfg):return hashlib.sha256(json.dumps(cfg,sort_keys=True).encode()).hexdigest()
@@ -93,7 +93,7 @@ def step_loss(system,records,xyz,cfg,g,teacher,generator):
 def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False):
     visible=os.environ.get('CUDA_VISIBLE_DEVICES','')
     if visible not in ('2','3'):raise ValueError('P1/P2 require one admitted GPU2/3')
-    admission=gpu_preflight((int(visible),))
+    admission=adaptation_admission(int(visible), configure_allocator=True)
     if admission['status']!='AVAILABLE':raise RuntimeError(json.dumps(admission))
     if not 0<max_updates<=10000 or smoke and max_updates>32:raise ValueError('No budget extension')
     report=json.loads(Path(cfg['engineering_report']).read_text())

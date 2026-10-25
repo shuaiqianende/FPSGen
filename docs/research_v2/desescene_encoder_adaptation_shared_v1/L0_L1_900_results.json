@@ -1,0 +1,587 @@
+{
+  "scope": "900 Development, EMA, Stage1 NFE2, Stage2 NFE4, native voxel centers; one training seed20261032",
+  "formal_runtime": "NOT TESTED; shared quality seconds are not latency evidence",
+  "arms": {
+    "B0": {
+      "fine": {
+        "iou": 0.3174501156853162,
+        "f1": 0.4776566809799864,
+        "precision": 0.6463304756261841,
+        "recall": 0.3867123068912088
+      },
+      "continuous": {
+        "cd_m": 0.2170993684292546,
+        "iou01": 0.1484159134135579,
+        "iou02": 0.3850151317062555,
+        "iou05": 0.5181696944373975,
+        "jsd_3d": 0.39742681355335674,
+        "jsd_bev": 0.32213103239283186
+      },
+      "occupied_children": 318934.5811111111,
+      "parent_count": 104667.73333333334,
+      "fine_gt_ceiling": 0.64035740899843,
+      "identity": {
+        "checkpoint_sha256": "b9574bb126490cb67b584b19bd5ab818e5f687ecc07f9f00ca8fada215d0dab2",
+        "evaluation_source_sha256": "0f884b42405dd1076bc054c7f20c9efa1f9a8ce8510565f2a2b6854f77cc450d",
+        "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+        "ema": true,
+        "candidate_mode": "predicted",
+        "protocol": {
+          "checkpoint_sha256": "b9574bb126490cb67b584b19bd5ab818e5f687ecc07f9f00ca8fada215d0dab2",
+          "continuous_metrics": true,
+          "evaluation_source_sha256": "0f884b42405dd1076bc054c7f20c9efa1f9a8ce8510565f2a2b6854f77cc450d",
+          "gpu_admission": {
+            "gpus": [
+              {
+                "available": true,
+                "driver": "580.159.03",
+                "existing_compute_pids": [],
+                "free_mib": 24103.0,
+                "physical_gpu": 1,
+                "shared_compute_allowed": false,
+                "total_mib": 24576.0,
+                "utilization_percent": 0.0
+              }
+            ],
+            "minimum_free_gib": 16.0,
+            "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+            "status": "AVAILABLE"
+          },
+          "input_manifest_sha256": {
+            "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+            "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+          },
+          "training_identity": {
+            "config_sha256": "0ab712bd2bbe1cd6c6da8bea15833b9c4fc2206dab5e0d5ed06f9cef93a9bfff",
+            "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+            "experiment": "hs-occflow-stage2-384-v1",
+            "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+            "output": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k",
+            "source_sha256": "0f884b42405dd1076bc054c7f20c9efa1f9a8ce8510565f2a2b6854f77cc450d",
+            "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+            "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+            "world_size": 1
+          },
+          "validation": {
+            "enabled": false,
+            "every_updates": 10000,
+            "max_frames": 900,
+            "nfes": [
+              4
+            ],
+            "sampling_seeds": [
+              20261031
+            ],
+            "seed": 20261031,
+            "structural_metrics": true,
+            "threshold": 0.0
+          }
+        }
+      }
+    },
+    "L0": {
+      "fine": {
+        "iou": 0.3175934637779709,
+        "f1": 0.4778371841579892,
+        "precision": 0.646177699863922,
+        "recall": 0.38693405053530194
+      },
+      "continuous": {
+        "cd_m": 0.21720312770376815,
+        "iou01": 0.14848129961125253,
+        "iou02": 0.3851465757175807,
+        "iou05": 0.5182098770606204,
+        "jsd_3d": 0.397407298898108,
+        "jsd_bev": 0.3221752518334689
+      },
+      "occupied_children": 319204.7444444444,
+      "parent_count": 104667.73333333334,
+      "fine_gt_ceiling": 0.64035740899843,
+      "identity": {
+        "checkpoint_sha256": "753721ba7a57981c7635dc0e130897092d600b0d43348c8968fb729ab067d7a3",
+        "evaluation_source_sha256": "286edd31457277b998aa337f6fc0ac073d343827310cd88d86b0aa390681d50f",
+        "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+        "ema": true,
+        "candidate_mode": "predicted",
+        "protocol": {
+          "allocator": {
+            "allocator_limit_gib": 6.0,
+            "device_total_bytes": 25296044032,
+            "limitation": "PyTorch allocator cap; external CUDA allocations are also watched by the parent NVML guard"
+          },
+          "checkpoint_sha256": "753721ba7a57981c7635dc0e130897092d600b0d43348c8968fb729ab067d7a3",
+          "continuous_metrics": true,
+          "diagnostic_indices": null,
+          "evaluation_content_checked_before_each_shard": true,
+          "evaluation_source_sha256": "286edd31457277b998aa337f6fc0ac073d343827310cd88d86b0aa390681d50f",
+          "gpu_admission": {
+            "allocator_limit_gib": 6.0,
+            "gpus": [
+              {
+                "available": true,
+                "driver": "580.159.03",
+                "existing_compute_pids": [
+                  1005963,
+                  1010313,
+                  1041646,
+                  1044331,
+                  1046333,
+                  1047996,
+                  1062991,
+                  1067680
+                ],
+                "free_mib": 16029.0,
+                "physical_gpu": 2,
+                "shared_compute_allowed": true,
+                "total_mib": 24576.0,
+                "utilization_percent": 0.0
+              }
+            ],
+            "minimum_free_gib": 10.0,
+            "policy": "Explicit user authorization for shared compute; preserve every other process",
+            "scope": "quality metrics only; no inference speed claims",
+            "status": "AVAILABLE"
+          },
+          "indices_file_sha256": null,
+          "input_manifest_sha256": {
+            "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+            "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+          },
+          "latency_is_formal_benchmark": false,
+          "lineage_audit_receipt": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-quality-eval-async-io-v1/experiments/desescene_quality_async_io_v1/p0_async_handoff_20261025/full_lineage_audit.json",
+          "shared_eval": false,
+          "shared_quality_eval": true,
+          "training_identity": {
+            "config_sha256": "468311e81f4c7ed6a241bab623a02e2975a031b94f4a663591ec6a000a42ba60",
+            "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+            "experiment": "hs-occflow-stage2-384-v1",
+            "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+            "output": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/position_20k",
+            "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+            "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+            "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+            "world_size": 1
+          },
+          "validation": {
+            "enabled": false,
+            "every_updates": 10000,
+            "max_frames": 900,
+            "nfes": [
+              4
+            ],
+            "sampling_seeds": [
+              20261031
+            ],
+            "seed": 20261031,
+            "structural_metrics": true,
+            "threshold": 0.0
+          }
+        }
+      },
+      "mechanisms64_single_sample": {
+        "1": {
+          "continuous_macro": {
+            "cd_m": 0.3354079769728717,
+            "iou01": 0.16083273610358947,
+            "iou02": 0.373010947457807,
+            "iou05": 0.43398079017049,
+            "jsd_3d": 0.4223337637198852,
+            "jsd_bev": 0.38536579870236354
+          },
+          "macro_f1": 0.5122074020010858,
+          "macro_iou": 0.34945256697044297,
+          "rows": 192
+        },
+        "2": {
+          "continuous_macro": {
+            "cd_m": 0.23145884687090135,
+            "iou01": 0.15172224696702977,
+            "iou02": 0.38784124756658067,
+            "iou05": 0.5102284713506381,
+            "jsd_3d": 0.3957674838663155,
+            "jsd_bev": 0.3316803989351263
+          },
+          "macro_f1": 0.4870448532216705,
+          "macro_iou": 0.3259519441797867,
+          "rows": 192
+        },
+        "4": {
+          "continuous_macro": {
+            "cd_m": 0.21940156475220904,
+            "iou01": 0.14844181077115862,
+            "iou02": 0.3849208427338458,
+            "iou05": 0.5154088929232518,
+            "jsd_3d": 0.39715312239692163,
+            "jsd_bev": 0.32477950705885733
+          },
+          "macro_f1": 0.4777242217497896,
+          "macro_iou": 0.3174681466800795,
+          "rows": 192
+        },
+        "8": {
+          "continuous_macro": {
+            "cd_m": 0.21915724454061758,
+            "iou01": 0.1465967587548054,
+            "iou02": 0.3822638390618689,
+            "iou05": 0.5148447272845126,
+            "jsd_3d": 0.4004489266861874,
+            "jsd_bev": 0.32398015024666305
+          },
+          "macro_f1": 0.47231792444648946,
+          "macro_iou": 0.31262441349948267,
+          "rows": 192
+        }
+      }
+    },
+    "L1": {
+      "fine": {
+        "iou": 0.31705651601886076,
+        "f1": 0.47721011390154355,
+        "precision": 0.6472247619980479,
+        "recall": 0.3857936882425755
+      },
+      "continuous": {
+        "cd_m": 0.2177754840193955,
+        "iou01": 0.1482418027278405,
+        "iou02": 0.3845908693830986,
+        "iou05": 0.5176840226792493,
+        "jsd_3d": 0.3976082172105573,
+        "jsd_bev": 0.3226613393438708
+      },
+      "occupied_children": 317761.2211111111,
+      "parent_count": 104667.73333333334,
+      "fine_gt_ceiling": 0.64035740899843,
+      "identity": {
+        "checkpoint_sha256": "a0aaec18f9f395faca61c2f31256ea700802ab7e85db64ca726fc2d3e00b8126",
+        "evaluation_source_sha256": "286edd31457277b998aa337f6fc0ac073d343827310cd88d86b0aa390681d50f",
+        "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+        "ema": true,
+        "candidate_mode": "predicted",
+        "protocol": {
+          "allocator": {
+            "allocator_limit_gib": 6.0,
+            "device_total_bytes": 25296044032,
+            "limitation": "PyTorch allocator cap; external CUDA allocations are also watched by the parent NVML guard"
+          },
+          "checkpoint_sha256": "a0aaec18f9f395faca61c2f31256ea700802ab7e85db64ca726fc2d3e00b8126",
+          "continuous_metrics": true,
+          "diagnostic_indices": null,
+          "evaluation_content_checked_before_each_shard": true,
+          "evaluation_source_sha256": "286edd31457277b998aa337f6fc0ac073d343827310cd88d86b0aa390681d50f",
+          "gpu_admission": {
+            "allocator_limit_gib": 6.0,
+            "gpus": [
+              {
+                "available": true,
+                "driver": "580.159.03",
+                "existing_compute_pids": [
+                  890546,
+                  893823,
+                  1008075,
+                  1012329,
+                  1020121,
+                  1024954
+                ],
+                "free_mib": 18032.0,
+                "physical_gpu": 3,
+                "shared_compute_allowed": true,
+                "total_mib": 24576.0,
+                "utilization_percent": 0.0
+              }
+            ],
+            "minimum_free_gib": 10.0,
+            "policy": "Explicit user authorization for shared compute; preserve every other process",
+            "scope": "quality metrics only; no inference speed claims",
+            "status": "AVAILABLE"
+          },
+          "indices_file_sha256": null,
+          "input_manifest_sha256": {
+            "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+            "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+          },
+          "latency_is_formal_benchmark": false,
+          "lineage_audit_receipt": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-quality-eval-async-io-v1/experiments/desescene_quality_async_io_v1/p0_async_handoff_20261025/full_lineage_audit.json",
+          "shared_eval": false,
+          "shared_quality_eval": true,
+          "training_identity": {
+            "config_sha256": "e83077f363c0b4c2230f4e5d6308f4b3468a0c868a368bc93e9076bafc6ece38",
+            "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+            "experiment": "hs-occflow-stage2-384-v1",
+            "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+            "output": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/attention_20k",
+            "source_sha256": "ee1cc5b9ab96939d9fe88f8b4e4fc753fa09c49175bc486836fbb772e92032f0",
+            "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+            "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+            "world_size": 1
+          },
+          "validation": {
+            "enabled": false,
+            "every_updates": 10000,
+            "max_frames": 900,
+            "nfes": [
+              4
+            ],
+            "sampling_seeds": [
+              20261031
+            ],
+            "seed": 20261031,
+            "structural_metrics": true,
+            "threshold": 0.0
+          }
+        }
+      },
+      "mechanisms64_single_sample": {
+        "1": {
+          "continuous_macro": {
+            "cd_m": 0.33604302966824456,
+            "iou01": 0.16082542720664075,
+            "iou02": 0.37294996689809984,
+            "iou05": 0.4338166712241591,
+            "jsd_3d": 0.42237526774872586,
+            "jsd_bev": 0.38557767368776436
+          },
+          "macro_f1": 0.5121636639720223,
+          "macro_iou": 0.34942695915723193,
+          "rows": 192
+        },
+        "2": {
+          "continuous_macro": {
+            "cd_m": 0.23136543332445514,
+            "iou01": 0.1517055836264074,
+            "iou02": 0.38780964857179406,
+            "iou05": 0.5102568138990646,
+            "jsd_3d": 0.3957154497557582,
+            "jsd_bev": 0.3317029071936831
+          },
+          "macro_f1": 0.48695658172239603,
+          "macro_iou": 0.32587161274986176,
+          "rows": 192
+        },
+        "4": {
+          "continuous_macro": {
+            "cd_m": 0.21987143470452986,
+            "iou01": 0.1482041186996881,
+            "iou02": 0.38435542751657187,
+            "iou05": 0.5149012315075773,
+            "jsd_3d": 0.3973394702993782,
+            "jsd_bev": 0.3252401382403221
+          },
+          "macro_f1": 0.4770990932499406,
+          "macro_iou": 0.3169331529275882,
+          "rows": 192
+        },
+        "8": {
+          "continuous_macro": {
+            "cd_m": 0.2192295305361438,
+            "iou01": 0.14637182382711703,
+            "iou02": 0.3819107266369743,
+            "iou05": 0.5146871134146588,
+            "jsd_3d": 0.4004852873979107,
+            "jsd_bev": 0.3241099130187674
+          },
+          "macro_f1": 0.47172597321104703,
+          "macro_iou": 0.3121189490851033,
+          "rows": 192
+        }
+      }
+    }
+  },
+  "paired": {
+    "L0": {
+      "inputs_parent_ids_gt_match": "900/900",
+      "groups": 18,
+      "metrics": {
+        "iou": {
+          "mean_delta": 0.00014334809265474343,
+          "ci95_sequence_50frame_block_bootstrap": [
+            5.1696219730295354e-05,
+            0.00021802839583814047
+          ],
+          "worst_decile_delta": -0.0003656699593481453,
+          "worst_frame": {
+            "sequence": "01",
+            "frame": 516
+          },
+          "worst_frame_delta": -0.0007876506691292806
+        },
+        "cd_m": {
+          "mean_delta": 0.00010375927451353524,
+          "ci95_sequence_50frame_block_bootstrap": [
+            3.922637580056373e-05,
+            0.0001709243235882152
+          ],
+          "worst_decile_delta": 0.0014827867491653875,
+          "worst_frame": {
+            "sequence": "02",
+            "frame": 557
+          },
+          "worst_frame_delta": 0.00695892099558254
+        },
+        "iou05": {
+          "mean_delta": 4.018262322299287e-05,
+          "ci95_sequence_50frame_block_bootstrap": [
+            -3.152868013487353e-05,
+            0.00011048839484727879
+          ],
+          "worst_decile_delta": -0.0005610220223375793,
+          "worst_frame": {
+            "sequence": "01",
+            "frame": 528
+          },
+          "worst_frame_delta": -0.0013387896647201192
+        },
+        "iou02": {
+          "mean_delta": 0.00013144401132517472,
+          "ci95_sequence_50frame_block_bootstrap": [
+            3.691109006651463e-05,
+            0.0002096013368607307
+          ],
+          "worst_decile_delta": -0.0003997222836320887,
+          "worst_frame": {
+            "sequence": "01",
+            "frame": 524
+          },
+          "worst_frame_delta": -0.000917169785313976
+        },
+        "iou01": {
+          "mean_delta": 6.538619769460555e-05,
+          "ci95_sequence_50frame_block_bootstrap": [
+            2.167514127755493e-05,
+            0.00010202494194737172
+          ],
+          "worst_decile_delta": -0.00016894933580901118,
+          "worst_frame": {
+            "sequence": "01",
+            "frame": 522
+          },
+          "worst_frame_delta": -0.0003719304573910065
+        },
+        "jsd_bev": {
+          "mean_delta": 4.4219440637120065e-05,
+          "ci95_sequence_50frame_block_bootstrap": [
+            -7.433215466760857e-06,
+            9.794557729480237e-05
+          ],
+          "worst_decile_delta": 0.0005448397068783312,
+          "worst_frame": {
+            "sequence": "01",
+            "frame": 528
+          },
+          "worst_frame_delta": 0.0010591432163687131
+        },
+        "jsd_3d": {
+          "mean_delta": -1.95146552487281e-05,
+          "ci95_sequence_50frame_block_bootstrap": [
+            -6.294256022804545e-05,
+            2.640266343440081e-05
+          ],
+          "worst_decile_delta": 0.00024362680123991625,
+          "worst_frame": {
+            "sequence": "01",
+            "frame": 516
+          },
+          "worst_frame_delta": 0.0006207916446770434
+        }
+      },
+      "decision": "NO_GO_EXPANSION"
+    },
+    "L1": {
+      "inputs_parent_ids_gt_match": "900/900",
+      "groups": 18,
+      "metrics": {
+        "iou": {
+          "mean_delta": -0.00039359966645543236,
+          "ci95_sequence_50frame_block_bootstrap": [
+            -0.00047518005513843734,
+            -0.00032733810256501913
+          ],
+          "worst_decile_delta": -0.0008972127422552582,
+          "worst_frame": {
+            "sequence": "01",
+            "frame": 513
+          },
+          "worst_frame_delta": -0.0013525852876837274
+        },
+        "cd_m": {
+          "mean_delta": 0.000676115590140918,
+          "ci95_sequence_50frame_block_bootstrap": [
+            0.0005052053503632363,
+            0.0008448359987238509
+          ],
+          "worst_decile_delta": 0.0032145910495707778,
+          "worst_frame": {
+            "sequence": "05",
+            "frame": 597
+          },
+          "worst_frame_delta": 0.017203238371942264
+        },
+        "iou05": {
+          "mean_delta": -0.00048567175814820564,
+          "ci95_sequence_50frame_block_bootstrap": [
+            -0.0005756728090827137,
+            -0.0003912577152679404
+          ],
+          "worst_decile_delta": -0.0011210664914381354,
+          "worst_frame": {
+            "sequence": "02",
+            "frame": 533
+          },
+          "worst_frame_delta": -0.0014793337572901466
+        },
+        "iou02": {
+          "mean_delta": -0.00042426232315691205,
+          "ci95_sequence_50frame_block_bootstrap": [
+            -0.000484244644989258,
+            -0.0003716407871690823
+          ],
+          "worst_decile_delta": -0.0008766162236141721,
+          "worst_frame": {
+            "sequence": "01",
+            "frame": 509
+          },
+          "worst_frame_delta": -0.0015140784036563604
+        },
+        "iou01": {
+          "mean_delta": -0.00017411068571745306,
+          "ci95_sequence_50frame_block_bootstrap": [
+            -0.00020649883750072808,
+            -0.00014629243975524002
+          ],
+          "worst_decile_delta": -0.00039271030506527886,
+          "worst_frame": {
+            "sequence": "01",
+            "frame": 513
+          },
+          "worst_frame_delta": -0.0005918590471163665
+        },
+        "jsd_bev": {
+          "mean_delta": 0.000530306951038959,
+          "ci95_sequence_50frame_block_bootstrap": [
+            0.0004770481625306931,
+            0.0005805623446386768
+          ],
+          "worst_decile_delta": 0.0010842987593131157,
+          "worst_frame": {
+            "sequence": "10",
+            "frame": 510
+          },
+          "worst_frame_delta": 0.0015524902282462727
+        },
+        "jsd_3d": {
+          "mean_delta": 0.00018140365720056395,
+          "ci95_sequence_50frame_block_bootstrap": [
+            0.00015437263076056656,
+            0.00021185896760200562
+          ],
+          "worst_decile_delta": 0.00043380853342843726,
+          "worst_frame": {
+            "sequence": "10",
+            "frame": 590
+          },
+          "worst_frame_delta": 0.0006567367478687025
+        }
+      },
+      "decision": "NO_GO_EXPANSION"
+    }
+  }
+}

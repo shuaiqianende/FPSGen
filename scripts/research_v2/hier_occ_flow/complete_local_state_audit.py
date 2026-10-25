@@ -10,7 +10,7 @@ from fpsgen.hier_occ_flow.stage2_model import Stage2OccupancyModel
 from fpsgen.hier_occ_flow.stage1_occ_adapter import FrozenStage1OccupancyAdapter
 from fpsgen.hier_occ_flow.stage2_dataset import assemble_stage2_scene
 from fpsgen.hier_occ_flow.inference import sample
-from fpsgen.hier_occ_flow.resources import gpu_preflight
+from fpsgen.hier_occ_flow.adaptation_gpu_slot import adaptation_admission
 from fpsgen.hier_occ_flow.storage import atomic_json,file_sha
 from fpsgen.hier_occ_flow.encoder_adaptation import STAGE2_SHA
 
@@ -81,7 +81,7 @@ def main():
             'mean_velocity_relative_l2':float(np.mean([float(r['velocity_relative_l2']) for r in sensitivity if r['perturbation']==name]))}
             for name in sorted({r['perturbation'] for r in sensitivity})}
     physical=os.environ.get('CUDA_VISIBLE_DEVICES','')
-    if physical not in ('2','3') or gpu_preflight((int(physical),))['status']!='AVAILABLE':raise RuntimeError('Idle GPU2/3 required for independent activity diagnosis')
+    if physical not in ('2','3') or adaptation_admission(int(physical), configure_allocator=True)['status']!='AVAILABLE':raise RuntimeError('Admitted GPU2/3 required for independent activity diagnosis')
     torch.set_num_threads(4)
     for arm in results:
         folder=a.p0_root/(arm+'_20k');cfg,g=load_stage2_config(folder/'config.json');_,dev,_=dataset_identity(cfg,g,verify=False)

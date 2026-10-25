@@ -13,7 +13,7 @@ from fpsgen.hier_occ_flow.encoder_adaptation_runtime import load_adaptation_conf
 from fpsgen.hier_occ_flow.stage1_occ_adapter import FrozenStage1OccupancyAdapter
 from fpsgen.hier_occ_flow.stage1_monitoring import module_grad_norm
 from fpsgen.hier_occ_flow.dataset import input_xyz
-from fpsgen.hier_occ_flow.resources import gpu_preflight
+from fpsgen.hier_occ_flow.adaptation_gpu_slot import adaptation_admission
 from fpsgen.hier_occ_flow.stage2_runtime import source_sha
 from fpsgen.hier_occ_flow.trainer import seed_all,rng_state,restore_rng
 from fpsgen.hier_occ_flow.storage import atomic_json,file_sha
@@ -57,7 +57,7 @@ def main():
     p.add_argument('--p0-root',type=Path,required=True);p.add_argument('--census',type=Path,required=True)
     a=p.parse_args();cfg,g=load_adaptation_config(a.config);physical=os.environ.get('CUDA_VISIBLE_DEVICES','')
     if physical not in ('2','3'):raise ValueError('Single GPU2/3 only')
-    admission=gpu_preflight((int(physical),))
+    admission=adaptation_admission(int(physical), configure_allocator=True)
     if admission['status']!='AVAILABLE':raise RuntimeError(json.dumps(admission))
     a.output.mkdir(parents=True,exist_ok=False);torch.set_num_threads(4)
     base={'arm':cfg['arm'],'phase':cfg['phase'],'config_sha256':config_sha(cfg),'source_sha256':source_sha(),

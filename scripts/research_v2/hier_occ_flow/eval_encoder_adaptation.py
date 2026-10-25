@@ -25,7 +25,7 @@ from fpsgen.hier_occ_flow.inference import sample
 from fpsgen.hier_occ_flow.evaluation import fine_metrics,aggregate_frames
 from fpsgen.hier_occ_flow.voxelization import voxelize_surface,occupied_fine_coords,pack_children
 from fpsgen.hier_occ_flow.raw_gt import RawMapSource
-from fpsgen.hier_occ_flow.resources import gpu_preflight
+from fpsgen.hier_occ_flow.adaptation_gpu_slot import adaptation_admission
 from fpsgen.hier_occ_flow.storage import atomic_json,file_sha
 from fpsgen.hier_occ_flow.stage2_runtime import source_sha
 from fpsgen.utils.gpu_kdtree_metrics import GPUKDTreeMetrics
@@ -42,7 +42,7 @@ def main():
         raise FileExistsError('Preserve previous complete or partial evaluation; review before restarting')
     gpu=os.environ.get('CUDA_VISIBLE_DEVICES','')
     if gpu not in ('2','3'):raise ValueError('One GPU2/3')
-    admission=gpu_preflight((int(gpu),))
+    admission=adaptation_admission(int(gpu), configure_allocator=True)
     if admission['status']!='AVAILABLE':raise RuntimeError(json.dumps(admission))
     cfg,g=load_adaptation_config(a.config);_,dev,manifest=datasets(cfg,g,verify=True)
     model,_,initial=load_sources(cfg,torch.device('cuda'));torch.set_num_threads(4)
