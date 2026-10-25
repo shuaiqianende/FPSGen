@@ -59,6 +59,7 @@ experiments:
   - 1
   - 2
   - 4
+  - 8
   evaluation_downstream_stage2_nfe: 4
   primary_checks:
   - parent_ranking
@@ -123,7 +124,29 @@ engineering_gates:
 - matching_FM_control_identity_decision
 evaluation:
   development_frames: 900
+  development_role: learning_and_primary_protocol_quality; not the Shortcut step-count comparison set
   sequence08_used_for_model_selection: false
+  step_count_comparison:
+    user_registered: '2026-10-26'
+    dataset: SemanticKITTI validation sequence08
+    sequence: '08'
+    stride: 100
+    frames: 41
+    first_frame: 0
+    last_frame: 4000
+    require_original_frozen_frame_manifest: true
+    nfes: [1, 2, 4, 8]
+    same_trained_checkpoint_for_all_nfes: true
+    retrain_per_nfe: false
+    same_input_gt_roi_seed_and_source_noise: true
+    stage2_noise_shared_for_common_absolute_parent_ids: true
+    stage1_sweep_other_stage: original Stage2 fixed NFE4
+    stage2_sweep_other_stage: original Stage1 fixed NFE2
+    include_matched_original_FM_at_identical_nfes: true
+    report_both_same_nfe_effect_and_deployment_budget_effect: true
+    report: [native_fine_iou, cd, iou05, iou02, iou01, jsd_bev, jsd_3d, parent_count, child_count, generation_wall, peak_vram]
+    no_training_or_bootstrap_targets_from_sequence08: true
+    checkpoint_and_protocol_frozen_before_sequence08_comparison: true
   point_mode: native_fine_voxel_centers
   metrics:
   - native_fine_iou
