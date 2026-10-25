@@ -25,3 +25,5 @@ CUDA_VISIBLE_DEVICES='' DESESCENE_SHARED_ADAPTATION=1 /data-12/M2024-HWZ/FPSGen/
 ```
 
 The source SHA and exact evidence hashes are in policy.json. Failed historical engineering and deterministic diagnostics stay in their original folders; nothing is relabeled PASS or overwritten. This cohort is mature100K+additional20K adaptation, not scratch20K.
+
+Startup regression: coarse filesystem timestamps can hide a same-size immediate file edit. Recently modified shards now always rehash, without changing the corruption test.31 CPU tests pass. The first startup was replaced before any model-launch audit, checkpoint or training update; its logs and policy are retained. Active path is formal_numeric_20261025_b.

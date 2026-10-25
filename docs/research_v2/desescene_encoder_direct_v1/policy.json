@@ -1,9 +1,9 @@
 {
   "status": "USER_DIRECTED_NUMERICAL_PILOT",
-  "epoch": 1792928034.7544954,
+  "epoch": 1792928539.5639496,
   "user_instruction": "\u5f00\u59cb\u6b63\u5f0f\u8bad\u7ec3\u554a",
   "context": "After explicit disclosure that original strict replay bounds failed; preserve FAIL, treat numerical reproducibility as NOT CERTIFIED. Start bounded formal pilot.",
-  "execution_source_sha256": "e6555a20659e70e141d7417886e1b19c685a9432ff9e51f9fb44b2b5d7589471",
+  "execution_source_sha256": "7de10390fe94e98545e8b834fc08230c10ae9d0358e45732f4813c77d713e557",
   "engineering_source_sha256": "7f954fb983866db815de3bcc393d04288a135f5b2a45c5285afa95620602a35b",
   "formal_exposures": 20000,
   "batch": 2,
@@ -32,5 +32,8 @@
       "max_parameter_replay_abs": 1.341104507446289e-07,
       "max_auxiliary_replay_abs": 9.992393188440474e-07
     }
-  }
+  },
+  "replaced_startup": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-shared-v1/experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025",
+  "previous_startup_successful_updates": 0,
+  "cpu_checks": "31 passed; coarse-timestamp cache invalidation fixed without weakening test"
 }

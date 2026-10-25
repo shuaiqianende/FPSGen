@@ -1,0 +1,36 @@
+{
+  "status": "USER_DIRECTED_NUMERICAL_PILOT",
+  "epoch": 1792928034.7544954,
+  "user_instruction": "\u5f00\u59cb\u6b63\u5f0f\u8bad\u7ec3\u554a",
+  "context": "After explicit disclosure that original strict replay bounds failed; preserve FAIL, treat numerical reproducibility as NOT CERTIFIED. Start bounded formal pilot.",
+  "execution_source_sha256": "e6555a20659e70e141d7417886e1b19c685a9432ff9e51f9fb44b2b5d7589471",
+  "engineering_source_sha256": "7f954fb983866db815de3bcc393d04288a135f5b2a45c5285afa95620602a35b",
+  "formal_exposures": 20000,
+  "batch": 2,
+  "seed": 20261032,
+  "verified_data_receipt": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-quality-eval-async-io-v1/experiments/desescene_quality_async_io_v1/p0_async_handoff_20261025/full_lineage_audit.json",
+  "verified_data_receipt_sha256": "0a1d85c63b3e9683876cd452f6ae6470049c5e070604ee0b6730e6d790c5446c",
+  "health_updates": [
+    32,
+    100,
+    500,
+    10000
+  ],
+  "no_optimizer_reset": true,
+  "arms": {
+    "EF1": {
+      "engineering_report_sha256": "ea64d199abc2afcbc44c6ca26ac72cdedf24d3f2c596970c610ca0b6fcc73e6b",
+      "config_sha256": "6120a43b9f875db1632f01aab502f1bc83944dafaa7dd9fc21866ec8396d9fc1",
+      "strict_status": "FAIL",
+      "max_parameter_replay_abs": 1.30385160446167e-07,
+      "max_auxiliary_replay_abs": 8.816537047096062e-07
+    },
+    "EF2": {
+      "engineering_report_sha256": "6417e75fc1671d16a9997c5447d04ea2d728c10d9274ef01f49f8d44299e28d0",
+      "config_sha256": "733c4d6b4aaebd326251f0e1d7ec6d2865d78f3d58d35f0edb1aa8517f3c1b89",
+      "strict_status": "FAIL",
+      "max_parameter_replay_abs": 1.341104507446289e-07,
+      "max_auxiliary_replay_abs": 9.992393188440474e-07
+    }
+  }
+}

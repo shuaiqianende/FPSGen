@@ -1,5 +1,6 @@
 """Reuse completed full audit, then checksum every consumed shard before access."""
 import json
+import time
 from pathlib import Path
 from .storage import file_sha
 
@@ -18,7 +19,12 @@ class VerifiedAdaptationDataset:
         for field in ('ids','masks'):
             path=self.dataset.root/shard[field];st=path.stat()
             signature=(st.st_size,st.st_mtime_ns,st.st_ctime_ns,st.st_ino)
-            if self.verified.get(str(path))!=signature:
+            # Some shared filesystems have coarse timestamps. Never reuse a
+            # checksum for recently written files: same-size edits in one clock
+            # tick must be read and hashed again. Frozen historical shards are
+            # eligible for the normal metadata-keyed cache.
+            recent=time.time_ns()-max(st.st_mtime_ns,st.st_ctime_ns)<2_000_000_000
+            if recent or self.verified.get(str(path))!=signature:
                 if file_sha(path)!=shard[field+'_sha256']:raise ValueError('Adaptation shard checksum failed')
                 after=path.stat()
                 if (after.st_size,after.st_mtime_ns,after.st_ctime_ns,after.st_ino)!=signature:
