@@ -1,0 +1,95 @@
+schema: desescene-shortcut-research-queue-v1
+registered: '2026-10-25'
+repository: shuaiqianende/FPSGen-private
+user_selected_method: Shortcut Models
+paper: https://arxiv.org/abs/2410.12557
+scope: independent Stage1 and Stage2 step-conditioned shortcut pilots
+status: REGISTERED_PENDING_IMPLEMENTATION_AND_ENGINEERING
+executable_queue_ready: false
+preserve_current_jobs: true
+current_predecessor:
+  active_pointer: experiments/desescene_encoder_adaptation_v1/active_formal.json
+  arms: [EF1, EF2]
+  required_completion: [formal_20k, development_900]
+training:
+  successful_frame_exposures: 20000
+  successful_updates: 10000
+  true_batch_per_gpu: 2
+  seed: 20261032
+  extra_seeds: false
+  automatic_100k: false
+  count_repeated_teacher_passes_as_new_exposures: false
+  report_teacher_forward_count_and_training_wall: true
+method:
+  inputs: [state_xt, current_time_t, step_size_d, original_condition]
+  instantaneous_branch: original Gaussian-to-binary FM at d=0
+  finite_step_branch: one2d shortcut agrees with two consecutive d shortcuts
+  bootstrap_target: stop-gradient EMA, subject to registered initialization tests
+  step_domain: dyadic d with 0 <= t and t+2d <= 1 for consistency pairs
+  euler_state_precision: float32
+  initialization: matched mature checkpoint, additional20k adaptation
+  same_initialization_for_matching_FM_control: true
+  not_meanflow_or_reflow: true
+  no_new_local_attention_or_encoder_architecture: true
+sources:
+  stage1_ema_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+  stage2_online_sha256: eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c
+  original_raw_surface_hit_labels: true
+  use_unvalidated_EF_encoder: false
+experiments:
+  - id: S1-SC20K
+    status: REGISTERED_PENDING_IMPLEMENTATION_AND_ENGINEERING
+    preferred_gpu: 2
+    trainable: [stage1_flow, step_size_embedding]
+    frozen: [stage1_encoder, stage2]
+    support_threshold: 0.5
+    evaluation_stage1_nfes: [1, 2, 4]
+    evaluation_downstream_stage2_nfe: 4
+    primary_checks: [parent_ranking, fixed_k_fine_gt_ceiling, downstream_fine_geometry, full_generation_latency]
+    control:
+      id: S1-FM20K
+      type: original FM, same frozen Encoder and Flow initialization, same20k continuation
+      status: REUSE_AUDIT_REQUIRED_OTHERWISE_MATCHED_CONTROL_REQUIRED
+      EF1_or_EF2_is_automatically_a_matching_control: false
+  - id: S2-SC20K
+    status: REGISTERED_PENDING_IMPLEMENTATION_AND_ENGINEERING
+    preferred_gpu: 3
+    trainable: [stage2_dynamic_ptv3_fm, step_size_embedding]
+    frozen: [stage1_encoder, stage1_flow]
+    parent_mode: actual frozen Stage1 predicted support
+    teacher_stage1_nfe: 2
+    support_threshold: 0.5
+    evaluation_stage2_nfes: [1, 2, 4, 8]
+    primary_checks: [native_fine_iou, cd, physical_iou, jsd, generation_latency]
+    control:
+      id: S2-FM20K
+      reference_candidate: B0 matched20k
+      status: REUSE_ONLY_AFTER_FULL_PROTOCOL_IDENTITY_AUDIT
+      verify: [source_checkpoint, frozen_stage1, support, seed, data_order, packed_batch2, optimizer, exposure_budget, evaluation]
+engineering_gates:
+  - separately_registered_shortcut_worktree_and_source_identity
+  - step_size_embedding_shape_and_initialization
+  - d0_original_network_output_comparison
+  - consistency_target_stop_gradient_and_valid_time_domain
+  - exact_child_order_x_plus_2y_plus_4z
+  - real_maximum_batch2_forward_backward_without_token_or_scene_reduction
+  - finite_nonzero_gradients_and_frozen_state
+  - checkpoint_optimizer_ema_scaler_scheduler_rng_resume_audit
+  - registered_short_learning_health_check
+  - matching_FM_control_identity_decision
+evaluation:
+  development_frames: 900
+  sequence08_used_for_model_selection: false
+  point_mode: native_fine_voxel_centers
+  metrics: [native_fine_iou, precision, recall, f1, cd, iou05, iou02, iou01, jsd_bev, jsd_3d]
+  stage1_additional: [parent_ids, fixed_k, fine_gt_recall_ceiling]
+  runtime: same_gpu_same_backend_paired_generation_wall
+  distinguish: [same_nfe_model_effect, fewer_nfe_sampling_gain]
+  combine_both_stages_only_after_independent_validation: true
+scheduling:
+  one_project_training_per_physical_gpu: true
+  shared_external_compute: only_after_memory_admission
+  preserve_real_batch2: true
+  stop_or_wait_on_failed_engineering: true
+  existing_numeric_EF_exception_is_not_inherited: true
+  no_current_executable_job_or_fake_completion_claim: true
