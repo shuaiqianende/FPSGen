@@ -21,7 +21,7 @@ Strict global determinism failed at _bincount_cuda. Deterministic cuDNN alone di
 
 ```bash
 cd /data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-shared-v1
-CUDA_VISIBLE_DEVICES='' DESESCENE_SHARED_ADAPTATION=1 /data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u scripts/research_v2/hier_occ_flow/run_direct_encoder_pilot.py --policy experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025/policy.json --output experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025
+CUDA_VISIBLE_DEVICES='' DESESCENE_SHARED_ADAPTATION=1 /data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u scripts/research_v2/hier_occ_flow/run_direct_encoder_pilot.py --policy experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025_b/policy.json --output experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025_b
 ```
 
 The source SHA and exact evidence hashes are in policy.json. Failed historical engineering and deterministic diagnostics stay in their original folders; nothing is relabeled PASS or overwritten. This cohort is mature100K+additional20K adaptation, not scratch20K.

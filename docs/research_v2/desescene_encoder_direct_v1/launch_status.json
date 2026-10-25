@@ -1,0 +1,15 @@
+{
+  "code_commit": "105b636",
+  "source_sha256": "7de10390fe94e98545e8b834fc08230c10ae9d0358e45732f4813c77d713e557",
+  "supervisor_pid": 3654444,
+  "gpu2_ef1_pid": 3654496,
+  "gpu3_ef2_pid": 3654505,
+  "status": "FORMAL_PROCESSES_RUNNING_INITIALIZATION",
+  "successful_updates_verified": 0,
+  "cpu_tests": {
+    "passed": 31,
+    "seconds": 11.66
+  },
+  "formal_runtime": "DEFERRED",
+  "resume_certification": "NOT_CERTIFIED_NUMERICAL_REPLAY"
+}
