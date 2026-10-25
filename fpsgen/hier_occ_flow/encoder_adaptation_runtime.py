@@ -34,7 +34,7 @@ def load_adaptation_config(path):
     if g.parent_resolution!=(384,384,32) or g.child_split!=(2,2,2):raise ValueError('384/8-way geometry locked')
     if g.origin!=(-50.,-50.,-4.) or g.maximum!=(50.,50.,4.4) or g.sphere_radius!=50.:raise ValueError('ROI locked')
     if cfg['arm'] not in ARMS or cfg['initialization_mode']!='pretrained_ema_adaptation':raise ValueError('Explicit adaptation identity required')
-    if cfg['phase']!=('P1' if cfg['arm'].startswith('EF') else 'P2'):raise ValueError('Arm/phase identity mismatch')
+    if cfg['phase']!=('P1' if cfg['arm'].startswith('EF') or cfg['arm']=='S1-FM20K' else 'P2'):raise ValueError('Arm/phase identity mismatch')
     t=cfg['training']
     if (t['successful_frame_exposures']!=20000 or t['successful_updates']!=10000 or t['batch_per_gpu']!=2
         or t['seed']!=20261032 or t['precision']!='fp16' or t['warmup_updates']!=500
@@ -96,7 +96,9 @@ def step_loss(system,records,xyz,cfg,g,teacher,generator):
 
 def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False,numerical_pilot_policy=None):
     visible=os.environ.get('CUDA_VISIBLE_DEVICES','')
-    if visible not in ('2','3'):raise ValueError('P1/P2 require one admitted GPU2/3')
+    flow_control=cfg['arm']=='S1-FM20K'
+    if visible not in ('2','3') and not (visible=='0' and flow_control and os.environ.get('DESESCENE_GPU0_FLOW_CONTROL')=='1'):
+        raise ValueError('One explicitly admitted GPU required')
     admission=adaptation_admission(int(visible), configure_allocator=True)
     if admission['status']!='AVAILABLE':raise RuntimeError(json.dumps(admission))
     if not 0<max_updates<=10000 or smoke and max_updates>32:raise ValueError('No budget extension')
@@ -109,7 +111,7 @@ def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False,nume
     if direct is None and (report.get('status')!='PASS' or report['source_sha256']!=source_sha()
         or report['config_sha256']!=config_sha(cfg) or report['arm']!=cfg['arm']):
         raise ValueError('Maximum real Batch2/gradient/replay engineering report required')
-    if not smoke and direct is None:
+    if not smoke and direct is None and not flow_control:
         smoke_summary=json.loads(Path(cfg['smoke_summary']).read_text())
         if (smoke_summary.get('successful_updates')!=32 or smoke_summary.get('successful_frame_exposures')!=64
             or smoke_summary.get('identity',{}).get('source_sha256')!=source_sha()
@@ -120,7 +122,8 @@ def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False,nume
     output=Path(output).resolve();output.mkdir(parents=True,exist_ok=True)
     if not resume and any((output/'checkpoints').glob('*.pt')):raise FileExistsError('Preserve existing run; use exact resume')
     torch.set_num_threads(4);device=torch.device('cuda')
-    ds,dev,manifests=datasets(cfg,g,verify=True,verified_receipt=direct.get('verified_data_receipt') if direct else None);seed_all(cfg['training']['seed'])
+    receipt=direct.get('verified_data_receipt') if direct else cfg.get('verified_data_receipt') if flow_control else None
+    ds,dev,manifests=datasets(cfg,g,verify=True,verified_receipt=receipt);seed_all(cfg['training']['seed'])
     system,_,initial=load_sources(cfg,device);seed_all(cfg['training']['seed']);t=cfg['training']
     identity={'experiment':'desescene-encoder-adaptation-v1','phase':cfg['phase'],'arm':cfg['arm'],
         'initialization_mode':'pretrained_ema_adaptation','source_sha256':source_sha(),'config_sha256':config_sha(cfg),
@@ -128,12 +131,18 @@ def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False,nume
         'stage2_source_sha256':STAGE2_SHA,'output':str(output),'world_size':1,
         'execution_scope':'engineering_smoke' if smoke else 'additional20k_adaptation'}
     if direct is not None:identity['direct_numerical_pilot']=direct
+    if flow_control:
+        identity['control_scope']='Stage1 originalFM Flow-only; frozen mature EMA Encoder'
+        identity['resume_audit_scope']=report['resume_classification']
+        identity['engineering_report_sha256']=file_sha(cfg['engineering_report'])
+        identity['startup_health']='in-run32/100/500; same optimizer/schedule and20K total'
     ema=copy.deepcopy(system).eval().requires_grad_(False);optimizer,scheduler=make_optimizer(system,t)
     scaler=torch.cuda.amp.GradScaler(init_scale=t['amp_initial_scale'])
     generator=torch.Generator(device=device).manual_seed(t['seed']+1000)
     teacher=FrozenStage1OccupancyAdapter(**cfg['source_stage1']).to(device) if cfg['phase']=='P2' else None
     successful=attempts=cursor=skips=failures=0
     frozen=initial['frozen_state_sha256'];initial_encoder=initial['encoder_initial_parameter_sha256']
+    initial_flow=parameter_sha(system.stage1.flow)
     if resume:
         value=verify_adaptation_resume(torch.load(resume,map_location='cpu'),identity,system)
         system.load_state_dict(value['model'],strict=True);ema.load_state_dict(value['ema'],strict=True)
@@ -175,23 +184,29 @@ def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False,nume
             with torch.autocast('cuda',dtype=torch.float16):loss,details=step_loss(system,records,xyz,cfg,g,teacher,generator)
             scaler.scale(loss).backward();scaler.unscale_(optimizer)
             encoder_norm=module_grad_norm(system.stage1.encoder)
+            flow_norm=module_grad_norm(system.stage1.flow)
             norm=torch.nn.utils.clip_grad_norm_([p for p in system.parameters() if p.requires_grad],t['grad_clip'])
             frozen_grad=any(p.grad is not None for p in system.parameters() if not p.requires_grad)
             if frozen_grad:raise RuntimeError('Frozen parameter received a gradient')
             finite=bool(torch.isfinite(loss) and torch.isfinite(norm) and norm>0)
-            if cfg['arm']!='S2-E0':finite=bool(finite and np.isfinite(encoder_norm) and encoder_norm>0)
+            if cfg['arm'] not in ('S2-E0','S1-FM20K'):finite=bool(finite and np.isfinite(encoder_norm) and encoder_norm>0)
+            if flow_control:finite=bool(finite and np.isfinite(flow_norm) and flow_norm>0)
             attempts+=1;cursor+=2
             if finite:
                 scaler.step(optimizer);scaler.update();scheduler.step();successful+=1;failures=0
                 update_adaptation_ema(ema,system,t['ema_decay'])
             else:
                 skips+=1;failures+=1;scaler.update(new_scale=scaler.get_scale()/2)
-            if successful<=1 and finite and cfg['arm']!='S2-E0' and parameter_sha(system.stage1.encoder)==before_parameters.get('encoder'):
+            if successful<=1 and finite and cfg['arm'] not in ('S2-E0','S1-FM20K') and parameter_sha(system.stage1.encoder)==before_parameters.get('encoder'):
                 raise RuntimeError('Encoder did not update despite finite gradient')
+            if successful==1 and finite and flow_control:
+                if parameter_sha(system.stage1.flow)==initial_flow or frozen_state_sha(system)!=frozen:
+                    raise RuntimeError('Flow-only update/frozen Encoder audit failed')
             if successful and successful%100==0 and frozen_state_sha(system)!=frozen:raise RuntimeError('Frozen parameter/state drift')
             torch.cuda.synchronize();row={'successful_updates':successful,'successful_frame_exposures':successful*2,
                 'attempts':attempts,'sample_cursor':cursor,'amp_skips':skips,'finite':finite,
                 'loss':float(loss) if torch.isfinite(loss) else None,'encoder_gradient_norm':encoder_norm if np.isfinite(encoder_norm) else None,
+                'flow_gradient_norm':flow_norm if np.isfinite(flow_norm) else None,
                 'gradient_norm':float(norm) if torch.isfinite(norm) else None,'seconds':time.perf_counter()-tick,
                 'batch_per_gpu':2,'records':[{'sequence':r['sequence'],'frame':r['frame'],'sampler_index':i} for r,i in zip(records,indices)],
                 'peak_allocated_bytes':torch.cuda.max_memory_allocated(),'peak_reserved_bytes':torch.cuda.max_memory_reserved(),
@@ -199,16 +214,16 @@ def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False,nume
             if 'ids' in details:row['parent_ids_sha256']=hashlib.sha256(details['ids'].detach().cpu().numpy().tobytes()).hexdigest();row['scene_tokens']=details['scene_lengths']
             log.write(json.dumps(row,allow_nan=False)+'\n');print(f"{cfg['arm']} update={successful}/{max_updates} exposures={successful*2}/20000 fm={row['loss']} seconds={row['seconds']:.3f}",flush=True)
             del details,loss,xyz
-            if direct is not None and finite and successful in (32,100,500,10000):
+            if (direct is not None or flow_control) and finite and successful in (32,100,500,10000):
                 if (frozen_state_sha(system)!=frozen or frozen_state_sha(ema)!=frozen
                     or skips>max(2,int(attempts*.01))):
                     raise RuntimeError('Direct-pilot in-run health failed; no budget extension')
                 atomic_json(output/f'health_{successful:06d}.json',dict(
                     status='PASSED_IN_RUN_HEALTH',successful_updates=successful,
                     successful_frame_exposures=successful*2,amp_skips=skips,
-                    resume_certification='NOT_CERTIFIED_NUMERICAL_REPLAY',
+                    resume_certification=identity.get('resume_audit_scope','NOT_CERTIFIED_NUMERICAL_REPLAY'),
                     scheduler_reset=False,optimizer_reset=False))
-            if finite and (successful%500==0 or successful==max_updates or direct is not None and successful in (32,100)) or stopped[0] or failures>=3:
+            if finite and (successful%500==0 or successful==max_updates or (direct is not None or flow_control) and successful in (32,100)) or stopped[0] or failures>=3:
                 save('resume_latest.pt')
                 if successful%2500==0 or successful==max_updates:save(f'step{successful:06d}.pt')
             if stopped[0] or failures>=3:break
@@ -217,5 +232,6 @@ def run_adaptation(cfg,g,output,*,resume=None,max_updates=10000,smoke=False,nume
         'identity':identity,'successful_updates':successful,'successful_frame_exposures':successful*2,'attempts':attempts,
         'amp_skips':skips,'freeze_violation':False,'frozen_state_sha256':frozen,'seconds':time.perf_counter()-start,
         'encoder_parameter_sha256':parameter_sha(system.stage1.encoder),'encoder_changed':parameter_sha(system.stage1.encoder)!=initial_encoder}
+    if flow_control:summary.update(flow_parameter_sha256=parameter_sha(system.stage1.flow),flow_changed=parameter_sha(system.stage1.flow)!=initial_flow)
     atomic_json(output/'summary.json',summary)
     if successful!=max_updates:raise RuntimeError('Adaptation stopped before requested successful budget')

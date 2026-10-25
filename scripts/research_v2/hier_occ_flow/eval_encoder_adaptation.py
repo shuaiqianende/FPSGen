@@ -41,10 +41,11 @@ def main():
     if any(p.exists() for p in (a.output,a.output.with_suffix('.jsonl'),a.output.with_suffix('.protocol.json'))):
         raise FileExistsError('Preserve previous complete or partial evaluation; review before restarting')
     gpu=os.environ.get('CUDA_VISIBLE_DEVICES','')
-    if gpu not in ('2','3'):raise ValueError('One GPU2/3')
+    if gpu not in ('2','3') and not (gpu=='0' and os.environ.get('DESESCENE_GPU0_FLOW_CONTROL')=='1'):raise ValueError('One explicitly authorized GPU required')
     admission=adaptation_admission(int(gpu), configure_allocator=True)
     if admission['status']!='AVAILABLE':raise RuntimeError(json.dumps(admission))
     cfg,g=load_adaptation_config(a.config);_,dev,manifest=datasets(cfg,g,verify=True)
+    if gpu=='0' and cfg['arm']!='S1-FM20K':raise ValueError('GPU0 is registered for Flow-only control')
     model,_,initial=load_sources(cfg,torch.device('cuda'));torch.set_num_threads(4)
     checkpoint_sha=None
     if not a.reference:

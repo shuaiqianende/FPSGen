@@ -6,7 +6,8 @@ import subprocess
 def gpu_preflight(physical_ids=(2,3),minimum_free_gib=16.,allow_shared_compute=False):
     # GPU1 explicitly authorized for this research cohort on 2026-10-24.
     # Default cards and the no-existing-compute admission policy are unchanged.
-    if any(p not in (1,2,3) for p in physical_ids): raise ValueError('Only physical GPU1/2/3 allowed')
+    allowed=(0,1,2,3) if os.environ.get('DESESCENE_GPU0_FLOW_CONTROL')=='1' else (1,2,3)
+    if any(p not in allowed for p in physical_ids): raise ValueError('GPU not explicitly authorized')
     rows=[]; blocked=False
     for physical in physical_ids:
         r=subprocess.run(['nvidia-smi',f'--id={physical}','--query-gpu=memory.free,memory.total,utilization.gpu,driver_version','--format=csv,noheader,nounits'],text=True,capture_output=True)

@@ -18,7 +18,7 @@ from .storage import file_sha
 
 STAGE1_SHA='b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2'
 STAGE2_SHA='eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c'
-ARMS=('EF1','EF2','S2-E0','S2-E1','S2-E2')
+ARMS=('EF1','EF2','S2-E0','S2-E1','S2-E2','S1-FM20K')
 
 
 def parameter_sha(module):
@@ -39,7 +39,7 @@ def tensor_state_sha(values):
 def train_prefixes(arm):
     return {'EF1':('stage1.encoder.',),'EF2':('stage1.encoder.','stage1.flow.'),
         'S2-E0':('stage2.',),'S2-E1':('stage1.encoder.',),
-        'S2-E2':('stage1.encoder.','stage2.')}[arm]
+        'S2-E2':('stage1.encoder.','stage2.'),'S1-FM20K':('stage1.flow.',)}[arm]
 
 
 def frozen_state_sha(system):
@@ -68,8 +68,8 @@ class EncoderAdaptationSystem(nn.Module):
     def train(self,mode=True):
         super().train(mode)
         if not mode:return self
-        self.stage1.encoder.train(self.arm!='S2-E0')
-        self.stage1.flow.train(self.arm=='EF2')
+        self.stage1.encoder.train(self.arm not in ('S2-E0','S1-FM20K'))
+        self.stage1.flow.train(self.arm in ('EF2','S1-FM20K'))
         if self.stage2 is not None:
             self.stage2.train(self.arm in ('S2-E0','S2-E2'))
             if self.arm=='S2-E1':
