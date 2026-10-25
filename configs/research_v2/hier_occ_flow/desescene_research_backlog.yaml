@@ -1,7 +1,9 @@
 schema: desescene-research-backlog-v1
 registered: '2026-10-24'
 latest_progress_report: docs/research_v2/desescene_child_local_progress_20261024_2140/README.md
-latest_addition: docs/research_v2/DESESCENE_SHORTCUT_NEXT_QUEUE.md
+latest_addition: docs/research_v2/DESESCENE_MEANFLOW_PLAN.md
+meanflow_queue: configs/research_v2/hier_occ_flow/desescene_meanflow_queue.yaml
+encoder_stage2_loss_status: USER_HOLD_20261026
 shortcut_queue: configs/research_v2/hier_occ_flow/desescene_shortcut_queue.yaml
 repository: shuaiqianende/FPSGen-private
 training_seed: 20261032
@@ -49,6 +51,20 @@ experiments:
     queue: desescene_shortcut_queue.yaml
     preferred_gpu: 3
     follows: [encoder_only_adaptation, encoder_and_flow_adaptation]
+  - id: stage1_meanflow20k
+    status: implemented_cpu_pass_pending_gpu_engineering
+    queue: desescene_meanflow_queue.yaml
+    preferred_gpu: 2
+    follows: [encoder_only_adaptation, encoder_and_flow_adaptation, S1-FM20K-control-evaluation]
+  - id: stage2_meanflow20k
+    status: implemented_cpu_pass_pending_native_ptv3_jvp
+    queue: desescene_meanflow_queue.yaml
+    preferred_gpu: 3
+    follows: [encoder_only_adaptation, encoder_and_flow_adaptation]
+  - id: stage2_loss_encoder_only
+    status: USER_HOLD
+  - id: stage2_loss_encoder_joint
+    status: USER_HOLD
 completion_policy:
   evaluate_development_frames: 900
   preserve_negative_results: true

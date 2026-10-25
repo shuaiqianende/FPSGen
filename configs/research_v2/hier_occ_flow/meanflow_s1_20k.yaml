@@ -1,0 +1,129 @@
+experiment: desescene-meanflow-v1
+phase: MEANFLOW
+arm: S1-MF20K
+initialization_mode: pretrained_meanflow_adaptation
+geometry:
+  child_split:
+  - 2
+  - 2
+  - 2
+  maximum:
+  - 50.0
+  - 50.0
+  - 4.4
+  origin:
+  - -50.0
+  - -50.0
+  - -4.0
+  parent_resolution:
+  - 384
+  - 384
+  - 32
+  sphere_radius: 50.0
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/train
+development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development
+source_stage1:
+  checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt
+  checkpoint_sha256: b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2
+  config: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/stage1_occ384_fm_100k_frames_gb4/config.json
+  weights: ema
+source_stage2:
+  checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes/checkpoints/step025000.pt
+  checkpoint_sha256: eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c
+reference_stage2_config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/config.json
+condition_cache: false
+training:
+  successful_frame_exposures: 20000
+  successful_updates: 10000
+  batch_per_gpu: 2
+  seed: 20261032
+  precision: fp16
+  optimizer: AdamW
+  weight_decay: 0.01
+  warmup_updates: 500
+  grad_clip: 1.0
+  ema_decay: 0.999
+  amp_initial_scale: 16384.0
+  learning_rate: 1.0e-05
+validation:
+  max_frames: 900
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  stage2_nfe: 4
+  seed: 20261031
+  threshold: 0.5
+  candidate_budgets:
+  - 84963
+  - 120000
+  stage1_nfe: 2
+  point_mode: native_fine_centers
+  seq08_frames:
+  - 0
+  - 100
+  - 200
+  - 300
+  - 400
+  - 500
+  - 600
+  - 700
+  - 800
+  - 900
+  - 1000
+  - 1100
+  - 1200
+  - 1300
+  - 1400
+  - 1500
+  - 1600
+  - 1700
+  - 1800
+  - 1900
+  - 2000
+  - 2100
+  - 2200
+  - 2300
+  - 2400
+  - 2500
+  - 2600
+  - 2700
+  - 2800
+  - 2900
+  - 3000
+  - 3100
+  - 3200
+  - 3300
+  - 3400
+  - 3500
+  - 3600
+  - 3700
+  - 3800
+  - 3900
+  - 4000
+  no_seq08_tuning: true
+  seq08_reference: /data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_eval/stage1_final_seq08_skip100_rawcd_grid124_gpu1
+reference_stage2_config_sha256: 0ab712bd2bbe1cd6c6da8bea15833b9c4fc2206dab5e0d5ed06f9cef93a9bfff
+verified_data_receipt: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-quality-eval-async-io-v1/experiments/desescene_quality_async_io_v1/p0_async_handoff_20261025/full_lineage_audit.json
+meanflow:
+  diagonal_probability: 0.75
+  adaptive_power: 0.0
+  adaptive_epsilon: 0.001
+  jvp_backend: torch.func.jvp
+  time_direction: noise0_to_data1
+  target_sign: plus
+specification:
+  path: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/docs/research_v2/meanflow/CODEX_MEANFLOW_SPEC_ZH.md
+  sha256: ba941e95b495f05fd355c016c528a14d0bf94767cbb80042e00aa278c66b2e0f
+stress:
+  p0_root: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1
+  census: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d3_fixed_budget/per_frame.jsonl
+engineering_report: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/experiments/desescene_meanflow_v1/S1-MF20K/engineering/result.json
+smoke_summary: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/experiments/desescene_meanflow_v1/S1-MF20K/smoke/summary.json
+control:
+  arm: S1-FM20K
+  status: WAITING_CONTROL_EVAL
+  source_config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/configs/research_v2/hier_occ_flow/shortcut_stage1_fm_control_20k.yaml
+  run_root: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-shortcut-pilot-v1/experiments/desescene_shortcut_pilot_v1/S1-FM20K

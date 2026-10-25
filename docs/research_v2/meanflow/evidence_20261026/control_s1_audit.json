@@ -1,0 +1,22 @@
+{
+  "arm": "S1-FM20K",
+  "checks": {
+    "amp_initial_scale": true,
+    "batch_per_gpu": true,
+    "ema_decay": true,
+    "flow_learning_rate": true,
+    "freeze_policy": true,
+    "grad_clip": true,
+    "optimizer": true,
+    "precision": true,
+    "seed": true,
+    "source_data_geometry_support": true,
+    "successful_frame_exposures": true,
+    "successful_updates": true,
+    "warmup_updates": true,
+    "weight_decay": true
+  },
+  "reason": "Control training/evaluation not complete",
+  "run_root": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-shortcut-pilot-v1/experiments/desescene_shortcut_pilot_v1/S1-FM20K",
+  "status": "WAITING_CONTROL_EVALUATION"
+}
