@@ -1,0 +1,53 @@
+{
+  "observed": "2026-10-25T20:48:18.676341",
+  "physical_gpu": 0,
+  "arm": "S1-FM20K",
+  "purpose": "OriginalFM Flow-only matched20K control for Stage1 Shortcut",
+  "source_sha256": "1244905d142fceeb6fd199cbacaf4bd34e82c5fc686c9c3884509fb48a4fda17",
+  "cpu_tests_passed": 28,
+  "engineering_status": "PASS",
+  "checks": {
+    "checkpoint_state_restored_exact": true,
+    "encoder_gradients_absent": true,
+    "finite_nonzero_flow_gradient": true,
+    "fixed_gradient_optimizer_ema_rng_replay_exact": true,
+    "flow_changed": true,
+    "frozen_encoder_and_ema_exact": true,
+    "maximum_real_batch2": true
+  },
+  "resume_classification": "EXACT_CHECKPOINT_AND_FIXED_GRADIENT_STATE_REPLAY_ONLY",
+  "native_end_to_end_cuda_replay": "NOT_CERTIFIED",
+  "stress_selection": [
+    {
+      "frame": 1019,
+      "sequence": "01",
+      "split": "train",
+      "teacher_parent_tokens": 192179
+    },
+    {
+      "frame": 1018,
+      "sequence": "01",
+      "split": "train",
+      "teacher_parent_tokens": 191976
+    }
+  ],
+  "memory": {
+    "peak_allocated_bytes": 7820747264,
+    "peak_reserved_bytes": 9099542528
+  },
+  "latest_training": {
+    "successful_updates": 13,
+    "successful_frame_exposures": 26,
+    "attempts": 13,
+    "amp_skips": 0,
+    "loss": 0.0031396320555359125,
+    "encoder_gradient_norm": 0.0,
+    "flow_gradient_norm": 0.16412001848220825,
+    "finite": true,
+    "batch_per_gpu": 2
+  },
+  "target_exposures": 20000,
+  "target_successful_updates": 10000,
+  "after_training": "same900 Development evaluation",
+  "EF1_EF2_source_unchanged": true
+}
