@@ -48,8 +48,12 @@ FD 仅用于诊断，AMP/Max 的小步长 FD 不作为训练目标和通过依�
 
 ## 接续安排
 
-Stage2 工程门槛已通过，接下来在空闲 GPU3 执行单独、丢弃的32 successful updates Smoke。正式20K仍使用新鲜源初始化/优化器与完整10K日程。Stage1 保持独立工程验收，不能借用 Stage2 gate。
+2026-10-26 15:24 +0800：Stage2 已在 GPU3 完成独立、丢弃的32 successful updates Smoke，`SMOKE_PASS`，64 exposures，34 attempts，其中2次 AMP overflow 明确记录。45个 diagonal / 19个 finite-interval exposures；成功更新内16次实际完整JVP，115.09秒，峰值allocated 7,107,677,184 bytes。Frozen Stage1 exact。Smoke权重不进入正式初始化；正式20K仍使用新鲜源初始化/优化器与完整10K日程。
+
+Stage1 也在 GPU3 完成了独立最大Batch2工程预检，`GPU_PASS`，full JVP/native reverse normalized error=5.76859e-6；自身原FM/MeanFlow replay的梯度整体relative L2为8.46982e-5/4.16412e-5，均在预注册界内。峰值allocated约7.35 GiB。它不能代替正式GPU2的同卡验收；队列将在GPU2释放后重跑其canonical gate，再进行独立Smoke和20K。
 
 v2 控制器保留 EF0/EF1/EF2 和 Flow-only 完整评价依赖，并等待旧 v1 控制器完成自己的已登记工程尝试、释放共享卡锁，再续上 v2 的20K/900帧/seq08-41帧 NFE1/2/4/8与配对测速。已通过且源码/config/物理GPU一致的工程/Smoke证据可严格复用；失败证据不覆盖、不静默跳过。
+
+持久v2控制器已启动，PID3979172，实际状态`WAITING_PREDECESSOR_EVAL`。EF0最新为439/900，GPU2原评价继续；v1控制器PID930632保持原计划。Stage2 Smoke启动PID3979171已正常结束。v2控制器在依赖满足后将严格复用已通过的Stage2工程和Smoke，而不重训Smoke或覆盖输出。Stage1/S2 formal均尚未启动；Stage2监督Encoder仍USER_HOLD。
 
 当前还没有 MeanFlow 正式20K训练质量或速度结果，不能从 JVP PASS 推断模型更好或少步生成已经成功。

@@ -1,0 +1,24 @@
+{
+  "epoch": 1792999406.6523721,
+  "pid": 3979172,
+  "predecessors": [
+    {
+      "actual_status": "FORMAL_EF1_EF2_LAUNCHING",
+      "name": "EF1_EF2_and_EF0_reference",
+      "status": "WAITING"
+    },
+    {
+      "name": "S1-FM20K_control",
+      "reason": "Verified own train/eval artifacts",
+      "status": "COMPLETE"
+    },
+    {
+      "actual_status": "WAITING_PREDECESSOR_EVAL",
+      "name": "legacy_v1_engineering_attempts_archived",
+      "status": "WAITING"
+    }
+  ],
+  "queue_sha256": "5e0f8b1e830497362e34d2b3cee8463aa7ed542962c62e3f036d09b7d091b2be",
+  "source_sha256": "9a7b41b05892dbb1df1067af99c08e4fc9422f60225fbe39e6f3d31df7812a00",
+  "status": "WAITING_PREDECESSOR_EVAL"
+}
