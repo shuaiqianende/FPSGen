@@ -1,0 +1,56 @@
+{
+  "status": "FORMAL_TRAINING_RUNNING",
+  "time": "2026-10-26T15:39:44.147468+08:00",
+  "physical_gpu": 3,
+  "pid": 4037454,
+  "supervisor_pid": 4037134,
+  "budget": {
+    "successful_updates": 10000,
+    "successful_frame_exposures": 20000,
+    "batch_per_gpu": 2
+  },
+  "health_stages": [
+    100,
+    500,
+    10000
+  ],
+  "source_initialization": {
+    "arm": "S2-MF20K",
+    "batch": 2,
+    "config_sha256": "6a44e3a6c80603e3a76f6193a534bf0c9d8ff23a2b040488c530aee4a774ad3e",
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "engineering_report_sha256": "96c8cff7a1856195d3d3d1d09b4eb7a70c98a60dd07f98a8534ce66960b4fc1c",
+    "experiment": "desescene-meanflow-v1",
+    "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+    "initialization_mode": "pretrained_online_meanflow_adaptation",
+    "jvp_backend": "torch.func.jvp",
+    "native_jvp_adapters": "original-primal SpConv + FlashAttention + native-argmax pooling; analytic tangent",
+    "native_resume_exception": true,
+    "output": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S2-MF20K/formal",
+    "precision": "FP32 parameters + original FP16 autocast",
+    "replay_policy_sha256": "4e26b8d6d58cd75de1c0f2278ad1ec37652744a31689eb30b71c610d17614837",
+    "resume_classification": "BOUNDED_NATIVE_NUMERICAL_REPLAY_WITH_OWN_FM_CONTROL",
+    "scope": "additional20k_meanflow",
+    "source_sha256": "9a7b41b05892dbb1df1067af99c08e4fc9422f60225fbe39e6f3d31df7812a00",
+    "source_stage1_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+    "source_stage2_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+    "spec_sha256": "ba941e95b495f05fd355c016c528a14d0bf94767cbb80042e00aa278c66b2e0f",
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+    "world_size": 1
+  },
+  "starting_updates": 0,
+  "resume": null,
+  "current": {
+    "updates": 56,
+    "exposures": 112,
+    "attempts": 58,
+    "amp_skips": 2,
+    "jvp_calls": 24,
+    "loss": 0.4399072527885437,
+    "seconds": 2.454966364428401,
+    "peak_allocated_bytes": 7504420864
+  },
+  "phase1_gpu2": "Wait for actual admission after EF0; own engineering/Smoke then20K",
+  "old_waiters_replaced_only": true,
+  "ef0_process_preserved": 3230215
+}

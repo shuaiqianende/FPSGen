@@ -1,0 +1,34 @@
+{
+  "controllers": [
+    {
+      "children": [],
+      "command": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/scripts/research_v2/hier_occ_flow/run_meanflow_queue.py --queue /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/configs/research_v2/hier_occ_flow/desescene_meanflow_queue.yaml --output /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/experiments/desescene_meanflow_v1/queue ",
+      "pid": 930632,
+      "previous_status": "WAITING_PREDECESSOR_EVAL",
+      "status_file": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/experiments/desescene_meanflow_v1/queue/supervisor.json"
+    },
+    {
+      "children": [],
+      "command": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/scripts/research_v2/hier_occ_flow/run_meanflow_queue.py --queue /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/configs/research_v2/hier_occ_flow/desescene_meanflow_queue.yaml --output /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/queue ",
+      "pid": 3979172,
+      "previous_status": "WAITING_PREDECESSOR_EVAL",
+      "status_file": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/queue/supervisor.json"
+    }
+  ],
+  "ef0_pid_preserved": 3230215,
+  "epoch": 1793000206.9048858,
+  "new_command": [
+    "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+    "-u",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/scripts/research_v2/hier_occ_flow/run_meanflow_queue.py",
+    "--queue",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/configs/research_v2/hier_occ_flow/desescene_meanflow_start_now_20261026.yaml",
+    "--output",
+    "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/queue_start_now_20261026"
+  ],
+  "new_pid": 4037134,
+  "queue_sha256": "8411b04bd4a47a2473e72109664ab15fd633a2b6aaf9760114f0f2fa28e719d6",
+  "source_sha256": "9a7b41b05892dbb1df1067af99c08e4fc9422f60225fbe39e6f3d31df7812a00",
+  "status": "HANDOFF_COMPLETE",
+  "training_protocol_changed": false
+}

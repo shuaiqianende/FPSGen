@@ -57,3 +57,15 @@ v2 控制器保留 EF0/EF1/EF2 和 Flow-only 完整评价依赖，并等待旧 v
 持久v2控制器已启动，PID3979172，实际状态`WAITING_PREDECESSOR_EVAL`。EF0最新为439/900，GPU2原评价继续；v1控制器PID930632保持原计划。Stage2 Smoke启动PID3979171已正常结束。v2控制器在依赖满足后将严格复用已通过的Stage2工程和Smoke，而不重训Smoke或覆盖输出。Stage1/S2 formal均尚未启动；Stage2监督Encoder仍USER_HOLD。
 
 当前还没有 MeanFlow 正式20K训练质量或速度结果，不能从 JVP PASS 推断模型更好或少步生成已经成功。
+
+## 2026-10-26 15:39 更新：用户要求立即正式开训
+
+用户明确要求空闲GPU3立即开始正式训练，替代上一快照中对EF0完成的全局等待。已核验旧两个CPU调度器均处于WAITING且没有子进程，仅替换这两个等待器；EF0的PID3230215与原评价完整保留。原任务状态和替换收据另存，没有将旧等待状态伪装成完成。
+
+**Stage2 MeanFlow 正式训练已运行：GPU3，PID4037454，新自动控制器PID4037134。** 15:39快照为56 successful updates /112 exposures，58 attempts，2 AMP skips已记录，目标仍为10,000 successful updates /20,000 exposures，真实Batch2。GPU3实际占用约9GiB，采样时GPU利用率100%。正式目录从严格源权重新建，`resume=None, starting_updates=0`；没有使用Smoke的权重。
+
+启动命令中的`--max-updates 100`是第一段注册健康检查，非最终训练预算。控制器按100→500→10,000自动恢复同一个formal目录，保持优化器、EMA、Scaler、Scheduler、Source/Interval RNG与完整10K日程，之后继续900帧Development、seq08/skip100的41帧NFE1/2/4/8评价及配对测速。
+
+新计划为`configs/research_v2/hier_occ_flow/desescene_meanflow_start_now_20261026.yaml`，Python源码SHA和两份模型训练配置没有改变。完成的EF1/EF2和Flow-only控制仍要求真实完成证据；Stage2的工程/Smoke严格复用。Stage1仍在GPU2等待EF0自然释放资源，再进行该卡的canonical工程/Smoke/20K。
+
+实际formal初始化、训练计数、源权重/config/source SHA、等待调度器替换收据分别见`meanflow/native_jvp_v2/formal_start_now_20261026.json`、`scheduling_handoff_20261026.json`。这只是训练启动进度，尚无正式20K最终质量结论。

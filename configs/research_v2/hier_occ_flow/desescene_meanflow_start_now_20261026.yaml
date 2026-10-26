@@ -1,0 +1,78 @@
+schema: desescene-meanflow-continuation-v1
+repository: shuaiqianende/FPSGen-private
+repository_root: /data-12/M2024-HWZ/FPSGen
+registration: 2026-10-26 user explicitly requests formal training now on idle GPU3
+specification: docs/research_v2/meanflow/CODEX_MEANFLOW_SPEC_ZH.md
+cpu_report: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/cpu_report.json
+project_lock_root: /data-12/M2024-HWZ/FPSGen/experiments/desescene_meanflow_locks
+predecessors:
+- name: EF1_evaluation_completed
+  status_file: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-shared-v1/experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025_b/EF1_eval900.json
+  required_status: COMPLETE
+  proofs:
+  - path: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-shared-v1/experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025_b/evaluations/EF1.json
+    equals:
+      status: COMPLETE
+      frames: 900
+- name: EF2_evaluation_completed
+  status_file: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-shared-v1/experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025_b/EF2_eval900.json
+  required_status: COMPLETE
+  proofs:
+  - path: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-shared-v1/experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025_b/evaluations/EF2.json
+    equals:
+      status: COMPLETE
+      frames: 900
+- name: S1-FM20K_control
+  status_file: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-shortcut-pilot-v1/experiments/desescene_shortcut_pilot_v1/S1-FM20K/supervisor.json
+  required_status: COMPLETE20K_AND_900
+  proofs:
+  - path: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-shortcut-pilot-v1/experiments/desescene_shortcut_pilot_v1/S1-FM20K/run/summary.json
+    equals:
+      successful_updates: 10000
+      successful_frame_exposures: 20000
+  - path: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-shortcut-pilot-v1/experiments/desescene_shortcut_pilot_v1/S1-FM20K/evaluation/primary900.json
+    equals:
+      status: COMPLETE
+      frames: 900
+arms:
+- id: S1-MF20K
+  physical_gpu: 2
+  config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/configs/research_v2/hier_occ_flow/meanflow_s1_20k.yaml
+  output: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S1-MF20K
+- id: S2-MF20K
+  physical_gpu: 3
+  config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/configs/research_v2/hier_occ_flow/meanflow_s2_20k.yaml
+  output: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S2-MF20K
+gates:
+- source-matched CPU_PASS
+- real native JVP
+- original source zero-init parity
+- largest two full scenes Batch2 AMP/backward
+- exact checkpoint/RNG + native replay exact or versioned bounded numerical replay
+  with own original-FM control
+- separate discarded Smoke32
+- formal health100/500 same10K schedule
+held:
+- S2-E1 encoder-only from Stage2 loss
+- S2-E2 encoder+Stage2 joint
+shortcut_queue:
+  path: configs/research_v2/hier_occ_flow/desescene_shortcut_queue.yaml
+  status: PRESERVED_INDEPENDENT_PENDING_IMPLEMENTATION
+  replaced_by_meanflow: false
+no_100k: true
+no_extra_seed: true
+no_new_candidates: true
+one_project_task_per_gpu: true
+stage2_jvp_failure: BLOCKED_JVP; Stage1 continues independently
+formal_runtime: Dedicated exclusive GPU only; deferred timing never blocks quality
+  or extends training
+scheduling_revision:
+  user_instruction: 开始训吧
+  stage2: Start formal on idle GPU3 after already-passed engineering and discarded
+    Smoke32
+  stage1: Wait for GPU2 admission and existing EF0 evaluation, then own GPU2 engineering/Smoke/formal
+  ef0: Continue existing evaluation; no interruption
+  supersedes_idle_controllers:
+  - 930632
+  - 3979172
+  training_protocol_changed: false
