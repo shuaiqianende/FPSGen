@@ -1,0 +1,203 @@
+[
+  {
+    "worktree": "desescene-scratch20k-stage1-deterministic-v1",
+    "run_root": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/experiments/desescene_scratch20k_encoder_fp32_v1/S1-MeanFlow-Scratch20K",
+    "snapshot_epoch": 1793023061.9814894,
+    "formal_resume": null,
+    "initialization": {
+      "all_network_parameters_trainable": true,
+      "condition": "Partial LiDAR",
+      "encoder_precision": "fp32_island",
+      "encoder_present": true,
+      "flow_precision": "fp16_amp",
+      "initial_state_sha256": "1e7837680e8100176761627264c188a1d0d351cc8a65dceab6038507257f4058",
+      "initialization_mode": "scratch",
+      "parameters": 19601377,
+      "pretrained_checkpoint_loaded": false,
+      "source_exposures": 0,
+      "trainable_modules": [
+        "stage1.encoder",
+        "stage1.flow"
+      ]
+    },
+    "smoke_counts": {
+      "amp_skips": 0,
+      "attempts": 32,
+      "consecutive_amp_skips": 0,
+      "cursor": 64,
+      "exposures": 64,
+      "updates": 32
+    },
+    "last_train_row": {
+      "loss": 2.0355217456817627,
+      "gradient_norm": 8.591202735900879,
+      "gradient_modules": {
+        "encoder": 0.09093326330184937,
+        "flow": 8.59072208404541
+      },
+      "finite": true,
+      "amp_scale": 2048.0,
+      "scene_lengths": [
+        158958,
+        117582
+      ],
+      "encoder_forwards": 1,
+      "jvp_calls": 1,
+      "diagonal_exposures": 1,
+      "finite_interval_exposures": 1,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "updates": 3,
+      "exposures": 6,
+      "attempts": 3,
+      "cursor": 6,
+      "amp_skips": 0,
+      "consecutive_amp_skips": 0,
+      "seconds": 6.784836996346712,
+      "records": [
+        {
+          "sequence": "06",
+          "frame": 304,
+          "index": 13740
+        },
+        {
+          "sequence": "00",
+          "frame": 3487,
+          "index": 3347
+        }
+      ],
+      "lr": [
+        8.000000000000001e-07,
+        1.6000000000000001e-06
+      ],
+      "peak_allocated_bytes": 12962172928,
+      "peak_reserved_bytes": 14795407360
+    },
+    "supervisor": {
+      "arm": "S1-MeanFlow-Scratch20K",
+      "child_pid": 1522599,
+      "command": [
+        "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+        "-u",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/scripts/research_v2/scratch20k/run.py",
+        "--config",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/configs/research_v2/hier_occ_flow/scratch20k_stage1_meanflow_gpu2.yaml",
+        "--mode",
+        "formal"
+      ],
+      "initialization_mode": "scratch",
+      "physical_gpu": 2,
+      "pid": 1500737,
+      "source_sha256": "ec09e56bee910d3e344b7a08d046d613659b409db5011d70d3e71be5583ff1aa",
+      "status": "RUNNING_FORMAL"
+    },
+    "evaluation_frames": 41
+  },
+  {
+    "worktree": "desescene-scratch20k-v1",
+    "run_root": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-v1/experiments/desescene_scratch20k_v1/S2-FM-NoEncoder-Scratch20K",
+    "snapshot_epoch": 1793023061.9880095,
+    "formal_resume": null,
+    "initialization": {
+      "all_network_parameters_trainable": true,
+      "condition": "GT coarse+25%nearby empty + input Observed; neutral scores1; no384D",
+      "encoder_present": false,
+      "initial_state_sha256": "7317a67c855771dd4f4d41723a26bb9d1bf18df4735a47731c6a5ec07adb4ee2",
+      "initialization_mode": "scratch",
+      "parameters": 2644232,
+      "pretrained_checkpoint_loaded": false,
+      "source_exposures": 0,
+      "trainable_modules": [
+        "stage2"
+      ]
+    },
+    "smoke_counts": {
+      "amp_skips": 0,
+      "attempts": 32,
+      "consecutive_amp_skips": 0,
+      "cursor": 64,
+      "exposures": 64,
+      "updates": 32
+    },
+    "last_train_row": {
+      "loss": 1.8600431680679321,
+      "gradient_norm": 1.4699578285217285,
+      "gradient_modules": {
+        "stage2": 1.4699578285217285
+      },
+      "finite": true,
+      "amp_scale": 2048.0,
+      "scene_lengths": [
+        167531,
+        150206
+      ],
+      "encoder_forwards": 0,
+      "jvp_calls": 0,
+      "parent_ids_sha256": "7bb6aaa35591538782dd20782417510ee934217072ef0d30fd4798124c97b95f",
+      "updates": 130,
+      "exposures": 260,
+      "attempts": 130,
+      "cursor": 260,
+      "amp_skips": 0,
+      "consecutive_amp_skips": 0,
+      "seconds": 2.0494711957871914,
+      "records": [
+        {
+          "sequence": "05",
+          "frame": 1983,
+          "index": 12658
+        },
+        {
+          "sequence": "09",
+          "frame": 630,
+          "index": 15848
+        }
+      ],
+      "lr": [
+        5.2400000000000007e-05
+      ],
+      "peak_allocated_bytes": 10644669440,
+      "peak_reserved_bytes": 14145290240
+    },
+    "supervisor": {
+      "arm": "S2-FM-NoEncoder-Scratch20K",
+      "child_pid": 1495624,
+      "command": [
+        "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+        "-u",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-v1/scripts/research_v2/scratch20k/run.py",
+        "--config",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-v1/configs/research_v2/hier_occ_flow/scratch20k_stage2_no_encoder_fm_gpu3.yaml",
+        "--mode",
+        "formal"
+      ],
+      "initialization_mode": "scratch",
+      "physical_gpu": 3,
+      "pid": 1484049,
+      "source_sha256": "e0081bac1257c96c7e5dc5c752588040496bc92650c0c34704cca8cf3571558c",
+      "status": "RUNNING_FORMAL"
+    },
+    "evaluation_frames": 41
+  }
+]
