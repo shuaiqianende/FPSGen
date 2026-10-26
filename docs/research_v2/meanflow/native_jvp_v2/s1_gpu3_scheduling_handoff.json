@@ -1,0 +1,11 @@
+{
+  "ef0_evaluation_untouched": true,
+  "epoch": 1793005225.3641179,
+  "old_command": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/scripts/research_v2/hier_occ_flow/run_meanflow_queue.py --queue /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/configs/research_v2/hier_occ_flow/desescene_meanflow_start_now_20261026.yaml --output /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/queue_start_now_20261026 ",
+  "old_pid": 4037134,
+  "reason": "Stage2 failed existing AMP health gate; move never-trained Stage1 onto its independently validated free GPU3",
+  "source_sha256": "9a7b41b05892dbb1df1067af99c08e4fc9422f60225fbe39e6f3d31df7812a00",
+  "stage2_failure_preserved": true,
+  "stage2_updates": 210,
+  "status": "WAITING_CONTROLLER_SCHEDULING_HANDOFF"
+}

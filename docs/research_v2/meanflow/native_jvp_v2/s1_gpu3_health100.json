@@ -1,0 +1,16 @@
+{
+  "counts": {
+    "amp_skips": 0,
+    "attempted_jvp_calls": 46,
+    "attempts": 100,
+    "consecutive_amp_skips": 0,
+    "cursor": 200,
+    "diagonal_exposures": 148,
+    "exposures": 200,
+    "finite_interval_exposures": 52,
+    "jvp_calls": 46,
+    "updates": 100
+  },
+  "frozen_exact": true,
+  "status": "PASS"
+}

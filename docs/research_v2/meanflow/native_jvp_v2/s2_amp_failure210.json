@@ -1,0 +1,17 @@
+{
+  "counts": {
+    "amp_skips": 3,
+    "attempted_jvp_calls": 83,
+    "attempts": 213,
+    "consecutive_amp_skips": 1,
+    "cursor": 426,
+    "diagonal_exposures": 333,
+    "exposures": 420,
+    "finite_interval_exposures": 87,
+    "jvp_calls": 81,
+    "updates": 210
+  },
+  "epoch": 1793000776.6490831,
+  "reason": "RuntimeError: AMP/gradient health gate failed; no automatic restart/precision substitution",
+  "status": "FAILED_REVIEW_REQUIRED"
+}

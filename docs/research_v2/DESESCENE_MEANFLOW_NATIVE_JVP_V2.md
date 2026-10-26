@@ -69,3 +69,13 @@ v2 控制器保留 EF0/EF1/EF2 和 Flow-only 完整评价依赖，并等待旧 v
 新计划为`configs/research_v2/hier_occ_flow/desescene_meanflow_start_now_20261026.yaml`，Python源码SHA和两份模型训练配置没有改变。完成的EF1/EF2和Flow-only控制仍要求真实完成证据；Stage2的工程/Smoke严格复用。Stage1仍在GPU2等待EF0自然释放资源，再进行该卡的canonical工程/Smoke/20K。
 
 实际formal初始化、训练计数、源权重/config/source SHA、等待调度器替换收据分别见`meanflow/native_jvp_v2/formal_start_now_20261026.json`、`scheduling_handoff_20261026.json`。这只是训练启动进度，尚无正式20K最终质量结论。
+
+## 2026-10-26 实际失败与独立接续（取代前面的启动快照）
+
+Stage2 原 formal 在 **210 successful updates /420 exposures、213 attempts** 停止，第3次AMP梯度溢出触发原健康门槛（3/213≈1.41%）。三次失败的Loss有限，其中一次没有JVP调用，尚不能归因于JVP算子。未发生OOM，未放宽溢出门槛，未静默重试。最新完整Checkpoint实际停在100 updates；不能从210无损恢复。原目录、失败、日志和100步Checkpoint均保留。详见 `meanflow/native_jvp_v2/s2_amp_failure210.json`。
+
+用户要求继续后，实际资源核验确认GPU3空闲。仅结束了无训练子进程、等待GPU2的CPU控制器4037134；GPU2的EF0评价PID3230215没有中断。Stage1自身已有同源码/配置、**同物理GPU3**的GPU_PASS，报告按字节原样复制到注册路径；这不是复用Stage2验收。源码SHA和两份原训练配置不变。
+
+Stage1独立丢弃Smoke32通过：32 updates/64 exposures、0 AMP skips、43 diagonal/21 finite-interval exposures、17次真实JVP、29.99秒。随后严格从源模型重新初始化formal，没有使用Smoke参数。**100 updates/200 exposures健康检查PASS，0 skips**，调度器233813已自动恢复同一formal至500健康节点，之后10,000成功更新/20K曝光。训练子进程PID随分段变化，以`single_arm_supervisor.json`为准。实际快照见`continuation_actual_20261026.json`。
+
+Stage1完成后只执行已登记的900帧Development、seq08/skip100固定41帧NFE1/2/4/8对照和无争用配对测速，不追加训练。GPU3每次只运行一个本项目任务。Stage2 AMP稳定性修复在独立分支`research/desescene-meanflow-amp-stability-v3`准备；其任何新源码/config需重新验收，不改本工作树的运行代码。尚无MeanFlow正式20K质量结论。

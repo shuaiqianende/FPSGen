@@ -1,0 +1,70 @@
+{
+  "snapshot_epoch": 1793005467.3390172,
+  "s1_supervisor": {
+    "arm": "S1-MF20K",
+    "child_pid": 247041,
+    "command": [
+      "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+      "-u",
+      "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/scripts/research_v2/hier_occ_flow/train_meanflow.py",
+      "--config",
+      "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/configs/research_v2/hier_occ_flow/meanflow_s1_20k.yaml",
+      "--output",
+      "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S1-MF20K/formal",
+      "--max-updates",
+      "500",
+      "--resume",
+      "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S1-MF20K/formal/checkpoints/resume_latest.pt"
+    ],
+    "config_file_sha256": "03cf1893ca0a3d568aeb165766998ce7494bf7e8e5b01f2216565f7fdeed536f",
+    "controller_sha256": "e4a89218a1d7c6d7de3ce393685360e402f03b4ce6112d868a4a944a0da7bbe0",
+    "epoch": 1793005387.1737225,
+    "physical_gpu": 3,
+    "pid": 233813,
+    "source_sha256": "9a7b41b05892dbb1df1067af99c08e4fc9422f60225fbe39e6f3d31df7812a00",
+    "status": "RUNNING_FORMAL_GPU3_500"
+  },
+  "s1_last_attempt": {
+    "updates": 182,
+    "exposures": 364,
+    "attempts": 182,
+    "cursor": 364,
+    "amp_skips": 0,
+    "diagonal_exposures": 285,
+    "finite_interval_exposures": 79,
+    "jvp_calls": 72,
+    "attempted_jvp_calls": 72,
+    "consecutive_amp_skips": 0,
+    "finite": true,
+    "loss": 0.03832869604229927,
+    "diagonal_velocity_mse": 0.03832869604229927,
+    "jvp_calls_this_attempt": 0,
+    "target_forward_calls": 0,
+    "prediction_forward_calls": 1,
+    "topology_warm_forward_calls": 0,
+    "gradient_norm": 0.23385600745677948,
+    "seconds": 0.7017238717526197,
+    "lr": 3.66e-06,
+    "amp_scale": 16384.0,
+    "records": [
+      {
+        "sequence": "02",
+        "frame": 2899,
+        "index": 8121
+      },
+      {
+        "sequence": "10",
+        "frame": 271,
+        "index": 17080
+      }
+    ],
+    "scene_lengths": null,
+    "parent_ids_sha256": null,
+    "peak_allocated_bytes": 7890533888,
+    "peak_reserved_bytes": 9013559296
+  },
+  "s2_status": "FAILED_REVIEW_REQUIRED",
+  "s2_last_serialized_update": 100,
+  "ef0_untouched": true,
+  "new_source_or_training_config_changes": false
+}
