@@ -1,0 +1,17 @@
+{
+  "status": "CPU_PASS",
+  "exit_code": 0,
+  "source_sha256": "f603ace994093b4d5c942c1a29a5490d25a3433de15c77df9307098ef662f658",
+  "epoch": 1793025968.8084748,
+  "command": [
+    "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_queued20k.py",
+    "tests/test_scratch20k_training.py",
+    "tests/test_meanflow_math.py"
+  ],
+  "scope": "28 CPU tests; full constructors/initialization/d0/EMA halfsteps/gradient/strict frozen source/queue dependencies; GPU gates still PENDING",
+  "cli_revision": "Renamed queue.py to avoid Python stdlib queue shadowing; no task had launched"
+}

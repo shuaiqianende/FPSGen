@@ -1,0 +1,85 @@
+{
+  "epoch": 1793026105.9067564,
+  "running": [
+    {
+      "gpu": 2,
+      "status": "RUNNING_FORMAL",
+      "updates": 462,
+      "exposures": 924,
+      "amp_skips": 0,
+      "recent200_mean_step_seconds": 6.6235654404200615,
+      "remaining_train_hours": 17.548768658535153,
+      "scope": "excludes final41 evaluation; current real step speed only"
+    },
+    {
+      "gpu": 3,
+      "status": "RUNNING_FORMAL",
+      "updates": 1252,
+      "exposures": 2504,
+      "amp_skips": 0,
+      "recent200_mean_step_seconds": 2.883069868190214,
+      "remaining_train_hours": 7.00585977970222,
+      "scope": "excludes final41 evaluation; current real step speed only"
+    }
+  ],
+  "controllers": [
+    {
+      "epoch": 1793026097.8115432,
+      "job": "S1-Shortcut-Scratch20K",
+      "physical_gpu": 2,
+      "pid": 1754816,
+      "reasons": [
+        "Waiting predecessor formal20K and41-frame quality"
+      ],
+      "source_sha256": "f603ace994093b4d5c942c1a29a5490d25a3433de15c77df9307098ef662f658",
+      "status": "WAITING_PREDECESSOR_TRAIN_AND_QUALITY41"
+    },
+    {
+      "epoch": 1793026097.8096817,
+      "job": "S1-FM-Scratch20K",
+      "physical_gpu": 3,
+      "pid": 1754818,
+      "reasons": [
+        "Waiting predecessor formal20K and41-frame quality"
+      ],
+      "source_sha256": "f603ace994093b4d5c942c1a29a5490d25a3433de15c77df9307098ef662f658",
+      "status": "WAITING_PREDECESSOR_TRAIN_AND_QUALITY41"
+    }
+  ],
+  "receipts": [
+    {
+      "pid": 1754816,
+      "physical_gpu": 2,
+      "command": [
+        "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+        "-u",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-followups-v1/scripts/research_v2/queued20k/run_followup_queue.py",
+        "--plan",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-followups-v1/configs/research_v2/hier_occ_flow/scratch20k_followup_queue.json",
+        "--gpu",
+        "2"
+      ],
+      "epoch": 1793026056.044773,
+      "stage": "WAITING_CURRENT_TRAIN_AND_QUALITY41",
+      "gpu_reserved": false
+    },
+    {
+      "pid": 1754818,
+      "physical_gpu": 3,
+      "command": [
+        "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+        "-u",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-followups-v1/scripts/research_v2/queued20k/run_followup_queue.py",
+        "--plan",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-followups-v1/configs/research_v2/hier_occ_flow/scratch20k_followup_queue.json",
+        "--gpu",
+        "3"
+      ],
+      "epoch": 1793026056.0480747,
+      "stage": "WAITING_CURRENT_TRAIN_AND_QUALITY41",
+      "gpu_reserved": false
+    }
+  ],
+  "future_estimate": "Rough35-48h total wall from queue scheduling, NOT measured future step speed; update after each actual smoke",
+  "future_gpu_gates": "PENDING"
+}

@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "additional_cli_regression_tests": 1,
+  "total_tests": 29,
+  "queue_check_only_gpus": [
+    2,
+    3
+  ]
+}

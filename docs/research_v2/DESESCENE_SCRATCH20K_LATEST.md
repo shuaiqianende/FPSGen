@@ -1,3 +1,5 @@
+> 后续三组已接入实际自动队列，见[接续计划与控制器状态](DESESCENE_SCRATCH20K_FOLLOWUP_QUEUE.md)。现有两张卡训练保持不动，以下为此前启动快照。
+
 # 从零20K已正式启动
 
 2026-10-26服务器核验：GPU2 Stage1 MeanFlow，完整Encoder+Flow均随机初始化并共同训练；GPU3 Stage2普通FM，GT粗占用+原始Observed Mask，无Encoder/384D特征，PTv3全随机初始化。两组Batch2、Seed20261032、总20K成功曝光/10K更新。
