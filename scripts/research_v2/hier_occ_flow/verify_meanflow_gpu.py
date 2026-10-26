@@ -18,6 +18,7 @@ from fpsgen.hier_occ_flow.trainer import seed_all,rng_state,restore_rng
 from verify_encoder_adaptation_gpu import stress_records
 from verify_desescene_m1_gpu import cpu_state
 from verify_stage1_flow_control import exact_state
+from fpsgen.hier_occ_flow.meanflow_replay_bounds import compare_native_replay,POLICY_SHA
 
 
 def errors(a,b):
@@ -114,6 +115,19 @@ def main():
         if not bool(torch.isfinite(derivative).all() and derivative.abs().max()>0):raise RuntimeError('Missing/nonfinite/zero complete native derivative')
         report['jvp']=dict(finite=True,nonzero=True,max_abs=float(derivative.abs().max()),
             full_state_time_tangent=True,endpoint_tangent_zero=True,contains_full_dynamic_backbone=True)
+        stage='full_native_jvp_vjp_dot_product'
+        sx=p0['state'].detach().requires_grad_(True);st=p0['time'].detach().requires_grad_(True)
+        ss=batch['end'].detach().requires_grad_(True);cotangent=torch.randn_like(primal)*.01
+        with torch.enable_grad(),torch.autocast('cuda',dtype=torch.float16):vy=u(sx,st,ss)
+        vy.backward(cotangent)
+        lhs=(derivative.double()*cotangent.double()).sum()
+        rhs=(sx.grad.double()*p0['velocity'].double()).sum()+st.grad.double().sum()
+        denom=(derivative.double().norm()*cotangent.double().norm()+sx.grad.double().norm()*p0['velocity'].double().norm()+st.grad.double().norm()*len(st)**.5)
+        dot_error=float((lhs-rhs).abs()/(denom+1e-30))
+        report['full_jvp_vjp_dot']=dict(normalized_error=dot_error,limit=3e-4,
+            lhs=float(lhs),rhs=float(rhs),native_reverse_path=True,fixed_endpoint_tangent_zero=True)
+        if not dot_error<3e-4:raise RuntimeError('Full native reverse / analytic forward derivative mismatch')
+        del sx,st,ss,vy,cotangent
         # FD is only a diagnostic; AMP/max-pooling can have discontinuities.
         # Its error is disclosed, never substituted for the actual derivative.
         stage='central_finite_difference_diagnostic'
@@ -130,35 +144,82 @@ def main():
             model.load_state_dict(value['model'],strict=True);ema.load_state_dict(value['ema'],strict=True)
             opt.load_state_dict(value['optimizer']);sched.load_state_dict(value['scheduler']);scaler.load_state_dict(value['scaler'])
             restore_rng(value['rng'],source_gen,torch.device('cuda'));interval_gen.set_state(value['interval_rng'])
-        def update():
+        def update(baseline=False):
             opt.zero_grad(set_to_none=True)
-            with torch.autocast('cuda',dtype=torch.float16):
-                batch=system.prepare(records,source_gen,interval_gen,force_finite=True);loss,details=system.loss(batch,require_jvp=True)
+            time_audit=[]
+            from fpsgen.hier_occ_flow.meanflow_interval import _ACTIVE_INTERVAL
+            tm=model.base.embedding if cfg['arm']=='S1-MF20K' else model.base.time
+            def time_hook(m,inputs,output):
+                active=_ACTIVE_INTERVAL.get()
+                time_audit.append(dict(module_id=id(m),active_id=active[0] if active else None,
+                    grad_enabled=torch.is_grad_enabled(),output_requires_grad=output.requires_grad,
+                    interval_matches=bool(active and active[0]==id(m))))
+            handle=tm.register_forward_hook(time_hook)
+            try:
+                with torch.autocast('cuda',dtype=torch.float16):
+                    batch=system.prepare(records,source_gen,interval_gen,force_finite=True)
+                    if baseline:
+                        p=batch['pair'];meta=batch['metadata']
+                        if cfg['arm']=='S1-MF20K':prediction=model.base(p['state'],meta['observed'],meta['pyramid'],p['time'])*batch['valid']
+                        else:prediction=model.base(meta['ids'],state=p['state'],time=p['time'],**meta['condition'])*batch['valid']
+                        from fpsgen.hier_occ_flow.meanflow_math import scene_squared_errors
+                        if cfg['arm']=='S1-MF20K':
+                            from fpsgen.hier_occ_flow.stage1_occupancy import masked_occ_loss
+                            loss=masked_occ_loss(prediction,p['velocity'],batch['valid'],objective='fm')
+                        else:loss=scene_squared_errors(prediction,p['velocity'],batch['valid'],batch['rows']).mean()
+                        details=dict(prediction=prediction,target=p['velocity'],derivative=torch.zeros_like(prediction),jvp_calls=0)
+                    else:loss,details=system.loss(batch,require_jvp=True)
+            finally:handle.remove()
+            report['time_module_forward_audit']=time_audit
             scaler.scale(loss).backward();scaler.unscale_(opt)
             norm=torch.nn.utils.clip_grad_norm_(model.parameters(),1.)
             if not bool(torch.isfinite(norm) and norm>0):raise RuntimeError('Nonfinite/zero maximum B2 gradient')
+            report['interval_gradient_audit']={n:dict(requires_grad=p.requires_grad,grad_none=p.grad is None,
+                grad_max_abs=float(p.grad.abs().max()) if p.grad is not None else None,
+                grad_finite=bool(torch.isfinite(p.grad).all()) if p.grad is not None else None)
+                for n,p in model.named_parameters() if '.interval.' in n}
             branch=[p.grad for n,p in model.named_parameters() if '.interval.net.2.' in n]
-            if not branch or not any(v is not None and bool(torch.isfinite(v).all() and v.abs().max()>0) for v in branch):
+            if not baseline and (not branch or not any(v is not None and bool(torch.isfinite(v).all() and v.abs().max()>0) for v in branch)):
                 raise RuntimeError('Interval final projection disconnected')
             if any(p.grad is not None for p in system.teacher.parameters() if not p.requires_grad):raise RuntimeError('Frozen gradient')
+            captures=cpu_state({k:details[k] for k in ('prediction','target','derivative')})
+            gradient=cpu_state({n:p.grad for n,p in model.named_parameters() if p.grad is not None})
             scale=scaler.get_scale();scaler.step(opt);scaler.update();sched.step();update_ema(ema,model,.999)
             if scaler.get_scale()<scale:raise RuntimeError('Maximum B2 AMP skip')
-            return dict(loss=float(loss),gradient_norm=float(norm),jvp_calls=details['jvp_calls'])
-        first=update();saved=snapshot();torch.save(saved,a.output/'resume_audit.pt')
+            return dict(loss=float(loss),gradient_norm=float(norm),jvp_calls=details['jvp_calls']),dict(gradient=gradient,**captures)
+        def checked_pair(saved,baseline):
+            left,left_capture=update(baseline);left_state=snapshot();restore(saved)
+            if not exact_state(saved,snapshot()):raise RuntimeError('Pre-replay checkpoint/RNG restoration not exact')
+            right,right_capture=update(baseline);right_state=snapshot()
+            check=compare_native_replay(dict(**left_state,**left_capture,loss=left['loss'],gradient_norm=left['gradient_norm']),
+                dict(**right_state,**right_capture,loss=right['loss'],gradient_norm=right['gradient_norm']))
+            return left,right,exact_state(left_state,right_state),check
+        stage='own_original_fm_native_replay_baseline'
+        initial=snapshot();update(True);control_saved=snapshot()
+        control_left,control_right,control_exact,control_check=checked_pair(control_saved,True)
+        report['original_fm_native_replay']=dict(expected_update=control_left,replayed_update=control_right,
+            exact=control_exact,bounds=control_check,same_source_same_gpu_same_maximum_batch2=True)
+        atomic_json(a.output/'original_fm_replay.json',report['original_fm_native_replay'])
+        if control_check['status']!='PASS':raise RuntimeError('Own unmodified-FM replay exceeds registered bounds')
+        restore(initial)
+        if not exact_state(initial,snapshot()):raise RuntimeError('Original source/RNG not restored after baseline diagnosis')
+        del initial,control_saved
+        stage='full_maximum_batch2_backward_and_update'
+        first,_=update();saved=snapshot();torch.save(saved,a.output/'resume_audit.pt')
         restored=torch.load(a.output/'resume_audit.pt',map_location='cpu');restore(restored)
         if not exact_state(saved,snapshot()):raise RuntimeError('Checkpoint roundtrip state/RNG not exact')
         stage='native_end_to_end_resume_replay'
-        second_update=update();expected=snapshot();restore(restored);replayed_update=update();actual=snapshot()
-        replay_exact=exact_state(expected,actual)
+        second_update,replayed_update,replay_exact,replay_bounds=checked_pair(restored,False)
         report['native_resume']=dict(checkpoint_roundtrip_exact=True,end_to_end_exact=replay_exact,
             expected_update=second_update,replayed_update=replayed_update,
-            numerical_exception_used=False)
-        if not replay_exact:raise RuntimeError('Native end-to-end replay differs; own baseline/bounds required before any exception')
+            numerical_exception_used=not replay_exact,bounds=replay_bounds)
+        if replay_bounds['status']!='PASS':raise RuntimeError('Own MeanFlow native replay exceeds registered bounds')
         if system.frozen_sha()!=frozen or tensor_state_sha(model.state_dict())==original:raise RuntimeError('Frozen drift or no trainable update')
         report.update(status='GPU_PASS',max_batch2_backward=first,frozen_exact=True,
             memory=dict(peak_allocated_bytes=torch.cuda.max_memory_allocated(),peak_reserved_bytes=torch.cuda.max_memory_reserved()),
             environment=dict(torch=torch.__version__,cuda=torch.version.cuda,gpu=torch.cuda.get_device_name(0)),
-            resume_classification='EXACT_FULL_NATIVE_UPDATE_WITH_INTERVAL_RNG')
+            native_resume_exception=not replay_exact,replay_policy_sha256=POLICY_SHA,
+            resume_classification='EXACT_FULL_NATIVE_UPDATE_WITH_INTERVAL_RNG' if replay_exact else 'BOUNDED_NATIVE_NUMERICAL_REPLAY_WITH_OWN_FM_CONTROL')
     except torch.cuda.OutOfMemoryError as exc:
         report.update(status='BLOCKED_MEMORY',reason=str(exc),stage=stage)
     except Exception as exc:
@@ -166,6 +227,7 @@ def main():
         jvp_stage='jvp' in stage
         report.update(status='BLOCKED_JVP' if jvp_stage else 'BLOCKED_ENGINEERING',reason=message,stage=stage,
             traceback=traceback.format_exc(),fallback_used=False)
+    if torch.cuda.is_initialized():report.setdefault('memory',dict(peak_allocated_bytes=torch.cuda.max_memory_allocated(),peak_reserved_bytes=torch.cuda.max_memory_reserved()))
     report['finished']=time.time();atomic_json(a.output/'result.json',report)
     print(json.dumps({k:report.get(k) for k in ('status','arm','stage','reason','memory')},indent=2),flush=True)
     if report['status']!='GPU_PASS':raise SystemExit(2)

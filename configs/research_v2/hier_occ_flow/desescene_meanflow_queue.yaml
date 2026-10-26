@@ -3,7 +3,7 @@ repository: shuaiqianende/FPSGen-private
 repository_root: /data-12/M2024-HWZ/FPSGen
 registration: '2026-10-26'
 specification: docs/research_v2/meanflow/CODEX_MEANFLOW_SPEC_ZH.md
-cpu_report: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/experiments/desescene_meanflow_v1/cpu_report.json
+cpu_report: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/cpu_report.json
 project_lock_root: /data-12/M2024-HWZ/FPSGen/experiments/desescene_meanflow_locks
 predecessors:
 - name: EF1_EF2_and_EF0_reference
@@ -42,21 +42,25 @@ predecessors:
     equals:
       status: COMPLETE
       frames: 900
+- name: legacy_v1_engineering_attempts_archived
+  status_file: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/experiments/desescene_meanflow_v1/queue/supervisor.json
+  required_status: QUEUE_FINISHED_REVIEW_RESULTS
 arms:
 - id: S1-MF20K
   physical_gpu: 2
-  config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/configs/research_v2/hier_occ_flow/meanflow_s1_20k.yaml
-  output: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/experiments/desescene_meanflow_v1/S1-MF20K
+  config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/configs/research_v2/hier_occ_flow/meanflow_s1_20k.yaml
+  output: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S1-MF20K
 - id: S2-MF20K
   physical_gpu: 3
-  config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/configs/research_v2/hier_occ_flow/meanflow_s2_20k.yaml
-  output: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/experiments/desescene_meanflow_v1/S2-MF20K
+  config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/configs/research_v2/hier_occ_flow/meanflow_s2_20k.yaml
+  output: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S2-MF20K
 gates:
 - source-matched CPU_PASS
 - real native JVP
 - original source zero-init parity
 - largest two full scenes Batch2 AMP/backward
-- exact checkpoint and full native update replay
+- exact checkpoint/RNG + native replay exact or versioned bounded numerical replay
+  with own original-FM control
 - separate discarded Smoke32
 - formal health100/500 same10K schedule
 held:

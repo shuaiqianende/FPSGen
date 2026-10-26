@@ -1,0 +1,92 @@
+[
+  {
+    "derivative_max_abs": 1.109546422958374,
+    "finite": true,
+    "name": "local_state_MLP",
+    "shape": [
+      384155,
+      64
+    ],
+    "status": "JVP_PASS"
+  },
+  {
+    "derivative_max_abs": 17.686355590820312,
+    "finite": true,
+    "name": "time_MLP",
+    "shape": [
+      2,
+      32
+    ],
+    "status": "JVP_PASS"
+  },
+  {
+    "derivative_max_abs": 1.6301573514938354,
+    "finite": true,
+    "name": "attention_qkv_linear",
+    "shape": [
+      384155,
+      192
+    ],
+    "status": "JVP_PASS"
+  },
+  {
+    "derivative_max_abs": 4.977459907531738,
+    "finite": true,
+    "name": "SpConv_embedding_and_norm",
+    "shape": [
+      384155,
+      64
+    ],
+    "status": "JVP_PASS"
+  },
+  {
+    "derivative_max_abs": 1.287217378616333,
+    "finite": true,
+    "name": "serialized_attention_actual_FlashAttention",
+    "shape": [
+      384155,
+      64
+    ],
+    "status": "JVP_PASS"
+  },
+  {
+    "derivative_max_abs": 57.91643524169922,
+    "finite": true,
+    "name": "SpConv_CPE",
+    "shape": [
+      384155,
+      64
+    ],
+    "status": "JVP_PASS"
+  },
+  {
+    "derivative_max_abs": 57.565185546875,
+    "finite": true,
+    "name": "full_time_conditioned_block",
+    "shape": [
+      384155,
+      64
+    ],
+    "status": "JVP_PASS"
+  },
+  {
+    "derivative_max_abs": 7.259528047143249e-06,
+    "finite": true,
+    "name": "pooling_project_and_segment_reduce",
+    "shape": [
+      94487,
+      128
+    ],
+    "status": "JVP_PASS"
+  },
+  {
+    "derivative_max_abs": 1.303533053942374e-06,
+    "finite": true,
+    "name": "unpool_project_and_index_gather",
+    "shape": [
+      384155,
+      64
+    ],
+    "status": "JVP_PASS"
+  }
+]

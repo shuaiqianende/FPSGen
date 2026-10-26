@@ -2,6 +2,7 @@
 import traceback
 import torch
 from .meanflow_jvp import without_activation_checkpointing
+from .meanflow_native_ops import native_jvp_mode
 
 
 def probe_stage2_components(model,context):
@@ -12,7 +13,7 @@ def probe_stage2_components(model,context):
     x=torch.randn(rows,64,device=device,dtype=torch.float32);results=[]
     def probe(name,fn,value):
         try:
-            with model._layouts(context,'static'),without_activation_checkpointing(model),torch.no_grad(),torch.autocast('cuda',enabled=False):
+            with model._layouts(context,'static'),without_activation_checkpointing(model),torch.no_grad(),native_jvp_mode(),torch.autocast('cuda',enabled=False):
                 primal,tangent=torch.func.jvp(fn,(value,),(torch.ones_like(value),))
             results.append(dict(name=name,status='JVP_PASS',finite=bool(torch.isfinite(primal).all() and torch.isfinite(tangent).all()),
                 derivative_max_abs=float(tangent.abs().max()),shape=list(primal.shape)))

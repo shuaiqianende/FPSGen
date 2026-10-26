@@ -1,0 +1,9 @@
+{
+  "cpu_junit_sha256": "2c6c5e69a3f35bbb7b5d967d6404761a8eb041ca955f73a0c427767b5130a896",
+  "gpu_junit_sha256": "24755fa327fe8b14a595094fb628c98646f51f0dcb9ed78097a77dcae5fda020",
+  "gpu_operator_passed": 6,
+  "passed": 27,
+  "skipped_gpu": 4,
+  "source_sha256": "9a7b41b05892dbb1df1067af99c08e4fc9422f60225fbe39e6f3d31df7812a00",
+  "status": "CPU_PASS"
+}

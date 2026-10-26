@@ -1,0 +1,721 @@
+{
+  "arm": "S2-MF20K",
+  "cached_inference_parity": {
+    "exact": true,
+    "max_abs": 0.0,
+    "mean_abs": 0.0,
+    "relative_l2": 0.0
+  },
+  "census_coverage": {
+    "development": 900,
+    "train": 17870
+  },
+  "config_sha256": "6a44e3a6c80603e3a76f6193a534bf0c9d8ff23a2b040488c530aee4a774ad3e",
+  "environment": {
+    "cuda": "11.7",
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "torch": "2.0.1+cu117"
+  },
+  "finished": 1792998650.6287057,
+  "finite_difference_diagnostic": {
+    "comparison": {
+      "exact": false,
+      "max_abs": 15.0,
+      "mean_abs": 0.4633949100971222,
+      "relative_l2": 0.12730254232883453
+    },
+    "epsilon": 0.001,
+    "training_target": "native_jvp_only"
+  },
+  "frozen_exact": true,
+  "full_jvp_vjp_dot": {
+    "fixed_endpoint_tangent_zero": true,
+    "lhs": 17.718539487777008,
+    "limit": 0.0003,
+    "native_reverse_path": true,
+    "normalized_error": 5.476473143886567e-06,
+    "rhs": 16.413292017589747
+  },
+  "gpu_admission": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24106.0,
+        "physical_gpu": 3,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 16.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "initialization": {
+    "frozen_state_sha256": "0a7f38b7b71906f4881579483b900b9471ebd620d490c412e09eeb91292fac8e",
+    "initial_network_state_sha256": "069e7e8ab8a51d898c70df669c10489f49e31704dbbd57311509c1e26c752c38",
+    "initialization_mode": "pretrained_online_meanflow_adaptation",
+    "interval": {
+      "allowed_new_keys": [
+        "time.interval.net.0.bias",
+        "time.interval.net.0.weight",
+        "time.interval.net.2.bias",
+        "time.interval.net.2.weight"
+      ],
+      "shared_tensor_count": 169,
+      "shared_tensors_exact": true
+    },
+    "source_exposures": 99520,
+    "stage1": {
+      "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+      "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+      "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+      "data_version": "hs-occ-surface-hit-v1",
+      "feature_layout": "B,C,Z,Y,X",
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_feature_version": "coarse_f64_v1",
+      "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+      "score_layout": "Z,Y,X",
+      "stage1_final_100k_frames": true,
+      "successful_frame_exposures": 100000,
+      "successful_updates": 34275,
+      "type": "FrozenStage1OccupancyAdapter",
+      "weights": "ema"
+    },
+    "stage2": {
+      "checkpoint_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+      "initial_parameter_sha256": "2a3d2d0b5adae6d5a0d4149df55fe1038af57afc3e27b9e477387967272720d4",
+      "loaded_tensors": [
+        "position.0.weight",
+        "position.0.bias",
+        "position.2.weight",
+        "position.2.bias",
+        "score.0.weight",
+        "score.0.bias",
+        "score.2.weight",
+        "score.2.bias",
+        "lidar.0.weight",
+        "lidar.0.bias",
+        "lidar.2.weight",
+        "lidar.2.bias",
+        "observed.0.weight",
+        "observed.0.bias",
+        "observed.2.weight",
+        "observed.2.bias",
+        "local.0.weight",
+        "local.0.bias",
+        "local.2.weight",
+        "local.2.bias",
+        "time.0.weight",
+        "time.0.bias",
+        "time.2.weight",
+        "time.2.bias",
+        "fuse.0.weight",
+        "fuse.0.bias",
+        "fuse.2.weight",
+        "fuse.2.bias",
+        "trunk.net.embedding.stem.conv.weight",
+        "trunk.net.embedding.stem.norm.weight",
+        "trunk.net.embedding.stem.norm.bias",
+        "trunk.net.enc.enc0.block0.cpe.0.weight",
+        "trunk.net.enc.enc0.block0.cpe.0.bias",
+        "trunk.net.enc.enc0.block0.cpe.1.weight",
+        "trunk.net.enc.enc0.block0.cpe.1.bias",
+        "trunk.net.enc.enc0.block0.cpe.2.weight",
+        "trunk.net.enc.enc0.block0.cpe.2.bias",
+        "trunk.net.enc.enc0.block0.norm1.0.weight",
+        "trunk.net.enc.enc0.block0.norm1.0.bias",
+        "trunk.net.enc.enc0.block0.attn.qkv.weight",
+        "trunk.net.enc.enc0.block0.attn.qkv.bias",
+        "trunk.net.enc.enc0.block0.attn.proj.weight",
+        "trunk.net.enc.enc0.block0.attn.proj.bias",
+        "trunk.net.enc.enc0.block0.norm2.0.weight",
+        "trunk.net.enc.enc0.block0.norm2.0.bias",
+        "trunk.net.enc.enc0.block0.mlp.0.fc1.weight",
+        "trunk.net.enc.enc0.block0.mlp.0.fc1.bias",
+        "trunk.net.enc.enc0.block0.mlp.0.fc2.weight",
+        "trunk.net.enc.enc0.block0.mlp.0.fc2.bias",
+        "trunk.net.enc.enc0.block0.time_modulation.1.weight",
+        "trunk.net.enc.enc0.block0.time_modulation.1.bias",
+        "trunk.net.enc.enc0.block1.cpe.0.weight",
+        "trunk.net.enc.enc0.block1.cpe.0.bias",
+        "trunk.net.enc.enc0.block1.cpe.1.weight",
+        "trunk.net.enc.enc0.block1.cpe.1.bias",
+        "trunk.net.enc.enc0.block1.cpe.2.weight",
+        "trunk.net.enc.enc0.block1.cpe.2.bias",
+        "trunk.net.enc.enc0.block1.norm1.0.weight",
+        "trunk.net.enc.enc0.block1.norm1.0.bias",
+        "trunk.net.enc.enc0.block1.attn.qkv.weight",
+        "trunk.net.enc.enc0.block1.attn.qkv.bias",
+        "trunk.net.enc.enc0.block1.attn.proj.weight",
+        "trunk.net.enc.enc0.block1.attn.proj.bias",
+        "trunk.net.enc.enc0.block1.norm2.0.weight",
+        "trunk.net.enc.enc0.block1.norm2.0.bias",
+        "trunk.net.enc.enc0.block1.mlp.0.fc1.weight",
+        "trunk.net.enc.enc0.block1.mlp.0.fc1.bias",
+        "trunk.net.enc.enc0.block1.mlp.0.fc2.weight",
+        "trunk.net.enc.enc0.block1.mlp.0.fc2.bias",
+        "trunk.net.enc.enc0.block1.time_modulation.1.weight",
+        "trunk.net.enc.enc0.block1.time_modulation.1.bias",
+        "trunk.net.enc.enc1.down.proj.weight",
+        "trunk.net.enc.enc1.down.proj.bias",
+        "trunk.net.enc.enc1.down.norm.0.weight",
+        "trunk.net.enc.enc1.down.norm.0.bias",
+        "trunk.net.enc.enc1.block0.cpe.0.weight",
+        "trunk.net.enc.enc1.block0.cpe.0.bias",
+        "trunk.net.enc.enc1.block0.cpe.1.weight",
+        "trunk.net.enc.enc1.block0.cpe.1.bias",
+        "trunk.net.enc.enc1.block0.cpe.2.weight",
+        "trunk.net.enc.enc1.block0.cpe.2.bias",
+        "trunk.net.enc.enc1.block0.norm1.0.weight",
+        "trunk.net.enc.enc1.block0.norm1.0.bias",
+        "trunk.net.enc.enc1.block0.attn.qkv.weight",
+        "trunk.net.enc.enc1.block0.attn.qkv.bias",
+        "trunk.net.enc.enc1.block0.attn.proj.weight",
+        "trunk.net.enc.enc1.block0.attn.proj.bias",
+        "trunk.net.enc.enc1.block0.norm2.0.weight",
+        "trunk.net.enc.enc1.block0.norm2.0.bias",
+        "trunk.net.enc.enc1.block0.mlp.0.fc1.weight",
+        "trunk.net.enc.enc1.block0.mlp.0.fc1.bias",
+        "trunk.net.enc.enc1.block0.mlp.0.fc2.weight",
+        "trunk.net.enc.enc1.block0.mlp.0.fc2.bias",
+        "trunk.net.enc.enc1.block0.time_modulation.1.weight",
+        "trunk.net.enc.enc1.block0.time_modulation.1.bias",
+        "trunk.net.enc.enc1.block1.cpe.0.weight",
+        "trunk.net.enc.enc1.block1.cpe.0.bias",
+        "trunk.net.enc.enc1.block1.cpe.1.weight",
+        "trunk.net.enc.enc1.block1.cpe.1.bias",
+        "trunk.net.enc.enc1.block1.cpe.2.weight",
+        "trunk.net.enc.enc1.block1.cpe.2.bias",
+        "trunk.net.enc.enc1.block1.norm1.0.weight",
+        "trunk.net.enc.enc1.block1.norm1.0.bias",
+        "trunk.net.enc.enc1.block1.attn.qkv.weight",
+        "trunk.net.enc.enc1.block1.attn.qkv.bias",
+        "trunk.net.enc.enc1.block1.attn.proj.weight",
+        "trunk.net.enc.enc1.block1.attn.proj.bias",
+        "trunk.net.enc.enc1.block1.norm2.0.weight",
+        "trunk.net.enc.enc1.block1.norm2.0.bias",
+        "trunk.net.enc.enc1.block1.mlp.0.fc1.weight",
+        "trunk.net.enc.enc1.block1.mlp.0.fc1.bias",
+        "trunk.net.enc.enc1.block1.mlp.0.fc2.weight",
+        "trunk.net.enc.enc1.block1.mlp.0.fc2.bias",
+        "trunk.net.enc.enc1.block1.time_modulation.1.weight",
+        "trunk.net.enc.enc1.block1.time_modulation.1.bias",
+        "trunk.net.dec.dec0.up.proj.0.weight",
+        "trunk.net.dec.dec0.up.proj.0.bias",
+        "trunk.net.dec.dec0.up.proj.1.weight",
+        "trunk.net.dec.dec0.up.proj.1.bias",
+        "trunk.net.dec.dec0.up.proj_skip.0.weight",
+        "trunk.net.dec.dec0.up.proj_skip.0.bias",
+        "trunk.net.dec.dec0.up.proj_skip.1.weight",
+        "trunk.net.dec.dec0.up.proj_skip.1.bias",
+        "trunk.net.dec.dec0.block0.cpe.0.weight",
+        "trunk.net.dec.dec0.block0.cpe.0.bias",
+        "trunk.net.dec.dec0.block0.cpe.1.weight",
+        "trunk.net.dec.dec0.block0.cpe.1.bias",
+        "trunk.net.dec.dec0.block0.cpe.2.weight",
+        "trunk.net.dec.dec0.block0.cpe.2.bias",
+        "trunk.net.dec.dec0.block0.norm1.0.weight",
+        "trunk.net.dec.dec0.block0.norm1.0.bias",
+        "trunk.net.dec.dec0.block0.attn.qkv.weight",
+        "trunk.net.dec.dec0.block0.attn.qkv.bias",
+        "trunk.net.dec.dec0.block0.attn.proj.weight",
+        "trunk.net.dec.dec0.block0.attn.proj.bias",
+        "trunk.net.dec.dec0.block0.norm2.0.weight",
+        "trunk.net.dec.dec0.block0.norm2.0.bias",
+        "trunk.net.dec.dec0.block0.mlp.0.fc1.weight",
+        "trunk.net.dec.dec0.block0.mlp.0.fc1.bias",
+        "trunk.net.dec.dec0.block0.mlp.0.fc2.weight",
+        "trunk.net.dec.dec0.block0.mlp.0.fc2.bias",
+        "trunk.net.dec.dec0.block0.time_modulation.1.weight",
+        "trunk.net.dec.dec0.block0.time_modulation.1.bias",
+        "trunk.net.dec.dec0.block1.cpe.0.weight",
+        "trunk.net.dec.dec0.block1.cpe.0.bias",
+        "trunk.net.dec.dec0.block1.cpe.1.weight",
+        "trunk.net.dec.dec0.block1.cpe.1.bias",
+        "trunk.net.dec.dec0.block1.cpe.2.weight",
+        "trunk.net.dec.dec0.block1.cpe.2.bias",
+        "trunk.net.dec.dec0.block1.norm1.0.weight",
+        "trunk.net.dec.dec0.block1.norm1.0.bias",
+        "trunk.net.dec.dec0.block1.attn.qkv.weight",
+        "trunk.net.dec.dec0.block1.attn.qkv.bias",
+        "trunk.net.dec.dec0.block1.attn.proj.weight",
+        "trunk.net.dec.dec0.block1.attn.proj.bias",
+        "trunk.net.dec.dec0.block1.norm2.0.weight",
+        "trunk.net.dec.dec0.block1.norm2.0.bias",
+        "trunk.net.dec.dec0.block1.mlp.0.fc1.weight",
+        "trunk.net.dec.dec0.block1.mlp.0.fc1.bias",
+        "trunk.net.dec.dec0.block1.mlp.0.fc2.weight",
+        "trunk.net.dec.dec0.block1.mlp.0.fc2.bias",
+        "trunk.net.dec.dec0.block1.time_modulation.1.weight",
+        "trunk.net.dec.dec0.block1.time_modulation.1.bias",
+        "decoder.0.weight",
+        "decoder.0.bias",
+        "decoder.1.weight",
+        "decoder.1.bias",
+        "decoder.3.weight",
+        "decoder.3.bias"
+      ],
+      "source_identity": {
+        "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+        "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+        "experiment": "hs-occflow-stage2-384-v1",
+        "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+        "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+        "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+        "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+        "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+        "world_size": 2
+      },
+      "source_successful_exposures": 99520,
+      "weights": "online"
+    }
+  },
+  "interval_gradient_audit": {
+    "base.time.interval.net.0.bias": {
+      "grad_finite": true,
+      "grad_max_abs": 1.6777661926425935e-08,
+      "grad_none": false,
+      "requires_grad": true
+    },
+    "base.time.interval.net.0.weight": {
+      "grad_finite": true,
+      "grad_max_abs": 1.6532135660440872e-08,
+      "grad_none": false,
+      "requires_grad": true
+    },
+    "base.time.interval.net.2.bias": {
+      "grad_finite": true,
+      "grad_max_abs": 0.003961922600865364,
+      "grad_none": false,
+      "requires_grad": true
+    },
+    "base.time.interval.net.2.weight": {
+      "grad_finite": true,
+      "grad_max_abs": 0.002531625796109438,
+      "grad_none": false,
+      "requires_grad": true
+    }
+  },
+  "jvp": {
+    "contains_full_dynamic_backbone": true,
+    "endpoint_tangent_zero": true,
+    "finite": true,
+    "full_state_time_tangent": true,
+    "max_abs": 125.0625,
+    "nonzero": true
+  },
+  "jvp_backend": "torch.func.jvp",
+  "manifests": {
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+  },
+  "max_batch2_backward": {
+    "gradient_norm": 6.526464939117432,
+    "jvp_calls": 1,
+    "loss": 0.5609179735183716
+  },
+  "memory": {
+    "peak_allocated_bytes": 9229540352,
+    "peak_reserved_bytes": 10791944192
+  },
+  "native_components": [
+    {
+      "derivative_max_abs": 1.109546422958374,
+      "finite": true,
+      "name": "local_state_MLP",
+      "shape": [
+        384155,
+        64
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "derivative_max_abs": 17.686355590820312,
+      "finite": true,
+      "name": "time_MLP",
+      "shape": [
+        2,
+        32
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "derivative_max_abs": 1.6301573514938354,
+      "finite": true,
+      "name": "attention_qkv_linear",
+      "shape": [
+        384155,
+        192
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "derivative_max_abs": 4.977459907531738,
+      "finite": true,
+      "name": "SpConv_embedding_and_norm",
+      "shape": [
+        384155,
+        64
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "derivative_max_abs": 1.287217378616333,
+      "finite": true,
+      "name": "serialized_attention_actual_FlashAttention",
+      "shape": [
+        384155,
+        64
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "derivative_max_abs": 57.91643524169922,
+      "finite": true,
+      "name": "SpConv_CPE",
+      "shape": [
+        384155,
+        64
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "derivative_max_abs": 57.565185546875,
+      "finite": true,
+      "name": "full_time_conditioned_block",
+      "shape": [
+        384155,
+        64
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "derivative_max_abs": 7.259528047143249e-06,
+      "finite": true,
+      "name": "pooling_project_and_segment_reduce",
+      "shape": [
+        94487,
+        128
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "derivative_max_abs": 1.303533053942374e-06,
+      "finite": true,
+      "name": "unpool_project_and_index_gather",
+      "shape": [
+        384155,
+        64
+      ],
+      "status": "JVP_PASS"
+    }
+  ],
+  "native_resume": {
+    "bounds": {
+      "exact": false,
+      "float_tensor_differences": [
+        {
+          "different_elements": 805,
+          "max_abs": 3.725290298461914e-09,
+          "mean_abs": 1.2107040370246124e-13,
+          "path": "model/base.trunk.net.embedding.stem.conv.weight",
+          "relative_l2": 7.456552193055951e-10,
+          "within_bounds": true
+        },
+        {
+          "different_elements": 2,
+          "max_abs": 2.2737367544323206e-13,
+          "mean_abs": 4.475586568020162e-19,
+          "path": "ema/base.trunk.net.embedding.stem.conv.weight",
+          "relative_l2": 2.6569848686860048e-14,
+          "within_bounds": true
+        },
+        {
+          "different_elements": 429519,
+          "max_abs": 1.4733814168721437e-10,
+          "mean_abs": 1.9676871276795603e-12,
+          "path": "optimizer/state/32/exp_avg",
+          "relative_l2": 2.1100708203549035e-07,
+          "within_bounds": true
+        },
+        {
+          "different_elements": 356112,
+          "max_abs": 3.9968028886505635e-15,
+          "mean_abs": 2.8188877055718972e-18,
+          "path": "optimizer/state/32/exp_avg_sq",
+          "relative_l2": 1.6809776982637872e-07,
+          "within_bounds": true
+        },
+        {
+          "different_elements": 475396,
+          "max_abs": 1.4842953532934189e-09,
+          "mean_abs": 1.967752536609325e-11,
+          "path": "gradient/base.trunk.net.embedding.stem.conv.weight",
+          "relative_l2": 4.594533799046012e-07,
+          "within_bounds": true
+        }
+      ],
+      "gradient_global_relative_l2": 2.396518252333922e-08,
+      "policy": {
+        "derivative": {
+          "atol": 0.001,
+          "rtol": 1e-06
+        },
+        "ema": {
+          "atol": 1e-07,
+          "rtol": 1e-06
+        },
+        "gradient": {
+          "atol": 5e-05,
+          "rtol": 0.0005
+        },
+        "gradient_global_relative_l2_limit": 0.0005,
+        "gradient_norm": {
+          "atol": 3e-05,
+          "rtol": 5e-06
+        },
+        "loss": {
+          "atol": 1e-07,
+          "rtol": 1e-06
+        },
+        "model": {
+          "atol": 1e-07,
+          "rtol": 1e-06
+        },
+        "optimizer_m1": {
+          "atol": 5e-06,
+          "rtol": 0.0005
+        },
+        "optimizer_m2": {
+          "atol": 5e-08,
+          "rtol": 0.001
+        },
+        "prediction": {
+          "atol": 0.0005,
+          "rtol": 1e-06
+        },
+        "target": {
+          "atol": 0.0005,
+          "rtol": 1e-06
+        },
+        "version": "native-replay-v2-20261026"
+      },
+      "policy_sha256": "4e26b8d6d58cd75de1c0f2278ad1ec37652744a31689eb30b71c610d17614837",
+      "scope": "same maximum real Batch2, same source/RNG/state, one native update; numerical replay only",
+      "status": "PASS",
+      "violations": []
+    },
+    "checkpoint_roundtrip_exact": true,
+    "end_to_end_exact": false,
+    "expected_update": {
+      "gradient_norm": 17.069223403930664,
+      "jvp_calls": 1,
+      "loss": 1.8560378551483154
+    },
+    "numerical_exception_used": true,
+    "replayed_update": {
+      "gradient_norm": 17.069223403930664,
+      "jvp_calls": 1,
+      "loss": 1.8560378551483154
+    }
+  },
+  "native_resume_exception": true,
+  "no_truncation": true,
+  "original_fm_native_replay": {
+    "bounds": {
+      "exact": false,
+      "float_tensor_differences": [
+        {
+          "different_elements": 1002,
+          "max_abs": 1.862645149230957e-09,
+          "mean_abs": 1.4660655328624372e-13,
+          "path": "model/base.trunk.net.embedding.stem.conv.weight",
+          "relative_l2": 6.77786915217376e-10,
+          "within_bounds": true
+        },
+        {
+          "different_elements": 1,
+          "max_abs": 1.4210854715202004e-14,
+          "mean_abs": 2.7755575615628914e-20,
+          "path": "ema/base.trunk.net.embedding.stem.conv.weight",
+          "relative_l2": 1.6605648670728506e-15,
+          "within_bounds": true
+        },
+        {
+          "different_elements": 450189,
+          "max_abs": 1.7462298274040222e-10,
+          "mean_abs": 3.21150112880865e-12,
+          "path": "optimizer/state/32/exp_avg",
+          "relative_l2": 2.755531563142743e-07,
+          "within_bounds": true
+        },
+        {
+          "different_elements": 432281,
+          "max_abs": 9.769962616701378e-15,
+          "mean_abs": 9.36462026743104e-18,
+          "path": "optimizer/state/32/exp_avg_sq",
+          "relative_l2": 3.103932231570066e-07,
+          "within_bounds": true
+        },
+        {
+          "different_elements": 470042,
+          "max_abs": 1.6298145055770874e-09,
+          "mean_abs": 3.211288523622576e-11,
+          "path": "gradient/base.trunk.net.embedding.stem.conv.weight",
+          "relative_l2": 3.90611924445234e-07,
+          "within_bounds": true
+        }
+      ],
+      "gradient_global_relative_l2": 3.882575617907734e-08,
+      "policy": {
+        "derivative": {
+          "atol": 0.001,
+          "rtol": 1e-06
+        },
+        "ema": {
+          "atol": 1e-07,
+          "rtol": 1e-06
+        },
+        "gradient": {
+          "atol": 5e-05,
+          "rtol": 0.0005
+        },
+        "gradient_global_relative_l2_limit": 0.0005,
+        "gradient_norm": {
+          "atol": 3e-05,
+          "rtol": 5e-06
+        },
+        "loss": {
+          "atol": 1e-07,
+          "rtol": 1e-06
+        },
+        "model": {
+          "atol": 1e-07,
+          "rtol": 1e-06
+        },
+        "optimizer_m1": {
+          "atol": 5e-06,
+          "rtol": 0.0005
+        },
+        "optimizer_m2": {
+          "atol": 5e-08,
+          "rtol": 0.001
+        },
+        "prediction": {
+          "atol": 0.0005,
+          "rtol": 1e-06
+        },
+        "target": {
+          "atol": 0.0005,
+          "rtol": 1e-06
+        },
+        "version": "native-replay-v2-20261026"
+      },
+      "policy_sha256": "4e26b8d6d58cd75de1c0f2278ad1ec37652744a31689eb30b71c610d17614837",
+      "scope": "same maximum real Batch2, same source/RNG/state, one native update; numerical replay only",
+      "status": "PASS",
+      "violations": []
+    },
+    "exact": false,
+    "expected_update": {
+      "gradient_norm": 3.018963098526001,
+      "jvp_calls": 0,
+      "loss": 0.60735023021698
+    },
+    "replayed_update": {
+      "gradient_norm": 3.018963098526001,
+      "jvp_calls": 0,
+      "loss": 0.60735023021698
+    },
+    "same_source_same_gpu_same_maximum_batch2": true
+  },
+  "precision": "FP32 weights + original FP16 autocast",
+  "replay_policy_sha256": "4e26b8d6d58cd75de1c0f2278ad1ec37652744a31689eb30b71c610d17614837",
+  "resume_classification": "BOUNDED_NATIVE_NUMERICAL_REPLAY_WITH_OWN_FM_CONTROL",
+  "scene_isolation": {
+    "packed_vs_single": [
+      {
+        "exact": false,
+        "max_abs": 0.00390625,
+        "mean_abs": 0.00018255920440424234,
+        "relative_l2": 0.00030964179313741624
+      },
+      {
+        "exact": false,
+        "max_abs": 0.0068359375,
+        "mean_abs": 0.0002461605763528496,
+        "relative_l2": 0.0003991535631939769
+      }
+    ],
+    "permutation_exact": true,
+    "single_scene_source_exact": true
+  },
+  "scene_lengths": [
+    192179,
+    191976
+  ],
+  "source_sha256": "9a7b41b05892dbb1df1067af99c08e4fc9422f60225fbe39e6f3d31df7812a00",
+  "started": 1792998599.290686,
+  "status": "GPU_PASS",
+  "stress_selection": [
+    {
+      "frame": 1019,
+      "sequence": "01",
+      "split": "train",
+      "teacher_parent_tokens": 192179
+    },
+    {
+      "frame": 1018,
+      "sequence": "01",
+      "split": "train",
+      "teacher_parent_tokens": 191976
+    }
+  ],
+  "time_module_forward_audit": [
+    {
+      "active_id": 140049963371200,
+      "grad_enabled": false,
+      "interval_matches": true,
+      "module_id": 140049963371200,
+      "output_requires_grad": false
+    },
+    {
+      "active_id": 140049963371200,
+      "grad_enabled": false,
+      "interval_matches": true,
+      "module_id": 140049963371200,
+      "output_requires_grad": false
+    },
+    {
+      "active_id": 140049963371200,
+      "grad_enabled": true,
+      "interval_matches": true,
+      "module_id": 140049963371200,
+      "output_requires_grad": true
+    }
+  ],
+  "true_batch": 2,
+  "zero_init_parity": [
+    {
+      "exact": true,
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative_l2": 0.0
+    },
+    {
+      "exact": true,
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative_l2": 0.0
+    },
+    {
+      "exact": true,
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative_l2": 0.0
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 """User-authorized two-arm MeanFlow queue, guarded by predecessor and GPU gates.
 
-No new training candidates, retries, reduced batches, or numeric exceptions.
+No new candidates, retries or reduced batches. A numerical replay exception must
+pass the versioned strict bounds and its own original-FM control on the same GPU.
 """
 from common import ROOT
 import argparse,concurrent.futures,fcntl,json,os,subprocess,sys,time,traceback
@@ -12,6 +13,7 @@ from fpsgen.hier_occ_flow.stage2_runtime import source_sha
 from fpsgen.hier_occ_flow.storage import atomic_json,file_sha
 from fpsgen.hier_occ_flow.meanflow_training import load_config
 from fpsgen.hier_occ_flow.meanflow_control_audit import audit_control
+from fpsgen.hier_occ_flow.encoder_adaptation_runtime import config_sha
 
 
 def main():
@@ -62,13 +64,30 @@ def main():
                 return code
             try:
                 cfg,g=load_config(task['config'])
-                if run('engineering','verify_meanflow_gpu.py',['--config',task['config'],'--output',root/'engineering']):
+                engineering=Path(cfg['engineering_report'])
+                reuse=False
+                if engineering.exists():
+                    evidence=json.loads(engineering.read_text())
+                    reuse=all(evidence.get(k)==v for k,v in dict(status='GPU_PASS',arm=ident,source_sha256=pin,config_sha256=config_sha(cfg)).items())
+                    tested=[x['physical_gpu'] for x in evidence.get('gpu_admission',{}).get('gpus',[])]
+                    if not reuse or tested!=[gpu]:raise ValueError('Existing engineering evidence is failed, mismatched, or from a different physical GPU')
+                    atomic_json(root/'engineering_reuse.json',dict(status='VERIFIED_EXISTING',sha256=file_sha(engineering)))
+                if not reuse and run('engineering','verify_meanflow_gpu.py',['--config',task['config'],'--output',root/'engineering']):
                     evidence=json.loads((root/'engineering/result.json').read_text()) if (root/'engineering/result.json').exists() else {}
                     mark(evidence.get('status','BLOCKED_ENGINEERING'),evidence=str(root/'engineering/result.json'),reason=evidence.get('reason'));return
                 # An unmatched old checkpoint cannot silently become a control.
                 control=audit_control(cfg);atomic_json(root/'control_audit.json',control)
                 if control['status']!='MATCHED_CONTROL':mark('BLOCKED_CONTROL',audit=control);return
-                if run('smoke32','train_meanflow.py',['--config',task['config'],'--output',root/'smoke','--max-updates',32,'--smoke']):
+                smoke=Path(cfg['smoke_summary']);reuse_smoke=False
+                if smoke.exists():
+                    proof=json.loads(smoke.read_text());identity=proof.get('identity',{})
+                    reuse_smoke=(proof.get('status')=='SMOKE_PASS' and proof.get('counts',{}).get('updates')==32
+                        and proof['counts']['exposures']==64 and identity.get('source_sha256')==pin
+                        and identity.get('config_sha256')==config_sha(cfg)
+                        and identity.get('engineering_report_sha256')==file_sha(engineering))
+                    if not reuse_smoke:raise ValueError('Existing Smoke evidence does not match source/config/engineering identity')
+                    atomic_json(root/'smoke_reuse.json',dict(status='VERIFIED_EXISTING',sha256=file_sha(smoke)))
+                if not reuse_smoke and run('smoke32','train_meanflow.py',['--config',task['config'],'--output',root/'smoke','--max-updates',32,'--smoke']):
                     mark('BLOCKED_SMOKE');return
                 for updates in (100,500,10000):
                     args=['--config',task['config'],'--output',root/'formal','--max-updates',updates]

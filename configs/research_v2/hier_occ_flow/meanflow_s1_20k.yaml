@@ -120,8 +120,8 @@ specification:
 stress:
   p0_root: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1
   census: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/phase0/d3_fixed_budget/per_frame.jsonl
-engineering_report: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/experiments/desescene_meanflow_v1/S1-MF20K/engineering/result.json
-smoke_summary: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/experiments/desescene_meanflow_v1/S1-MF20K/smoke/summary.json
+engineering_report: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S1-MF20K/engineering/result.json
+smoke_summary: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S1-MF20K/smoke/summary.json
 control:
   arm: S1-FM20K
   status: WAITING_CONTROL_EVAL

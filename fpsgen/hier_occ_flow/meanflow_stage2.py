@@ -26,6 +26,7 @@ class PreparedStage2:
     topology:object=None
     norm_layouts:dict=field(default_factory=dict)
     pool_layouts:dict=field(default_factory=dict)
+    flash_layouts:dict=field(default_factory=dict)
     warmed:bool=False
 
 
@@ -74,7 +75,11 @@ def _pool_forward(module,point):
     cluster,indices,idx_ptr,head,code,order,inverse,grid,batch,depth,coord=cached
     layout=module._mf_pool_layout
     if layout is None:raise ValueError('Pooling sparse metadata was not prepared')
-    data=dict(feat=torch_scatter.segment_csr(module.proj(point.feat)[indices],idx_ptr,reduce=module.reduce),
+    from .meanflow_native_ops import native_jvp_active,segment_max_jvp
+    projected=module.proj(point.feat)[indices]
+    reduced=(segment_max_jvp(projected,idx_ptr) if native_jvp_active() and module.reduce=='max'
+             else torch_scatter.segment_csr(projected,idx_ptr,reduce=module.reduce))
+    data=dict(feat=reduced,
         coord=coord,grid_coord=grid,serialized_code=code,serialized_order=order,
         serialized_inverse=inverse,serialized_depth=depth,batch=batch,offset=layout['offset'],
         sparse_shape=list(layout['sparse_shape']),_v3_topology=topology,
@@ -99,6 +104,7 @@ class MeanFlowStage2(nn.Module):
         self.base=base
         self.initialization_audit=install_interval(base,'time',32,64)
         self._norms={};self._pools={}
+        self._attention={}
         if base.backbone_kind=='ptv3':
             from fpsgen.voxel_point.vendor.pwm.ptv3_reference.model import PointInstanceNorm,SerializedPooling
             for name,module in base.trunk.named_modules():
@@ -111,6 +117,8 @@ class MeanFlowStage2(nn.Module):
                     module._mf_original_forward=module.forward
                     module._mf_pool_mode='original';module._mf_pool_layout=None
                     module.forward=MethodType(_pool_forward,module);self._pools[name]=module
+            from .meanflow_native_ops import install_native_jvp_bridges
+            self._attention=install_native_jvp_bridges(base.trunk)
 
     def _apply(self,fn):
         frequency=self.base.frequencies.detach().float().clone()
@@ -130,8 +138,15 @@ class MeanFlowStage2(nn.Module):
         for name,module in self._pools.items():
             pool_previous.append((module,module._mf_pool_mode,module._mf_pool_layout))
             module._mf_pool_mode=mode;module._mf_pool_layout=context.pool_layouts.get(name)
+        flash_previous=[]
+        for name,module in self._attention.items():
+            flash_previous.append((module,module._mf_capture_native_layout,module._mf_flash_groups))
+            module._mf_capture_native_layout=mode=='capture'
+            module._mf_flash_groups=context.flash_layouts.get(name)
         try:yield
         finally:
+            if mode=='capture':context.flash_layouts={name:module._mf_flash_groups for name,module in self._attention.items()}
+            for module,capture,groups in flash_previous:module._mf_capture_native_layout=capture;module._mf_flash_groups=groups
             if mode=='capture':context.pool_layouts={name:module._mf_pool_layout for name,module in self._pools.items()}
             for module,old_mode,layout in pool_previous:module._mf_pool_mode=old_mode;module._mf_pool_layout=layout
             if mode=='capture':context.norm_layouts={name:module._mf_lengths for name,module in self._norms.items()}
@@ -204,7 +219,9 @@ class MeanFlowStage2(nn.Module):
 
     @torch.no_grad()
     def warm_topology(self,context,state,time,*,time_end):
-        with self._layouts(context,'capture'):value=self._prepared(context,state,time,time_end)
+        from .meanflow_jvp import uncached_current_autocast
+        with self._layouts(context,'capture'),uncached_current_autocast(state.device.type):
+            value=self._prepared(context,state,time,time_end)
         context.warmed=True
         return value
 

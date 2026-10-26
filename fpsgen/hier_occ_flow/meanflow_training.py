@@ -168,6 +168,18 @@ def run_training(cfg,g,output,*,resume=None,max_updates=10000,smoke=False):
     gate=json.loads(Path(cfg['engineering_report']).read_text())
     if any(gate.get(k)!=v for k,v in {'status':'GPU_PASS','arm':cfg['arm'],'source_sha256':source_sha(),'config_sha256':config_sha(cfg)}.items()):
         raise ValueError('Own exact native JVP/maxB2/replay GPU gate required')
+    from .meanflow_replay_bounds import POLICY_SHA
+    if (not gate.get('native_resume',{}).get('checkpoint_roundtrip_exact')
+        or gate.get('full_jvp_vjp_dot',{}).get('normalized_error',float('inf'))>=3e-4):
+        raise ValueError('Exact serialization/RNG and full native reverse/JVP comparison required')
+    if gate.get('native_resume_exception'):
+        if (gate.get('replay_policy_sha256')!=POLICY_SHA
+            or gate.get('original_fm_native_replay',{}).get('bounds',{}).get('status')!='PASS'
+            or gate.get('native_resume',{}).get('bounds',{}).get('status')!='PASS'
+            or gate.get('resume_classification')!='BOUNDED_NATIVE_NUMERICAL_REPLAY_WITH_OWN_FM_CONTROL'):
+            raise ValueError('Own same-GPU unmodified-FM control and versioned strict bounds required for Numerical Replay')
+    elif not gate.get('native_resume',{}).get('end_to_end_exact'):
+        raise ValueError('No implicit numerical replay exception')
     if not smoke:
         proof=json.loads(Path(cfg['smoke_summary']).read_text())
         if (proof.get('status')!='SMOKE_PASS' or proof['counts']['updates']!=32 or proof['counts']['exposures']!=64
@@ -186,6 +198,9 @@ def run_training(cfg,g,output,*,resume=None,max_updates=10000,smoke=False):
         initialization_mode=system.initialization['initialization_mode'],output=str(out),batch=2,world_size=1,
         precision='FP32 parameters + original FP16 autocast',jvp_backend='torch.func.jvp',
         engineering_report_sha256=file_sha(cfg['engineering_report']))
+    identity.update(resume_classification=gate['resume_classification'],native_resume_exception=gate['native_resume_exception'],
+        replay_policy_sha256=gate.get('replay_policy_sha256'),
+        native_jvp_adapters='original-primal SpConv + FlashAttention + native-argmax pooling; analytic tangent')
     counts=dict(updates=0,exposures=0,attempts=0,cursor=0,amp_skips=0,diagonal_exposures=0,finite_interval_exposures=0,jvp_calls=0,attempted_jvp_calls=0,consecutive_amp_skips=0)
     frozen=system.frozen_sha()
     if resume:
