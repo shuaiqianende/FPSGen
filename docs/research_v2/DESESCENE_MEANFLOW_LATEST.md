@@ -1,3 +1,5 @@
+> 2026-10-26最新用户修订：取消当前900帧评价，后续全部seq08/skip100固定41帧；GPU2普通FM正式训练已启动。见[当前策略与实际接续](DESESCENE_SEQ08_ONLY_EVALUATION_POLICY.md)。以下为历史快照，旧等待关系不再生效。
+
 # 更新入口
 
 最新900帧结果及独立GPU预检见 [2026-10-26更新](DESESCENE_ENCODER_900_MEANFLOW_GPU_STATUS.md)。以下为首次排队时点快照，不能当作实时状态。

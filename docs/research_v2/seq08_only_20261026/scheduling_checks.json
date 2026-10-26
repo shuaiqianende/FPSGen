@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "model_training_sources_modified": false,
+  "training_configs_modified": false,
+  "checks": [
+    "New scheduling/benchmark/cache-preparation scripts parse",
+    "Explicit41 frame policy equals0..4000 step100",
+    "Both active roles only invoke evaluator --split seq08_41",
+    "MeanFlow benchmark TIMED list exactly41 frames",
+    "No development900 evaluator command in replacement scheduler"
+  ],
+  "scope": "Scheduling revision; previous CPU/GPU training gates retained; not new quality results"
+}

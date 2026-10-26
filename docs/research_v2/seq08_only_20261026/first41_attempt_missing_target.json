@@ -1,0 +1,12 @@
+{
+  "config_file_sha256": "03cf1893ca0a3d568aeb165766998ce7494bf7e8e5b01f2216565f7fdeed536f",
+  "epoch": 1793017999.9495196,
+  "evaluation_policy": "seq08_skip100_41_only_user_20261026",
+  "physical_gpu": 3,
+  "pid": 1122990,
+  "reason": "RuntimeError: seq08_policy_quality41 exited 1; review, no automatic retry",
+  "role": "stage1_eval",
+  "source_sha256": "9a7b41b05892dbb1df1067af99c08e4fc9422f60225fbe39e6f3d31df7812a00",
+  "status": "BLOCKED_REVIEW_REQUIRED",
+  "traceback": "Traceback (most recent call last):\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/scripts/research_v2/experiment_ops/run_seq08_only.py\", line 83, in main\n    run('seq08_policy_quality41',scripts/'eval_meanflow.py',['--config',a.config,'--checkpoint',a.output/'formal/checkpoints/resume_latest.pt','--output',a.output/'evaluation/seq08_41','--split','seq08_41'])\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/scripts/research_v2/experiment_ops/run_seq08_only.py\", line 71, in run\n    if code:raise RuntimeError(f'{name} exited {code}; review, no automatic retry')\nRuntimeError: seq08_policy_quality41 exited 1; review, no automatic retry\n"
+}

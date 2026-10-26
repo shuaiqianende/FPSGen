@@ -1,0 +1,424 @@
+{
+  "frames": [
+    {
+      "frame": 0,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "b8a06dbd329448f6da2ff26b88b07047958c353eac635777d7acdc784a63f7dc",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1728347,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "290f8170613256142a441af8d11e7b72042879cd0020e220110e4827013159c0"
+    },
+    {
+      "frame": 100,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "51900c9390a412d4cab123f9345b97453c03df38277a19fd7ab8b6989a5b4403",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 2381384,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "9f1d1d972e45f7b9d01ae29336c42960402bc2db39ccb89f2ed608ac83edf040"
+    },
+    {
+      "frame": 200,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "0777576a77e47aef020f361c437e3cd80664ef164d3436ec4bd36d30b0a3de98",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 2188487,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "0e36071ea38c16a2bc6319ec9a1c906fa4953b985a93b75eecd112874d149513"
+    },
+    {
+      "frame": 300,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "57797d8b3ad3a8f71f323bfdc3d450ba0a2397e79ab824b637b28b144f0a4af2",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1375865,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "8ec66e6218b527b19855c5dccb6114b30bcd3d4fde48972208bc5c76870aa872"
+    },
+    {
+      "frame": 400,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "461782ea6add3002fe17c2103adf1424acbc7bfeb60f4b2b99e35f3598088870",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1366360,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "67cfbc10e3d3137f7ebb66f0beb39620577e63e6a9581518d1e0c862a93a91a5"
+    },
+    {
+      "frame": 500,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "e29bc9357f7b1ff029d3d0146b4034e0141428a8ee737a0484d9d8c5341f5f7d",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1337634,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "0f2b4e422a1837e92eaec54d817b7f2a4d37d58aae7576e0b6888566f9e0e220"
+    },
+    {
+      "frame": 600,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "f904d6b1901839a11f863bdc22bd81267e00feb3406b8bd0141c91e704146db9",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 952655,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "c0cd8836df0470590835e95496aa246dc307c00ae227007a699a9d8b41c6dfb4"
+    },
+    {
+      "frame": 700,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "f46e21a9764ab1a979f4beccc56df97cb17397bdb93139cff22e4a7bf7d74030",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1830555,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "da9d121c1bcf489b6e195087393e7ca28c9bc8ca60a8a9bf9553f6e9fad8488f"
+    },
+    {
+      "frame": 800,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "779281b3493814740d056f44d115599652dd0c2765499cbb51622e06a69d2efa",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1819587,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "4429e74b6ce60e20e6acf3de9078d3d6df04705ee991e1c6befebcd1fb3afb6e"
+    },
+    {
+      "frame": 900,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "68be9f136cbe780282e94a73e2d0f7a1fede081f9175152aa9ccf485149374d9",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 900103,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "e5e59009bc6e8b033bfdc7e4ebbdc86c5e0e23488ee8d40a6e6427aa8a029520"
+    },
+    {
+      "frame": 1000,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "6df5850b1deb85a794f65379fed303500ebb1cdd33a237d5862c677258dc6248",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1388644,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "7ac09705ea8b11beb9aaa484725cd5bf571a18a7bbad551be695b8e0b9e66287"
+    },
+    {
+      "frame": 1100,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "6d770d7d8caaaa4ec6180fec7bdc4f5f3a5ab05b733651fb45c4ba65596e34fb",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 973131,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "931de0da3c463786fbefeefa32a9d9219ff689cc5f973358c292ce98ee46267b"
+    },
+    {
+      "frame": 1200,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "56392c696a6291a296590ce8faac1a56331cf3af7528e5431b53a2e10c8451cb",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 932100,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "286d498b989cb31a8b5105b30f80854767d7d9b4888abf7694cfc78a28e1e703"
+    },
+    {
+      "frame": 1300,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "faeaeb5c9c852a175e8933db9cd5fa599d3b688df779c927cb38f81098642265",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1248033,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "14e642b488af793df8013020b9aa37f8b09123a97204c7b878ee73b2e7409584"
+    },
+    {
+      "frame": 1400,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "37694cf36482d1f8754380baf977703fdca8694537881128fd497d248efea241",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1644435,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "98b01772b3bcc858ddd3c312c2b6969be19a361bcdef53b20f699d02e655fef0"
+    },
+    {
+      "frame": 1500,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "306f7ccd04879a6f00897cbd740809c609af0679b8cb2b721a853a6b00e75247",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1883149,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "9ae76dc012d8d6c643e42f91eec8b9df7e69e7b27818fc31a27c0eb3530c174c"
+    },
+    {
+      "frame": 1600,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "b8f6dc22c97baafe777bd275c52d3e5b5cea6cfde496b686e99f89d71fab5657",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 2282916,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "f9eead20ea86b370f3394af535dbda80ab2a3054306fee64e3e82be6caceaa3f"
+    },
+    {
+      "frame": 1700,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "19aaea3e0d858434ac85f7e6700f84c48d0d03416690e49c04321b45985d683b",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 2164698,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "519efb9b7f7d58990d4d2f7c1e97d33fedc655d9244a6a3404fa0cb22346f46b"
+    },
+    {
+      "frame": 1800,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "7bb797e789545ed40ab4d0a6972b56e3c46863ce33cb56360350d6237ac7d1d0",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 2450855,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "6bc84c60c8d3a117a57fa9174920483a75d50daa3e01191a32b1ba75ee1e0f91"
+    },
+    {
+      "frame": 1900,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "fb86f47440e920d57510e05da2387dec33d28d7eabaf8306c423a9c79916bc79",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1551155,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "0957be3f09d86a808471f87f1afa5713904ddc68cbb273f533518e19dd1a6612"
+    },
+    {
+      "frame": 2000,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "2f43eeed3a1c84a1a7192505ef00472debd68abfe4be66a7b07a7510d5000a8d",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 946013,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "6fa0d3c25d84ca343dd4432ffc29d7a9758b1d61af0cd6044a3e53bd1265b12a"
+    },
+    {
+      "frame": 2100,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "7fdb989f234638ddbe5e94ba8d7f4369e4af1427ae5f0d7f56434bd65425ec62",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 886586,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "fe613957de35dce8dc90beea005db9365189f068b00d0cd7a62e98121fceca3d"
+    },
+    {
+      "frame": 2200,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "0cea57bdbae01d5858cd9d5011ca41236e2fdfb0163738efdbde1dbd67e95890",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 703182,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "bafc5d81c95d79e9a9983cdbd997c69de28d55e465144b6c5161317d7b658f4e"
+    },
+    {
+      "frame": 2300,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "a0a105977d32cced388a53bf8ddb7b90f35306713bb6919afa25bb35858e8856",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 698708,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "04e9e12a1b931c51d1f283b2fb7e1802cf0dee9503e0eb9fc95f9515016a2166"
+    },
+    {
+      "frame": 2400,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "11249fee64990d7a288f2a29e1a0bca47511680d945aeee7237142a5a1bd506f",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 813926,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "548d946e072ea83a04286e08839b59528bc52db40dee26856df59c6fd268a12f"
+    },
+    {
+      "frame": 2500,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "1bfbc4be3fe929979a52c3950b0d03a5eff35730d71f2e631da6e77171b0b77a",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1721017,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "4f26c06bccf77d4b12adbdfefc87d753e51bb3acfa8767a9f17ad1aa8642cf62"
+    },
+    {
+      "frame": 2600,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "804a63f91ea40970b9c0ec63e956a9753b40756f932efc64b4997a9ea531095c",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 938580,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "a2bc69534423d8bb4ee6097a30c6e38162dd38b2747dbfd072aa79d31216cd6e"
+    },
+    {
+      "frame": 2700,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "04108ddcf22bef1b9b324fa7a923c5b784f628c98bd5fdc1dd6bbd66bef12fa7",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1185566,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "ce62da96e1d4540617d6b40ad3022a327a17db51c4a1239671eb6ab609d1e0fa"
+    },
+    {
+      "frame": 2800,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "694e436243875ca423f4341bda3fded61c6b8d56f1955310b936ef612ee908ff",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1111487,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "7d9c3fcd5c00d8b628eac132c8c7db3b12e9a2ed9fec685b6482af5fea1e0acf"
+    },
+    {
+      "frame": 2900,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "b0e10e3c624e709b5cbc387e7eb789434362c2fb8991e5321082942dec90a98a",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1081627,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "1c7ceff674d2f3fbb5d1d0ad914041b4efd73b13f3126d07c99743efb2aa6439"
+    },
+    {
+      "frame": 3000,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "97cc0f47cde4bc5cac83b6a6af61ee940198eb199b6e768ef288aba69af6b7d1",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1307216,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "16464ad839f0334efd294178771d859290f453baecc5547d8a662d42b44957ca"
+    },
+    {
+      "frame": 3100,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "af5167534ef29d99458c13cf9935b4bd7b917347e45bc9bb26b20b4bba9ebb85",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1294937,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "0ae2f1bfdd34e8dcc1f6cca58e2f97310549e765442270d12c481e2948b6b592"
+    },
+    {
+      "frame": 3200,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "eadcb6e52f30241fe8cd57adf28b9971c53b66a6924575d566e161935c50de2f",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1114686,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "a3419486060ac3ce417ffe4bde9cda4690b93a0a38f1309e3d95ae60b85b373b"
+    },
+    {
+      "frame": 3300,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "f221a5b047cb391ebe47dedbe11943970d862f43216d4ba320a54cb388a1bc02",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1106292,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "0cca09b5974a68e49caf67f0c7757e8adc8f041d95dcdbf4372ace3bd7b06987"
+    },
+    {
+      "frame": 3400,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "84d702d1b9b5b5b2251886df5c42325b5d4208eb3960b0aec255d46f12f1e5f6",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1491434,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "9b2244402033758a27099f12e55f525719ef3ad86a03001cb88178ccf14dac23"
+    },
+    {
+      "frame": 3500,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "62b1395fa3a8246a7a95db49bdbda4758912667863277d82e1a2e86f3fdf6c04",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1029062,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "d615bb6073f0eff37bee82215ef29206d2dbda658c5a9d128b0cafafa98b81ad"
+    },
+    {
+      "frame": 3600,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "73174a9e8be3f1bd0ccb7627d3f732548906f51e61bf99570990635b3c3eb505",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 916949,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "869fee7978d98938074a13e26a9fcb6fd263db72da8922e5ea22e46bfbc66969"
+    },
+    {
+      "frame": 3700,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "a2cbe20a62f6c5fc5ab7f303534bd17bd2373dfdc437a584350acbdc3a79dc9d",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 879552,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "320745c8138b751e1cef5a1e10cd0d9c7a21a990df96f2007555c7f76e0f29f8"
+    },
+    {
+      "frame": 3800,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "1b778e949da0c6cd0942c32539d7d02a0790c8a1b29fb4f33ad265d2a87fc348",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1011994,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "7fcdc9deb0de86a1ab1fe56d666d098b4671bd46c275a6bc9cea292018bcc4d0"
+    },
+    {
+      "frame": 3900,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "e2208e313ebe40b223f13b4c3370f8254ca7021f4c9b5284a69179f82d2d36c9",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1144476,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "57996255a71da0a2dcb29d7073aa6fe375abf582a816ad5aaf114e890e7af438"
+    },
+    {
+      "frame": 4000,
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_sha256": "da7c8c391cc5a712e12a09901e43de49a06eaaa3c049ebd90e7fc45b8d27292b",
+      "provenance": "New target cache from original hash-verified raw source; not a historical target file",
+      "raw_gt_points": 1126190,
+      "raw_source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+      "sequence": "08",
+      "target_sha256": "0a5c8e29034e1a6841739c9119b7aaeae5cc96a1563fb68d2b44bf167941f469"
+    }
+  ],
+  "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+  "historical_reference_files_unchanged": {
+    "per_frame.jsonl": "0cd2d89f5f2e42a1b1cbfec0bf49e9d3ba265336d8ebf0675f70bda0b508ba9c",
+    "protocol.json": "509e79e79e387aaf28ab277edd788ea585916f2b98502d05ad3410c5c667d7f4",
+    "raw_sources.json": "7323d814e828b8433175bae821cf01882c69d87488eb67de2ba1672756a6046c",
+    "results.json": "7af8d4629bd9f6a3efbe9fed91545876996b3e4a1aad86b23f4923b683710ca4"
+  },
+  "reference": "/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_eval/stage1_final_seq08_skip100_rawcd_grid124_gpu1",
+  "source_manifest_sha256": "f4ee9ca37c6bc5f8f9dc86c4db03b00ae788e1fd84503215ae3d13a440da4700",
+  "status": "VERIFIED41"
+}
