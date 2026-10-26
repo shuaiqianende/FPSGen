@@ -37,9 +37,9 @@ L0 Fine IoU仅+0.0143个百分点；当前单Seed分组CI为+0.00166至+0.02417�
 
 ## 尚未获得正式结论的任务
 
-- Stage1 MeanFlow：GPU3正式训练中，最终900帧及seq08/skip100 41帧NFE1/2/4/8质量尚未完成，不根据Loss宣称少步加速成功。
+- Stage1 MeanFlow：已完成10K成功更新/20K曝光，正在900帧评价；最终900帧及seq08/skip100 41帧NFE1/2/4/8质量尚未完成，不根据Loss宣称少步加速成功。
 - Stage2 MeanFlow修复试验：最大Batch2/native JVP/恢复与Smoke通过，正式359步/718曝光、0 AMP skips后用户要求暂停，完整Checkpoint保留；尚无正式质量结果。此前16384初始scale运行210步触发AMP门槛的失败记录另存。
 - Shortcut Models：本体未启动，完成的是S1-FM20K普通FM对照。
-- 用户新提出Stage2移除LiDAR Encoder：正在明确Observed Mask保留与否，准备独立消融；本结果汇总不将其写为已训练。
+- 用户已确认Stage2用GT粗占用、保留原始Observed Mask、去掉384D特征；独立分支research/desescene-stage2-no-encoder-v1已通过最大799343 Parent Batch2/native JVP/恢复与Smoke32，正式队列等待Stage1训练评价完成。尚无该组正式20K质量结果。
 
 这些训练消融尚无已完成的独占、同后端三轮端到端性能结论，不能使用共享评测内的计时宣称推理加速。
