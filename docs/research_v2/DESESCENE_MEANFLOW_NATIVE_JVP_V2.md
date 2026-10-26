@@ -81,3 +81,7 @@ Stage1独立丢弃Smoke32通过：32 updates/64 exposures、0 AMP skips、43 dia
 Stage1完成后只执行已登记的900帧Development、seq08/skip100固定41帧NFE1/2/4/8对照和无争用配对测速，不追加训练。GPU3每次只运行一个本项目任务。Stage2 AMP稳定性修复在独立分支`research/desescene-meanflow-amp-stability-v3`准备；其任何新源码/config需重新验收，不改本工作树的运行代码。尚无MeanFlow正式20K质量结论。
 
 Stage1后续实际通过500 successful updates/1,000 exposures健康检查，500 attempts、0 AMP skips。控制器已自动启动正式末段`--max-updates 10000`，从同一Checkpoint恢复，非重新训练；见`s1_gpu3_health500.json`与`continuation_latest_20261026.json`。
+
+## 用户更新：先Stage1，后Stage2
+
+Stage1继续原有MeanFlow20K适配：只训练Flow与interval分支，成熟LiDAR Encoder冻结，并非重训Encoder。最新快照见`stage1_first_user_schedule.json`。Stage2在独立v3工作树正常保存于359更新/718曝光后由用户暂停，0 AMP skips，完整Checkpoint已验证，调度器已停止；不会因为GPU空闲自行恢复。后续GT粗Parent支持的独立Stage2训练需新的协议身份，不从已暂停Predicted-Support运行静默切换。Stage1完成后原900帧与seq08-41帧NFE对比继续执行，其他任务不变。

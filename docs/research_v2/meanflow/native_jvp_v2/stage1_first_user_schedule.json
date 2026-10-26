@@ -1,0 +1,47 @@
+{
+  "epoch": 1793006753.9546738,
+  "stage1": {
+    "status": "CONTINUES",
+    "supervisor": {
+      "arm": "S1-MF20K",
+      "child_pid": 275477,
+      "command": [
+        "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+        "-u",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/scripts/research_v2/hier_occ_flow/train_meanflow.py",
+        "--config",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/configs/research_v2/hier_occ_flow/meanflow_s1_20k.yaml",
+        "--output",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S1-MF20K/formal",
+        "--max-updates",
+        "10000",
+        "--resume",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-replay-v2/experiments/desescene_meanflow_jvp_v2/S1-MF20K/formal/checkpoints/resume_latest.pt"
+      ],
+      "config_file_sha256": "03cf1893ca0a3d568aeb165766998ce7494bf7e8e5b01f2216565f7fdeed536f",
+      "controller_sha256": "e4a89218a1d7c6d7de3ce393685360e402f03b4ce6112d868a4a944a0da7bbe0",
+      "epoch": 1793005741.1912246,
+      "physical_gpu": 3,
+      "pid": 233813,
+      "source_sha256": "9a7b41b05892dbb1df1067af99c08e4fc9422f60225fbe39e6f3d31df7812a00",
+      "status": "RUNNING_FORMAL_GPU3_10000"
+    },
+    "counts": {
+      "updates": 1690,
+      "exposures": 3380,
+      "attempts": 1693,
+      "amp_skips": 3
+    },
+    "trainable": "MeanFlow Stage1 Flow + interval adapter",
+    "encoder": "mature Stage1 EMA frozen"
+  },
+  "stage2": {
+    "status": "USER_HOLD",
+    "saved_updates": 359,
+    "saved_exposures": 718,
+    "amp_skips": 0,
+    "full_checkpoint_verified": true,
+    "automatic_restart": false,
+    "future": "Independent GT coarse-parent support training after Stage1 training/evaluation; separate protocol identity"
+  }
+}
