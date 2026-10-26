@@ -16,3 +16,11 @@ CPU16项通过（Scratch构造不调用权重加载器、所有Encoder/Flow可�
 评价脚本`experiment_ops/eval_scratch20k_seq08.py`只加载本次最终Scratch EMA，不加载成熟权重。Stage1先报告独立粗占用中心质量；Stage2报告Oracle支持下原生Fine中心质量（非部署）。这两种质量不能混称为完整系统指标，也不能直接与旧微调表作曝光匹配因果比较。完整两阶段组合需两组完成后另行明确支持身份。
 
 训练日志/大Checkpoint在experiments本地，不上传Git。新旧实验分支、运行目录严格分离。新质量和速度尚未完成，不预报性能收益。
+
+## Stage1重放修复：独立分支GPU2
+
+首次原AMP Gate以及仅启用确定性cuDNN的重试都因少量参数更新差异超既定容差失败，产物均保留，未变更bounds或忽略异常。最终采用Encoder FP32精度岛、Flow FP16 AMP，关闭TF32、启用确定性cuDNN，在同样的完整最大Batch2上通过原生下一更新重放。参数、架构、几何与曝光均不改变；这属于明确登记的计算精度策略，不能把它说成全网络AMP。后续同协议对照必须匹配该精度。
+
+最大场景为seq02帧925/4192、GT positives319738/319737；三尺度输出[2,128,16,192,192]/[2,128,8,96,96]/[2,128,4,48,48]。Encoder梯度范数0.089326、Flow7.489892，原生JVP实际调用1次，initial state SHA1e7837680e8100176761627264c188a1d0d351cc8a65dceab6038507257f4058。梯度重放relativeL2=3.6851e-6，原界限PASS；磁盘全状态精确恢复，归类NUMERICAL_NATIVE_REPLAY_WITHIN_FIXED_BOUNDS，不宣称逐位更新相同。峰值allocated12.072GiB。
+
+GPU2实际接续路径为`experiments/desescene_scratch20k_encoder_fp32_v1/S1-MeanFlow-Scratch20K`，controller1500737；GPU3在原独立工作树`desescene-scratch20k-v1`中，controller1484049，两者不共享可变源文件。32步Smoke丢弃，正式仍从计数0且全随机初值开始。

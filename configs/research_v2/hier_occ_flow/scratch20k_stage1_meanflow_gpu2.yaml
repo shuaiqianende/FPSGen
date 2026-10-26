@@ -101,6 +101,7 @@ validation:
   - 8
   threshold: 0.5
   point_mode: native_fine_centers
-output_root: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-v1/experiments/desescene_scratch20k_v1/S1-MeanFlow-Scratch20K
-engineering_report: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-v1/experiments/desescene_scratch20k_v1/S1-MeanFlow-Scratch20K/engineering/result.json
-smoke_summary: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-v1/experiments/desescene_scratch20k_v1/S1-MeanFlow-Scratch20K/smoke/summary.json
+output_root: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/experiments/desescene_scratch20k_encoder_fp32_v1/S1-MeanFlow-Scratch20K
+engineering_report: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/experiments/desescene_scratch20k_encoder_fp32_v1/S1-MeanFlow-Scratch20K/engineering/result.json
+smoke_summary: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/experiments/desescene_scratch20k_encoder_fp32_v1/S1-MeanFlow-Scratch20K/smoke/summary.json
+encoder_compute_precision: fp32_replay_stability_island

@@ -57,7 +57,14 @@ def admission(cfg):
     report=gpu_preflight((gpu,),minimum_free_gib=22.,allow_shared_compute=False)
     if report['status']!='AVAILABLE':raise RuntimeError(json.dumps(report))
     torch.cuda.set_per_process_memory_fraction(21.5*2**30/torch.cuda.get_device_properties(0).total_memory)
-    torch.set_num_threads(4);return report
+    torch.set_num_threads(4)
+    if cfg['arm'].startswith('S1'):
+        # Fix convolution algorithm nondeterminism without changing model or replay bounds.
+        torch.backends.cudnn.benchmark=False
+        torch.backends.cudnn.deterministic=True
+        torch.backends.cudnn.allow_tf32=False
+        torch.backends.cuda.matmul.allow_tf32=False
+    return report
 
 
 class ScratchSystem(nn.Module):
@@ -75,7 +82,7 @@ class ScratchSystem(nn.Module):
             encoder_present=self.is_s1,all_network_parameters_trainable=all(p.requires_grad for p in self.parameters()),
             initial_state_sha256=tensor_state_sha(self.state_dict()),
             trainable_modules=['stage1.encoder','stage1.flow'] if self.is_s1 else ['stage2'],
-            parameters=sum(p.numel() for p in self.parameters()),condition='Partial LiDAR' if self.is_s1 else 'GT coarse+25%nearby empty + input Observed; neutral scores1; no384D')
+            encoder_precision='fp32_island' if self.is_s1 else 'not_present',flow_precision='fp16_amp',parameters=sum(p.numel() for p in self.parameters()),condition='Partial LiDAR' if self.is_s1 else 'GT coarse+25%nearby empty + input Observed; neutral scores1; no384D')
         if not self.is_s1 and any('interval' in n or 'lidar' in n for n,p in self.named_parameters()):raise ValueError('No interval or384D branch in ordinary FM')
 
     def loss(self,records,generator,interval_generator,*,force_finite=False):
@@ -85,7 +92,8 @@ class ScratchSystem(nn.Module):
             model=self.stage1
             target=torch.cat([ids_to_dense_occupancy(r['parent_ids'],self.g,device=self.device) for r in records])
             pair=occupancy_flow_pair(target,model.valid,generator=generator)
-            pyramid=model.encoder(xyz)
+            with torch.autocast('cuda',enabled=False):
+                pyramid=model.encoder(xyz)
             if not all(p.requires_grad for p in pyramid):raise RuntimeError('Encoder gradient disconnected')
             observed=torch.cat([model.geometry.observed_mask(x) for x in xyz])
             end,diagonal=sample_endpoints(pair['time'],interval_generator)

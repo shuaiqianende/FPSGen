@@ -1,0 +1,37 @@
+{
+  "snapshot_epoch": 1793023002.727634,
+  "supervisor": {
+    "arm": "S1-MeanFlow-Scratch20K",
+    "child_pid": 1503981,
+    "command": [
+      "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+      "-u",
+      "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/scripts/research_v2/scratch20k/run.py",
+      "--config",
+      "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/configs/research_v2/hier_occ_flow/scratch20k_stage1_meanflow_gpu2.yaml",
+      "--mode",
+      "smoke"
+    ],
+    "initialization_mode": "scratch",
+    "physical_gpu": 2,
+    "pid": 1500737,
+    "source_sha256": "ec09e56bee910d3e344b7a08d046d613659b409db5011d70d3e71be5583ff1aa",
+    "status": "RUNNING_SMOKE"
+  },
+  "initialization": {
+    "all_network_parameters_trainable": true,
+    "condition": "Partial LiDAR",
+    "encoder_precision": "fp32_island",
+    "encoder_present": true,
+    "flow_precision": "fp16_amp",
+    "initial_state_sha256": "1e7837680e8100176761627264c188a1d0d351cc8a65dceab6038507257f4058",
+    "initialization_mode": "scratch",
+    "parameters": 19601377,
+    "pretrained_checkpoint_loaded": false,
+    "source_exposures": 0,
+    "trainable_modules": [
+      "stage1.encoder",
+      "stage1.flow"
+    ]
+  }
+}

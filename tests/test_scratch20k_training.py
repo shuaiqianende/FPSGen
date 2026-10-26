@@ -69,3 +69,24 @@ def test_scene_equal_fm_never_has_meanflow_interval():
     pred=torch.tensor([[1.],[2.],[2.]],requires_grad=True);target=torch.zeros_like(pred);mask=torch.ones_like(pred,dtype=torch.bool)
     loss=scene_mean_mse(pred,target,mask,torch.tensor([0,1,1]));assert loss==2.5
     loss.backward();assert torch.isfinite(pred.grad).all()
+
+
+def test_real_stage1_constructor_cannot_load_pretrained(monkeypatch):
+    cfg,g=s.load_config(CONFIG)
+    monkeypatch.setattr(torch,'load',lambda *a,**k:pytest.fail('Actual scratch Stage1 constructor opened a checkpoint'))
+    s.seed_all(20261032);model=s.ScratchSystem(cfg,g,'cpu')
+    assert model.initialization['pretrained_checkpoint_loaded'] is False
+    assert model.initialization['source_exposures']==0
+    assert all(p.requires_grad for p in model.stage1.encoder.parameters())
+    assert all(p.requires_grad for p in model.stage1.flow.parameters())
+    assert model.initialization['parameters']>19000000
+
+
+def test_real_stage2_constructor_no_encoder_or_interval_or_checkpoint(monkeypatch):
+    cfg,g=s.load_config(ROOT/'configs/research_v2/hier_occ_flow/scratch20k_stage2_no_encoder_fm_gpu3.yaml')
+    monkeypatch.setattr(torch,'load',lambda *a,**k:pytest.fail('Actual scratch Stage2 constructor opened a checkpoint'))
+    s.seed_all(20261032);model=s.ScratchSystem(cfg,g,'cpu')
+    assert model.initialization['source_exposures']==0
+    assert model.stage2.fuse[0].in_features==176
+    assert not hasattr(model,'stage1') and not hasattr(model.stage2,'lidar')
+    assert not any('interval' in n for n,p in model.named_parameters())

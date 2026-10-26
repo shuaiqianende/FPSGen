@@ -1,0 +1,6 @@
+{
+  "status": "CPU_PASS",
+  "passed": 18,
+  "actual_stage1_and_stage2_constructors": true,
+  "torch_load_forbidden_during_construction": true
+}

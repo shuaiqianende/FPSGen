@@ -64,7 +64,9 @@ def main():
             obs_ids,obs_masks,_=voxelize_surface(xyz.cpu().numpy(),g)
             with torch.autocast('cuda',dtype=torch.float16):
                 if model.is_s1:
-                    network=model.stage1;pyramid=network.encoder([xyz]);observed=network.geometry.observed_mask(xyz);valid=network.valid
+                    network=model.stage1
+                    with torch.autocast('cuda',enabled=False):pyramid=network.encoder([xyz])
+                    observed=network.geometry.observed_mask(xyz);valid=network.valid
                     source=torch.randn(valid.shape,device='cuda',generator=torch.Generator(device='cuda').manual_seed(scene_seed('08',f,20261031)))*valid
                 else:
                     parents,c,labels,_=assemble_oracle_encoder_free_scene(record,xyz,g,seed=scene_seed('08',f,20261018),device='cuda',keep_observed=True,negative_fraction=.25)
