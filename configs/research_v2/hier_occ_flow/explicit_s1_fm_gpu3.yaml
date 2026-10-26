@@ -1,0 +1,109 @@
+experiment: desescene-explicit-fp16-training-v1
+arm: S1-FM-Scratch20K
+initialization_mode: scratch
+physical_gpu: 3
+geometry:
+  child_split:
+  - 2
+  - 2
+  - 2
+  maximum:
+  - 50.0
+  - 50.0
+  - 4.4
+  origin:
+  - -50.0
+  - -50.0
+  - -4.0
+  parent_resolution:
+  - 384
+  - 384
+  - 32
+  sphere_radius: 50.0
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/train
+development_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development
+verified_data_receipt: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-quality-eval-async-io-v1/experiments/desescene_quality_async_io_v1/p0_async_handoff_20261025/full_lineage_audit.json
+model:
+  widths:
+  - 8
+  - 16
+  - 32
+  - 64
+  stage2_width: 64
+  patch_sizes:
+  - 64
+  - 128
+  checkpointing: true
+training:
+  successful_updates: 10000
+  successful_frame_exposures: 20000
+  batch_per_gpu: 2
+  seed: 20261032
+  precision: fp16
+  optimizer: AdamW
+  weight_decay: 0.01
+  warmup_updates: 500
+  grad_clip: 1.0
+  ema_decay: 0.999
+  amp_initial_scale: 2048.0
+  lr_encoder: 0.0001
+  lr_flow: 0.0002
+  lr_stage2: 0.0002
+validation:
+  split: seq08_41
+  frames:
+  - 0
+  - 100
+  - 200
+  - 300
+  - 400
+  - 500
+  - 600
+  - 700
+  - 800
+  - 900
+  - 1000
+  - 1100
+  - 1200
+  - 1300
+  - 1400
+  - 1500
+  - 1600
+  - 1700
+  - 1800
+  - 1900
+  - 2000
+  - 2100
+  - 2200
+  - 2300
+  - 2400
+  - 2500
+  - 2600
+  - 2700
+  - 2800
+  - 2900
+  - 3000
+  - 3100
+  - 3200
+  - 3300
+  - 3400
+  - 3500
+  - 3600
+  - 3700
+  - 3800
+  - 3900
+  - 4000
+  nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  threshold: 0.5
+  point_mode: native_fine_centers
+output_root: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S1-FM-Scratch20K
+engineering_report: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S1-FM-Scratch20K/engineering/result.json
+smoke_summary: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S1-FM-Scratch20K/smoke/summary.json
+network_precision: explicit_fp16_fp32_master
+normalization_statistics: fp32
+ema_storage: fp32

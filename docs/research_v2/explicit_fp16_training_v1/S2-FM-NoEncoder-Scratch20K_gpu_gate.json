@@ -1,0 +1,885 @@
+{
+  "config_sha256": "6d96242aa195d4fa0fdbaabf92aa0ad747105345207405271db0e13a6a838da4",
+  "dtype_audit": {
+    "stage2.decoder.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.decoder.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.decoder.3": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.fuse.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.fuse.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.local.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.local.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.observed.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.observed.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.position.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.position.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.score.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.score.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.time.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.time.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block0.attn.proj": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block0.attn.qkv": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block0.cpe.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SubMConv3d"
+    },
+    "stage2.trunk.net.dec.dec0.block0.cpe.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block0.cpe.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.dec.dec0.block0.mlp.0.fc1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block0.mlp.0.fc2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block0.norm1.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.dec.dec0.block0.norm2.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.dec.dec0.block0.time_modulation.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block1.attn.proj": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block1.attn.qkv": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block1.cpe.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SubMConv3d"
+    },
+    "stage2.trunk.net.dec.dec0.block1.cpe.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block1.cpe.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.dec.dec0.block1.mlp.0.fc1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block1.mlp.0.fc2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.block1.norm1.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.dec.dec0.block1.norm2.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.dec.dec0.block1.time_modulation.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.up.proj.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.up.proj.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SceneNorm"
+    },
+    "stage2.trunk.net.dec.dec0.up.proj_skip.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.dec.dec0.up.proj_skip.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SceneNorm"
+    },
+    "stage2.trunk.net.embedding.stem.conv": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SubMConv3d"
+    },
+    "stage2.trunk.net.embedding.stem.norm": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SceneNorm"
+    },
+    "stage2.trunk.net.enc.enc0.block0.attn.proj": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block0.attn.qkv": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block0.cpe.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SubMConv3d"
+    },
+    "stage2.trunk.net.enc.enc0.block0.cpe.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block0.cpe.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc0.block0.mlp.0.fc1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block0.mlp.0.fc2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block0.norm1.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc0.block0.norm2.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc0.block0.time_modulation.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block1.attn.proj": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block1.attn.qkv": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block1.cpe.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SubMConv3d"
+    },
+    "stage2.trunk.net.enc.enc0.block1.cpe.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block1.cpe.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc0.block1.mlp.0.fc1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block1.mlp.0.fc2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc0.block1.norm1.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc0.block1.norm2.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc0.block1.time_modulation.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block0.attn.proj": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block0.attn.qkv": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block0.cpe.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SubMConv3d"
+    },
+    "stage2.trunk.net.enc.enc1.block0.cpe.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block0.cpe.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc1.block0.mlp.0.fc1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block0.mlp.0.fc2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block0.norm1.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc1.block0.norm2.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc1.block0.time_modulation.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block1.attn.proj": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block1.attn.qkv": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block1.cpe.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SubMConv3d"
+    },
+    "stage2.trunk.net.enc.enc1.block1.cpe.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block1.cpe.2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc1.block1.mlp.0.fc1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block1.mlp.0.fc2": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.block1.norm1.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc1.block1.norm2.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "LayerNorm"
+    },
+    "stage2.trunk.net.enc.enc1.block1.time_modulation.1": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    },
+    "stage2.trunk.net.enc.enc1.down.norm.0": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "SceneNorm"
+    },
+    "stage2.trunk.net.enc.enc1.down.proj": {
+      "input_dtype": "torch.float16",
+      "output_dtype": "torch.float16",
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "type": "Linear"
+    }
+  },
+  "elapsed_seconds": 31.115793466567993,
+  "first_update": {
+    "amp_scale": 2048.0,
+    "encoder_forwards": 0,
+    "finite": true,
+    "gradient_modules": {
+      "stage2": 0.21727995574474335
+    },
+    "gradient_norm": 0.21727995574474335,
+    "jvp_calls": 0,
+    "loss": 2.0008177757263184,
+    "master_gradient_dtype": "torch.float32",
+    "network_gradient_dtype": "torch.float16",
+    "optimizer_dtype": "torch.float32",
+    "parameter_dtype": "torch.float16",
+    "parent_ids_sha256": "2d70d47d7042d3c61a178164be0072d51648d66712c8d3e250355270dcdcb466",
+    "scene_lengths": [
+      399672,
+      399671
+    ],
+    "teacher_flow_forwards": 0
+  },
+  "gpu": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24106.0,
+        "physical_gpu": 3,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 22.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "initialization": {
+    "all_network_parameters_trainable": true,
+    "condition": "GT coarse+25%nearby empty + input Observed; neutral scores1; no384D",
+    "ema_accumulation_dtype": "torch.float32",
+    "encoder_precision": "explicit_fp16",
+    "encoder_present": false,
+    "flow_precision": "explicit_fp16",
+    "initial_state_sha256": "a23fe6d0bd9795d2781ce009af08eac300ffa800664d25ad6d23f442893a2b83",
+    "initialization_mode": "scratch",
+    "master_parameter_dtype": "torch.float32",
+    "network_precision": {
+      "batch_norm_fp32_stats": 0,
+      "fp32_buffers": [
+        "stage2.frequencies"
+      ],
+      "group_layer_norm_fp32_stats": 19,
+      "mode": "explicit_fp16_network_fp32_master",
+      "parameter_bytes": 5288464,
+      "parameter_count": 2644232,
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "scene_norm_fp32_stats": 4
+    },
+    "original_initial_fp32_state_sha256": "7317a67c855771dd4f4d41723a26bb9d1bf18df4735a47731c6a5ec07adb4ee2",
+    "parameters": 2644232,
+    "pretrained_checkpoint_loaded": false,
+    "source_exposures": 0,
+    "trainable_modules": [
+      "stage2"
+    ]
+  },
+  "initialization_mode": "scratch",
+  "manifests": {
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+  },
+  "native_jvp_exercised": false,
+  "native_resume": {
+    "bounds": {
+      "differences": [
+        {
+          "max_abs": 7.62939453125e-06,
+          "mean_abs": 8.218921720981597e-11,
+          "path": "model/stage2.trunk.net.embedding.stem.conv.weight",
+          "relative_l2": 2.914386725732877e-06,
+          "within_bounds": true
+        },
+        {
+          "max_abs": 2.4330802261829376e-07,
+          "mean_abs": 1.2265970520015935e-10,
+          "path": "master_parameters/stage2.trunk.net.embedding.stem.conv.weight",
+          "relative_l2": 1.7664519011064858e-07,
+          "within_bounds": true
+        },
+        {
+          "max_abs": 9.313225746154785e-10,
+          "mean_abs": 1.4441445608803783e-13,
+          "path": "ema/stage2.trunk.net.embedding.stem.conv.weight",
+          "relative_l2": 1.3135445195324675e-09,
+          "within_bounds": true
+        },
+        {
+          "max_abs": 5.960464477539063e-08,
+          "mean_abs": 1.4083005483321631e-09,
+          "path": "optimizer/state/24/exp_avg",
+          "relative_l2": 0.0006656975610202692,
+          "within_bounds": true
+        },
+        {
+          "max_abs": 1.5568102362806258e-13,
+          "mean_abs": 8.681819434434624e-16,
+          "path": "optimizer/state/24/exp_avg_sq",
+          "relative_l2": 0.0012615778370051094,
+          "within_bounds": true
+        },
+        {
+          "max_abs": 5.960464477539062e-07,
+          "mean_abs": 1.4083005623888312e-08,
+          "path": "gradient/stage2.trunk.net.embedding.stem.conv.weight",
+          "relative_l2": 0.001260945621224902,
+          "within_bounds": true
+        }
+      ],
+      "exact": false,
+      "gradient_global_relative_l2": 8.813430412056508e-05,
+      "policy": {
+        "derivative": {
+          "atol": 0.002,
+          "rtol": 0.005
+        },
+        "ema": {
+          "atol": 1e-06,
+          "rtol": 1e-05
+        },
+        "gradient": {
+          "atol": 0.0005,
+          "rtol": 0.005
+        },
+        "gradient_global_relative_l2_limit": 0.005,
+        "gradient_norm": {
+          "atol": 0.001,
+          "rtol": 0.001
+        },
+        "half_storage_near_zero_atol": 1e-06,
+        "half_storage_ulps": 8,
+        "loss": {
+          "atol": 1e-05,
+          "rtol": 0.0001
+        },
+        "master_parameters": {
+          "atol": 1e-06,
+          "rtol": 1e-05
+        },
+        "model_fp32_buffers": {
+          "atol": 1e-06,
+          "rtol": 1e-05
+        },
+        "optimizer_m1": {
+          "atol": 5e-05,
+          "rtol": 0.005
+        },
+        "optimizer_m2": {
+          "atol": 5e-07,
+          "rtol": 0.01
+        },
+        "prediction": {
+          "atol": 0.001,
+          "rtol": 0.005
+        },
+        "target": {
+          "atol": 0.001,
+          "rtol": 0.005
+        },
+        "version": "explicit-fp16-master-replay-v1"
+      },
+      "policy_sha256": "12e0adec9e0ec8d9975a048a17bc28c890ddf074bdd0593baa795b838173bbf4",
+      "scope": "same-state one native update only; dtype-aware NUMERICAL_REPLAY, not geometry-quality certification",
+      "status": "PASS",
+      "violations": []
+    },
+    "checkpoint_roundtrip_exact": true
+  },
+  "peak_allocated_bytes": 9876853760,
+  "peak_reserved_bytes": 11790188544,
+  "physical_gpu": 3,
+  "replay_policy_sha256": "12e0adec9e0ec8d9975a048a17bc28c890ddf074bdd0593baa795b838173bbf4",
+  "resume_classification": "NUMERICAL_NATIVE_REPLAY_WITHIN_FIXED_BOUNDS",
+  "scenes": [
+    {
+      "frame": 925,
+      "positive_parents": 319738,
+      "sequence": "02"
+    },
+    {
+      "frame": 4192,
+      "positive_parents": 319737,
+      "sequence": "02"
+    }
+  ],
+  "shortcut_teacher_forwards": 0,
+  "source_sha256": "8fdf545441de0bc25a36d12f1e203b17205cff062039fd5c4f414d86d80da904",
+  "status": "GPU_PASS",
+  "stress_selection": [
+    [
+      319738,
+      "train",
+      6147
+    ],
+    [
+      319737,
+      "train",
+      9414
+    ]
+  ],
+  "true_batch": 2,
+  "truncation": false
+}

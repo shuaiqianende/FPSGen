@@ -1,0 +1,61 @@
+{
+  "schema": "explicit-fp16-followups-v1",
+  "authorization": "User selected actual FP16 weights+activations with separateFP32 masters for all five jobs",
+  "queue_root": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/queue",
+  "cpu_report": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/cpu_report.json",
+  "jobs": [
+    {
+      "id": "S1-FM-Scratch20K",
+      "physical_gpu": 3,
+      "config": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/configs/research_v2/hier_occ_flow/explicit_s1_fm_gpu3.yaml",
+      "config_sha256": "a4766d598273c43a4a230bd45a40db1a819f1c8b646f38fcb23b46a6b743fa2a",
+      "config_file_sha256": "d888fb5445a0fdd33f37731af3abf82f5a9ca882a68565109faf243917e9a4d4",
+      "output_root": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S1-FM-Scratch20K",
+      "depends_on": [
+        {
+          "root": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S2-FM-NoEncoder-Scratch20K",
+          "arm": "S2-FM-NoEncoder-Scratch20K",
+          "config_sha256": "6d96242aa195d4fa0fdbaabf92aa0ad747105345207405271db0e13a6a838da4",
+          "source_sha256": "8fdf545441de0bc25a36d12f1e203b17205cff062039fd5c4f414d86d80da904"
+        }
+      ]
+    },
+    {
+      "id": "S1-Shortcut-Scratch20K",
+      "physical_gpu": 2,
+      "config": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/configs/research_v2/hier_occ_flow/explicit_s1_shortcut_gpu2.yaml",
+      "config_sha256": "663d42de792d141540e81c65cf57fbdef973dfe797ba678ad510ee36eef13474",
+      "config_file_sha256": "096823923901e358537202be86798b647888ff7d746f15d29c986f3960416a65",
+      "output_root": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S1-Shortcut-Scratch20K",
+      "depends_on": [
+        {
+          "root": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S1-MeanFlow-Scratch20K",
+          "arm": "S1-MeanFlow-Scratch20K",
+          "config_sha256": "09d29246b006337a8a9adaf5d2b24ae0053b4c49edbb349737d2c515c2c45369",
+          "source_sha256": "8fdf545441de0bc25a36d12f1e203b17205cff062039fd5c4f414d86d80da904"
+        }
+      ]
+    },
+    {
+      "id": "S2-FM-Encoder-Scratch20K",
+      "physical_gpu": 3,
+      "config": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/configs/research_v2/hier_occ_flow/explicit_s2_encoder_fm_gpu3.yaml",
+      "config_sha256": "b5443611c5ab81e03fa374de99bf953cac353614035459cda398d6497d9d1ed7",
+      "config_file_sha256": "85bf886aae7c4907f36586b615fd7bab39912e9a2427cbea4783dbb65e82d9a9",
+      "output_root": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S2-FM-Encoder-Scratch20K",
+      "depends_on": [
+        {
+          "root": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S1-FM-Scratch20K",
+          "arm": "S1-FM-Scratch20K",
+          "config_sha256": "a4766d598273c43a4a230bd45a40db1a819f1c8b646f38fcb23b46a6b743fa2a",
+          "source_sha256": "8fdf545441de0bc25a36d12f1e203b17205cff062039fd5c4f414d86d80da904"
+        }
+      ]
+    }
+  ],
+  "source_sha256": "8fdf545441de0bc25a36d12f1e203b17205cff062039fd5c4f414d86d80da904",
+  "one_training_per_gpu": true,
+  "preserve_old_runs": true,
+  "extra_seed_or_100k": false,
+  "maximum_exposures_each": 20000
+}

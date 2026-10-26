@@ -1,0 +1,61 @@
+{
+  "counts": {
+    "amp_skips": 0,
+    "attempts": 32,
+    "consecutive_amp_skips": 0,
+    "cursor": 64,
+    "exposures": 64,
+    "updates": 32
+  },
+  "elapsed_seconds": 75.43005919456482,
+  "identity": {
+    "arm": "S2-FM-NoEncoder-Scratch20K",
+    "batch": 2,
+    "config_sha256": "6d96242aa195d4fa0fdbaabf92aa0ad747105345207405271db0e13a6a838da4",
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "experiment": "desescene-explicit-fp16-training-v1",
+    "frozen_encoder_sha256": null,
+    "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+    "initialization_mode": "scratch",
+    "network_precision": "explicit_fp16_fp32_master",
+    "output": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S2-FM-NoEncoder-Scratch20K/smoke",
+    "physical_gpu": 3,
+    "scope": "discarded_smoke",
+    "seed": 20261032,
+    "source_sha256": "8fdf545441de0bc25a36d12f1e203b17205cff062039fd5c4f414d86d80da904",
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+  },
+  "initialization": {
+    "all_network_parameters_trainable": true,
+    "condition": "GT coarse+25%nearby empty + input Observed; neutral scores1; no384D",
+    "ema_accumulation_dtype": "torch.float32",
+    "encoder_precision": "explicit_fp16",
+    "encoder_present": false,
+    "flow_precision": "explicit_fp16",
+    "initial_state_sha256": "a23fe6d0bd9795d2781ce009af08eac300ffa800664d25ad6d23f442893a2b83",
+    "initialization_mode": "scratch",
+    "master_parameter_dtype": "torch.float32",
+    "network_precision": {
+      "batch_norm_fp32_stats": 0,
+      "fp32_buffers": [
+        "stage2.frequencies"
+      ],
+      "group_layer_norm_fp32_stats": 19,
+      "mode": "explicit_fp16_network_fp32_master",
+      "parameter_bytes": 5288464,
+      "parameter_count": 2644232,
+      "parameter_dtypes": [
+        "torch.float16"
+      ],
+      "scene_norm_fp32_stats": 4
+    },
+    "original_initial_fp32_state_sha256": "7317a67c855771dd4f4d41723a26bb9d1bf18df4735a47731c6a5ec07adb4ee2",
+    "parameters": 2644232,
+    "pretrained_checkpoint_loaded": false,
+    "source_exposures": 0,
+    "trainable_modules": [
+      "stage2"
+    ]
+  },
+  "status": "SMOKE_PASS"
+}

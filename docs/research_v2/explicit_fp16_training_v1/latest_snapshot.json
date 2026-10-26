@@ -1,0 +1,369 @@
+{
+  "epoch": 1793028815.5905843,
+  "running": [
+    {
+      "arm": "S1-MeanFlow-Scratch20K",
+      "supervisor": {
+        "arm": "S1-MeanFlow-Scratch20K",
+        "child_pid": 1919941,
+        "command": [
+          "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+          "-u",
+          "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/scripts/research_v2/explicit_fp16/worker.py",
+          "--config",
+          "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/configs/research_v2/hier_occ_flow/explicit_s1_meanflow_gpu2.yaml",
+          "--mode",
+          "formal"
+        ],
+        "initialization_mode": "scratch",
+        "physical_gpu": 2,
+        "pid": 1912921,
+        "source_sha256": "8fdf545441de0bc25a36d12f1e203b17205cff062039fd5c4f414d86d80da904",
+        "status": "RUNNING_FORMAL"
+      },
+      "initialization": {
+        "all_network_parameters_trainable": true,
+        "condition": "Partial LiDAR",
+        "ema_accumulation_dtype": "torch.float32",
+        "encoder_precision": "explicit_fp16",
+        "encoder_present": true,
+        "flow_precision": "explicit_fp16",
+        "initial_state_sha256": "7951734eb0eaa4e524166b1f567d4dd87ecbc1e2a76abccaa17fca6c3fba72fc",
+        "initialization_mode": "scratch",
+        "master_parameter_dtype": "torch.float32",
+        "network_precision": {
+          "batch_norm_fp32_stats": 37,
+          "fp32_buffers": [
+            "stage1.encoder.lidar_tokenizer.point_mlp.0.running_mean",
+            "stage1.encoder.lidar_tokenizer.point_mlp.0.running_var",
+            "stage1.encoder.lidar_tokenizer.point_mlp.2.running_mean",
+            "stage1.encoder.lidar_tokenizer.point_mlp.2.running_var",
+            "stage1.encoder.lidar_tokenizer.point_mlp.5.running_mean",
+            "stage1.encoder.lidar_tokenizer.point_mlp.5.running_var",
+            "stage1.encoder.lidar_tokenizer.point_mlp.8.running_mean",
+            "stage1.encoder.lidar_tokenizer.point_mlp.8.running_var",
+            "stage1.encoder.voxel_backbone.layers.0.0.conv1.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.0.0.conv1.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.0.0.conv2.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.0.0.conv2.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.0.0.downsample.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.0.0.downsample.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.0.1.conv1.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.0.1.conv1.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.0.1.conv2.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.0.1.conv2.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.1.0.conv1.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.1.0.conv1.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.1.0.conv2.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.1.0.conv2.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.1.0.downsample.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.1.0.downsample.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.1.1.conv1.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.1.1.conv1.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.1.1.conv2.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.1.1.conv2.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.2.0.conv1.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.2.0.conv1.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.2.0.conv2.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.2.0.conv2.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.2.0.downsample.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.2.0.downsample.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.2.1.conv1.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.2.1.conv1.bn.running_var",
+            "stage1.encoder.voxel_backbone.layers.2.1.conv2.bn.running_mean",
+            "stage1.encoder.voxel_backbone.layers.2.1.conv2.bn.running_var",
+            "stage1.encoder.local_backbone.layers.0.0.conv1.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.0.0.conv1.bn.running_var",
+            "stage1.encoder.local_backbone.layers.0.0.conv2.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.0.0.conv2.bn.running_var",
+            "stage1.encoder.local_backbone.layers.0.1.conv1.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.0.1.conv1.bn.running_var",
+            "stage1.encoder.local_backbone.layers.0.1.conv2.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.0.1.conv2.bn.running_var",
+            "stage1.encoder.local_backbone.layers.0.2.conv1.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.0.2.conv1.bn.running_var",
+            "stage1.encoder.local_backbone.layers.0.2.conv2.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.0.2.conv2.bn.running_var",
+            "stage1.encoder.local_backbone.layers.1.0.conv1.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.1.0.conv1.bn.running_var",
+            "stage1.encoder.local_backbone.layers.1.0.conv2.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.1.0.conv2.bn.running_var",
+            "stage1.encoder.local_backbone.layers.1.1.conv1.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.1.1.conv1.bn.running_var",
+            "stage1.encoder.local_backbone.layers.1.1.conv2.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.1.1.conv2.bn.running_var",
+            "stage1.encoder.local_backbone.layers.1.2.conv1.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.1.2.conv1.bn.running_var",
+            "stage1.encoder.local_backbone.layers.1.2.conv2.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.1.2.conv2.bn.running_var",
+            "stage1.encoder.local_backbone.layers.2.0.conv1.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.2.0.conv1.bn.running_var",
+            "stage1.encoder.local_backbone.layers.2.0.conv2.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.2.0.conv2.bn.running_var",
+            "stage1.encoder.local_backbone.layers.2.1.conv1.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.2.1.conv1.bn.running_var",
+            "stage1.encoder.local_backbone.layers.2.1.conv2.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.2.1.conv2.bn.running_var",
+            "stage1.encoder.local_backbone.layers.2.2.conv1.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.2.2.conv1.bn.running_var",
+            "stage1.encoder.local_backbone.layers.2.2.conv2.bn.running_mean",
+            "stage1.encoder.local_backbone.layers.2.2.conv2.bn.running_var",
+            "stage1.flow.base.frequencies",
+            "stage1.flow.base.embedding.interval.frequencies"
+          ],
+          "group_layer_norm_fp32_stats": 33,
+          "mode": "explicit_fp16_network_fp32_master",
+          "parameter_bytes": 39202754,
+          "parameter_count": 19601377,
+          "parameter_dtypes": [
+            "torch.float16"
+          ],
+          "scene_norm_fp32_stats": 0
+        },
+        "original_initial_fp32_state_sha256": "1e7837680e8100176761627264c188a1d0d351cc8a65dceab6038507257f4058",
+        "parameters": 19601377,
+        "pretrained_checkpoint_loaded": false,
+        "source_exposures": 0,
+        "trainable_modules": [
+          "stage1.encoder",
+          "stage1.flow"
+        ]
+      },
+      "last_row": {
+        "finite": true,
+        "loss": 1.0049279928207397,
+        "gradient_norm": 3.2568442821502686,
+        "gradient_modules": {
+          "encoder": 0.04194633662700653,
+          "flow": 0.9991195797920227
+        },
+        "amp_scale": 2048.0,
+        "scene_lengths": [
+          78110,
+          188899
+        ],
+        "encoder_forwards": 1,
+        "jvp_calls": 1,
+        "teacher_flow_forwards": 0,
+        "parameter_dtype": "torch.float16",
+        "network_gradient_dtype": "torch.float16",
+        "master_gradient_dtype": "torch.float32",
+        "optimizer_dtype": "torch.float32",
+        "diagonal_exposures": 1,
+        "finite_interval_exposures": 1,
+        "pyramid_shapes": [
+          [
+            2,
+            128,
+            16,
+            192,
+            192
+          ],
+          [
+            2,
+            128,
+            8,
+            96,
+            96
+          ],
+          [
+            2,
+            128,
+            4,
+            48,
+            48
+          ]
+        ],
+        "updates": 205,
+        "exposures": 410,
+        "attempts": 205,
+        "cursor": 410,
+        "amp_skips": 0,
+        "consecutive_amp_skips": 0,
+        "seconds": 2.2051778603345156,
+        "records": [
+          {
+            "sequence": "10",
+            "frame": 1093,
+            "index": 17762
+          },
+          {
+            "sequence": "01",
+            "frame": 67,
+            "index": 4468
+          }
+        ],
+        "lr": [
+          4.12e-05,
+          8.24e-05
+        ],
+        "peak_allocated_bytes": 9043998208,
+        "peak_reserved_bytes": 10647240704
+      },
+      "mean_last50_seconds": 2.0279216722771527,
+      "remaining_training_hours": 5.517636883320753,
+      "scope": "preliminary training speed, not paired inference benchmark"
+    },
+    {
+      "arm": "S2-FM-NoEncoder-Scratch20K",
+      "supervisor": {
+        "arm": "S2-FM-NoEncoder-Scratch20K",
+        "child_pid": 1919453,
+        "command": [
+          "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+          "-u",
+          "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/scripts/research_v2/explicit_fp16/worker.py",
+          "--config",
+          "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/configs/research_v2/hier_occ_flow/explicit_s2_no_encoder_fm_gpu3.yaml",
+          "--mode",
+          "formal"
+        ],
+        "initialization_mode": "scratch",
+        "physical_gpu": 3,
+        "pid": 1912922,
+        "source_sha256": "8fdf545441de0bc25a36d12f1e203b17205cff062039fd5c4f414d86d80da904",
+        "status": "RUNNING_FORMAL"
+      },
+      "initialization": {
+        "all_network_parameters_trainable": true,
+        "condition": "GT coarse+25%nearby empty + input Observed; neutral scores1; no384D",
+        "ema_accumulation_dtype": "torch.float32",
+        "encoder_precision": "explicit_fp16",
+        "encoder_present": false,
+        "flow_precision": "explicit_fp16",
+        "initial_state_sha256": "a23fe6d0bd9795d2781ce009af08eac300ffa800664d25ad6d23f442893a2b83",
+        "initialization_mode": "scratch",
+        "master_parameter_dtype": "torch.float32",
+        "network_precision": {
+          "batch_norm_fp32_stats": 0,
+          "fp32_buffers": [
+            "stage2.frequencies"
+          ],
+          "group_layer_norm_fp32_stats": 19,
+          "mode": "explicit_fp16_network_fp32_master",
+          "parameter_bytes": 5288464,
+          "parameter_count": 2644232,
+          "parameter_dtypes": [
+            "torch.float16"
+          ],
+          "scene_norm_fp32_stats": 4
+        },
+        "original_initial_fp32_state_sha256": "7317a67c855771dd4f4d41723a26bb9d1bf18df4735a47731c6a5ec07adb4ee2",
+        "parameters": 2644232,
+        "pretrained_checkpoint_loaded": false,
+        "source_exposures": 0,
+        "trainable_modules": [
+          "stage2"
+        ]
+      },
+      "last_row": {
+        "finite": true,
+        "loss": 1.6232304573059082,
+        "gradient_norm": 0.780693531036377,
+        "gradient_modules": {
+          "stage2": 0.780693531036377
+        },
+        "amp_scale": 2048.0,
+        "scene_lengths": [
+          272845,
+          93062
+        ],
+        "encoder_forwards": 0,
+        "jvp_calls": 0,
+        "teacher_flow_forwards": 0,
+        "parameter_dtype": "torch.float16",
+        "network_gradient_dtype": "torch.float16",
+        "master_gradient_dtype": "torch.float32",
+        "optimizer_dtype": "torch.float32",
+        "parent_ids_sha256": "b7158a29b90e5428d2938f04d9b345582dd44d9d48eb4928a30cae753e8cf176",
+        "updates": 208,
+        "exposures": 416,
+        "attempts": 208,
+        "cursor": 416,
+        "amp_skips": 0,
+        "consecutive_amp_skips": 0,
+        "seconds": 2.3116998039186,
+        "records": [
+          {
+            "sequence": "06",
+            "frame": 404,
+            "index": 13840
+          },
+          {
+            "sequence": "10",
+            "frame": 1113,
+            "index": 17782
+          }
+        ],
+        "lr": [
+          8.36e-05
+        ],
+        "peak_allocated_bytes": 7678998016,
+        "peak_reserved_bytes": 10794041344
+      },
+      "mean_last50_seconds": 2.1165869634598495,
+      "remaining_training_hours": 5.757116540610791,
+      "scope": "preliminary training speed, not paired inference benchmark"
+    }
+  ],
+  "queue": [
+    {
+      "epoch": 1793028674.9392636,
+      "job": "S1-Shortcut-Scratch20K",
+      "physical_gpu": 2,
+      "pid": 1934611,
+      "reasons": [
+        "Waiting predecessor formal20K and41-frame quality"
+      ],
+      "source_sha256": "8fdf545441de0bc25a36d12f1e203b17205cff062039fd5c4f414d86d80da904",
+      "status": "WAITING_PREDECESSOR_TRAIN_AND_QUALITY41"
+    },
+    {
+      "epoch": 1793028674.9376771,
+      "job": "S1-FM-Scratch20K",
+      "physical_gpu": 3,
+      "pid": 1934615,
+      "reasons": [
+        "Waiting predecessor formal20K and41-frame quality"
+      ],
+      "source_sha256": "8fdf545441de0bc25a36d12f1e203b17205cff062039fd5c4f414d86d80da904",
+      "status": "WAITING_PREDECESSOR_TRAIN_AND_QUALITY41"
+    }
+  ],
+  "receipts": [
+    {
+      "pid": 1934611,
+      "physical_gpu": 2,
+      "epoch": 1793028551.4553552,
+      "command": [
+        "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+        "-u",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/scripts/research_v2/explicit_fp16/run_followup_queue.py",
+        "--plan",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/configs/research_v2/hier_occ_flow/explicit_fp16_followup_queue.json",
+        "--gpu",
+        "2"
+      ],
+      "precision": "explicitFP16 networks +FP32 masters/Adam/EMA",
+      "stage": "WAITING_NEW_EXPLICIT_FP16_TRAIN20K_AND_QUALITY41",
+      "gpu_reserved": false
+    },
+    {
+      "pid": 1934615,
+      "physical_gpu": 3,
+      "epoch": 1793028551.458608,
+      "command": [
+        "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+        "-u",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/scripts/research_v2/explicit_fp16/run_followup_queue.py",
+        "--plan",
+        "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/configs/research_v2/hier_occ_flow/explicit_fp16_followup_queue.json",
+        "--gpu",
+        "3"
+      ],
+      "precision": "explicitFP16 networks +FP32 masters/Adam/EMA",
+      "stage": "WAITING_NEW_EXPLICIT_FP16_TRAIN20K_AND_QUALITY41",
+      "gpu_reserved": false
+    }
+  ]
+}

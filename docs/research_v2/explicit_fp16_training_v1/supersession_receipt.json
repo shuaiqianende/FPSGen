@@ -1,0 +1,39 @@
+{
+  "status": "USER_EXPLICIT_FP16_RESTART_REQUESTED",
+  "epoch": 1793027766.5360117,
+  "verified_processes": [
+    {
+      "pid": 1754816,
+      "worktree": "desescene-scratch20k-followups-v1",
+      "command": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-followups-v1/scripts/research_v2/queued20k/run_followup_queue.py --plan /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-followups-v1/configs/research_v2/hier_occ_flow/scratch20k_followup_queue.json --gpu 2 "
+    },
+    {
+      "pid": 1754818,
+      "worktree": "desescene-scratch20k-followups-v1",
+      "command": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-followups-v1/scripts/research_v2/queued20k/run_followup_queue.py --plan /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-followups-v1/configs/research_v2/hier_occ_flow/scratch20k_followup_queue.json --gpu 3 "
+    },
+    {
+      "pid": 1500737,
+      "worktree": "desescene-scratch20k-stage1-deterministic-v1",
+      "command": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/scripts/research_v2/scratch20k/run.py --config /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/configs/research_v2/hier_occ_flow/scratch20k_stage1_meanflow_gpu2.yaml --mode pipeline "
+    },
+    {
+      "pid": 1484049,
+      "worktree": "desescene-scratch20k-v1",
+      "command": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-v1/scripts/research_v2/scratch20k/run.py --config /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-v1/configs/research_v2/hier_occ_flow/scratch20k_stage2_no_encoder_fm_gpu3.yaml --mode pipeline "
+    },
+    {
+      "pid": 1522599,
+      "worktree": "desescene-scratch20k-stage1-deterministic-v1",
+      "command": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/scripts/research_v2/scratch20k/run.py --config /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-stage1-deterministic-v1/configs/research_v2/hier_occ_flow/scratch20k_stage1_meanflow_gpu2.yaml --mode formal "
+    },
+    {
+      "pid": 1495624,
+      "worktree": "desescene-scratch20k-v1",
+      "command": "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python -u /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-v1/scripts/research_v2/scratch20k/run.py --config /data-12/M2024-HWZ/FPSGen/worktrees/desescene-scratch20k-v1/configs/research_v2/hier_occ_flow/scratch20k_stage2_no_encoder_fm_gpu3.yaml --mode formal "
+    }
+  ],
+  "reason": "User explicitly selected FP16 network weights+activations and separate FP32 masters; new matched cohort starts fresh from same seed, old partial runs retained",
+  "new_worktree": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1",
+  "old_checkpoints_preserved": true
+}

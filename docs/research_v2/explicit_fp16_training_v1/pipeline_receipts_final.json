@@ -1,0 +1,38 @@
+[
+  {
+    "pid": 1912921,
+    "physical_gpu": 2,
+    "epoch": 1793028266.6097748,
+    "command": [
+      "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+      "-u",
+      "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/scripts/research_v2/explicit_fp16/worker.py",
+      "--config",
+      "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/configs/research_v2/hier_occ_flow/explicit_s1_meanflow_gpu2.yaml",
+      "--mode",
+      "pipeline"
+    ],
+    "stage": "Own final-source GPU_PASS; Smoke32 then fresh formal20K",
+    "network": "FP16",
+    "masters_optimizer_ema": "FP32",
+    "formal_initialization": "scratch from same seed; Smoke discarded; no old-run weights"
+  },
+  {
+    "pid": 1912922,
+    "physical_gpu": 3,
+    "epoch": 1793028266.61293,
+    "command": [
+      "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/bin/python",
+      "-u",
+      "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/scripts/research_v2/explicit_fp16/worker.py",
+      "--config",
+      "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/configs/research_v2/hier_occ_flow/explicit_s2_no_encoder_fm_gpu3.yaml",
+      "--mode",
+      "pipeline"
+    ],
+    "stage": "Own final-source GPU_PASS; Smoke32 then fresh formal20K",
+    "network": "FP16",
+    "masters_optimizer_ema": "FP32",
+    "formal_initialization": "scratch from same seed; Smoke discarded; no old-run weights"
+  }
+]
