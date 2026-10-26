@@ -1,0 +1,39 @@
+{
+  "status": "USER_CORRECTED_TO_SCRATCH20K",
+  "epoch": 1793021300.1189163,
+  "instruction": "当前研究对照按从零训练，总预算20,000成功帧曝光；不再把成熟权重追加20K解释为scratch20K",
+  "supersedes_prior_initialization_policy": true,
+  "existing_stage1_runs": "pretrained_ema_meanflow_adaptation / matched mature-source FM adaptation; not scratch",
+  "existing_stage2_run": {
+    "initialization_mode": "pretrained_online_encoder_free_ordinary_fm_adaptation",
+    "status": "STOPPED",
+    "counts": {
+      "amp_skips": 0,
+      "attempts": 809,
+      "consecutive_amp_skips": 0,
+      "cursor": 1618,
+      "exposures": 1618,
+      "updates": 809
+    }
+  },
+  "old_adaptation_controller_stopped": true,
+  "automatic_adaptation_resume": false,
+  "preserve_all_historical_artifacts": true,
+  "future_budget": {
+    "successful_frame_exposures": 20000,
+    "successful_updates": 10000,
+    "batch": 2,
+    "seed": 20261032
+  },
+  "future_evaluation": "seq08 skip10041 only; GPU where validated",
+  "new_scratch_formal_started": false,
+  "new_scratch_requirements": [
+    "Independent experiment identity, directory and initialization audit",
+    "No mature checkpoint for trainable network initialization",
+    "Stage1 scratch means Encoder and Flow randomly initialized and trained; no silently frozen pretrained Encoder",
+    "Stage2 scratch means trainable PTv3/state/time/velocity modules randomly initialized; no mature Stage2 weight copy",
+    "Matched common parameters, seed, data order and source/time protocol",
+    "CPU + true maximum Batch2 GPU + gradient/AMP/resume gates before formal launch"
+  ],
+  "scope_note": "Any separately frozen evaluation-stage checkpoint must be explicitly disclosed; not counted as a scratch-trained full system"
+}
