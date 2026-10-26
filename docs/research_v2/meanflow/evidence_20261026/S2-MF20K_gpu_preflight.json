@@ -1,0 +1,396 @@
+{
+  "arm": "S2-MF20K",
+  "cached_inference_parity": {
+    "exact": true,
+    "max_abs": 0.0,
+    "mean_abs": 0.0,
+    "relative_l2": 0.0
+  },
+  "census_coverage": {
+    "development": 900,
+    "train": 17870
+  },
+  "config_sha256": "968957c8c204f8ec0dfb9da9992e182fc4f7e0d1ec15fbc98175026d385940a3",
+  "fallback_used": false,
+  "finished": 1792991540.3684366,
+  "gpu_admission": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24106.0,
+        "physical_gpu": 3,
+        "shared_compute_allowed": true,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 16.0,
+    "policy": "Explicitly authorized shared compute; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "initialization": {
+    "frozen_state_sha256": "0a7f38b7b71906f4881579483b900b9471ebd620d490c412e09eeb91292fac8e",
+    "initial_network_state_sha256": "069e7e8ab8a51d898c70df669c10489f49e31704dbbd57311509c1e26c752c38",
+    "initialization_mode": "pretrained_online_meanflow_adaptation",
+    "interval": {
+      "allowed_new_keys": [
+        "time.interval.net.0.bias",
+        "time.interval.net.0.weight",
+        "time.interval.net.2.bias",
+        "time.interval.net.2.weight"
+      ],
+      "shared_tensor_count": 169,
+      "shared_tensors_exact": true
+    },
+    "source_exposures": 99520,
+    "stage1": {
+      "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+      "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+      "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+      "data_version": "hs-occ-surface-hit-v1",
+      "feature_layout": "B,C,Z,Y,X",
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_feature_version": "coarse_f64_v1",
+      "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+      "score_layout": "Z,Y,X",
+      "stage1_final_100k_frames": true,
+      "successful_frame_exposures": 100000,
+      "successful_updates": 34275,
+      "type": "FrozenStage1OccupancyAdapter",
+      "weights": "ema"
+    },
+    "stage2": {
+      "checkpoint_sha256": "eaf70f8e2cbc068add3b744b1988299197c787b8f15567fd19fd06b0d5f3f74c",
+      "initial_parameter_sha256": "2a3d2d0b5adae6d5a0d4149df55fe1038af57afc3e27b9e477387967272720d4",
+      "loaded_tensors": [
+        "position.0.weight",
+        "position.0.bias",
+        "position.2.weight",
+        "position.2.bias",
+        "score.0.weight",
+        "score.0.bias",
+        "score.2.weight",
+        "score.2.bias",
+        "lidar.0.weight",
+        "lidar.0.bias",
+        "lidar.2.weight",
+        "lidar.2.bias",
+        "observed.0.weight",
+        "observed.0.bias",
+        "observed.2.weight",
+        "observed.2.bias",
+        "local.0.weight",
+        "local.0.bias",
+        "local.2.weight",
+        "local.2.bias",
+        "time.0.weight",
+        "time.0.bias",
+        "time.2.weight",
+        "time.2.bias",
+        "fuse.0.weight",
+        "fuse.0.bias",
+        "fuse.2.weight",
+        "fuse.2.bias",
+        "trunk.net.embedding.stem.conv.weight",
+        "trunk.net.embedding.stem.norm.weight",
+        "trunk.net.embedding.stem.norm.bias",
+        "trunk.net.enc.enc0.block0.cpe.0.weight",
+        "trunk.net.enc.enc0.block0.cpe.0.bias",
+        "trunk.net.enc.enc0.block0.cpe.1.weight",
+        "trunk.net.enc.enc0.block0.cpe.1.bias",
+        "trunk.net.enc.enc0.block0.cpe.2.weight",
+        "trunk.net.enc.enc0.block0.cpe.2.bias",
+        "trunk.net.enc.enc0.block0.norm1.0.weight",
+        "trunk.net.enc.enc0.block0.norm1.0.bias",
+        "trunk.net.enc.enc0.block0.attn.qkv.weight",
+        "trunk.net.enc.enc0.block0.attn.qkv.bias",
+        "trunk.net.enc.enc0.block0.attn.proj.weight",
+        "trunk.net.enc.enc0.block0.attn.proj.bias",
+        "trunk.net.enc.enc0.block0.norm2.0.weight",
+        "trunk.net.enc.enc0.block0.norm2.0.bias",
+        "trunk.net.enc.enc0.block0.mlp.0.fc1.weight",
+        "trunk.net.enc.enc0.block0.mlp.0.fc1.bias",
+        "trunk.net.enc.enc0.block0.mlp.0.fc2.weight",
+        "trunk.net.enc.enc0.block0.mlp.0.fc2.bias",
+        "trunk.net.enc.enc0.block0.time_modulation.1.weight",
+        "trunk.net.enc.enc0.block0.time_modulation.1.bias",
+        "trunk.net.enc.enc0.block1.cpe.0.weight",
+        "trunk.net.enc.enc0.block1.cpe.0.bias",
+        "trunk.net.enc.enc0.block1.cpe.1.weight",
+        "trunk.net.enc.enc0.block1.cpe.1.bias",
+        "trunk.net.enc.enc0.block1.cpe.2.weight",
+        "trunk.net.enc.enc0.block1.cpe.2.bias",
+        "trunk.net.enc.enc0.block1.norm1.0.weight",
+        "trunk.net.enc.enc0.block1.norm1.0.bias",
+        "trunk.net.enc.enc0.block1.attn.qkv.weight",
+        "trunk.net.enc.enc0.block1.attn.qkv.bias",
+        "trunk.net.enc.enc0.block1.attn.proj.weight",
+        "trunk.net.enc.enc0.block1.attn.proj.bias",
+        "trunk.net.enc.enc0.block1.norm2.0.weight",
+        "trunk.net.enc.enc0.block1.norm2.0.bias",
+        "trunk.net.enc.enc0.block1.mlp.0.fc1.weight",
+        "trunk.net.enc.enc0.block1.mlp.0.fc1.bias",
+        "trunk.net.enc.enc0.block1.mlp.0.fc2.weight",
+        "trunk.net.enc.enc0.block1.mlp.0.fc2.bias",
+        "trunk.net.enc.enc0.block1.time_modulation.1.weight",
+        "trunk.net.enc.enc0.block1.time_modulation.1.bias",
+        "trunk.net.enc.enc1.down.proj.weight",
+        "trunk.net.enc.enc1.down.proj.bias",
+        "trunk.net.enc.enc1.down.norm.0.weight",
+        "trunk.net.enc.enc1.down.norm.0.bias",
+        "trunk.net.enc.enc1.block0.cpe.0.weight",
+        "trunk.net.enc.enc1.block0.cpe.0.bias",
+        "trunk.net.enc.enc1.block0.cpe.1.weight",
+        "trunk.net.enc.enc1.block0.cpe.1.bias",
+        "trunk.net.enc.enc1.block0.cpe.2.weight",
+        "trunk.net.enc.enc1.block0.cpe.2.bias",
+        "trunk.net.enc.enc1.block0.norm1.0.weight",
+        "trunk.net.enc.enc1.block0.norm1.0.bias",
+        "trunk.net.enc.enc1.block0.attn.qkv.weight",
+        "trunk.net.enc.enc1.block0.attn.qkv.bias",
+        "trunk.net.enc.enc1.block0.attn.proj.weight",
+        "trunk.net.enc.enc1.block0.attn.proj.bias",
+        "trunk.net.enc.enc1.block0.norm2.0.weight",
+        "trunk.net.enc.enc1.block0.norm2.0.bias",
+        "trunk.net.enc.enc1.block0.mlp.0.fc1.weight",
+        "trunk.net.enc.enc1.block0.mlp.0.fc1.bias",
+        "trunk.net.enc.enc1.block0.mlp.0.fc2.weight",
+        "trunk.net.enc.enc1.block0.mlp.0.fc2.bias",
+        "trunk.net.enc.enc1.block0.time_modulation.1.weight",
+        "trunk.net.enc.enc1.block0.time_modulation.1.bias",
+        "trunk.net.enc.enc1.block1.cpe.0.weight",
+        "trunk.net.enc.enc1.block1.cpe.0.bias",
+        "trunk.net.enc.enc1.block1.cpe.1.weight",
+        "trunk.net.enc.enc1.block1.cpe.1.bias",
+        "trunk.net.enc.enc1.block1.cpe.2.weight",
+        "trunk.net.enc.enc1.block1.cpe.2.bias",
+        "trunk.net.enc.enc1.block1.norm1.0.weight",
+        "trunk.net.enc.enc1.block1.norm1.0.bias",
+        "trunk.net.enc.enc1.block1.attn.qkv.weight",
+        "trunk.net.enc.enc1.block1.attn.qkv.bias",
+        "trunk.net.enc.enc1.block1.attn.proj.weight",
+        "trunk.net.enc.enc1.block1.attn.proj.bias",
+        "trunk.net.enc.enc1.block1.norm2.0.weight",
+        "trunk.net.enc.enc1.block1.norm2.0.bias",
+        "trunk.net.enc.enc1.block1.mlp.0.fc1.weight",
+        "trunk.net.enc.enc1.block1.mlp.0.fc1.bias",
+        "trunk.net.enc.enc1.block1.mlp.0.fc2.weight",
+        "trunk.net.enc.enc1.block1.mlp.0.fc2.bias",
+        "trunk.net.enc.enc1.block1.time_modulation.1.weight",
+        "trunk.net.enc.enc1.block1.time_modulation.1.bias",
+        "trunk.net.dec.dec0.up.proj.0.weight",
+        "trunk.net.dec.dec0.up.proj.0.bias",
+        "trunk.net.dec.dec0.up.proj.1.weight",
+        "trunk.net.dec.dec0.up.proj.1.bias",
+        "trunk.net.dec.dec0.up.proj_skip.0.weight",
+        "trunk.net.dec.dec0.up.proj_skip.0.bias",
+        "trunk.net.dec.dec0.up.proj_skip.1.weight",
+        "trunk.net.dec.dec0.up.proj_skip.1.bias",
+        "trunk.net.dec.dec0.block0.cpe.0.weight",
+        "trunk.net.dec.dec0.block0.cpe.0.bias",
+        "trunk.net.dec.dec0.block0.cpe.1.weight",
+        "trunk.net.dec.dec0.block0.cpe.1.bias",
+        "trunk.net.dec.dec0.block0.cpe.2.weight",
+        "trunk.net.dec.dec0.block0.cpe.2.bias",
+        "trunk.net.dec.dec0.block0.norm1.0.weight",
+        "trunk.net.dec.dec0.block0.norm1.0.bias",
+        "trunk.net.dec.dec0.block0.attn.qkv.weight",
+        "trunk.net.dec.dec0.block0.attn.qkv.bias",
+        "trunk.net.dec.dec0.block0.attn.proj.weight",
+        "trunk.net.dec.dec0.block0.attn.proj.bias",
+        "trunk.net.dec.dec0.block0.norm2.0.weight",
+        "trunk.net.dec.dec0.block0.norm2.0.bias",
+        "trunk.net.dec.dec0.block0.mlp.0.fc1.weight",
+        "trunk.net.dec.dec0.block0.mlp.0.fc1.bias",
+        "trunk.net.dec.dec0.block0.mlp.0.fc2.weight",
+        "trunk.net.dec.dec0.block0.mlp.0.fc2.bias",
+        "trunk.net.dec.dec0.block0.time_modulation.1.weight",
+        "trunk.net.dec.dec0.block0.time_modulation.1.bias",
+        "trunk.net.dec.dec0.block1.cpe.0.weight",
+        "trunk.net.dec.dec0.block1.cpe.0.bias",
+        "trunk.net.dec.dec0.block1.cpe.1.weight",
+        "trunk.net.dec.dec0.block1.cpe.1.bias",
+        "trunk.net.dec.dec0.block1.cpe.2.weight",
+        "trunk.net.dec.dec0.block1.cpe.2.bias",
+        "trunk.net.dec.dec0.block1.norm1.0.weight",
+        "trunk.net.dec.dec0.block1.norm1.0.bias",
+        "trunk.net.dec.dec0.block1.attn.qkv.weight",
+        "trunk.net.dec.dec0.block1.attn.qkv.bias",
+        "trunk.net.dec.dec0.block1.attn.proj.weight",
+        "trunk.net.dec.dec0.block1.attn.proj.bias",
+        "trunk.net.dec.dec0.block1.norm2.0.weight",
+        "trunk.net.dec.dec0.block1.norm2.0.bias",
+        "trunk.net.dec.dec0.block1.mlp.0.fc1.weight",
+        "trunk.net.dec.dec0.block1.mlp.0.fc1.bias",
+        "trunk.net.dec.dec0.block1.mlp.0.fc2.weight",
+        "trunk.net.dec.dec0.block1.mlp.0.fc2.bias",
+        "trunk.net.dec.dec0.block1.time_modulation.1.weight",
+        "trunk.net.dec.dec0.block1.time_modulation.1.bias",
+        "decoder.0.weight",
+        "decoder.0.bias",
+        "decoder.1.weight",
+        "decoder.1.bias",
+        "decoder.3.weight",
+        "decoder.3.bias"
+      ],
+      "source_identity": {
+        "config_sha256": "36f9659d7f3951b8ce49bb4869e9b9ac2e5291a9b6af473f2185a17a36037390",
+        "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+        "experiment": "hs-occflow-stage2-384-v1",
+        "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+        "output": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_fm_gb4_100kframes",
+        "source_sha256": "01ef37195ef50b412016dd5bae481afb2421d4986b64618c153ed5cf5929a3f7",
+        "stage1_checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+        "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064",
+        "world_size": 2
+      },
+      "source_successful_exposures": 99520,
+      "weights": "online"
+    }
+  },
+  "jvp_backend": "torch.func.jvp",
+  "manifests": {
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+  },
+  "native_components": [
+    {
+      "derivative_max_abs": 1.109546422958374,
+      "finite": true,
+      "name": "local_state_MLP",
+      "shape": [
+        384155,
+        64
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "derivative_max_abs": 17.686355590820312,
+      "finite": true,
+      "name": "time_MLP",
+      "shape": [
+        2,
+        32
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "derivative_max_abs": 1.6301573514938354,
+      "finite": true,
+      "name": "attention_qkv_linear",
+      "shape": [
+        384155,
+        192
+      ],
+      "status": "JVP_PASS"
+    },
+    {
+      "name": "SpConv_embedding_and_norm",
+      "reason": "RuntimeError: Cannot access data pointer of Tensor that doesn't have storage",
+      "status": "BLOCKED_JVP",
+      "traceback": "Traceback (most recent call last):\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_component_probe.py\", line 16, in probe\n    primal,tangent=torch.func.jvp(fn,(value,),(torch.ones_like(value),))\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 916, in jvp\n    return _jvp_with_argnums(func, primals, tangents, argnums=None, strict=strict, has_aux=has_aux)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/vmap.py\", line 39, in fn\n    return f(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 965, in _jvp_with_argnums\n    result_duals = func(*duals)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_component_probe.py\", line 30, in <lambda>\n    probe('SpConv_embedding_and_norm',lambda z:net.embedding(point(z)).feat,x)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/voxel_point/vendor/pwm/ptv3_reference/model.py\", line 897, in forward\n    point = self.stem(point)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/voxel_point/vendor/pwm/ptv3_reference/model.py\", line 336, in forward\n    input.sparse_conv_feat = module(input.sparse_conv_feat)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 755, in forward\n    return self._conv_forward(self.training,\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 297, in _conv_forward\n    raise e\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 284, in _conv_forward\n    outids, indice_pairs, indice_pair_num = ops.get_indice_pairs(\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/ops.py\", line 156, in get_indice_pairs\n    num_act_out = SpconvOps.get_indice_pairs(alloc,\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/cppcore.py\", line 181, in full_int\n    ten_tv = torch_tensor_to_tv(ten, dtype_bkp)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/cppcore.py\", line 70, in torch_tensor_to_tv\n    ptr = ten.data_ptr()\nRuntimeError: Cannot access data pointer of Tensor that doesn't have storage\n"
+    },
+    {
+      "name": "serialized_attention_actual_FlashAttention",
+      "reason": "RuntimeError: In order to use an autograd.Function with functorch transforms (vmap, grad, jvp, jacrev, ...), it must override the setup_context staticmethod. For more details, please see https://pytorch.org/docs/master/notes/extending.func.html",
+      "status": "BLOCKED_JVP",
+      "traceback": "Traceback (most recent call last):\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_component_probe.py\", line 16, in probe\n    primal,tangent=torch.func.jvp(fn,(value,),(torch.ones_like(value),))\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 916, in jvp\n    return _jvp_with_argnums(func, primals, tangents, argnums=None, strict=strict, has_aux=has_aux)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/vmap.py\", line 39, in fn\n    return f(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 965, in _jvp_with_argnums\n    result_duals = func(*duals)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_component_probe.py\", line 31, in <lambda>\n    probe('serialized_attention_actual_FlashAttention',lambda z:first(point(z)).feat,x)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/voxel_point/vendor/pwm/ptv3_reference/model.py\", line 588, in forward\n    feat = flash_attn.flash_attn_varlen_qkvpacked_func(\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/flash_attn/flash_attn_interface.py\", line 893, in flash_attn_varlen_qkvpacked_func\n    return FlashAttnVarlenQKVPackedFunc.apply(\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/autograd/function.py\", line 509, in apply\n    raise RuntimeError(\nRuntimeError: In order to use an autograd.Function with functorch transforms (vmap, grad, jvp, jacrev, ...), it must override the setup_context staticmethod. For more details, please see https://pytorch.org/docs/master/notes/extending.func.html\n"
+    },
+    {
+      "name": "SpConv_CPE",
+      "reason": "RuntimeError: Cannot access data pointer of Tensor that doesn't have storage",
+      "status": "BLOCKED_JVP",
+      "traceback": "Traceback (most recent call last):\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_component_probe.py\", line 16, in probe\n    primal,tangent=torch.func.jvp(fn,(value,),(torch.ones_like(value),))\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 916, in jvp\n    return _jvp_with_argnums(func, primals, tangents, argnums=None, strict=strict, has_aux=has_aux)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/vmap.py\", line 39, in fn\n    return f(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 965, in _jvp_with_argnums\n    result_duals = func(*duals)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_component_probe.py\", line 33, in <lambda>\n    probe('SpConv_CPE',lambda z:block.cpe(point(z)).feat,x)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/voxel_point/vendor/pwm/ptv3_reference/model.py\", line 336, in forward\n    input.sparse_conv_feat = module(input.sparse_conv_feat)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 755, in forward\n    return self._conv_forward(self.training,\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 408, in _conv_forward\n    raise e\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 385, in _conv_forward\n    res = ops.get_indice_pairs_implicit_gemm(\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/ops.py\", line 492, in get_indice_pairs_implicit_gemm\n    pair_tv = torch_tensor_to_tv(pair)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/cppcore.py\", line 70, in torch_tensor_to_tv\n    ptr = ten.data_ptr()\nRuntimeError: Cannot access data pointer of Tensor that doesn't have storage\n"
+    },
+    {
+      "name": "full_time_conditioned_block",
+      "reason": "RuntimeError: Cannot access data pointer of Tensor that doesn't have storage",
+      "status": "BLOCKED_JVP",
+      "traceback": "Traceback (most recent call last):\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_component_probe.py\", line 16, in probe\n    primal,tangent=torch.func.jvp(fn,(value,),(torch.ones_like(value),))\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 916, in jvp\n    return _jvp_with_argnums(func, primals, tangents, argnums=None, strict=strict, has_aux=has_aux)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/vmap.py\", line 39, in fn\n    return f(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 965, in _jvp_with_argnums\n    result_duals = func(*duals)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_component_probe.py\", line 37, in <lambda>\n    probe('full_time_conditioned_block',lambda z:block(point(z)).feat,x)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/ptv3_backbone.py\", line 13, in forward\n    if not self.training or not torch.is_grad_enabled(): return super().forward(point)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/voxel_point/vendor/pwm/ptv3_time_conditioning.py\", line 36, in forward\n    point = self.cpe(point)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/voxel_point/vendor/pwm/ptv3_reference/model.py\", line 336, in forward\n    input.sparse_conv_feat = module(input.sparse_conv_feat)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 755, in forward\n    return self._conv_forward(self.training,\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 408, in _conv_forward\n    raise e\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 385, in _conv_forward\n    res = ops.get_indice_pairs_implicit_gemm(\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/ops.py\", line 492, in get_indice_pairs_implicit_gemm\n    pair_tv = torch_tensor_to_tv(pair)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/cppcore.py\", line 70, in torch_tensor_to_tv\n    ptr = ten.data_ptr()\nRuntimeError: Cannot access data pointer of Tensor that doesn't have storage\n"
+    },
+    {
+      "name": "pooling_project_and_segment_reduce",
+      "reason": "RuntimeError: Cannot access data pointer of Tensor that doesn't have storage",
+      "status": "BLOCKED_JVP",
+      "traceback": "Traceback (most recent call last):\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_component_probe.py\", line 16, in probe\n    primal,tangent=torch.func.jvp(fn,(value,),(torch.ones_like(value),))\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 916, in jvp\n    return _jvp_with_argnums(func, primals, tangents, argnums=None, strict=strict, has_aux=has_aux)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/vmap.py\", line 39, in fn\n    return f(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 965, in _jvp_with_argnums\n    result_duals = func(*duals)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_component_probe.py\", line 39, in <lambda>\n    probe('pooling_project_and_segment_reduce',lambda z:pooling(point(z)).feat,x)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_stage2.py\", line 77, in _pool_forward\n    data=dict(feat=torch_scatter.segment_csr(module.proj(point.feat)[indices],idx_ptr,reduce=module.reduce),\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch_scatter/segment_csr.py\", line 107, in segment_csr\n    return segment_max_csr(src, indptr, out)[0]\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch_scatter/segment_csr.py\", line 32, in segment_max_csr\n    return torch.ops.torch_scatter.segment_max_csr(src, indptr, out)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_ops.py\", line 502, in __call__\n    return self._op(*args, **kwargs or {})\nRuntimeError: Cannot access data pointer of Tensor that doesn't have storage\n"
+    },
+    {
+      "derivative_max_abs": 1.303533053942374e-06,
+      "finite": true,
+      "name": "unpool_project_and_index_gather",
+      "shape": [
+        384155,
+        64
+      ],
+      "status": "JVP_PASS"
+    }
+  ],
+  "native_resume_exception": false,
+  "no_truncation": true,
+  "precision": "FP32 weights + original FP16 autocast",
+  "reason": "RuntimeError: Cannot access data pointer of Tensor that doesn't have storage",
+  "scene_isolation": {
+    "packed_vs_single": [
+      {
+        "exact": false,
+        "max_abs": 0.00390625,
+        "mean_abs": 0.00018255920440424234,
+        "relative_l2": 0.00030964179313741624
+      },
+      {
+        "exact": false,
+        "max_abs": 0.0068359375,
+        "mean_abs": 0.0002461605763528496,
+        "relative_l2": 0.0003991535631939769
+      }
+    ],
+    "permutation_exact": true,
+    "single_scene_source_exact": true
+  },
+  "scene_lengths": [
+    192179,
+    191976
+  ],
+  "source_sha256": "1293e8bef20b2684859fac32db4b228eaed0b604a93b8143fc6274c1ab617391",
+  "stage": "full_native_state_and_fixed_endpoint_jvp",
+  "started": 1792991512.3818974,
+  "status": "BLOCKED_JVP",
+  "stress_selection": [
+    {
+      "frame": 1019,
+      "sequence": "01",
+      "split": "train",
+      "teacher_parent_tokens": 192179
+    },
+    {
+      "frame": 1018,
+      "sequence": "01",
+      "split": "train",
+      "teacher_parent_tokens": 191976
+    }
+  ],
+  "traceback": "Traceback (most recent call last):\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/scripts/research_v2/hier_occ_flow/verify_meanflow_gpu.py\", line 113, in main\n    primal,derivative=endpoint_jvp(u,p0['state'],p0['time'],batch['end'],p0['velocity'],model=model)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_jvp.py\", line 23, in endpoint_jvp\n    primal,derivative=torch.func.jvp(u_fn,(state,time,time_end),\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 916, in jvp\n    return _jvp_with_argnums(func, primals, tangents, argnums=None, strict=strict, has_aux=has_aux)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/vmap.py\", line 39, in fn\n    return f(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/_functorch/eager_transforms.py\", line 965, in _jvp_with_argnums\n    result_duals = func(*duals)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_training.py\", line 121, in u\n    def u(x,t,s):return self.network.forward_prepared(context,x,t,time_end=s)*valid\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_stage2.py\", line 203, in forward_prepared\n    with self._layouts(context,mode):return self._prepared(context,state,time,time_end)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/hier_occ_flow/meanflow_stage2.py\", line 195, in _prepared\n    point=net.embedding(point);point=net.enc(point);point=net.dec(point)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/voxel_point/vendor/pwm/ptv3_reference/model.py\", line 897, in forward\n    point = self.stem(point)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/fpsgen/voxel_point/vendor/pwm/ptv3_reference/model.py\", line 336, in forward\n    input.sparse_conv_feat = module(input.sparse_conv_feat)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/nn/modules/module.py\", line 1501, in _call_impl\n    return forward_call(*args, **kwargs)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 755, in forward\n    return self._conv_forward(self.training,\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 297, in _conv_forward\n    raise e\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/conv.py\", line 284, in _conv_forward\n    outids, indice_pairs, indice_pair_num = ops.get_indice_pairs(\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/ops.py\", line 156, in get_indice_pairs\n    num_act_out = SpconvOps.get_indice_pairs(alloc,\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/cppcore.py\", line 181, in full_int\n    ten_tv = torch_tensor_to_tv(ten, dtype_bkp)\n  File \"/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/spconv/pytorch/cppcore.py\", line 70, in torch_tensor_to_tv\n    ptr = ten.data_ptr()\nRuntimeError: Cannot access data pointer of Tensor that doesn't have storage\n",
+  "true_batch": 2,
+  "zero_init_parity": [
+    {
+      "exact": true,
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative_l2": 0.0
+    },
+    {
+      "exact": true,
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative_l2": 0.0
+    },
+    {
+      "exact": true,
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative_l2": 0.0
+    }
+  ]
+}

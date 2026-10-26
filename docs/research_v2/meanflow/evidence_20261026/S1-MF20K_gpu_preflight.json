@@ -1,0 +1,148 @@
+{
+  "arm": "S1-MF20K",
+  "cached_inference_parity": {
+    "exact": true,
+    "max_abs": 0.0,
+    "mean_abs": 0.0,
+    "relative_l2": 0.0
+  },
+  "census_coverage": {
+    "development": 900,
+    "train": 17870
+  },
+  "config_sha256": "61d207e4f9a38f6049d821250eef4f51a69b91e582ec18a5090a828186e27d19",
+  "fallback_used": false,
+  "finished": 1792991635.1178257,
+  "finite_difference_diagnostic": {
+    "comparison": {
+      "exact": false,
+      "max_abs": 20.433597564697266,
+      "mean_abs": 0.8474621176719666,
+      "relative_l2": 0.3780638873577118
+    },
+    "epsilon": 0.001,
+    "training_target": "native_jvp_only"
+  },
+  "gpu_admission": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24106.0,
+        "physical_gpu": 3,
+        "shared_compute_allowed": true,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 16.0,
+    "policy": "Explicitly authorized shared compute; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "initialization": {
+    "frozen_state_sha256": "d4ab8a29a69e3547b30793e9a31c7473243a8ee45bed229c08268909568fd3e2",
+    "initial_network_state_sha256": "30a5b1cfa8ec8c9c11b82db8247bb38cb1cd9c19f216de651d6a5e03a83aea21",
+    "initialization_mode": "pretrained_ema_meanflow_adaptation",
+    "interval": {
+      "allowed_new_keys": [
+        "embedding.interval.net.0.bias",
+        "embedding.interval.net.0.weight",
+        "embedding.interval.net.2.bias",
+        "embedding.interval.net.2.weight"
+      ],
+      "shared_tensor_count": 96,
+      "shared_tensors_exact": true
+    },
+    "source_exposures": 100000,
+    "stage1": {
+      "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2/experiments/hier_occ_flow/stage2_384_preflight/stage1_final_100kframes.pt",
+      "checkpoint_sha256": "b60ab632b26e79140ace4cdb94577db6aba43b02f44f3393da84a6a94622e3d2",
+      "config_sha256": "06badff24b884320062c6734509846f480b7bff7076ae1215679f77cc49ddc10",
+      "data_version": "hs-occ-surface-hit-v1",
+      "feature_layout": "B,C,Z,Y,X",
+      "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+      "input_feature_version": "coarse_f64_v1",
+      "score_definition": "clipped linear endpoint proxy, not a calibrated probability",
+      "score_layout": "Z,Y,X",
+      "stage1_final_100k_frames": true,
+      "successful_frame_exposures": 100000,
+      "successful_updates": 34275,
+      "type": "FrozenStage1OccupancyAdapter",
+      "weights": "ema"
+    }
+  },
+  "jvp": {
+    "contains_full_dynamic_backbone": true,
+    "endpoint_tangent_zero": true,
+    "finite": true,
+    "full_state_time_tangent": true,
+    "max_abs": 137.625,
+    "nonzero": true
+  },
+  "jvp_backend": "torch.func.jvp",
+  "manifests": {
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+  },
+  "native_resume": {
+    "checkpoint_roundtrip_exact": true,
+    "end_to_end_exact": false,
+    "expected_update": {
+      "gradient_norm": 7.719179153442383,
+      "jvp_calls": 1,
+      "loss": 0.7160856127738953
+    },
+    "numerical_exception_used": false,
+    "replayed_update": {
+      "gradient_norm": 7.719182968139648,
+      "jvp_calls": 1,
+      "loss": 0.7160856127738953
+    }
+  },
+  "native_resume_exception": false,
+  "no_truncation": true,
+  "precision": "FP32 weights + original FP16 autocast",
+  "reason": "RuntimeError: Native end-to-end replay differs; own baseline/bounds required before any exception",
+  "scene_lengths": null,
+  "source_sha256": "1293e8bef20b2684859fac32db4b228eaed0b604a93b8143fc6274c1ab617391",
+  "stage": "native_end_to_end_resume_replay",
+  "started": 1792991616.3009486,
+  "status": "BLOCKED_ENGINEERING",
+  "stress_selection": [
+    {
+      "frame": 1019,
+      "sequence": "01",
+      "split": "train",
+      "teacher_parent_tokens": 192179
+    },
+    {
+      "frame": 1018,
+      "sequence": "01",
+      "split": "train",
+      "teacher_parent_tokens": 191976
+    }
+  ],
+  "traceback": "Traceback (most recent call last):\n  File \"/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v1/scripts/research_v2/hier_occ_flow/verify_meanflow_gpu.py\", line 156, in main\n    if not replay_exact:raise RuntimeError('Native end-to-end replay differs; own baseline/bounds required before any exception')\nRuntimeError: Native end-to-end replay differs; own baseline/bounds required before any exception\n",
+  "true_batch": 2,
+  "zero_init_parity": [
+    {
+      "exact": true,
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative_l2": 0.0
+    },
+    {
+      "exact": true,
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative_l2": 0.0
+    },
+    {
+      "exact": true,
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative_l2": 0.0
+    }
+  ]
+}
