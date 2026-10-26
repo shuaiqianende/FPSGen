@@ -79,3 +79,5 @@ Stage2 原 formal 在 **210 successful updates /420 exposures、213 attempts** �
 Stage1独立丢弃Smoke32通过：32 updates/64 exposures、0 AMP skips、43 diagonal/21 finite-interval exposures、17次真实JVP、29.99秒。随后严格从源模型重新初始化formal，没有使用Smoke参数。**100 updates/200 exposures健康检查PASS，0 skips**，调度器233813已自动恢复同一formal至500健康节点，之后10,000成功更新/20K曝光。训练子进程PID随分段变化，以`single_arm_supervisor.json`为准。实际快照见`continuation_actual_20261026.json`。
 
 Stage1完成后只执行已登记的900帧Development、seq08/skip100固定41帧NFE1/2/4/8对照和无争用配对测速，不追加训练。GPU3每次只运行一个本项目任务。Stage2 AMP稳定性修复在独立分支`research/desescene-meanflow-amp-stability-v3`准备；其任何新源码/config需重新验收，不改本工作树的运行代码。尚无MeanFlow正式20K质量结论。
+
+Stage1后续实际通过500 successful updates/1,000 exposures健康检查，500 attempts、0 AMP skips。控制器已自动启动正式末段`--max-updates 10000`，从同一Checkpoint恢复，非重新训练；见`s1_gpu3_health500.json`与`continuation_latest_20261026.json`。
