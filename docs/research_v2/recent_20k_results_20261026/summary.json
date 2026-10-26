@@ -1,0 +1,446 @@
+{
+  "snapshot_epoch": 1793012532.8762903,
+  "protocol": {
+    "frames": 900,
+    "stage1_nfe": 2,
+    "stage2_nfe": 4,
+    "point_mode": "native_fine_voxel_centers",
+    "train_seed": 20261032,
+    "single_training_seed": true
+  },
+  "summary": {
+    "EF0": {
+      "cohort": "Stage1 mature100K plus optional20K adaptation",
+      "parent": {
+        "active_parents": 104702.62444444445,
+        "f1": 0.6270554617727702,
+        "fine_recall_ceiling": 0.640180913175394,
+        "iou": 0.46252501829793435,
+        "precision": 0.7322905561944066,
+        "recall": 0.5551545266816128
+      },
+      "fixed84963": {
+        "actual_k": 84963.0,
+        "f1": 0.5868939565018558,
+        "fine_recall_ceiling": 0.5835624301788267,
+        "iou": 0.4214719645430941,
+        "precision": 0.7717723662718543,
+        "recall": 0.4959328123280668
+      },
+      "fine": {
+        "f1": 0.4699517167713707,
+        "iou": 0.3104701727628711,
+        "precision": 0.6545031453928957,
+        "recall": 0.37278699664239684
+      },
+      "continuous": {
+        "cd_m": 0.20702424480346338,
+        "iou01": 0.1448552867336927,
+        "iou02": 0.38075037984112026,
+        "iou05": 0.5061099806080172,
+        "jsd_3d": 0.4001182245616543,
+        "jsd_bev": 0.31836193726414613
+      },
+      "teacher_fine": {
+        "f1": 0.4699517167713707,
+        "iou": 0.3104701727628711,
+        "precision": 0.6545031453928957,
+        "recall": 0.37278699664239684
+      },
+      "teacher_continuous": {
+        "cd_m": 0.20702424480346338,
+        "iou01": 0.1448552867336927,
+        "iou02": 0.38075037984112026,
+        "iou05": 0.5061099806080172,
+        "jsd_3d": 0.4001182245616543,
+        "jsd_bev": 0.31836193726414613
+      }
+    },
+    "EF1": {
+      "cohort": "Stage1 mature100K plus optional20K adaptation",
+      "parent": {
+        "active_parents": 104170.70222222223,
+        "f1": 0.6272706934778186,
+        "fine_recall_ceiling": 0.6398679774912955,
+        "iou": 0.46276805091951434,
+        "precision": 0.7346775371124825,
+        "recall": 0.5546509399510166
+      },
+      "fixed84963": {
+        "actual_k": 84963.0,
+        "f1": 0.5876352046900061,
+        "fine_recall_ceiling": 0.5843824683798372,
+        "iou": 0.42219718126379646,
+        "precision": 0.7727690615653612,
+        "recall": 0.49654358531643844
+      },
+      "fine": {
+        "f1": 0.46979832412542405,
+        "iou": 0.31037940886923093,
+        "precision": 0.6562652520217356,
+        "recall": 0.37239450859255
+      },
+      "continuous": {
+        "cd_m": 0.20817165759183032,
+        "iou01": 0.1447532258746199,
+        "iou02": 0.38065115581193715,
+        "iou05": 0.5061152310521524,
+        "jsd_3d": 0.39972930595058315,
+        "jsd_bev": 0.318875584326666
+      },
+      "teacher_fine": {
+        "f1": 0.46986296646923714,
+        "iou": 0.31039008834396586,
+        "precision": 0.6545117474215508,
+        "recall": 0.37268037023327466
+      },
+      "teacher_continuous": {
+        "cd_m": 0.20679392236814992,
+        "iou01": 0.14478212484377878,
+        "iou02": 0.3807138757818012,
+        "iou05": 0.5063163687284593,
+        "jsd_3d": 0.40009591753611434,
+        "jsd_bev": 0.31826501109267785
+      }
+    },
+    "EF2": {
+      "cohort": "Stage1 mature100K plus optional20K adaptation",
+      "parent": {
+        "active_parents": 104544.33888888889,
+        "f1": 0.6268843182019623,
+        "fine_recall_ceiling": 0.6400863721687786,
+        "iou": 0.4624059035038526,
+        "precision": 0.7328915856380892,
+        "recall": 0.5548950930803651
+      },
+      "fixed84963": {
+        "actual_k": 84963.0,
+        "f1": 0.5870032667125777,
+        "fine_recall_ceiling": 0.5837771233538501,
+        "iou": 0.4215965400722431,
+        "precision": 0.7719330113631162,
+        "recall": 0.4960100610773611
+      },
+      "fine": {
+        "f1": 0.46974275663048326,
+        "iou": 0.31034691724534424,
+        "precision": 0.6553055722801246,
+        "recall": 0.3725338826245933
+      },
+      "continuous": {
+        "cd_m": 0.2068249296846416,
+        "iou01": 0.14478917987210102,
+        "iou02": 0.3806097925457713,
+        "iou05": 0.5061097016819107,
+        "jsd_3d": 0.39978102880149713,
+        "jsd_bev": 0.3185989314243529
+      },
+      "teacher_fine": {
+        "f1": 0.46994890398903166,
+        "iou": 0.3104676527263507,
+        "precision": 0.6545138702551712,
+        "recall": 0.37278575778311945
+      },
+      "teacher_continuous": {
+        "cd_m": 0.20688081884933018,
+        "iou01": 0.14482611790397787,
+        "iou02": 0.38080085527018437,
+        "iou05": 0.5062250144696238,
+        "jsd_3d": 0.4000748601198996,
+        "jsd_bev": 0.3182726590626627
+      }
+    },
+    "S1-FM20K": {
+      "cohort": "Stage1 mature100K plus optional20K adaptation",
+      "parent": {
+        "active_parents": 104449.06666666667,
+        "f1": 0.6268629770605246,
+        "fine_recall_ceiling": 0.6390210955956839,
+        "iou": 0.4623987340420114,
+        "precision": 0.7339631881995885,
+        "recall": 0.5539608096072685
+      },
+      "fixed84963": {
+        "actual_k": 84963.0,
+        "f1": 0.5869470695388995,
+        "fine_recall_ceiling": 0.5833972471759492,
+        "iou": 0.42155242749829946,
+        "precision": 0.7718694935180934,
+        "recall": 0.49595584287650873
+      },
+      "fine": {
+        "f1": 0.4697542466236834,
+        "iou": 0.3103242502144756,
+        "precision": 0.6554046372092939,
+        "recall": 0.3723008535247129
+      },
+      "continuous": {
+        "cd_m": 0.20989287481818147,
+        "iou01": 0.14478274503604735,
+        "iou02": 0.38022922064665676,
+        "iou05": 0.5053223939095944,
+        "jsd_3d": 0.4004878413862383,
+        "jsd_bev": 0.31949170526316995
+      },
+      "teacher_fine": {
+        "f1": 0.4699514149088205,
+        "iou": 0.31046990922765133,
+        "precision": 0.6545025043506917,
+        "recall": 0.3727868154847964
+      },
+      "teacher_continuous": {
+        "cd_m": 0.20701772940775326,
+        "iou01": 0.14485527381853722,
+        "iou02": 0.3807503971505214,
+        "iou05": 0.5061105541098713,
+        "jsd_3d": 0.40011807540456706,
+        "jsd_bev": 0.3183626697426021
+      }
+    },
+    "B0": {
+      "cohort": "Stage2 matched20K adaptation",
+      "fine": {
+        "f1": 0.4776566809799864,
+        "iou": 0.3174501156853162,
+        "precision": 0.6463304756261841,
+        "recall": 0.3867123068912088
+      },
+      "continuous": {
+        "cd_m": 0.2170993684292546,
+        "iou01": 0.1484159134135579,
+        "iou02": 0.3850151317062555,
+        "iou05": 0.5181696944373975,
+        "jsd_3d": 0.39742681355335674,
+        "jsd_bev": 0.32213103239283186
+      }
+    },
+    "L0": {
+      "cohort": "Stage2 matched20K adaptation",
+      "fine": {
+        "f1": 0.4778371841579892,
+        "iou": 0.3175934637779709,
+        "precision": 0.646177699863922,
+        "recall": 0.38693405053530194
+      },
+      "continuous": {
+        "cd_m": 0.21720312770376815,
+        "iou01": 0.14848129961125253,
+        "iou02": 0.3851465757175807,
+        "iou05": 0.5182098770606204,
+        "jsd_3d": 0.397407298898108,
+        "jsd_bev": 0.3221752518334689
+      }
+    },
+    "L1": {
+      "cohort": "Stage2 matched20K adaptation",
+      "fine": {
+        "f1": 0.47721011390154355,
+        "iou": 0.31705651601886076,
+        "precision": 0.6472247619980479,
+        "recall": 0.3857936882425755
+      },
+      "continuous": {
+        "cd_m": 0.2177754840193955,
+        "iou01": 0.1482418027278405,
+        "iou02": 0.3845908693830986,
+        "iou05": 0.5176840226792493,
+        "jsd_3d": 0.3976082172105573,
+        "jsd_bev": 0.3226613393438708
+      }
+    }
+  },
+  "paired": {
+    "EF1": {
+      "reference": "EF0",
+      "checks": {
+        "input_sha256": true,
+        "parent_ids_sha256": false
+      },
+      "fine_iou": {
+        "mean": -9.076389364013036e-05,
+        "ci95": [
+          -0.0006558477020035868,
+          0.0005133566319358019
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": 0.00869447053592523
+      },
+      "cd_m": {
+        "mean": 0.0011474127883669373,
+        "ci95": [
+          0.00039519610738998926,
+          0.0021280713786882553
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": -0.049882275241959706
+      },
+      "parent_iou": {
+        "mean": 0.00024303262158009456,
+        "ci95": [
+          -0.00010808318859250998,
+          0.0005849326165296881
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": 0.010418870979355899
+      }
+    },
+    "EF2": {
+      "reference": "EF0",
+      "checks": {
+        "input_sha256": true,
+        "parent_ids_sha256": false
+      },
+      "fine_iou": {
+        "mean": -0.0001232555175268403,
+        "ci95": [
+          -0.0006971577127585273,
+          0.0004948431568344919
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": 0.008572245524345073
+      },
+      "cd_m": {
+        "mean": -0.00019931511882174803,
+        "ci95": [
+          -0.0006993654233292452,
+          0.0002649651116116286
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": -0.04235227481248194
+      },
+      "parent_iou": {
+        "mean": -0.00011911479408171943,
+        "ci95": [
+          -0.000674332550115234,
+          0.00037716969641223144
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": 0.009508156005198165
+      }
+    },
+    "S1-FM20K": {
+      "reference": "EF0",
+      "checks": {
+        "input_sha256": true,
+        "parent_ids_sha256": false
+      },
+      "fine_iou": {
+        "mean": -0.0001459225483954779,
+        "ci95": [
+          -0.000838372040724726,
+          0.000652010440025442
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": -0.007031901461948709
+      },
+      "cd_m": {
+        "mean": 0.0028686300147181113,
+        "ci95": [
+          0.0014084749131768241,
+          0.0046473059672289254
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": 0.036412996383976604
+      }
+    },
+    "L0": {
+      "reference": "B0",
+      "checks": {
+        "input_sha256": true,
+        "parent_ids_sha256": true
+      },
+      "fine_iou": {
+        "mean": 0.00014334809265474343,
+        "ci95": [
+          1.6616394879036396e-05,
+          0.00024168742188777957
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": -0.0007876506691292806
+      },
+      "cd_m": {
+        "mean": 0.00010375927451353524,
+        "ci95": [
+          4.622168158197125e-05,
+          0.00015811438356100037
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": -0.009795051333363003
+      }
+    },
+    "L1": {
+      "reference": "B0",
+      "checks": {
+        "input_sha256": true,
+        "parent_ids_sha256": true
+      },
+      "fine_iou": {
+        "mean": -0.00039359966645543236,
+        "ci95": [
+          -0.0005072604256894805,
+          -0.00030930219642559965
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": -0.0013525852876837274
+      },
+      "cd_m": {
+        "mean": 0.000676115590140918,
+        "ci95": [
+          0.0004449009910044195,
+          0.0009124798600950165
+        ],
+        "time_blocks": 9,
+        "scope": "scene/time-block paired bootstrap; one training seed, not cross-training reproducibility",
+        "largest_absolute_delta": 0.017203238371942264
+      }
+    }
+  },
+  "sources": {
+    "EF0": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-shared-v1/experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025_b/evaluations/EF0.json",
+      "sha256": "ba34bc58de3343353a53476200fcd565a9f9a23fe9de7d3f0b275fb9627af066"
+    },
+    "EF1": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-shared-v1/experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025_b/evaluations/EF1.json",
+      "sha256": "6cca6e97fa563858f5e4cd688acdc6afa5be496e0c3a7c8a937cca402ce455e4"
+    },
+    "EF2": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-encoder-adaptation-shared-v1/experiments/desescene_encoder_adaptation_v1/formal_numeric_20261025_b/evaluations/EF2.json",
+      "sha256": "cb2f9ca7b45642db347a86f24c17db8d73623ba53d28ac5c0bff31d68dfa5ff6"
+    },
+    "S1-FM20K": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-shortcut-pilot-v1/experiments/desescene_shortcut_pilot_v1/S1-FM20K/evaluation/primary900.json",
+      "sha256": "8a121923e9f646626994db2dcc29b1e71c8c4f65f959d1d0ad9a202c6e6d3527"
+    },
+    "B0": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-state-condition-v1/experiments/desescene_state_condition_v1/matched20k_gpu1_gpu3_v2/b0_20k/evaluation/primary900_nfe4.json",
+      "sha256": "b6a33e130872976bbf30d43e64da71c2d606c3e04a13eb4df92b75fa231654b5"
+    },
+    "L0": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/position_20k/evaluation/primary900_nfe4.json",
+      "sha256": "6f3da24d9c799c32de796042ef828a8ed950cd48fda6e3ae7401d6a7c00eaaea"
+    },
+    "L1": {
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-child-local-state-v1/experiments/desescene_child_local_state_v1/pilot_pair_v1/attention_20k/evaluation/primary900_nfe4.json",
+      "sha256": "3c390ba8da063ae15fd25bef066886eefa6552d2422e275558c8b7039dc15b12"
+    }
+  },
+  "limitations": [
+    "EF0 JSON arm=EF1 comes from shared reference config; reference_only=true and original source loading identify EF0.",
+    "EF1/EF2 direct numerical pilots were NOT_CERTIFIED_NUMERICAL_REPLAY, not exact-resume certified.",
+    "Deployment support changes can change sequential noise assignment on shared Parents; fixed-teacher-support comparison is separate.",
+    "Different Stage1 and Stage2 adaptation cohorts are not a single architecture leaderboard.",
+    "No formal exclusive latency gain is established for these adaptations."
+  ]
+}
