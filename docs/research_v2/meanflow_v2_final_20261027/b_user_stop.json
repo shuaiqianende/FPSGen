@@ -1,0 +1,33 @@
+{
+  "status": "USER_STOPPED_CHECKPOINT_SAVED",
+  "reason": "User explicitly chose traditional FM and save/stop MeanFlow",
+  "epoch": 1793110078.2024121,
+  "arm": "MFV2-B",
+  "counts": {
+    "updates": 3332,
+    "exposures": 6664,
+    "attempts": 3332,
+    "cursor": 6664,
+    "amp_skips": 0,
+    "consecutive_amp_skips": 0
+  },
+  "checkpoint": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v2-b-gpu3/experiments/desescene_meanflow_v2/MFV2-B/formal/checkpoints/resume_latest.pt",
+  "checkpoint_sha256": "3cfd441e0c23a7240b8cb0d6b3c112085944daba5be9083235a19ccfa37dca5c",
+  "checkpoint_bytes": 353529531,
+  "preserved": [
+    "FP16 model",
+    "FP32 master",
+    "FP32 Adam",
+    "FP32 EMA",
+    "scheduler",
+    "scaler",
+    "full RNG and interval RNG",
+    "successful counters"
+  ],
+  "planned_exposures": 20000,
+  "completed_exposures": 6664,
+  "final_quality": "NOT TESTED; user stopped before budget",
+  "resume_cpu_integrity_checks": "PASS",
+  "automatic_resume": false,
+  "automatic_extra_training": false
+}

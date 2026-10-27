@@ -1,0 +1,38 @@
+[
+  {
+    "nfe": 1,
+    "mean_encoder_minus_noencoder_iou": 0.00026137823942638295,
+    "wins": 21,
+    "frames": 41,
+    "min_delta": -0.0026684686534902413,
+    "max_delta": 0.004553494096811939,
+    "same_parent_counts": true
+  },
+  {
+    "nfe": 2,
+    "mean_encoder_minus_noencoder_iou": 0.0026920642366936535,
+    "wins": 41,
+    "frames": 41,
+    "min_delta": 0.0002336070606506757,
+    "max_delta": 0.005910887405040921,
+    "same_parent_counts": true
+  },
+  {
+    "nfe": 4,
+    "mean_encoder_minus_noencoder_iou": 0.0025963687134268453,
+    "wins": 41,
+    "frames": 41,
+    "min_delta": 0.00015465613588122595,
+    "max_delta": 0.005662477047140846,
+    "same_parent_counts": true
+  },
+  {
+    "nfe": 8,
+    "mean_encoder_minus_noencoder_iou": 0.0022935484992111415,
+    "wins": 40,
+    "frames": 41,
+    "min_delta": -0.00015155262850047313,
+    "max_delta": 0.00604482211131413,
+    "same_parent_counts": true
+  }
+]
