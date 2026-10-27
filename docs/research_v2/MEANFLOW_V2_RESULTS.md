@@ -1,3 +1,5 @@
+> Historical launch snapshot below. Latest A15K interim evaluation: [report](MEANFLOW_V2_A_INTERIM_15K_RESULTS.md). B was reassigned to GPU3 in branch `research/desescene-meanflow-v2-b-gpu3`; this evaluator does not launch training.
+
 # MeanFlow-V2 execution status
 
 Snapshot: 2026-10-27T15:11:50; not a completed20K quality claim.

@@ -1,0 +1,8 @@
+{
+  "source": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v2/experiments/desescene_meanflow_v2/MFV2-A/formal/checkpoints/resume_latest.pt",
+  "snapshot": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v2/experiments/desescene_meanflow_v2/interim_evaluation/snapshot_20261027_195734/checkpoint_snapshot.pt",
+  "sha256": "a3fd96045876c9f39f3fb6660d44630b6483c9d231080557b51a76fb5b81d8bc",
+  "bytes": 353529531,
+  "immutable_snapshot_method": "hardlink to atomic-published checkpoint inode",
+  "created": "2026-10-27T19:57:34.829699"
+}

@@ -1,0 +1,454 @@
+{
+  "S1-FM-Scratch20K": {
+    "1": {
+      "cd_m": {
+        "ci95": [
+          -0.009423654756410202,
+          0.001067048255679421
+        ],
+        "mean": -0.004032105196873954,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2600
+      },
+      "ceiling": {
+        "ci95": [
+          -0.06263370340475334,
+          -0.05856015067531498
+        ],
+        "mean": -0.06056088214862192,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3000
+      },
+      "fixed120000_iou": {
+        "ci95": [
+          -0.02604751981702494,
+          -0.015899686376918253
+        ],
+        "mean": -0.021184721868877612,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 900
+      },
+      "fixed84963_iou": {
+        "ci95": [
+          -0.017875592996191497,
+          -0.009221303253078642
+        ],
+        "mean": -0.013565123757494867,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2300
+      },
+      "parent_iou": {
+        "ci95": [
+          -0.0425019643210991,
+          -0.03849304761390353
+        ],
+        "mean": -0.04077696879261392,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3900
+      },
+      "recall": {
+        "ci95": [
+          -0.06409077998715675,
+          -0.05889200496709174
+        ],
+        "mean": -0.06136937460362807,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3000
+      }
+    },
+    "2": {
+      "cd_m": {
+        "ci95": [
+          0.009182472508196956,
+          0.015531053733375008
+        ],
+        "mean": 0.012620885563836674,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2600
+      },
+      "ceiling": {
+        "ci95": [
+          -0.033996188999541266,
+          -0.02953640777572351
+        ],
+        "mean": -0.031796361672719445,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3000
+      },
+      "fixed120000_iou": {
+        "ci95": [
+          -0.015810625174316043,
+          -0.01016728778441118
+        ],
+        "mean": -0.013122220524320065,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3900
+      },
+      "fixed84963_iou": {
+        "ci95": [
+          -0.012433518093804032,
+          -0.006434932230508588
+        ],
+        "mean": -0.009442553445135535,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2100
+      },
+      "parent_iou": {
+        "ci95": [
+          -0.023023929234126935,
+          -0.020309482023558378
+        ],
+        "mean": -0.02171730715974913,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3900
+      },
+      "recall": {
+        "ci95": [
+          -0.03330710646332796,
+          -0.029267522489604545
+        ],
+        "mean": -0.03128075191889437,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3000
+      }
+    },
+    "4": {
+      "cd_m": {
+        "ci95": [
+          0.017078671632108976,
+          0.028663247855839676
+        ],
+        "mean": 0.022777411173144576,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2000
+      },
+      "ceiling": {
+        "ci95": [
+          -0.03330067544583213,
+          -0.02810686416700308
+        ],
+        "mean": -0.030610304513406336,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3000
+      },
+      "fixed120000_iou": {
+        "ci95": [
+          -0.016455338767577675,
+          -0.010537053032676108
+        ],
+        "mean": -0.013651653221932387,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3900
+      },
+      "fixed84963_iou": {
+        "ci95": [
+          -0.01300130270598838,
+          -0.006704359733353571
+        ],
+        "mean": -0.009896910033880697,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2300
+      },
+      "parent_iou": {
+        "ci95": [
+          -0.022979711882693273,
+          -0.020065553315704115
+        ],
+        "mean": -0.02137205089162995,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3900
+      },
+      "recall": {
+        "ci95": [
+          -0.032161451670338834,
+          -0.026788313233142364
+        ],
+        "mean": -0.029338473182662753,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3000
+      }
+    },
+    "8": {
+      "cd_m": {
+        "ci95": [
+          0.018650646111304108,
+          0.03345869231452143
+        ],
+        "mean": 0.025761837543142454,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2000
+      },
+      "ceiling": {
+        "ci95": [
+          -0.02038336004661747,
+          -0.014779140548048316
+        ],
+        "mean": -0.017582033787490285,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3000
+      },
+      "fixed120000_iou": {
+        "ci95": [
+          -0.017624473448096475,
+          -0.01195600644329939
+        ],
+        "mean": -0.014989729809059786,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 1200
+      },
+      "fixed84963_iou": {
+        "ci95": [
+          -0.015494889173135974,
+          -0.008225005924631029
+        ],
+        "mean": -0.011905080270459967,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2300
+      },
+      "parent_iou": {
+        "ci95": [
+          -0.018772647042280894,
+          -0.014683691783142216
+        ],
+        "mean": -0.016821406463457398,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2300
+      },
+      "recall": {
+        "ci95": [
+          -0.01874570116165167,
+          -0.013140262741163065
+        ],
+        "mean": -0.01586218604239542,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3000
+      }
+    }
+  },
+  "S1-MeanFlow-Scratch20K": {
+    "1": {
+      "cd_m": {
+        "ci95": [
+          -0.002333376450475071,
+          0.007893002671981246
+        ],
+        "mean": 0.0023403469380194777,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3700
+      },
+      "ceiling": {
+        "ci95": [
+          -0.003972744859056142,
+          0.007273430256196201
+        ],
+        "mean": 0.001367745122757203,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2300
+      },
+      "fixed120000_iou": {
+        "ci95": [
+          0.0030972239775646743,
+          0.005483565305883802
+        ],
+        "mean": 0.004191440608139418,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2300
+      },
+      "fixed84963_iou": {
+        "ci95": [
+          0.0030706946107477325,
+          0.006131626618838133
+        ],
+        "mean": 0.004588659836649641,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2900
+      },
+      "parent_iou": {
+        "ci95": [
+          0.0011488263685590049,
+          0.007519355335941052
+        ],
+        "mean": 0.004107617216937292,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 1400
+      },
+      "recall": {
+        "ci95": [
+          -0.00522673591217282,
+          0.006700522958140053
+        ],
+        "mean": 0.0004841322423469666,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2300
+      }
+    },
+    "2": {
+      "cd_m": {
+        "ci95": [
+          -0.04387534386332385,
+          -0.023877959481067357
+        ],
+        "mean": -0.033893560236104,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 400
+      },
+      "ceiling": {
+        "ci95": [
+          0.02395215414321255,
+          0.03410468171520078
+        ],
+        "mean": 0.028855386588480286,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3600
+      },
+      "fixed120000_iou": {
+        "ci95": [
+          0.027496929765452854,
+          0.03482474704996531
+        ],
+        "mean": 0.03140893070927951,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 1600
+      },
+      "fixed84963_iou": {
+        "ci95": [
+          0.02095809744585023,
+          0.03315888448837447
+        ],
+        "mean": 0.027254676828320643,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 1600
+      },
+      "parent_iou": {
+        "ci95": [
+          0.030758151693832288,
+          0.03494709279703859
+        ],
+        "mean": 0.0329400661671938,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3600
+      },
+      "recall": {
+        "ci95": [
+          0.022021742963297144,
+          0.032211998767498695
+        ],
+        "mean": 0.02692127157841478,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3600
+      }
+    },
+    "4": {
+      "cd_m": {
+        "ci95": [
+          -0.011610520934454987,
+          -0.007840890760926079
+        ],
+        "mean": -0.00963873989126671,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3800
+      },
+      "ceiling": {
+        "ci95": [
+          0.013588500403419168,
+          0.02376659819838465
+        ],
+        "mean": 0.01839863057522274,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 3600
+      },
+      "fixed120000_iou": {
+        "ci95": [
+          0.005701378484794943,
+          0.008391760867696586
+        ],
+        "mean": 0.007097664024189688,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 500
+      },
+      "fixed84963_iou": {
+        "ci95": [
+          0.0024804654188022536,
+          0.006875039876022971
+        ],
+        "mean": 0.0047343066849462444,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2900
+      },
+      "parent_iou": {
+        "ci95": [
+          0.010348507611117734,
+          0.01694984576730015
+        ],
+        "mean": 0.013401716528337283,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 1400
+      },
+      "recall": {
+        "ci95": [
+          0.012691331951049099,
+          0.023119887696423286
+        ],
+        "mean": 0.0176367681001999,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 1400
+      }
+    },
+    "8": {
+      "cd_m": {
+        "ci95": [
+          -0.002669692263061301,
+          0.00786315468256034
+        ],
+        "mean": 0.00279436580359559,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 1400
+      },
+      "ceiling": {
+        "ci95": [
+          0.012199557732594056,
+          0.021058899940559362
+        ],
+        "mean": 0.01626428042621674,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 1400
+      },
+      "fixed120000_iou": {
+        "ci95": [
+          -0.006794864718221032,
+          -0.002892422147356414
+        ],
+        "mean": -0.004757261551927656,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 4000
+      },
+      "fixed84963_iou": {
+        "ci95": [
+          -0.009239826019809704,
+          -0.006198998120257942
+        ],
+        "mean": -0.007596700432271657,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2900
+      },
+      "parent_iou": {
+        "ci95": [
+          0.0014155356435175922,
+          0.009244080450795777
+        ],
+        "mean": 0.0049565994039172225,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 2300
+      },
+      "recall": {
+        "ci95": [
+          0.011809373029090747,
+          0.02117633489754541
+        ],
+        "mean": 0.01617630136518312,
+        "method": "paired contiguous5-frame block bootstrap; one training seed; not cross-seed confidence",
+        "worst_frame": 1400
+      }
+    }
+  }
+}

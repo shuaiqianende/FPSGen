@@ -1,3 +1,5 @@
+> Historical launch snapshot below. Latest A15K interim evaluation: [report](MEANFLOW_V2_A_INTERIM_15K_RESULTS.md). B was reassigned to GPU3 in branch `research/desescene-meanflow-v2-b-gpu3`; this evaluator does not launch training.
+
 # DeSeScene MeanFlow-V2 preregistered protocol
 
 Only two authorized Stage1 arms, independently random initialized. No Stage2 training, new network, extra seed, curriculum or warm-start. Existing worktrees and GPU processes remain unchanged.
