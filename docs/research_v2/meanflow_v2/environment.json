@@ -1,0 +1,17 @@
+{
+  "python": "3.9.19",
+  "torch": "2.0.1+cu117",
+  "cuda_runtime": "11.7",
+  "cudnn_introspection": null,
+  "cudnn_introspection_warning": "cuDNN version incompatibility: PyTorch was compiled  against (8, 5, 0) but found runtime version (8, 4, 0). PyTorch already comes bundled with cuDNN. One option to resolving this error is to ensure PyTorch can find the bundled cuDNN.Looks like your LD_LIBRARY_PATH contains incompatible version of cudnnPlease either remove it from the path or install cudnn (8, 5, 0)",
+  "actual_training_pid": 1351803,
+  "actual_training_cuda_libraries": [
+    "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/cumm_cu117.libs/libcudart-987eca32.so.11.7.99",
+    "/data-12/M2024-HWZ/FPSGen/env/voxdet_density_py39/lib/python3.9/site-packages/torch/lib/libcudart-e409450e.so.11.0",
+    "/usr/local/cuda-11.7/targets/x86_64-linux/lib/libcudnn.so.8.4.0"
+  ],
+  "gpu_query": "index, name, uuid, driver_version, memory.total [MiB]\n0, NVIDIA GeForce RTX 3090, GPU-a23938fd-09b4-ef42-75b5-3f136832f452, 580.159.03, 24576 MiB\n1, NVIDIA GeForce RTX 3090, GPU-344ba01c-8c3e-2abc-d864-a849b1dde74a, 580.159.03, 24576 MiB\n2, NVIDIA GeForce RTX 3090, GPU-72e775cb-0753-39d4-48c7-114859fd25df, 580.159.03, 24576 MiB\n3, NVIDIA GeForce RTX 3090, GPU-e714f6ac-987e-bdc2-3647-78b486aa6960, 580.159.03, 24576 MiB\n",
+  "code_base_commit": "638e201",
+  "data_snapshot_commit": "d6a3a60",
+  "physical_gpu": 2
+}

@@ -1,0 +1,812 @@
+{
+  "amp_skips": 5,
+  "attempts": 10005,
+  "groups": {
+    "diagonal_only": {
+      "amp_skips": 0,
+      "attempts": 5641,
+      "loss": {
+        "max": 2.0033316612243652,
+        "mean": 0.1750844616942838,
+        "median": 0.1197606697678566,
+        "n": 5641,
+        "p95": 0.5085605382919312,
+        "p99": 1.1143210649490363
+      },
+      "loss_gt10": 0
+    },
+    "finite_only": {
+      "amp_skips": 4,
+      "attempts": 651,
+      "loss": {
+        "max": 2179.813720703125,
+        "mean": 47.18155080023953,
+        "median": 11.763178825378418,
+        "n": 651,
+        "p95": 194.2320098876953,
+        "p99": 550.1016845703125
+      },
+      "loss_gt10": 346
+    },
+    "mixed": {
+      "amp_skips": 1,
+      "attempts": 3713,
+      "loss": {
+        "max": 1509.359619140625,
+        "mean": 23.78695478022837,
+        "median": 2.1251888275146484,
+        "n": 3713,
+        "p95": 116.49436035156228,
+        "p99": 342.5340722656258
+      },
+      "loss_gt10": 1083
+    }
+  },
+  "inputs": {
+    "README.md": {
+      "bytes": 11135,
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-all-experiment-data-publish-20261027/docs/research_v2/all_experiment_data_20261027/README.md",
+      "sha256": "358faf49076ce8d704c4e46a2212447e7c6772991b7cd1a95caaf289a7fe89bc"
+    },
+    "dataset_parts.json": {
+      "bytes": 25354,
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-all-experiment-data-publish-20261027/docs/research_v2/all_experiment_data_20261027/dataset_parts.json",
+      "sha256": "f2ae235439772917eef4ca17766e9e499f0cd76253d5bb86f4e1e60ddd1a7acc"
+    },
+    "stage1_scratch20k_full_metrics.csv": {
+      "bytes": 10439,
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-all-experiment-data-publish-20261027/docs/research_v2/all_experiment_data_20261027/stage1_scratch20k_full_metrics.csv",
+      "sha256": "feb1431077c99113fd8036d254f0a7582eab059064a28dff3723087271da834e"
+    },
+    "training_loss_200_500.csv": {
+      "bytes": 757648,
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-all-experiment-data-publish-20261027/docs/research_v2/all_experiment_data_20261027/training_loss_200_500.csv",
+      "sha256": "c3881f84c0b9d4cf6c5816c1fe6b434334b3410dd70c820ac458c4bb4260581c"
+    },
+    "training_run_registry.csv": {
+      "bytes": 38395,
+      "path": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-all-experiment-data-publish-20261027/docs/research_v2/all_experiment_data_20261027/training_run_registry.csv",
+      "sha256": "dae85b7112cee2e9cf043564bb255e3789b1477322f672b90f8a1a6e4b34c94b"
+    }
+  },
+  "last200_attempts": {
+    "max": 1239.57470703125,
+    "mean": 20.21329892968759,
+    "median": 0.13158702105283737,
+    "n": 200,
+    "p95": 106.66687431335441,
+    "p99": 295.0447479248026
+  },
+  "last200_successful": {
+    "max": 1239.57470703125,
+    "mean": 20.21329892968759,
+    "median": 0.13158702105283737,
+    "n": 200,
+    "p95": 106.66687431335441,
+    "p99": 295.0447479248026
+  },
+  "limitation": "Original logs omit t/s/delta, per-scene MSE and JVP norm; long-gap/JVP causality NOT TESTED",
+  "loss": {
+    "max": 2179.813720703125,
+    "mean": 11.996382220725769,
+    "median": 0.17789287865161896,
+    "n": 10005,
+    "p95": 56.32801055908201,
+    "p99": 243.49910522460817
+  },
+  "snapshot_commit": "d6a3a60",
+  "source_log_sha256": "424756722764ca32e326bf6cb7619c0565cb5410dfacdbd9363bb8db32f962bc",
+  "successful_updates": 10000,
+  "top10": [
+    {
+      "amp_scale": 1024.0,
+      "amp_skips": 5,
+      "attempts": 8151,
+      "consecutive_amp_skips": 1,
+      "cursor": 16302,
+      "diagonal_exposures": 0,
+      "encoder_forwards": 1,
+      "exposures": 16292,
+      "finite": false,
+      "finite_interval_exposures": 2,
+      "gradient_modules": {
+        "encoder": 0.0,
+        "flow": null
+      },
+      "gradient_norm": null,
+      "jvp_calls": 1,
+      "loss": 2179.813720703125,
+      "lr": [
+        9.106780468381631e-06,
+        1.8213560936763262e-05
+      ],
+      "master_gradient_dtype": "torch.float32",
+      "network_gradient_dtype": "torch.float16",
+      "optimizer_dtype": "torch.float32",
+      "parameter_dtype": "torch.float16",
+      "peak_allocated_bytes": 9043998208,
+      "peak_reserved_bytes": 10647240704,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "records": [
+        {
+          "frame": 208,
+          "index": 5570,
+          "sequence": "02"
+        },
+        {
+          "frame": 3222,
+          "index": 3082,
+          "sequence": "00"
+        }
+      ],
+      "scene_lengths": [
+        155854,
+        113261
+      ],
+      "seconds": 2.1950339432805777,
+      "teacher_flow_forwards": 0,
+      "updates": 8146
+    },
+    {
+      "amp_scale": 1024.0,
+      "amp_skips": 4,
+      "attempts": 6880,
+      "consecutive_amp_skips": 0,
+      "cursor": 13760,
+      "diagonal_exposures": 1,
+      "encoder_forwards": 1,
+      "exposures": 13752,
+      "finite": true,
+      "finite_interval_exposures": 1,
+      "gradient_modules": {
+        "encoder": 0.03330312296748161,
+        "flow": 0.9994451999664307
+      },
+      "gradient_norm": 345.3024597167969,
+      "jvp_calls": 1,
+      "loss": 1509.359619140625,
+      "lr": [
+        2.4391544747400252e-05,
+        4.8783089494800504e-05
+      ],
+      "master_gradient_dtype": "torch.float32",
+      "network_gradient_dtype": "torch.float16",
+      "optimizer_dtype": "torch.float32",
+      "parameter_dtype": "torch.float16",
+      "peak_allocated_bytes": 9043998208,
+      "peak_reserved_bytes": 10647240704,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "records": [
+        {
+          "frame": 3959,
+          "index": 9181,
+          "sequence": "02"
+        },
+        {
+          "frame": 2270,
+          "index": 7492,
+          "sequence": "02"
+        }
+      ],
+      "scene_lengths": [
+        156771,
+        155292
+      ],
+      "seconds": 2.2075725998729467,
+      "teacher_flow_forwards": 0,
+      "updates": 6876
+    },
+    {
+      "amp_scale": 1024.0,
+      "amp_skips": 5,
+      "attempts": 9874,
+      "consecutive_amp_skips": 0,
+      "cursor": 19748,
+      "diagonal_exposures": 0,
+      "encoder_forwards": 1,
+      "exposures": 19738,
+      "finite": true,
+      "finite_interval_exposures": 2,
+      "gradient_modules": {
+        "encoder": 0.06125063821673393,
+        "flow": 0.9981223940849304
+      },
+      "gradient_norm": 174.79551696777344,
+      "jvp_calls": 1,
+      "loss": 1239.57470703125,
+      "lr": [
+        4.6910192341864664e-08,
+        9.382038468372933e-08
+      ],
+      "master_gradient_dtype": "torch.float32",
+      "network_gradient_dtype": "torch.float16",
+      "optimizer_dtype": "torch.float32",
+      "parameter_dtype": "torch.float16",
+      "peak_allocated_bytes": 9043998208,
+      "peak_reserved_bytes": 10647240704,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "records": [
+        {
+          "frame": 1019,
+          "index": 5280,
+          "sequence": "01"
+        },
+        {
+          "frame": 3945,
+          "index": 3805,
+          "sequence": "00"
+        }
+      ],
+      "scene_lengths": [
+        255491,
+        118137
+      ],
+      "seconds": 2.1797097083181143,
+      "teacher_flow_forwards": 0,
+      "updates": 9869
+    },
+    {
+      "amp_scale": 1024.0,
+      "amp_skips": 5,
+      "attempts": 8577,
+      "consecutive_amp_skips": 0,
+      "cursor": 17154,
+      "diagonal_exposures": 1,
+      "encoder_forwards": 1,
+      "exposures": 17144,
+      "finite": true,
+      "finite_interval_exposures": 1,
+      "gradient_modules": {
+        "encoder": 0.04118797183036804,
+        "flow": 0.9991514086723328
+      },
+      "gradient_norm": 316.2976989746094,
+      "jvp_calls": 1,
+      "loss": 1173.7054443359375,
+      "lr": [
+        5.472215498356004e-06,
+        1.0944430996712007e-05
+      ],
+      "master_gradient_dtype": "torch.float32",
+      "network_gradient_dtype": "torch.float16",
+      "optimizer_dtype": "torch.float32",
+      "parameter_dtype": "torch.float16",
+      "peak_allocated_bytes": 9043998208,
+      "peak_reserved_bytes": 10647240704,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "records": [
+        {
+          "frame": 412,
+          "index": 5774,
+          "sequence": "02"
+        },
+        {
+          "frame": 89,
+          "index": 10904,
+          "sequence": "05"
+        }
+      ],
+      "scene_lengths": [
+        197778,
+        179940
+      ],
+      "seconds": 2.209058955311775,
+      "teacher_flow_forwards": 0,
+      "updates": 8572
+    },
+    {
+      "amp_scale": 1024.0,
+      "amp_skips": 4,
+      "attempts": 6920,
+      "consecutive_amp_skips": 0,
+      "cursor": 13840,
+      "diagonal_exposures": 1,
+      "encoder_forwards": 1,
+      "exposures": 13832,
+      "finite": true,
+      "finite_interval_exposures": 1,
+      "gradient_modules": {
+        "encoder": 0.04135633260011673,
+        "flow": 0.9991444945335388
+      },
+      "gradient_norm": 294.72705078125,
+      "jvp_calls": 1,
+      "loss": 1138.94873046875,
+      "lr": [
+        2.3825745757039452e-05,
+        4.7651491514078903e-05
+      ],
+      "master_gradient_dtype": "torch.float32",
+      "network_gradient_dtype": "torch.float16",
+      "optimizer_dtype": "torch.float32",
+      "parameter_dtype": "torch.float16",
+      "peak_allocated_bytes": 9043998208,
+      "peak_reserved_bytes": 10647240704,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "records": [
+        {
+          "frame": 4355,
+          "index": 4215,
+          "sequence": "00"
+        },
+        {
+          "frame": 443,
+          "index": 13879,
+          "sequence": "06"
+        }
+      ],
+      "scene_lengths": [
+        141302,
+        208213
+      ],
+      "seconds": 2.2261446453630924,
+      "teacher_flow_forwards": 0,
+      "updates": 6916
+    },
+    {
+      "amp_scale": 1024.0,
+      "amp_skips": 4,
+      "attempts": 6614,
+      "consecutive_amp_skips": 0,
+      "cursor": 13228,
+      "diagonal_exposures": 1,
+      "encoder_forwards": 1,
+      "exposures": 13220,
+      "finite": true,
+      "finite_interval_exposures": 1,
+      "gradient_modules": {
+        "encoder": 0.04137277230620384,
+        "flow": 0.9991437792778015
+      },
+      "gradient_norm": 219.8352508544922,
+      "jvp_calls": 1,
+      "loss": 899.2930908203125,
+      "lr": [
+        2.8263259167333777e-05,
+        5.652651833466755e-05
+      ],
+      "master_gradient_dtype": "torch.float32",
+      "network_gradient_dtype": "torch.float16",
+      "optimizer_dtype": "torch.float32",
+      "parameter_dtype": "torch.float16",
+      "peak_allocated_bytes": 9043998208,
+      "peak_reserved_bytes": 10647240704,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "records": [
+        {
+          "frame": 77,
+          "index": 77,
+          "sequence": "00"
+        },
+        {
+          "frame": 1569,
+          "index": 12244,
+          "sequence": "05"
+        }
+      ],
+      "scene_lengths": [
+        132367,
+        235951
+      ],
+      "seconds": 2.206663690507412,
+      "teacher_flow_forwards": 0,
+      "updates": 6610
+    },
+    {
+      "amp_scale": 1024.0,
+      "amp_skips": 5,
+      "attempts": 8701,
+      "consecutive_amp_skips": 0,
+      "cursor": 17402,
+      "diagonal_exposures": 1,
+      "encoder_forwards": 1,
+      "exposures": 17392,
+      "finite": true,
+      "finite_interval_exposures": 1,
+      "gradient_modules": {
+        "encoder": 0.0392765998840332,
+        "flow": 0.999228298664093
+      },
+      "gradient_norm": 165.16860961914062,
+      "jvp_calls": 1,
+      "loss": 888.7293701171875,
+      "lr": [
+        4.577278451608336e-06,
+        9.154556903216671e-06
+      ],
+      "master_gradient_dtype": "torch.float32",
+      "network_gradient_dtype": "torch.float16",
+      "optimizer_dtype": "torch.float32",
+      "parameter_dtype": "torch.float16",
+      "peak_allocated_bytes": 9043998208,
+      "peak_reserved_bytes": 10647240704,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "records": [
+        {
+          "frame": 1150,
+          "index": 6372,
+          "sequence": "02"
+        },
+        {
+          "frame": 3380,
+          "index": 8602,
+          "sequence": "02"
+        }
+      ],
+      "scene_lengths": [
+        132616,
+        253054
+      ],
+      "seconds": 2.208527836948633,
+      "teacher_flow_forwards": 0,
+      "updates": 8696
+    },
+    {
+      "amp_scale": 1024.0,
+      "amp_skips": 5,
+      "attempts": 9499,
+      "consecutive_amp_skips": 0,
+      "cursor": 18998,
+      "diagonal_exposures": 1,
+      "encoder_forwards": 1,
+      "exposures": 18988,
+      "finite": true,
+      "finite_interval_exposures": 1,
+      "gradient_modules": {
+        "encoder": 0.06000293791294098,
+        "flow": 0.9981981515884399
+      },
+      "gradient_norm": 228.51202392578125,
+      "jvp_calls": 1,
+      "loss": 791.8289794921875,
+      "lr": [
+        6.983610306397381e-07,
+        1.3967220612794762e-06
+      ],
+      "master_gradient_dtype": "torch.float32",
+      "network_gradient_dtype": "torch.float16",
+      "optimizer_dtype": "torch.float32",
+      "parameter_dtype": "torch.float16",
+      "peak_allocated_bytes": 9043998208,
+      "peak_reserved_bytes": 10647240704,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "records": [
+        {
+          "frame": 1397,
+          "index": 1257,
+          "sequence": "00"
+        },
+        {
+          "frame": 1098,
+          "index": 14394,
+          "sequence": "06"
+        }
+      ],
+      "scene_lengths": [
+        187476,
+        159523
+      ],
+      "seconds": 2.179048804566264,
+      "teacher_flow_forwards": 0,
+      "updates": 9494
+    },
+    {
+      "amp_scale": 2048.0,
+      "amp_skips": 1,
+      "attempts": 2480,
+      "consecutive_amp_skips": 0,
+      "cursor": 4960,
+      "diagonal_exposures": 1,
+      "encoder_forwards": 1,
+      "exposures": 4958,
+      "finite": true,
+      "finite_interval_exposures": 1,
+      "gradient_modules": {
+        "encoder": 0.02288404479622841,
+        "flow": 0.9997381567955017
+      },
+      "gradient_norm": 137.1945037841797,
+      "jvp_calls": 1,
+      "loss": 774.22119140625,
+      "lr": [
+        8.966934456872602e-05,
+        0.00017933868913745204
+      ],
+      "master_gradient_dtype": "torch.float32",
+      "network_gradient_dtype": "torch.float16",
+      "optimizer_dtype": "torch.float32",
+      "parameter_dtype": "torch.float16",
+      "peak_allocated_bytes": 9043998208,
+      "peak_reserved_bytes": 10647240704,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "records": [
+        {
+          "frame": 318,
+          "index": 14715,
+          "sequence": "07"
+        },
+        {
+          "frame": 356,
+          "index": 5718,
+          "sequence": "02"
+        }
+      ],
+      "scene_lengths": [
+        139132,
+        145221
+      ],
+      "seconds": 2.196220027282834,
+      "teacher_flow_forwards": 0,
+      "updates": 2479
+    },
+    {
+      "amp_scale": 1024.0,
+      "amp_skips": 4,
+      "attempts": 6563,
+      "consecutive_amp_skips": 0,
+      "cursor": 13126,
+      "diagonal_exposures": 0,
+      "encoder_forwards": 1,
+      "exposures": 13118,
+      "finite": true,
+      "finite_interval_exposures": 2,
+      "gradient_modules": {
+        "encoder": 0.03174632415175438,
+        "flow": 0.9994961023330688
+      },
+      "gradient_norm": 323.28399658203125,
+      "jvp_calls": 1,
+      "loss": 770.8663940429688,
+      "lr": [
+        2.9025728133335873e-05,
+        5.8051456266671746e-05
+      ],
+      "master_gradient_dtype": "torch.float32",
+      "network_gradient_dtype": "torch.float16",
+      "optimizer_dtype": "torch.float32",
+      "parameter_dtype": "torch.float16",
+      "peak_allocated_bytes": 9043998208,
+      "peak_reserved_bytes": 10647240704,
+      "pyramid_shapes": [
+        [
+          2,
+          128,
+          16,
+          192,
+          192
+        ],
+        [
+          2,
+          128,
+          8,
+          96,
+          96
+        ],
+        [
+          2,
+          128,
+          4,
+          48,
+          48
+        ]
+      ],
+      "records": [
+        {
+          "frame": 3495,
+          "index": 8717,
+          "sequence": "02"
+        },
+        {
+          "frame": 344,
+          "index": 11159,
+          "sequence": "05"
+        }
+      ],
+      "scene_lengths": [
+        125487,
+        107897
+      ],
+      "seconds": 2.167484901845455,
+      "teacher_flow_forwards": 0,
+      "updates": 6559
+    }
+  ]
+}

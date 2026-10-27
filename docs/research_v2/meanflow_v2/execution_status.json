@@ -1,0 +1,18 @@
+{
+  "snapshot_time": "2026-10-27T15:14:16",
+  "MFV2_A": "RUNNING_FORMAL",
+  "MFV2_B": "QUEUED_AFTER_A_TRAIN_EVALUATE_ANALYZE_BENCHMARK",
+  "quality": "NOT TESTED",
+  "source_sha256": "37ddfcc699e22e6ba9b60237968c65304ccaf9eb64fc4e5dc94b6eebde164378",
+  "sequence_pid": 1345131,
+  "formal_latest": {
+    "updates": 106,
+    "exposures": 212,
+    "attempts": 106,
+    "amp_skips": 0,
+    "raw_unweighted_mse": 1.1585087776184082,
+    "weighted_loss": 0.9914416074752808,
+    "gradient_norm": 2.050696611404419,
+    "seconds": 2.2426232676953077
+  }
+}

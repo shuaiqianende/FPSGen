@@ -1,0 +1,48 @@
+{
+  "epoch": 1793085017.1811135,
+  "gpu": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24105.0,
+        "physical_gpu": 2,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 22.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "identity": {
+    "arm": "MFV2-A",
+    "batch": 2,
+    "config_sha256": "efb36bf24865170f91c07fe15d5c7d8be0eefdc3b2260fb476b6c2dd271d4a07",
+    "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+    "experiment": "desescene-meanflow-v2",
+    "frozen_encoder_sha256": null,
+    "geometry_sha256": "c07b659712f6260ed07c77941568748389826ff3523c3603484969cacb35dd9b",
+    "initialization_mode": "scratch",
+    "meanflow_v2": {
+      "adaptive_epsilon": 0.01,
+      "adaptive_power": 1.0,
+      "diagonal_probability": 0.75,
+      "native_jvp": true,
+      "reduction": "mean_valid_per_scene",
+      "tangent": "conditional",
+      "time_direction": "noise0_data1"
+    },
+    "network_precision": "explicit_fp16_fp32_master",
+    "output": "/data-12/M2024-HWZ/FPSGen/worktrees/desescene-meanflow-v2/experiments/desescene_meanflow_v2/MFV2-A/formal",
+    "physical_gpu": 2,
+    "scope": "total20k_from_random",
+    "seed": 20261032,
+    "source_sha256": "37ddfcc699e22e6ba9b60237968c65304ccaf9eb64fc4e5dc94b6eebde164378",
+    "train_manifest_sha256": "8dc632d341ffc2c6f0c139322cd24767616d570cf84c91fb4e516a26d7bab064"
+  },
+  "pid": 1351803,
+  "resume": null
+}
