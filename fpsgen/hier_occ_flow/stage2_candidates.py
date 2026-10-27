@@ -52,7 +52,11 @@ def select_occupancy_candidates(score_zyx,geometry,*,strategy='threshold',thresh
         'budget_dropped':uncapped-len(ids),'budget_policy':overflow,'expansion':expansion}
 
 
-def oracle_parent_candidates(label_ids,geometry,*,seed,negative_fraction=.25,neutral_score=1.):
+def oracle_parent_candidates(label_ids,geometry,*,seed,negative_fraction=0.,neutral_score=1.):
+    # User explicitly retired nearby-empty Parent augmentation. Historical
+    # reproductions belong to the immutable historical worktree, not this path.
+    if negative_fraction!=0:
+        raise ValueError('Nearby-empty Parent augmentation is retired; negative_fraction must be0')
     ids=np.asarray(label_ids,dtype=np.int64)
     if not 0<=negative_fraction<=1:raise ValueError('Invalid negative fraction')
     if negative_fraction==0:
@@ -64,12 +68,3 @@ def oracle_parent_candidates(label_ids,geometry,*,seed,negative_fraction=.25,neu
             'negative_fraction_relative_to_gt':0.,'negative_sampling_weight':1.,
             'positive_parent_count':len(ids),
             'score_policy':'constant_neutral_for_positive_and_negative','neutral_score':neutral_score}
-    nearby=expand_parent_ids(ids,geometry,1)
-    empty=np.setdiff1d(nearby,ids,assume_unique=True)
-    n=min(len(empty),int(len(ids)*negative_fraction))
-    negatives=np.random.default_rng(seed).choice(empty,n,replace=False)
-    candidates=np.union1d(ids,negatives)
-    return candidates,np.full(len(candidates),neutral_score,np.float32),{
-        'mode':'oracle_not_deployable','nearby_empty_pool':len(empty),'nearby_negatives':n,
-        'negative_fraction_relative_to_gt':negative_fraction,'negative_sampling_weight':1.,
-        'score_policy':'constant_neutral_for_positive_and_negative','neutral_score':neutral_score}

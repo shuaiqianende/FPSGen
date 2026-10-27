@@ -66,7 +66,7 @@ def encoder_free_conditions(parent_ids,xyz,geometry,*,device='cpu',keep_observed
 
 
 def assemble_oracle_encoder_free_scene(record,xyz,geometry,*,seed,device='cpu',
-                                        keep_observed=True,negative_fraction=.25):
+                                        keep_observed=True,negative_fraction=0.):
     ids,_,provenance=oracle_parent_candidates(record['parent_ids'],geometry,seed=seed,
         negative_fraction=negative_fraction,neutral_score=1.)
     parents,condition=encoder_free_conditions(ids,xyz,geometry,device=device,keep_observed=keep_observed)

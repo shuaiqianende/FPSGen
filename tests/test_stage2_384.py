@@ -50,15 +50,16 @@ def test_sphere_intersecting_mask_matches_child_union(g):
     assert np.array_equal(parent_valid_field(g).ravel()[ids],g.valid_children(ids).any(1))
 
 
-def test_oracle_nearby_negatives_neutral_scores_and_repeatability(g):
+def test_oracle_gt_only_neutral_scores_and_repeatability(g):
     ids=center_ids(g,100)
     a,s,source=oracle_parent_candidates(ids,g,seed=10)
     b,t,_=oracle_parent_candidates(ids,g,seed=10)
-    assert len(a)==125 and source['nearby_negatives']==25
+    assert len(a)==100 and source['nearby_negatives']==0
     assert np.isin(ids,a).all() and np.array_equal(a,b) and np.all(s==1) and np.array_equal(s,t)
-    neg=np.setdiff1d(a,ids);coord=g.unflatten(neg);gt=g.unflatten(ids)
-    assert (np.abs(coord[:,None]-gt[None]).max(2).min(1)<=1).all()
-    assert np.all(lookup_masks(ids,np.ones(len(ids),dtype=np.uint8),neg)==0)
+    assert np.array_equal(a,np.sort(ids))
+    assert not source['nearby_pool_evaluated']
+    with pytest.raises(ValueError,match='augmentation is retired'):
+        oracle_parent_candidates(ids,g,seed=10,negative_fraction=.25)
 
 
 def test_predicted_ids_scores_zyx_threshold_topk_and_budget(g):

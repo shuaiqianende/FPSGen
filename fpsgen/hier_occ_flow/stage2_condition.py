@@ -79,7 +79,7 @@ def input_conditions(xyz,geometry,adapter,policy,*,seed,oracle_ids=None,
         if oracle_ids is None:raise ValueError('Oracle mode needs labeled support')
         if score_mode not in ('neutral','stage1'):raise ValueError('Unknown oracle score policy')
         ids,scores,provenance=oracle_parent_candidates(oracle_ids,geometry,seed=seed,
-            negative_fraction=policy.get('negative_fraction',.25),neutral_score=policy.get('neutral_score',1.))
+            negative_fraction=policy.get('negative_fraction',0.),neutral_score=policy.get('neutral_score',1.))
         if need_scores:
             scores=score.reshape(-1)[torch.as_tensor(ids,device=score.device)].detach()
             provenance['score_policy']='actual_Stage1_score_for_every_positive_and_negative'

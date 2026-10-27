@@ -1,0 +1,38 @@
+{
+  "fpsgen/hier_occ_flow/stage1_network.py": {
+    "sha256": "a18cf35aaaef4b525a7bbbdb3512a20d78362262b4212952ff54671d8684b8d7",
+    "matches_original_training_file": true
+  },
+  "fpsgen/hier_occ_flow/stage1_occupancy.py": {
+    "sha256": "091ea0470aca7dc3a4c06ad83a531088fd2ad56a0937d5995338034389123198",
+    "matches_original_training_file": true
+  },
+  "fpsgen/hier_occ_flow/stage2_model.py": {
+    "sha256": "29783e40194d91391b71d94a493fa8c53f58ae63e9f4a8500519fedd171eb89d",
+    "matches_original_training_file": true
+  },
+  "fpsgen/hier_occ_flow/explicit_fp16_training_policy.py": {
+    "sha256": "93b0455db772485c8effc47cdcb94dce19a4b64aa1fd8ad6484bd485c84e2fa8",
+    "matches_original_training_file": true
+  },
+  "fpsgen/hier_occ_flow/meanflow_sampling.py": {
+    "sha256": "50a768bc5ddb26e75e7d22c0409ea9ff0388bbc3ec8a95bea89e15cd4b787e04",
+    "matches_original_training_file": true
+  },
+  "fpsgen/hier_occ_flow/geometry.py": {
+    "sha256": "82ecf9a7b28d1f12a7ffe56b4867216671ae967ede738059defda861bac4908a",
+    "matches_original_training_file": true
+  },
+  "fpsgen/hier_occ_flow/condition.py": {
+    "sha256": "0397f47324f0fbed62eef33ba6bc22be099e1d9aed0891660859dc9180867261",
+    "matches_original_training_file": true
+  },
+  "fpsgen/hier_occ_flow/voxelization.py": {
+    "sha256": "456461c6aef245709195ad7e56b7adc5e18117b0620196c21f85d5f67c15d5d4",
+    "matches_original_training_file": true
+  },
+  "fpsgen/hier_occ_flow/evaluation.py": {
+    "sha256": "8ee58af8cf00d6e2f2610e06167f93f818d334a3357ee1625805467bc081fcec",
+    "matches_original_training_file": true
+  }
+}

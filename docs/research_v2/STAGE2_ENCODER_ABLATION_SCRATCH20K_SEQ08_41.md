@@ -1,3 +1,5 @@
+> Protocol correction: these historical weights were trained with prohibited25% nearby-empty Parents and do not satisfy the user-requested no-extra-Parent training. See [correction](STAGE2_NO_EXTRA_PARENT_CORRECTION.md). Historical numbers below are preserved, not reclassified as compliant.
+
 # Stage2 Encoder注入消融：Scratch20K /seq08 skip10041帧
 
 两组Stage2均从零训练20K成功曝光、Batch2、10000成功更新、Seed20261032、同Manifest/原Surface-hit GT/原Gaussian FM/原动态PTv3/原子体素顺序。共享初始张量及Fusion公共列有exact匹配审计；含Encoder组仅新增LiDAR分支/列随机初始化。

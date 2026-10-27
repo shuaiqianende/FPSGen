@@ -1,0 +1,26 @@
+experiment: desescene-joint-fm-no-extra-parents-v1
+scope: evaluation_only_legacy_weights
+physical_gpu: 2
+inference:
+  candidate_mode: predicted
+  stage1_nfe: 2
+  threshold: 0.5
+  expansion: 0
+  extra_parent_fraction: 0.0
+  gt_support: false
+  observed_parent_union: false
+  stage2_nfes:
+  - 1
+  - 2
+  - 4
+  - 8
+  primary_stage2_nfe: 4
+  source_seed: 20261031
+legacy_stage2_training:
+  extra_parent_fraction: 0.25
+  status: USER_PROTOCOL_VIOLATION; historical evaluation-only weights, not compliant
+    retraining
+future_training:
+  extra_parent_fraction: 0.0
+  neighbor_expansion: 0
+  automatic_training: false
