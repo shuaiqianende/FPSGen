@@ -1,0 +1,596 @@
+{
+  "actual_12d": [
+    "log_count",
+    "mean_local_xyz(3)",
+    "variance_local_xyz(3)",
+    "local_z_min",
+    "local_z_max",
+    "mean_normalized_range",
+    "variance_normalized_range",
+    "observed_mask"
+  ],
+  "development_manifest_sha256": "6447076563b6c0efffbd3a07c5f695ebedf8aef1fa270a5cda9d99df73b30d53",
+  "frames": 64,
+  "original": "6D pointwise local xyz, absolute XY, normalized distance -> trainable point MLP and voxel max aggregation",
+  "rows": [
+    {
+      "duplicate_points": 12642,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 500,
+      "input_points": 18000,
+      "occupied_cells": 5358,
+      "sequence": "00",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 13049,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 514,
+      "input_points": 18000,
+      "occupied_cells": 4951,
+      "sequence": "00",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12371,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 528,
+      "input_points": 18000,
+      "occupied_cells": 5629,
+      "sequence": "00",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12705,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 542,
+      "input_points": 18000,
+      "occupied_cells": 5295,
+      "sequence": "00",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11721,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 557,
+      "input_points": 18000,
+      "occupied_cells": 6279,
+      "sequence": "00",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 10863,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 571,
+      "input_points": 18000,
+      "occupied_cells": 7137,
+      "sequence": "00",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 10911,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 585,
+      "input_points": 18000,
+      "occupied_cells": 7089,
+      "sequence": "00",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11959,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 599,
+      "input_points": 18000,
+      "occupied_cells": 6041,
+      "sequence": "00",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12492,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 514,
+      "input_points": 18000,
+      "occupied_cells": 5508,
+      "sequence": "01",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11496,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 528,
+      "input_points": 18000,
+      "occupied_cells": 6504,
+      "sequence": "01",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11590,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 542,
+      "input_points": 18000,
+      "occupied_cells": 6410,
+      "sequence": "01",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11120,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 556,
+      "input_points": 18000,
+      "occupied_cells": 6880,
+      "sequence": "01",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12513,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 571,
+      "input_points": 18000,
+      "occupied_cells": 5487,
+      "sequence": "01",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11691,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 585,
+      "input_points": 18000,
+      "occupied_cells": 6309,
+      "sequence": "01",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 10565,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 599,
+      "input_points": 18000,
+      "occupied_cells": 7435,
+      "sequence": "01",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 9766,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 514,
+      "input_points": 18000,
+      "occupied_cells": 8234,
+      "sequence": "02",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12445,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 528,
+      "input_points": 18000,
+      "occupied_cells": 5555,
+      "sequence": "02",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 13006,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 542,
+      "input_points": 18000,
+      "occupied_cells": 4994,
+      "sequence": "02",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 13554,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 556,
+      "input_points": 18000,
+      "occupied_cells": 4446,
+      "sequence": "02",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11659,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 571,
+      "input_points": 18000,
+      "occupied_cells": 6341,
+      "sequence": "02",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12064,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 585,
+      "input_points": 18000,
+      "occupied_cells": 5936,
+      "sequence": "02",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 13000,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 599,
+      "input_points": 18000,
+      "occupied_cells": 5000,
+      "sequence": "02",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 10217,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 513,
+      "input_points": 18000,
+      "occupied_cells": 7783,
+      "sequence": "03",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 9772,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 528,
+      "input_points": 18000,
+      "occupied_cells": 8228,
+      "sequence": "03",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 9136,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 542,
+      "input_points": 18000,
+      "occupied_cells": 8864,
+      "sequence": "03",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 8730,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 556,
+      "input_points": 18000,
+      "occupied_cells": 9270,
+      "sequence": "03",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 8776,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 571,
+      "input_points": 18000,
+      "occupied_cells": 9224,
+      "sequence": "03",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 9927,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 585,
+      "input_points": 18000,
+      "occupied_cells": 8073,
+      "sequence": "03",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 9619,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 599,
+      "input_points": 18000,
+      "occupied_cells": 8381,
+      "sequence": "03",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 10823,
+      "fp32_vs_original_f64_index_mismatches": 2,
+      "frame": 513,
+      "input_points": 18000,
+      "occupied_cells": 7177,
+      "sequence": "05",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11094,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 528,
+      "input_points": 18000,
+      "occupied_cells": 6906,
+      "sequence": "05",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11592,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 542,
+      "input_points": 18000,
+      "occupied_cells": 6408,
+      "sequence": "05",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12072,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 556,
+      "input_points": 18000,
+      "occupied_cells": 5928,
+      "sequence": "05",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12065,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 570,
+      "input_points": 18000,
+      "occupied_cells": 5935,
+      "sequence": "05",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 13495,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 585,
+      "input_points": 18000,
+      "occupied_cells": 4505,
+      "sequence": "05",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12015,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 599,
+      "input_points": 18000,
+      "occupied_cells": 5985,
+      "sequence": "05",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 10189,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 513,
+      "input_points": 18000,
+      "occupied_cells": 7811,
+      "sequence": "06",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11521,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 527,
+      "input_points": 18000,
+      "occupied_cells": 6479,
+      "sequence": "06",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 9748,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 542,
+      "input_points": 18000,
+      "occupied_cells": 8252,
+      "sequence": "06",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 8768,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 556,
+      "input_points": 18000,
+      "occupied_cells": 9232,
+      "sequence": "06",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 8994,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 570,
+      "input_points": 18000,
+      "occupied_cells": 9006,
+      "sequence": "06",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 9210,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 585,
+      "input_points": 18000,
+      "occupied_cells": 8790,
+      "sequence": "06",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 9010,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 599,
+      "input_points": 18000,
+      "occupied_cells": 8990,
+      "sequence": "06",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 13382,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 513,
+      "input_points": 18000,
+      "occupied_cells": 4618,
+      "sequence": "07",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12779,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 527,
+      "input_points": 18000,
+      "occupied_cells": 5221,
+      "sequence": "07",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11883,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 542,
+      "input_points": 18000,
+      "occupied_cells": 6117,
+      "sequence": "07",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 10974,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 556,
+      "input_points": 18000,
+      "occupied_cells": 7026,
+      "sequence": "07",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 10921,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 570,
+      "input_points": 18000,
+      "occupied_cells": 7079,
+      "sequence": "07",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 13555,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 584,
+      "input_points": 18000,
+      "occupied_cells": 4445,
+      "sequence": "07",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 14617,
+      "fp32_vs_original_f64_index_mismatches": 3,
+      "frame": 599,
+      "input_points": 18000,
+      "occupied_cells": 3383,
+      "sequence": "07",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12121,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 513,
+      "input_points": 18000,
+      "occupied_cells": 5879,
+      "sequence": "09",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11436,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 527,
+      "input_points": 18000,
+      "occupied_cells": 6564,
+      "sequence": "09",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11913,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 542,
+      "input_points": 18000,
+      "occupied_cells": 6087,
+      "sequence": "09",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11981,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 556,
+      "input_points": 18000,
+      "occupied_cells": 6019,
+      "sequence": "09",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11746,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 570,
+      "input_points": 18000,
+      "occupied_cells": 6254,
+      "sequence": "09",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 12303,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 584,
+      "input_points": 18000,
+      "occupied_cells": 5697,
+      "sequence": "09",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 11858,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 599,
+      "input_points": 18000,
+      "occupied_cells": 6142,
+      "sequence": "09",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 13874,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 513,
+      "input_points": 18000,
+      "occupied_cells": 4126,
+      "sequence": "10",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 14709,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 527,
+      "input_points": 18000,
+      "occupied_cells": 3291,
+      "sequence": "10",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 13988,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 541,
+      "input_points": 18000,
+      "occupied_cells": 4012,
+      "sequence": "10",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 14982,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 556,
+      "input_points": 18000,
+      "occupied_cells": 3018,
+      "sequence": "10",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 14405,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 570,
+      "input_points": 18000,
+      "occupied_cells": 3595,
+      "sequence": "10",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 14641,
+      "fp32_vs_original_f64_index_mismatches": 1,
+      "frame": 584,
+      "input_points": 18000,
+      "occupied_cells": 3359,
+      "sequence": "10",
+      "valid_points": 18000
+    },
+    {
+      "duplicate_points": 14671,
+      "fp32_vs_original_f64_index_mismatches": 0,
+      "frame": 599,
+      "input_points": 18000,
+      "occupied_cells": 3329,
+      "sequence": "10",
+      "valid_points": 18000
+    }
+  ],
+  "scope": "Voxel ID/observed count diagnostic, not full D0 or evidence of architecture causality",
+  "status": "COMPLETE_DIAGNOSTIC",
+  "total_index_mismatches": 27
+}

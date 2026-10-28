@@ -1,0 +1,96 @@
+{
+  "batch": 2,
+  "checkpoint_roundtrip": true,
+  "config_sha256": "fc1baf24addddfbff04388adcfbf46b44919d2a526f20fc712985f2282f23321",
+  "encoder_event_ms": 2150.868896484375,
+  "gpu": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24110.0,
+        "physical_gpu": 2,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 22.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "gradient_norms": {
+    "encoder": 0.18541443347930908,
+    "flow": 8.07040023803711
+  },
+  "gt_used_as_input": false,
+  "loss": 1.9974559545516968,
+  "peak_allocated_bytes": 5034406400,
+  "peak_reserved_bytes": 5773459456,
+  "points": [
+    18000,
+    18000
+  ],
+  "pyramid_dtypes": [
+    "torch.float16",
+    "torch.float16",
+    "torch.float16"
+  ],
+  "pyramid_shapes": [
+    [
+      2,
+      128,
+      16,
+      192,
+      192
+    ],
+    [
+      2,
+      128,
+      8,
+      96,
+      96
+    ],
+    [
+      2,
+      128,
+      4,
+      48,
+      48
+    ]
+  ],
+  "records": [
+    {
+      "frame": 925,
+      "gt_parents": 319738,
+      "sequence": "02"
+    },
+    {
+      "frame": 4192,
+      "gt_parents": 319737,
+      "sequence": "02"
+    }
+  ],
+  "selected": [
+    [
+      319738,
+      "train",
+      6147
+    ],
+    [
+      319737,
+      "train",
+      9414
+    ]
+  ],
+  "source_sha256": {
+    "gctv_encoder.py": "006b5aa946a0b7fe5ca27be5d6e3f02f12ee58286e6fb6c908b3e7f5a8a78fbd",
+    "stage1_occupancy.py": "3f6b72aedb862fe232a59953c1ea37d77f45d887225bf0ca6d61b1fc4c76c4eb",
+    "stage1_training.py": "90bd17638e922fd10a031a64c7461d8d278421cd929b7c340f7bab2a5e4a31f8",
+    "triplane_encoder.py": "c7d2fe9ae81c595113221f37517a7711fbc930107c3dcc0fe0d3ace8e4607f46"
+  },
+  "status": "GPU_PASS",
+  "step_wall_seconds": 3.313171424000757,
+  "variant": "gctv_g2"
+}

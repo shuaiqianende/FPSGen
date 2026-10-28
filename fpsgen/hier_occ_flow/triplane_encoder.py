@@ -4,7 +4,7 @@ from torch import nn
 from torch.nn import functional as F
 
 
-def voxel_statistics(xyz, spec):
+def voxel_statistics(xyz, spec, *, index_precision='float32'):
     """12D FP32 features and mask in B,C,Z,Y,X; geometry never uses autocast.
 
     Channels: log count, mean local XYZ, local XYZ variance, local Z min/max,
@@ -18,9 +18,14 @@ def voxel_statistics(xyz, spec):
         if points.ndim!=2 or points.shape[1]!=3 or not bool(torch.isfinite(points).all()):raise ValueError('Finite XYZ required')
         with torch.autocast(points.device.type,enabled=False):
             p=points.float(); p=p[spec.valid_points(p)]
-            if len(p)<2:raise ValueError('Too few observed points within ROI')
+            if len(p)==0:
+                rows.append(p.new_zeros((12,nz,ny,nx)));continue
             origin=p.new_tensor(spec.origin);size=p.new_tensor(spec.size)*2
-            q=torch.floor((p-origin)/size).long()
+            if index_precision=='float32':q=torch.floor((p-origin)/size).long()
+            elif index_precision=='float64':
+                origin64=p.new_tensor(spec.origin,dtype=torch.float64);size64=p.new_tensor(spec.size,dtype=torch.float64)*2
+                q=torch.floor((p.double()-origin64)/size64).long()
+            else:raise ValueError('Explicit geometry index precision required')
             if bool(((q<0)|(q>=q.new_tensor((nx,ny,nz)))).any()):raise ValueError('Voxel index outside grid')
             ids=q[:,0]+nx*(q[:,1]+ny*q[:,2]);n=nx*ny*nz
             center=origin+(q.float()+.5)*size;local=(p-center)/size

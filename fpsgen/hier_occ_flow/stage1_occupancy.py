@@ -88,7 +88,11 @@ class Stage1DirectOccupancy(nn.Module):
             x_max=geometry.maximum[0], y_max=geometry.maximum[1], z_max=geometry.maximum[2],
             nx=nx, ny=ny, nz=nz, xy_radius=geometry.sphere_radius,
             sphere_radius=geometry.sphere_radius)
-        if encoder_variant in ('triplane_v1','triplane_v2','triplane_v3'):
+        if encoder_variant in ('gctv_g0','gctv_g1','gctv_g2'):
+            if omd_config or dense_fidelity_config:raise ValueError('Dense VoxDet options do not apply to GCTV')
+            from .gctv_encoder import Compact3DEncoder
+            self.encoder=Compact3DEncoder(self.geometry,variant=encoder_variant[-2:],activation_checkpointing=activation_checkpointing)
+        elif encoder_variant in ('triplane_v1','triplane_v2','triplane_v3'):
             if omd_config or dense_fidelity_config:raise ValueError('Dense VoxDet options do not apply to TriPlane')
             from .triplane_encoder import TriPlaneEncoder
             self.encoder=TriPlaneEncoder(self.geometry,variant=encoder_variant[-2:])
