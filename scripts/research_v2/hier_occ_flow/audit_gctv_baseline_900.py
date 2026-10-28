@@ -1,4 +1,4 @@
-"""No-training matched900 support curves, regions and FM velocity diagnostics."""
+"""No-training seq08/skip100 41-frame support curves, regions and FM velocity diagnostics."""
 from pathlib import Path
 import sys
 ROOT=Path(__file__).resolve().parents[3];sys.path.insert(0,str(ROOT))
@@ -10,12 +10,13 @@ from fpsgen.hier_occ_flow.geometry import SparseHierarchyGeometry
 from fpsgen.hier_occ_flow.storage import SparseShardDataset,atomic_json,file_sha
 from fpsgen.hier_occ_flow.stage1_curve_metrics import threshold_curve_metrics,fixed_budget_metrics
 from fpsgen.hier_occ_flow.dataset import input_xyz
+from fpsgen.hier_occ_flow.stage2_condition import scene_seed
 from fpsgen.hier_occ_flow.raw_gt import RawMapSource
 from fpsgen.utils.gpu_kdtree_metrics import GPUKDTreeMetrics
 
 BASE=Path('/data-12/M2024-HWZ/FPSGen/worktrees/desescene-triplane-encoder-v1/experiments/desescene_triplane_v1')
 R0=Path('/data-12/M2024-HWZ/FPSGen/worktrees/desescene-explicit-fp16-training-v1/experiments/desescene_explicit_fp16_v1/S1-FM-Scratch20K/formal/checkpoints/resume_latest.pt')
-DATA=Path('/data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage1occ/experiments/hier_occ_flow/occ384_full_parallel/development')
+REFERENCE=Path('/data-12/M2024-HWZ/FPSGen/experiments/hs_stage2_eval/stage1_final_seq08_skip100_rawcd_grid124_gpu1')
 INPUT=Path('/data-12/M2024-HWZ/KITTI_Odometry')
 
 def regional(score,valid,ids,masks,zone):
@@ -24,15 +25,15 @@ def regional(score,valid,ids,masks,zone):
     return dict(precision=tp/max(tp+fp,1),recall=tp/max(tp+fn,1),iou=tp/max(tp+fp+fn,1),fine_recall_ceiling=num/max(denom,1),tp=tp,fp=fp,fn=fn)
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--model',choices=('r0','v1','v2'),required=True);p.add_argument('--gpu',type=int,choices=(2,3),required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--max-frames',type=int,default=900);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--model',choices=('r0','v1','v2'),required=True);p.add_argument('--gpu',type=int,choices=(2,3),required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--max-frames',type=int,default=41);a=p.parse_args()
     if os.environ.get('CUDA_VISIBLE_DEVICES')!=str(a.gpu):raise ValueError('Physical GPU mismatch')
     gpu=gpu_preflight((a.gpu,),minimum_free_gib=22.,allow_shared_compute=False)
     if gpu['status']!='AVAILABLE':raise RuntimeError(json.dumps(gpu))
     if a.output.exists():raise FileExistsError('Prior audit preserved')
     a.output.mkdir(parents=True);(a.output/'scores').mkdir();torch.set_num_threads(4)
     geometry=SparseHierarchyGeometry(parent_resolution=(384,384,32),child_split=(2,2,2),origin=(-50.,-50.,-4.),maximum=(50.,50.,4.4),sphere_radius=50.)
-    ds=SparseShardDataset(DATA,geometry,verify=False)
-    if len(ds)!=900 or not 1<=a.max_frames<=900:raise ValueError('Frozen900 development required')
+    if not 1<=a.max_frames<=41:raise ValueError('Only seq08 skip100 up to41 frames is allowed')
+    frames=list(range(0,4001,100))[:a.max_frames]
     checkpoint=R0 if a.model=='r0' else BASE/f'run_{a.model}/formal/checkpoints/resume_latest.pt'
     saved=torch.load(checkpoint,map_location='cpu')
     if a.model=='r0':
@@ -48,13 +49,18 @@ def main():
     thresholds=np.linspace(0,1,101);raw_thresholds=(.25,.35,.5,.65,.75);rows=[]
     raw=RawMapSource(INPUT,fast_viewpoint=True);metric=GPUKDTreeMetrics(('cd',),geometry=geometry)
     sources={p:file_sha(ROOT/'fpsgen/hier_occ_flow'/p) for p in ('triplane_encoder.py','stage1_occupancy.py','stage1_network.py')}
-    atomic_json(a.output/'protocol.json',dict(model=a.model,checkpoint=str(checkpoint),checkpoint_sha256=file_sha(checkpoint),checkpoint_identity=identity,development_manifest_sha256=file_sha(DATA/'manifest.json'),source_sha256=sources,frame_count=a.max_frames,source_seed='20261031+development_index',nfe=2,amp='fp32 weights with fp16 autocast for all models',threshold=.5,distance='Euclidean XYZ center distance',gt_used_only_for_metrics=True,gpu=gpu,gradient_scope='L2 norm of d(valid-mean MSE)/d velocity output; not parameter gradient',uncomputed=['height-layer region labels','thin/road-edge structure annotation']))
+    atomic_json(a.output/'protocol.json',dict(model=a.model,checkpoint=str(checkpoint),checkpoint_sha256=file_sha(checkpoint),checkpoint_identity=identity,reference_protocol_sha256=file_sha(REFERENCE/'protocol.json'),source_sha256=sources,frame_count=a.max_frames,source_seed='scene_seed(08,frame,20261031)',nfe=2,amp='fp32 weights with fp16 autocast for all models',threshold=.5,distance='Euclidean XYZ center distance',gt_used_only_for_metrics=True,gpu=gpu,gradient_scope='L2 norm of d(valid-mean MSE)/d velocity output; not parameter gradient',uncomputed=['height-layer region labels','thin/road-edge structure annotation']))
     try:
         with (a.output/'per_frame.jsonl').open('x',buffering=1) as log,torch.no_grad():
             for i in range(a.max_frames):
-                record=ds[i];xyz=torch.from_numpy(input_xyz(INPUT/record['sequence']/'input_'/f"{record['frame']:06d}.npy")).cuda()
+                frame=frames[i];sequence='08';path=INPUT/sequence/'input_'/f'{frame:06d}.npy'
+                meta=json.loads((REFERENCE/'targets'/f'08_{frame:06d}.json').read_text())
+                if file_sha(path)!=meta['input_sha256']:raise ValueError('Frozen input changed')
+                with np.load(REFERENCE/'targets'/f'08_{frame:06d}.npz',allow_pickle=False) as frozen:
+                    record=dict(sequence=sequence,frame=frame,parent_ids=frozen['parent_ids'].copy(),child_occ_mask=frozen['child_masks'].copy())
+                xyz=torch.from_numpy(input_xyz(path)).cuda()
                 with torch.autocast('cuda',dtype=torch.float16):
-                    pyramid=model.encoder([xyz]);obs=model.geometry.observed_mask(xyz);generator=torch.Generator(device='cuda').manual_seed(20261031+i)
+                    pyramid=model.encoder([xyz]);obs=model.geometry.observed_mask(xyz);generator=torch.Generator(device='cuda').manual_seed(scene_seed('08',frame,20261031))
                     score,_=model.sample(xyz,generator=generator,nfe=2,condition=pyramid)
                     target=ids_to_dense_occupancy(record['parent_ids'],geometry,device='cuda');noise=torch.randn(target.shape,device='cuda',generator=torch.Generator(device='cuda').manual_seed(20262031+i))*model.valid
                     dest=(2*target-1)*model.valid;desired=dest-noise;vt=[]

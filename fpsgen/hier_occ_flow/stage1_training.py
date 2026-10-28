@@ -567,7 +567,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                                 and frame_target is not None and successful==steps)
         # This cohort evaluates seq08/skip100 through its separate registered
         # evaluator; do not launch the historical 900-frame development pass.
-        evaluate_development=not (model_variant.startswith('triplane_') and val.get('automatic_development_evaluation') is False)
+        evaluate_development=not (model_variant.startswith(('triplane_','gctv_')) and val.get('automatic_development_evaluation') is False)
         if evaluate_development and bool(finite) and (successful%val['light_every']==0 or pilot_partial_final
                              or pilot_full_final or registered_frame_final or is_frame_milestone):
             state=rng_state(generator,device)

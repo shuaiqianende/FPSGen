@@ -64,4 +64,4 @@ validation:
   - 2000
   - 5000
   - 20000
-  automatic_development_evaluation: true
+  automatic_development_evaluation: false

@@ -1,4 +1,4 @@
-"""Run read-only 900-frame D0 models sequentially on one admitted GPU."""
+"""Run read-only 41-frame D0 models sequentially on one admitted GPU."""
 from pathlib import Path
 import sys
 ROOT=Path(__file__).resolve().parents[3];sys.path.insert(0,str(ROOT))
@@ -20,7 +20,7 @@ def main():
                 code=child.wait()
             if code:raise RuntimeError(f'{name} failed, exit {code}; no automatic retry')
             result=json.loads((a.root/name/'results.json').read_text())
-            if result['status']!='COMPLETE' or result['frames']!=900:raise ValueError('Full900 diagnostic incomplete')
+            if result['status']!='COMPLETE' or result['frames']!=41:raise ValueError('Full41 diagnostic incomplete')
             time.sleep(2)
         atomic_json(a.root/'queue_status.json',dict(status='COMPLETE',models=a.models,gpu=a.gpu,source_sha256=pin))
     except Exception as e:

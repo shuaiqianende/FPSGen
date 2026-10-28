@@ -25,7 +25,9 @@ def main():
     cfg=yaml.safe_load(a.config.read_text());cfg['geometry']=yaml.safe_load((a.config.parent/cfg['geometry']).read_text());g=validate_config(cfg)
     if os.environ.get('CUDA_VISIBLE_DEVICES')!=str(cfg['training']['physical_gpus'][0]):raise ValueError('Wrong GPU')
     ck=torch.load(a.checkpoint,map_location='cpu');identity=ck['identity']
-    if ck['initialization_mode']!='scratch' or ck['successful_updates']!=10000 or ck['sampler']['successful_frame_exposures']!=20000 or identity['experiment']!='desescene-triplane-encoder-v1':raise ValueError('Own completed scratch20K checkpoint required')
+    if identity['experiment']=='desescene-gctv-encoder-v1':
+        if ck['initialization_mode']!='scratch' or ck['successful_updates'] not in (1000,2500,10000) or ck['sampler']['successful_frame_exposures']!=2*ck['successful_updates']:raise ValueError('Own registered GCTV checkpoint required')
+    elif ck['initialization_mode']!='scratch' or ck['successful_updates']!=10000 or ck['sampler']['successful_frame_exposures']!=20000 or identity['experiment']!='desescene-triplane-encoder-v1':raise ValueError('Own completed scratch20K checkpoint required')
     if a.output.exists():raise FileExistsError('Preserve old evaluation')
     a.output.mkdir(parents=True);torch.set_num_threads(4)
     model=Stage1DirectOccupancy(g,objective='fm',widths=cfg['model']['widths'],activation_checkpointing=False,encoder_variant=cfg['model']['encoder_variant']).cuda()
