@@ -1,0 +1,182 @@
+{
+  "gpu": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24110.0,
+        "physical_gpu": 2,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 22.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "input_sha256": "51900c9390a412d4cab123f9345b97453c03df38277a19fd7ab8b6989a5b4403",
+  "peak_allocated_bytes": 551318528,
+  "peak_reserved_bytes": 767557632,
+  "rows": [
+    {
+      "event_ms": 6.711008071899414,
+      "module_event_ms": {
+        "planes.layers.0": 0.41702400147914886,
+        "planes.layers.1": 0.3624960035085678,
+        "planes.layers.2": 0.33078401163220406,
+        "planes.refine.0": 0.6792000085115433,
+        "planes.refine.1": 0.36454400420188904,
+        "planes.refine.2": 0.33183999732136726
+      },
+      "wall_ms": 6.734766000590753
+    },
+    {
+      "event_ms": 6.849311828613281,
+      "module_event_ms": {
+        "planes.layers.0": 0.44015999138355255,
+        "planes.layers.1": 0.38387198746204376,
+        "planes.layers.2": 0.3429440073668957,
+        "planes.refine.0": 0.6901759952306747,
+        "planes.refine.1": 0.37376001477241516,
+        "planes.refine.2": 0.3482239916920662
+      },
+      "wall_ms": 6.874129001516849
+    },
+    {
+      "event_ms": 6.713791847229004,
+      "module_event_ms": {
+        "planes.layers.0": 0.4238719940185547,
+        "planes.layers.1": 0.36611199378967285,
+        "planes.layers.2": 0.33075200393795967,
+        "planes.refine.0": 0.6798720210790634,
+        "planes.refine.1": 0.36643199622631073,
+        "planes.refine.2": 0.33049599453806877
+      },
+      "wall_ms": 6.742420002410654
+    },
+    {
+      "event_ms": 6.797088146209717,
+      "module_event_ms": {
+        "planes.layers.0": 0.41363200545310974,
+        "planes.layers.1": 0.3837760090827942,
+        "planes.layers.2": 0.3391040004789829,
+        "planes.refine.0": 0.6871999949216843,
+        "planes.refine.1": 0.3729280084371567,
+        "planes.refine.2": 0.35494399815797806
+      },
+      "wall_ms": 6.820258000516333
+    },
+    {
+      "event_ms": 6.841983795166016,
+      "module_event_ms": {
+        "planes.layers.0": 0.4423680007457733,
+        "planes.layers.1": 0.3747519925236702,
+        "planes.layers.2": 0.3389440067112446,
+        "planes.refine.0": 0.6850560009479523,
+        "planes.refine.1": 0.3729279935359955,
+        "planes.refine.2": 0.3479359969496727
+      },
+      "wall_ms": 6.866437004646286
+    },
+    {
+      "event_ms": 6.604767799377441,
+      "module_event_ms": {
+        "planes.layers.0": 0.3993600010871887,
+        "planes.layers.1": 0.3553279936313629,
+        "planes.layers.2": 0.3235840015113354,
+        "planes.refine.0": 0.6686720103025436,
+        "planes.refine.1": 0.3580160066485405,
+        "planes.refine.2": 0.3112959861755371
+      },
+      "wall_ms": 6.628108996665105
+    },
+    {
+      "event_ms": 6.749824047088623,
+      "module_event_ms": {
+        "planes.layers.0": 0.41977599263191223,
+        "planes.layers.1": 0.36563199758529663,
+        "planes.layers.2": 0.32972800359129906,
+        "planes.refine.0": 0.6828479915857315,
+        "planes.refine.1": 0.37673600018024445,
+        "planes.refine.2": 0.3418239988386631
+      },
+      "wall_ms": 6.774426001356915
+    },
+    {
+      "event_ms": 7.273183822631836,
+      "module_event_ms": {
+        "planes.layers.0": 0.4679040014743805,
+        "planes.layers.1": 0.3992000073194504,
+        "planes.layers.2": 0.36454400792717934,
+        "planes.refine.0": 0.7260160148143768,
+        "planes.refine.1": 0.40243200212717056,
+        "planes.refine.2": 0.4188160002231598
+      },
+      "wall_ms": 7.300104000023566
+    },
+    {
+      "event_ms": 7.382143974304199,
+      "module_event_ms": {
+        "planes.layers.0": 0.473920002579689,
+        "planes.layers.1": 0.40646400302648544,
+        "planes.layers.2": 0.3725760020315647,
+        "planes.refine.0": 0.7346560060977936,
+        "planes.refine.1": 0.40140800178050995,
+        "planes.refine.2": 0.4094720035791397
+      },
+      "wall_ms": 7.408587000099942
+    },
+    {
+      "event_ms": 7.264319896697998,
+      "module_event_ms": {
+        "planes.layers.0": 0.4723840057849884,
+        "planes.layers.1": 0.4026240110397339,
+        "planes.layers.2": 0.3715199939906597,
+        "planes.refine.0": 0.7088320106267929,
+        "planes.refine.1": 0.38809599727392197,
+        "planes.refine.2": 0.3789759948849678
+      },
+      "wall_ms": 7.291322996024974
+    }
+  ],
+  "scope": "random-initialized encoder, single real frame, AMP, warm5 timed10; not quality or full generation",
+  "statistics_rows": [
+    {
+      "event_ms": 1.5750720500946045,
+      "wall_ms": 1.600763003807515
+    },
+    {
+      "event_ms": 1.563647985458374,
+      "wall_ms": 1.5865940004005097
+    },
+    {
+      "event_ms": 1.5144319534301758,
+      "wall_ms": 1.5369690008810721
+    },
+    {
+      "event_ms": 1.499168038368225,
+      "wall_ms": 1.5216640022117645
+    },
+    {
+      "event_ms": 1.521664023399353,
+      "wall_ms": 1.543333004519809
+    }
+  ],
+  "status": "COMPLETE",
+  "summary": {
+    "event_ms": 6.918742322921753,
+    "module_event_ms": {
+      "planes.layers.0": 0.4370399996638298,
+      "planes.layers.1": 0.3800255998969078,
+      "planes.layers.2": 0.3444480039179325,
+      "planes.refine.0": 0.6942528054118157,
+      "planes.refine.1": 0.37772800251841543,
+      "planes.refine.2": 0.35738239623606205
+    },
+    "statistics_event_ms": 1.5347968101501466,
+    "statistics_wall_ms": 1.557864602364134,
+    "wall_ms": 6.944055900385138
+  }
+}

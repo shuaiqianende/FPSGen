@@ -1,0 +1,204 @@
+{
+  "gpu": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24110.0,
+        "physical_gpu": 3,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 22.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "input_sha256": "51900c9390a412d4cab123f9345b97453c03df38277a19fd7ab8b6989a5b4403",
+  "peak_allocated_bytes": 1190931968,
+  "peak_reserved_bytes": 1619001344,
+  "rows": [
+    {
+      "event_ms": 18.34771156311035,
+      "module_event_ms": {
+        "bridge": 0.1884479969739914,
+        "planes.layers.0": 0.5682560168206692,
+        "planes.layers.1": 0.38425600342452526,
+        "planes.layers.2": 0.258048003539443,
+        "planes.refine.0": 0.719871997833252,
+        "planes.refine.1": 0.3992640133947134,
+        "planes.refine.2": 0.23654399998486042,
+        "sparse_conv": 0.562175989151001
+      },
+      "wall_ms": 18.37459599482827
+    },
+    {
+      "event_ms": 18.252031326293945,
+      "module_event_ms": {
+        "bridge": 0.18751999735832214,
+        "planes.layers.0": 0.5773119889199734,
+        "planes.layers.1": 0.38508800230920315,
+        "planes.layers.2": 0.2610240038484335,
+        "planes.refine.0": 0.720928005874157,
+        "planes.refine.1": 0.4002879988402128,
+        "planes.refine.2": 0.2344959992915392,
+        "sparse_conv": 0.5427200198173523
+      },
+      "wall_ms": 18.277818999195006
+    },
+    {
+      "event_ms": 18.081024169921875,
+      "module_event_ms": {
+        "bridge": 0.1884479969739914,
+        "planes.layers.0": 0.5662720017135143,
+        "planes.layers.1": 0.3778559993952513,
+        "planes.layers.2": 0.25395200215280056,
+        "planes.refine.0": 0.7465600147843361,
+        "planes.refine.1": 0.42598400078713894,
+        "planes.refine.2": 0.25612799264490604,
+        "sparse_conv": 0.5776320099830627
+      },
+      "wall_ms": 18.107878997398075
+    },
+    {
+      "event_ms": 18.356704711914062,
+      "module_event_ms": {
+        "bridge": 0.1947840005159378,
+        "planes.layers.0": 0.5454079918563366,
+        "planes.layers.1": 0.3635199945420027,
+        "planes.layers.2": 0.27238399162888527,
+        "planes.refine.0": 0.7881279774010181,
+        "planes.refine.1": 0.40371200256049633,
+        "planes.refine.2": 0.24380800873041153,
+        "sparse_conv": 0.5839040279388428
+      },
+      "wall_ms": 18.38401600252837
+    },
+    {
+      "event_ms": 18.33500862121582,
+      "module_event_ms": {
+        "bridge": 0.19865599274635315,
+        "planes.layers.0": 0.5520320124924183,
+        "planes.layers.1": 0.3728320077061653,
+        "planes.layers.2": 0.25932799838483334,
+        "planes.refine.0": 0.8507199697196484,
+        "planes.refine.1": 0.408799996599555,
+        "planes.refine.2": 0.23552000522613525,
+        "sparse_conv": 0.5478399991989136
+      },
+      "wall_ms": 18.363201001193374
+    },
+    {
+      "event_ms": 17.844928741455078,
+      "module_event_ms": {
+        "bridge": 0.18534399569034576,
+        "planes.layers.0": 0.5337279997766018,
+        "planes.layers.1": 0.3575359955430031,
+        "planes.layers.2": 0.2396799996495247,
+        "planes.refine.0": 0.7443199940025806,
+        "planes.refine.1": 0.37795200012624264,
+        "planes.refine.2": 0.22643200308084488,
+        "sparse_conv": 0.513375997543335
+      },
+      "wall_ms": 17.87251500354614
+    },
+    {
+      "event_ms": 18.240991592407227,
+      "module_event_ms": {
+        "bridge": 0.1937279999256134,
+        "planes.layers.0": 0.5455680005252361,
+        "planes.layers.1": 0.37088000029325485,
+        "planes.layers.2": 0.2654399983584881,
+        "planes.refine.0": 0.8243200071156025,
+        "planes.refine.1": 0.39039999805390835,
+        "planes.refine.2": 0.23680000752210617,
+        "sparse_conv": 0.5681920051574707
+      },
+      "wall_ms": 18.267086998093873
+    },
+    {
+      "event_ms": 17.814847946166992,
+      "module_event_ms": {
+        "bridge": 0.1852799952030182,
+        "planes.layers.0": 0.5355520080775023,
+        "planes.layers.1": 0.3617599979043007,
+        "planes.layers.2": 0.24303999543190002,
+        "planes.refine.0": 0.749855998903513,
+        "planes.refine.1": 0.37683199159801006,
+        "planes.refine.2": 0.22329599410295486,
+        "sparse_conv": 0.5232639908790588
+      },
+      "wall_ms": 17.84178700472694
+    },
+    {
+      "event_ms": 17.765792846679688,
+      "module_event_ms": {
+        "bridge": 0.18432000279426575,
+        "planes.layers.0": 0.5447360016405582,
+        "planes.layers.1": 0.3647680040448904,
+        "planes.layers.2": 0.24473600089550018,
+        "planes.refine.0": 0.7208959944546223,
+        "planes.refine.1": 0.37923200242221355,
+        "planes.refine.2": 0.22220800071954727,
+        "sparse_conv": 0.49561598896980286
+      },
+      "wall_ms": 17.791022000892553
+    },
+    {
+      "event_ms": 18.14192008972168,
+      "module_event_ms": {
+        "bridge": 0.19446399807929993,
+        "planes.layers.0": 0.5507839880883694,
+        "planes.layers.1": 0.3739840146154165,
+        "planes.layers.2": 0.2775679938495159,
+        "planes.refine.0": 0.8283519856631756,
+        "planes.refine.1": 0.3788799922913313,
+        "planes.refine.2": 0.22732800245285034,
+        "sparse_conv": 0.49459201097488403
+      },
+      "wall_ms": 18.167807997087948
+    }
+  ],
+  "scope": "random-initialized encoder, single real frame, AMP, warm5 timed10; not quality or full generation",
+  "statistics_rows": [
+    {
+      "event_ms": 1.5753599405288696,
+      "wall_ms": 1.6013310014386661
+    },
+    {
+      "event_ms": 1.5298880338668823,
+      "wall_ms": 1.5513780017499812
+    },
+    {
+      "event_ms": 1.5073280334472656,
+      "wall_ms": 1.527661006548442
+    },
+    {
+      "event_ms": 1.4858239889144897,
+      "wall_ms": 1.5058439967106096
+    },
+    {
+      "event_ms": 1.4807039499282837,
+      "wall_ms": 1.500562000728678
+    }
+  ],
+  "status": "COMPLETE",
+  "summary": {
+    "event_ms": 18.118096160888673,
+    "module_event_ms": {
+      "bridge": 0.19009919762611388,
+      "planes.layers.0": 0.551964800991118,
+      "planes.layers.1": 0.37124800197780133,
+      "planes.layers.2": 0.25751999877393245,
+      "planes.refine.0": 0.7693951945751906,
+      "planes.refine.1": 0.39413439966738223,
+      "planes.refine.2": 0.23425600137561559,
+      "sparse_conv": 0.5409312039613724
+    },
+    "statistics_event_ms": 1.5158207893371582,
+    "statistics_wall_ms": 1.5373552014352754,
+    "wall_ms": 18.144772999949055
+  }
+}

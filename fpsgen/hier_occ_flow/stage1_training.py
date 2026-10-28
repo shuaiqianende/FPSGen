@@ -94,7 +94,8 @@ def validate_config(cfg):
     if set(cfg['model'])-allowed:raise ValueError('Unsupported model options; init_cfg/load_from/pretrained adapters are prohibited')
     variant=cfg['model'].get('encoder_variant','original')
     fidelity_variants=('bottleneck96','asymmetric3d','lightweight_skip')
-    if variant not in ('original','bottleneck','omd3d',*fidelity_variants):raise ValueError('Unknown dense encoder variant')
+    triplane_variants=('triplane_v1','triplane_v2','triplane_v3')
+    if variant not in ('original','bottleneck','omd3d',*fidelity_variants,*triplane_variants):raise ValueError('Unknown encoder variant')
     scope=cfg.get('scope')
     if scope=='architecture_pilot':
         train=cfg['training']
@@ -168,6 +169,10 @@ def validate_config(cfg):
                 raise ValueError('E1 is registered with internal width 96')
             if variant=='asymmetric3d' and fidelity.get('asymmetric_rank',64) not in (64,96):
                 raise ValueError('E2 rank is registered at 64 or 96')
+        elif experiment=='desescene-triplane-encoder-v1':
+            if variant not in ('triplane_v1','triplane_v2') or cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
+                raise ValueError('Registered TriPlane pilot permits V1/V2 only')
+            if train.get('seed')!=20261032:raise ValueError('TriPlane seed must be20261032')
         else:
             raise ValueError('Single-GPU 20K experiment requires a registered R0/E3 or E1/E2 identity')
         if train.get('successful_frame_exposures')!=20000 or train.get('successful_updates')!=10000:
@@ -180,7 +185,8 @@ def validate_config(cfg):
             raise ValueError('Single-GPU comparison is a fresh scratch pair, not a continuation')
     elif variant!='original' or cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
         raise ValueError('Architecture variants require a registered architecture scope')
-    if cfg['model'].get('input_feature_version')!='coarse_f64_v1':raise ValueError('Require geometry-audited float64 coarse indexing')
+    feature_version='triplane_fp32_v1' if variant in triplane_variants else 'coarse_f64_v1'
+    if cfg['model'].get('input_feature_version')!=feature_version:raise ValueError('Require registered encoder geometry precision')
     objective=cfg['model']['objective']
     if objective not in ('fm','bce') or cfg.get('loss')!={objective:1.0}: raise ValueError('Only pure FM or direct BCE loss allowed')
     if objective=='fm' and cfg.get('flow')!={'source':'gaussian','sigma':1.0,'target':'binary_symmetric'}:
@@ -321,7 +327,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         shared_flow_sha=digest.hexdigest()
         del flow_template
     matched_init_audit=None
-    if cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE):
+    if cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and not model_variant.startswith('triplane_'):
         # Build one canonical scratch R0 initialization for the pair. E3 copies
         # every same-name/same-shape tensor; only architecture-specific 3x3 vs
         # 1x1 skip kernels retain their own deterministic scratch initialization.
@@ -410,7 +416,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     output.mkdir(parents=True,exist_ok=True)
     code_files=list(Path(__file__).parent.glob('stage1*.py'))
     code_files.extend(Path(__file__).parent/name for name in
-                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py'))
+                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py','triplane_encoder.py'))
     code_sha={p.name:file_sha(p) for p in code_files if p.is_file()}
     launch_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     if rank==0:
@@ -553,7 +559,10 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                           and frame_target==20000 and successful==steps)
         registered_frame_final=(cfg['scope'] not in PILOT_SCOPES
                                 and frame_target is not None and successful==steps)
-        if bool(finite) and (successful%val['light_every']==0 or pilot_partial_final
+        # This cohort evaluates seq08/skip100 through its separate registered
+        # evaluator; do not launch the historical 900-frame development pass.
+        evaluate_development=not (model_variant.startswith('triplane_') and val.get('automatic_development_evaluation') is False)
+        if evaluate_development and bool(finite) and (successful%val['light_every']==0 or pilot_partial_final
                              or pilot_full_final or registered_frame_final or is_frame_milestone):
             state=rng_state(generator,device)
             if rank==0:

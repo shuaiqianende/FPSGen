@@ -88,10 +88,15 @@ class Stage1DirectOccupancy(nn.Module):
             x_max=geometry.maximum[0], y_max=geometry.maximum[1], z_max=geometry.maximum[2],
             nx=nx, ny=ny, nz=nz, xy_radius=geometry.sphere_radius,
             sphere_radius=geometry.sphere_radius)
-        self.encoder=OccupancyConditionEncoder(
-            self.geometry,activation_checkpointing,
-            encoder_variant=encoder_variant,omd_config=omd_config,
-            dense_fidelity_config=dense_fidelity_config)
+        if encoder_variant in ('triplane_v1','triplane_v2','triplane_v3'):
+            if omd_config or dense_fidelity_config:raise ValueError('Dense VoxDet options do not apply to TriPlane')
+            from .triplane_encoder import TriPlaneEncoder
+            self.encoder=TriPlaneEncoder(self.geometry,variant=encoder_variant[-2:])
+        else:
+            self.encoder=OccupancyConditionEncoder(
+                self.geometry,activation_checkpointing,
+                encoder_variant=encoder_variant,omd_config=omd_config,
+                dense_fidelity_config=dense_fidelity_config)
         self.flow=OccupancyUNet(objective,widths,activation_checkpointing)
         self.register_buffer('valid',self.geometry.field_mask(),persistent=False)
         self.last_condition_cache_cuda_events=None

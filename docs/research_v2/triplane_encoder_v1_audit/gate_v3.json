@@ -1,0 +1,95 @@
+{
+  "batch": 2,
+  "checkpoint_roundtrip": true,
+  "config_sha256": "12957376b63e5fe039e2a0410a7d3acffa86cfd1c98dcf4a4a1238525a350b6d",
+  "encoder_event_ms": 2291.769287109375,
+  "gpu": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24110.0,
+        "physical_gpu": 3,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 22.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "gradient_norms": {
+    "encoder": 2.161768913269043,
+    "flow": 7.232620716094971
+  },
+  "gt_used_as_input": false,
+  "loss": 2.008979558944702,
+  "peak_allocated_bytes": 6052283392,
+  "peak_reserved_bytes": 7365197824,
+  "points": [
+    18000,
+    18000
+  ],
+  "pyramid_dtypes": [
+    "torch.float16",
+    "torch.float16",
+    "torch.float16"
+  ],
+  "pyramid_shapes": [
+    [
+      2,
+      128,
+      16,
+      192,
+      192
+    ],
+    [
+      2,
+      128,
+      8,
+      96,
+      96
+    ],
+    [
+      2,
+      128,
+      4,
+      48,
+      48
+    ]
+  ],
+  "records": [
+    {
+      "frame": 925,
+      "gt_parents": 319738,
+      "sequence": "02"
+    },
+    {
+      "frame": 4192,
+      "gt_parents": 319737,
+      "sequence": "02"
+    }
+  ],
+  "selected": [
+    [
+      319738,
+      "train",
+      6147
+    ],
+    [
+      319737,
+      "train",
+      9414
+    ]
+  ],
+  "source_sha256": {
+    "stage1_occupancy.py": "2768515ab001dc520b7d38f70f88dd72867bfeb93f792fd440ca6cb7f8d7d7c2",
+    "stage1_training.py": "c547d901a88c6cf61293174496d4677f22faf7439ad37bf7f7488597048c5495",
+    "triplane_encoder.py": "cc0ad66f3f11b960b80bcd3a6c99f109407eb44453f602395b6a5fc62f0e8033"
+  },
+  "status": "GPU_PASS",
+  "step_wall_seconds": 3.182749406005314,
+  "variant": "triplane_v3"
+}
