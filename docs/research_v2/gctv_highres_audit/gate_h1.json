@@ -1,0 +1,98 @@
+{
+  "batch": 2,
+  "checkpoint_roundtrip": true,
+  "config_sha256": "3ab4fa3efd820bfdd19eeaf399d62a5e112aa1792933606fa81994b5fd75568b",
+  "dcn_offset_probes": [],
+  "encoder_event_ms": 2236.106689453125,
+  "gpu": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24110.0,
+        "physical_gpu": 2,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 22.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "gradient_norms": {
+    "encoder": 0.15977254509925842,
+    "flow": 13.48798656463623
+  },
+  "gt_used_as_input": false,
+  "loss": 1.988963007926941,
+  "peak_allocated_bytes": 5214845440,
+  "peak_reserved_bytes": 5960105984,
+  "points": [
+    18000,
+    18000
+  ],
+  "pyramid_dtypes": [
+    "torch.float16",
+    "torch.float16",
+    "torch.float16"
+  ],
+  "pyramid_shapes": [
+    [
+      2,
+      128,
+      16,
+      192,
+      192
+    ],
+    [
+      2,
+      128,
+      8,
+      96,
+      96
+    ],
+    [
+      2,
+      128,
+      4,
+      48,
+      48
+    ]
+  ],
+  "records": [
+    {
+      "frame": 925,
+      "gt_parents": 319738,
+      "sequence": "02"
+    },
+    {
+      "frame": 4192,
+      "gt_parents": 319737,
+      "sequence": "02"
+    }
+  ],
+  "selected": [
+    [
+      319738,
+      "train",
+      6147
+    ],
+    [
+      319737,
+      "train",
+      9414
+    ]
+  ],
+  "source_sha256": {
+    "gctv_encoder.py": "006b5aa946a0b7fe5ca27be5d6e3f02f12ee58286e6fb6c908b3e7f5a8a78fbd",
+    "gctv_highres_encoder.py": "b2837c87bc58eecdbad476590489add3bac9f02886926abcf7bb7f1ea6abfa4f",
+    "stage1_occupancy.py": "9b068406503abc842cba64c7c0d7f8555697ee1c89858ce6213a72dc3146d612",
+    "stage1_training.py": "d0abd0b194ca95b51d0c0c6f1ce610f0e7f39869b63d1d1427ff4beb94e6a1ed",
+    "triplane_encoder.py": "c7d2fe9ae81c595113221f37517a7711fbc930107c3dcc0fe0d3ace8e4607f46"
+  },
+  "status": "GPU_PASS",
+  "step_wall_seconds": 3.2604280619998462,
+  "variant": "gctv_h1"
+}

@@ -95,7 +95,7 @@ def validate_config(cfg):
     variant=cfg['model'].get('encoder_variant','original')
     fidelity_variants=('bottleneck96','asymmetric3d','lightweight_skip')
     triplane_variants=('triplane_v1','triplane_v2','triplane_v3')
-    gctv_variants=('gctv_g0','gctv_g1','gctv_g2')
+    gctv_variants=('gctv_g0','gctv_g1','gctv_g2','gctv_h1','gctv_h2','gctv_h3','gctv_h4','gctv_h5','gctv_h6')
     if variant not in ('original','bottleneck','omd3d',*fidelity_variants,*triplane_variants,*gctv_variants):raise ValueError('Unknown encoder variant')
     scope=cfg.get('scope')
     if scope=='architecture_pilot':
@@ -170,7 +170,7 @@ def validate_config(cfg):
                 raise ValueError('E1 is registered with internal width 96')
             if variant=='asymmetric3d' and fidelity.get('asymmetric_rank',64) not in (64,96):
                 raise ValueError('E2 rank is registered at 64 or 96')
-        elif experiment=='desescene-gctv-encoder-v1':
+        elif experiment in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1'):
             if variant not in gctv_variants or cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
                 raise ValueError('GCTV accepts only registered G0/G1/G2')
             if train.get('seed')!=20261032:raise ValueError('GCTV seed must be20261032')
@@ -237,7 +237,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         if steps>32 and (steps!=train['successful_updates'] or frame_target!=100000):
             raise ValueError('Long-run arms require the registered full100K frame budget')
     elif cfg['scope']==SINGLE_GPU_20K_SCOPE:
-        permitted=(1000,2500,10000) if cfg.get('experiment')=='desescene-gctv-encoder-v1' else (train['successful_updates'],)
+        permitted=(1000,2500,10000) if cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1') else (train['successful_updates'],)
         if steps>32 and (steps not in permitted or frame_target!=20000):
             raise ValueError('Single-GPU arms require the registered full20K frame budget')
     elif steps>1000 or cfg['scope']=='formal':
@@ -263,7 +263,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if world!=len(visible.split(',')): raise ValueError('Use one process per selected physical GPU')
     if cfg['scope'] in PILOT_SCOPES and steps<train['successful_updates']:
         frame_target=steps*world*train['batch_per_gpu']
-    elif cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and (smoke or cfg.get('experiment')=='desescene-gctv-encoder-v1') and steps<train['successful_updates']:
+    elif cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and (smoke or cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1')) and steps<train['successful_updates']:
         # Smoke runs have a deliberately shortened exposure budget. Keep the
         # same frame/update accounting invariant as the registered full run.
         frame_target=steps*world*train['batch_per_gpu']
@@ -422,7 +422,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     output.mkdir(parents=True,exist_ok=True)
     code_files=list(Path(__file__).parent.glob('stage1*.py'))
     code_files.extend(Path(__file__).parent/name for name in
-                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py','triplane_encoder.py','gctv_encoder.py'))
+                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py','triplane_encoder.py','gctv_encoder.py','gctv_highres_encoder.py'))
     code_sha={p.name:file_sha(p) for p in code_files if p.is_file()}
     launch_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     if rank==0:

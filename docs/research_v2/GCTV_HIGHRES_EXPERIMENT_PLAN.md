@@ -1,0 +1,13 @@
+# GCTV high-resolution experiments — registered protocol
+
+H1: G1 single-pass coupling at F1/F2. H2: H1 plus learned observed-ray softmax projection; context mean and coverage retained, all-empty rays produce zero. H3: H2 plus torchvision native CUDA deformable depthwise 3×3 convolution. H4: H1 plus G2 feedback at F1/F2. H5: H1 F1-only. H6: H4 plus adaptive/DCN; conditional on independent 5K evidence.
+
+All arms are scratch Stage1 FM, single GPU Batch2, seed20261032, FP32 weights + FP16 autocast, LR encoder1e-4/flow2e-4, 1000-update warmup,20K-exposure cosine horizon, AdamW, EMA0.999. Separate maximum-scene Batch2 gate, independent2+30 resumed Smoke and checkpoints are required. The 2K and5K stages resume the original optimizer/scheduler/EMA/RNG/data cursor. GPUs2/3 run one arm serially and wait for the preexisting G2 evaluation / matched VoxDet training+evaluation, respectively.
+
+Intermediate model selection uses a deterministic 41-scene non-seq08 development subset (evenly spread over the existing dev index) only; it does not read seq08. A prespecified 5K screen stops an arm only if its macro Parent IoU is >2 percentage points below the same-card G1 5K reference AND its warm encoder median wall time is not at least5% faster. This is an exploratory screen with one seed; time spans are synchronized wall estimates and not kernel-only metrics. Every model progressing to20K gets NFE1/2/4/8 evaluation on seq08 skip100 41 frames; NFE2 is primary. No900-frame evaluation is launched.
+
+H6 is conditional: require matched dev41 5K IoU H4−H1 >=0.003 and H3−H2 >=0.003, with identical frame identities; otherwise record SKIPPED. If a required peer fails/is not measured, H6 is skipped. This criterion is a prespecified screening heuristic, not proof of statistical significance or quality retention.
+
+Real maximum Batch2 H1 and H3 passed on RTX3090 GPU2. H1 peak allocated 4.86 GiB. H3 peak allocated 5.19 GiB; six independent DCN offset-gradient probes were finite and nonzero. Torchvision 0.15.2+cu117 is used because the installed MMCV lacks `mmcv._ext`; no silent fallback. Single-event gate durations contain startup/host waits and are not inference benchmarks. All other gates, 32-step Smoke, 2K/5K/20K results and formal kernel/full-Stage1 latency: NOT TESTED at registration.
+
+Tests include exact initial H1/H4 common state, feedback effect, non-square projection shapes, all-empty adaptive weights and nonzero projection gradients. Need full paired runtime benchmarks, per-frame deltas and independent evidence before selecting any Pareto model. Checkpoints/large outputs remain local.

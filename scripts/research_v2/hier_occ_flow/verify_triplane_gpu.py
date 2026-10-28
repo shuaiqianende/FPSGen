@@ -23,7 +23,7 @@ def main():
     if admission['status']!='AVAILABLE':raise RuntimeError(json.dumps(admission))
     if a.output.exists():raise FileExistsError('Prior audit preserved')
     a.output.mkdir(parents=True);torch.set_num_threads(4);torch.manual_seed(c['training']['seed']);torch.cuda.manual_seed_all(c['training']['seed'])
-    source_paths=[ROOT/'fpsgen/hier_occ_flow'/p for p in ('triplane_encoder.py','gctv_encoder.py','stage1_occupancy.py','stage1_training.py')]
+    source_paths=[ROOT/'fpsgen/hier_occ_flow'/p for p in ('triplane_encoder.py','gctv_encoder.py','gctv_highres_encoder.py','stage1_occupancy.py','stage1_training.py')]
     report=dict(status='RUNNING',config_sha256=file_sha(a.config),source_sha256={p.name:file_sha(p) for p in source_paths},gpu=admission,variant=c['model']['encoder_variant'],batch=2,gt_used_as_input=False)
     try:
         train=SparseShardDataset(c['train_dataset'],g,verify=False);dev=SparseShardDataset(c['development_dataset'],g,verify=False)
@@ -42,6 +42,19 @@ def main():
         scaler.scale(loss).backward();scaler.unscale_(optimizer)
         norms={name:float(torch.linalg.vector_norm(torch.stack([p.grad.float().norm() for p in module.parameters() if p.grad is not None]))) for name,module in [('encoder',model.encoder),('flow',model.flow)]}
         if not bool(torch.isfinite(loss)) or any(not 0<v<float('inf') for v in norms.values()):raise ValueError('Loss/gradient not finite and nonzero')
+        # Zero initialized fusion projections initially suppress downstream
+        # branch gradients. Probe DCN offset gradients independently on the
+        # actual modules without changing any model or optimizer parameters.
+        from fpsgen.hier_occ_flow.gctv_highres_encoder import DeformDepthwise2D
+        dcn=[]
+        for name,layer in model.named_modules():
+            if isinstance(layer,DeformDepthwise2D):
+                x=torch.randn(2,layer.weight.shape[0],16,20,device='cuda',requires_grad=True)
+                with torch.autocast('cuda',dtype=torch.float16):y=layer(x).float().square().mean()
+                grad=torch.autograd.grad(y,layer.offset.weight)[0]
+                if not bool(torch.isfinite(grad).all()) or float(grad.norm())<=0:raise ValueError('DCN offset gradient failed: '+name)
+                dcn.append(dict(module=name,offset_gradient_norm=float(grad.norm()),output_dtype=str(y.dtype)))
+        report['dcn_offset_probes']=dcn
         torch.nn.utils.clip_grad_norm_(model.parameters(),1.);scaler.step(optimizer);scaler.update();torch.cuda.synchronize()
         initial=copy.deepcopy(model.state_dict());ema=copy.deepcopy(model).eval().requires_grad_(False)
         checkpoint=dict(model=initial,ema=ema.state_dict(),optimizer=optimizer.state_dict(),scaler=scaler.state_dict(),generator=gen.get_state())
