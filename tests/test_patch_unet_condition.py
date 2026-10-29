@@ -42,3 +42,15 @@ def test_a_four_sites_and_zero_residual_identity():
     for m in list(model.plane_down)+list(model.plane_up):
         assert m.update.weight.grad is not None and torch.isfinite(m.update.weight.grad).all() and m.update.weight.grad.abs().sum()>0
     for h in hooks:h.remove()
+
+def test_bc_paths_and_gradients():
+    from fpsgen.hier_occ_flow.patch_unet_condition import PlaneMemory,DirectionalContext
+    torch.set_num_threads(2);x=torch.randn(1,32,2,4,4,requires_grad=True)
+    planes=(torch.randn(1,32,4,4,requires_grad=True),torch.randn(1,32,2,4,requires_grad=True),torch.randn(1,32,2,4,requires_grad=True))
+    m=PlaneMemory(32);c=tuple(torch.ones(1,1,*p.shape[2:]) for p in planes)
+    fused=m(planes,tuple(p*2 for p in planes),c);sum(y.square().mean() for y in fused).backward(retain_graph=True)
+    assert all(g.weight.grad is not None and g.weight.grad.abs().sum()>0 for g in m.gates)
+    for flag in (True,False):
+        b=DirectionalContext(32,flag);y=b(x,planes);y.square().mean().backward(retain_graph=True);assert b.output.weight.grad.abs().sum()>0
+    for variant in ('u1ab','u1ac','u1abc','u1abctl','u1acctl'):
+        model=PatchLidarCondition(TinySpec(),variant,False);y=model(torch.rand(16**3));assert len(y)==3 and all(torch.isfinite(t).all() for t in y)

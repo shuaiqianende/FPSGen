@@ -19,7 +19,8 @@ def main():
         c['model']['encoder_variant']='triplane_v3'
     gpu=c['training']['physical_gpus'][0]
     if os.environ.get('CUDA_VISIBLE_DEVICES')!=str(gpu):raise ValueError('Physical GPU mismatch')
-    admission=gpu_preflight((gpu,),minimum_free_gib=22.,allow_shared_compute=False)
+    shared=os.environ.get('HS_OCCFLOW_ALLOW_SHARED_GPU')=='1'
+    admission=gpu_preflight((gpu,),minimum_free_gib=14.5 if shared else 22.,allow_shared_compute=shared)
     if admission['status']!='AVAILABLE':raise RuntimeError(json.dumps(admission))
     if a.output.exists():raise FileExistsError('Prior audit preserved')
     a.output.mkdir(parents=True);torch.set_num_threads(4);torch.manual_seed(c['training']['seed']);torch.cuda.manual_seed_all(c['training']['seed'])
