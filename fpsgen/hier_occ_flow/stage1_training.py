@@ -96,7 +96,7 @@ def validate_config(cfg):
     fidelity_variants=('bottleneck96','asymmetric3d','lightweight_skip')
     triplane_variants=('triplane_v1','triplane_v2','triplane_v3')
     gctv_variants=('gctv_g0','gctv_g1','gctv_g2','gctv_h1','gctv_h2','gctv_h3','gctv_h4','gctv_h5','gctv_h6')
-    if variant not in ('original','bottleneck','omd3d',*fidelity_variants,*triplane_variants,*gctv_variants):raise ValueError('Unknown encoder variant')
+    if variant not in ('original','bottleneck','omd3d','strong_s1','strong_s5',*fidelity_variants,*triplane_variants,*gctv_variants):raise ValueError('Unknown encoder variant')
     scope=cfg.get('scope')
     if scope=='architecture_pilot':
         train=cfg['training']
@@ -174,6 +174,12 @@ def validate_config(cfg):
             if variant not in gctv_variants or cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
                 raise ValueError('GCTV accepts only registered G0/G1/G2')
             if train.get('seed')!=20261032:raise ValueError('GCTV seed must be20261032')
+        elif experiment=='desescene-gctv-matched-fm-control':
+            if variant!='original' or train.get('seed')!=20261032:
+                raise ValueError('Matched original FM control requires registered seed and architecture')
+        elif experiment=='desescene-strong-encoder-v2':
+            if variant not in ('strong_s1','strong_s5') or train.get('seed')!=20261032:
+                raise ValueError('Strong encoder first phase permits only registered S1/S5 with fixed seed')
         elif experiment=='desescene-triplane-encoder-v1':
             if variant not in ('triplane_v1','triplane_v2') or cfg['model'].get('omd3d') or cfg['model'].get('dense_fidelity'):
                 raise ValueError('Registered TriPlane pilot permits V1/V2 only')
@@ -377,7 +383,9 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             encoder_variant=model_variant,omd_config=cfg['model'].get('omd3d'),
             dense_fidelity_config=cfg['model'].get('dense_fidelity')).to(device)
     if shared_flow_state is not None:
-        raw.flow.load_state_dict(shared_flow_state,strict=True)
+        incompatible=raw.flow.load_state_dict(shared_flow_state,strict=(model_variant!='strong_s5'))
+        if model_variant=='strong_s5' and (set(incompatible.missing_keys)!={'fullres_projection.weight','fullres_projection.bias'} or incompatible.unexpected_keys):
+            raise ValueError('S5 must preserve all original Flow weights')
         del shared_flow_state
     model=torch.nn.parallel.DistributedDataParallel(raw,device_ids=[local]) if world>1 else raw
     # Initial broadcast precedes EMA construction; no pre-existing EMA is loaded.
@@ -422,7 +430,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     output.mkdir(parents=True,exist_ok=True)
     code_files=list(Path(__file__).parent.glob('stage1*.py'))
     code_files.extend(Path(__file__).parent/name for name in
-                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py','triplane_encoder.py','gctv_encoder.py','gctv_highres_encoder.py'))
+                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py','triplane_encoder.py','gctv_encoder.py','gctv_highres_encoder.py','strong_encoder_v2.py'))
     code_sha={p.name:file_sha(p) for p in code_files if p.is_file()}
     launch_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     if rank==0:
@@ -567,7 +575,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                                 and frame_target is not None and successful==steps)
         # This cohort evaluates seq08/skip100 through its separate registered
         # evaluator; do not launch the historical 900-frame development pass.
-        evaluate_development=not (model_variant.startswith(('triplane_','gctv_')) and val.get('automatic_development_evaluation') is False)
+        evaluate_development=not (model_variant.startswith(('triplane_','gctv_','strong_')) and val.get('automatic_development_evaluation') is False)
         if evaluate_development and bool(finite) and (successful%val['light_every']==0 or pilot_partial_final
                              or pilot_full_final or registered_frame_final or is_frame_milestone):
             state=rng_state(generator,device)

@@ -88,7 +88,12 @@ class Stage1DirectOccupancy(nn.Module):
             x_max=geometry.maximum[0], y_max=geometry.maximum[1], z_max=geometry.maximum[2],
             nx=nx, ny=ny, nz=nz, xy_radius=geometry.sphere_radius,
             sphere_radius=geometry.sphere_radius)
-        if encoder_variant in ('gctv_h1','gctv_h2','gctv_h3','gctv_h4','gctv_h5','gctv_h6'):
+        if encoder_variant == 'strong_s1':
+            from .strong_encoder_v2 import FullPyramidVoxDet
+            self.encoder=FullPyramidVoxDet(self.geometry,activation_checkpointing)
+        elif encoder_variant == 'strong_s5':
+            self.encoder=OccupancyConditionEncoder(self.geometry,activation_checkpointing,encoder_variant='original')
+        elif encoder_variant in ('gctv_h1','gctv_h2','gctv_h3','gctv_h4','gctv_h5','gctv_h6'):
             if omd_config or dense_fidelity_config:raise ValueError('Dense VoxDet options do not apply to GCTV')
             from .gctv_highres_encoder import HighResGCTVEncoder
             self.encoder=HighResGCTVEncoder(self.geometry,variant=encoder_variant[-2:],activation_checkpointing=activation_checkpointing)
@@ -105,7 +110,11 @@ class Stage1DirectOccupancy(nn.Module):
                 self.geometry,activation_checkpointing,
                 encoder_variant=encoder_variant,omd_config=omd_config,
                 dense_fidelity_config=dense_fidelity_config)
-        self.flow=OccupancyUNet(objective,widths,activation_checkpointing)
+        if encoder_variant == 'strong_s5':
+            from .strong_encoder_v2 import FullResolutionConditionFlow
+            self.flow=FullResolutionConditionFlow(objective,widths,activation_checkpointing)
+        else:
+            self.flow=OccupancyUNet(objective,widths,activation_checkpointing)
         self.register_buffer('valid',self.geometry.field_mask(),persistent=False)
         self.last_condition_cache_cuda_events=None
 

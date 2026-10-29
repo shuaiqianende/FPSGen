@@ -1,0 +1,5 @@
+# Strong Encoder V2 — initialization and protocol
+
+Matched original control: seed 20261032, FP32 model weights with FP16 autocast, batch 2, 1000 successful-update warmup, 10000 updates/20000 exposures. Original scratch template SHA256 is `5fcb2bc5cc4fb78d8d4371f35cc2f085c75e40624d93d9c30ba29fd215d4ba67`; the independently seeded common Flow SHA256 is `6efa2c64da812878dd70b883153bd6e04d897a864c19637f71b5b79a37875ddd`. The S1/S5 runner checks these identities before formal training and checks every shared tensor match. S5 adds only its zero-initialized flow projection. No trained model weights are used for initialization.
+
+The first neck returns enhanced F2 as an intermediate. S1 F1 is bitwise equal to the original in a fixed real-input eval test. On that test, S1 F2/F3 backpropagation reaches the second backbone (gradient norm 5.42286) and its TPV layers (0.21880). These are gradient connectivity checks, not proof of a quality gain. In AMP S1 F2/F3 are FP32, while the original outputs FP16 for those scales; this is a numerical/execution distinction to measure.
