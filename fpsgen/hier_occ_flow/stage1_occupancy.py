@@ -88,9 +88,10 @@ class Stage1DirectOccupancy(nn.Module):
             x_max=geometry.maximum[0], y_max=geometry.maximum[1], z_max=geometry.maximum[2],
             nx=nx, ny=ny, nz=nz, xy_radius=geometry.sphere_radius,
             sphere_radius=geometry.sphere_radius)
-        if encoder_variant in ('patch_p0','patch_u1','patch_u1a','patch_u1ab','patch_u1abc','patch_u1ac','patch_u1abctl','patch_u1acctl'):
+        if encoder_variant in ('patch_p0','patch_u1','patch_u1a','patch_u1ab','patch_u1abc','patch_u1ac','patch_u1abctl','patch_u1acctl','patch_psa','patch_psab'):
             from .patch_unet_condition import PatchLidarCondition
-            self.encoder=PatchLidarCondition(self.geometry,variant=encoder_variant[6:],activation_checkpointing=activation_checkpointing)
+            enc={'patch_psa':'u1a','patch_psab':'u1ab'}.get(encoder_variant,encoder_variant[6:])
+            self.encoder=PatchLidarCondition(self.geometry,variant=enc,activation_checkpointing=activation_checkpointing)
         elif encoder_variant == 'strong_s1':
             from .strong_encoder_v2 import FullPyramidVoxDet
             self.encoder=FullPyramidVoxDet(self.geometry,activation_checkpointing)
@@ -113,7 +114,10 @@ class Stage1DirectOccupancy(nn.Module):
                 self.geometry,activation_checkpointing,
                 encoder_variant=encoder_variant,omd_config=omd_config,
                 dense_fidelity_config=dense_fidelity_config)
-        if encoder_variant == 'strong_s5':
+        if encoder_variant in ('patch_psa','patch_psab'):
+            from .patch_fm_backbone import PatchFlowUNet
+            self.flow=PatchFlowUNet(objective,widths,activation_checkpointing)
+        elif encoder_variant == 'strong_s5':
             from .strong_encoder_v2 import FullResolutionConditionFlow
             self.flow=FullResolutionConditionFlow(objective,widths,activation_checkpointing)
         else:

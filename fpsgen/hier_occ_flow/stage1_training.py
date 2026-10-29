@@ -96,7 +96,7 @@ def validate_config(cfg):
     fidelity_variants=('bottleneck96','asymmetric3d','lightweight_skip')
     triplane_variants=('triplane_v1','triplane_v2','triplane_v3')
     gctv_variants=('gctv_g0','gctv_g1','gctv_g2','gctv_h1','gctv_h2','gctv_h3','gctv_h4','gctv_h5','gctv_h6')
-    if variant not in ('original','bottleneck','omd3d','strong_s1','strong_s5','patch_p0','patch_u1','patch_u1a','patch_u1ab','patch_u1abc','patch_u1ac','patch_u1abctl','patch_u1acctl',*fidelity_variants,*triplane_variants,*gctv_variants):raise ValueError('Unknown encoder variant')
+    if variant not in ('original','bottleneck','omd3d','strong_s1','strong_s5','patch_p0','patch_u1','patch_u1a','patch_u1ab','patch_u1abc','patch_u1ac','patch_u1abctl','patch_u1acctl','patch_psa','patch_psab',*fidelity_variants,*triplane_variants,*gctv_variants):raise ValueError('Unknown encoder variant')
     scope=cfg.get('scope')
     if scope=='architecture_pilot':
         train=cfg['training']
@@ -178,7 +178,7 @@ def validate_config(cfg):
             if variant!='original' or train.get('seed')!=20261032:
                 raise ValueError('Matched original FM control requires registered seed and architecture')
         elif experiment=='desescene-u1-triplane-v1':
-            if variant not in ('patch_p0','patch_u1','patch_u1a','patch_u1ab','patch_u1abc','patch_u1ac','patch_u1abctl','patch_u1acctl') or train.get('seed')!=20261032:
+            if variant not in ('patch_p0','patch_u1','patch_u1a','patch_u1ab','patch_u1abc','patch_u1ac','patch_u1abctl','patch_u1acctl','patch_psa','patch_psab') or train.get('seed')!=20261032:
                 raise ValueError('U1 phase permits only registered P0/U1/U1+A with fixed seed')
         elif experiment=='desescene-strong-encoder-v2':
             if variant not in ('strong_s1','strong_s5') or train.get('seed')!=20261032:
@@ -327,6 +327,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     shared_flow_state=None;shared_flow_sha=None
     if cfg['scope'] in ('architecture_pilot','architecture_fidelity_pilot',LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE):
         from .stage1_network import OccupancyUNet
+        if model_variant in ('patch_psa','patch_psab'):
+            from .patch_fm_backbone import PatchFlowUNet as OccupancyUNet
         # Encoder variants consume different RNG amounts. Seed an independent
         # Flow template so the three pilot arms begin with identical Flow U-Nets.
         with torch.random.fork_rng(devices=[]):
@@ -433,7 +435,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     output.mkdir(parents=True,exist_ok=True)
     code_files=list(Path(__file__).parent.glob('stage1*.py'))
     code_files.extend(Path(__file__).parent/name for name in
-                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py','triplane_encoder.py','gctv_encoder.py','gctv_highres_encoder.py','strong_encoder_v2.py','patch_unet_condition.py'))
+                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py','triplane_encoder.py','gctv_encoder.py','gctv_highres_encoder.py','strong_encoder_v2.py','patch_unet_condition.py','patch_fm_backbone.py'))
     code_sha={p.name:file_sha(p) for p in code_files if p.is_file()}
     launch_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     if rank==0:
