@@ -88,7 +88,10 @@ class Stage1DirectOccupancy(nn.Module):
             x_max=geometry.maximum[0], y_max=geometry.maximum[1], z_max=geometry.maximum[2],
             nx=nx, ny=ny, nz=nz, xy_radius=geometry.sphere_radius,
             sphere_radius=geometry.sphere_radius)
-        if encoder_variant == 'strong_s1':
+        if encoder_variant in ('patch_p0','patch_u1'):
+            from .patch_unet_condition import PatchLidarCondition
+            self.encoder=PatchLidarCondition(self.geometry,variant=encoder_variant[6:],activation_checkpointing=activation_checkpointing)
+        elif encoder_variant == 'strong_s1':
             from .strong_encoder_v2 import FullPyramidVoxDet
             self.encoder=FullPyramidVoxDet(self.geometry,activation_checkpointing)
         elif encoder_variant == 'strong_s5':

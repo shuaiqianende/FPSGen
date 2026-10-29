@@ -96,7 +96,7 @@ def validate_config(cfg):
     fidelity_variants=('bottleneck96','asymmetric3d','lightweight_skip')
     triplane_variants=('triplane_v1','triplane_v2','triplane_v3')
     gctv_variants=('gctv_g0','gctv_g1','gctv_g2','gctv_h1','gctv_h2','gctv_h3','gctv_h4','gctv_h5','gctv_h6')
-    if variant not in ('original','bottleneck','omd3d','strong_s1','strong_s5',*fidelity_variants,*triplane_variants,*gctv_variants):raise ValueError('Unknown encoder variant')
+    if variant not in ('original','bottleneck','omd3d','strong_s1','strong_s5','patch_p0','patch_u1',*fidelity_variants,*triplane_variants,*gctv_variants):raise ValueError('Unknown encoder variant')
     scope=cfg.get('scope')
     if scope=='architecture_pilot':
         train=cfg['training']
@@ -177,6 +177,9 @@ def validate_config(cfg):
         elif experiment=='desescene-gctv-matched-fm-control':
             if variant!='original' or train.get('seed')!=20261032:
                 raise ValueError('Matched original FM control requires registered seed and architecture')
+        elif experiment=='desescene-u1-triplane-v1':
+            if variant not in ('patch_p0','patch_u1') or train.get('seed')!=20261032:
+                raise ValueError('U1 first phase permits only registered P0/U1 with fixed seed')
         elif experiment=='desescene-strong-encoder-v2':
             if variant not in ('strong_s1','strong_s5') or train.get('seed')!=20261032:
                 raise ValueError('Strong encoder first phase permits only registered S1/S5 with fixed seed')
@@ -243,7 +246,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         if steps>32 and (steps!=train['successful_updates'] or frame_target!=100000):
             raise ValueError('Long-run arms require the registered full100K frame budget')
     elif cfg['scope']==SINGLE_GPU_20K_SCOPE:
-        permitted=(1000,2500,10000) if cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1','desescene-strong-encoder-v2') else (train['successful_updates'],)
+        permitted=(1000,2500,10000) if cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1','desescene-strong-encoder-v2','desescene-u1-triplane-v1') else (train['successful_updates'],)
         if steps>32 and (steps not in permitted or frame_target!=20000):
             raise ValueError('Single-GPU arms require the registered full20K frame budget')
     elif steps>1000 or cfg['scope']=='formal':
@@ -269,7 +272,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if world!=len(visible.split(',')): raise ValueError('Use one process per selected physical GPU')
     if cfg['scope'] in PILOT_SCOPES and steps<train['successful_updates']:
         frame_target=steps*world*train['batch_per_gpu']
-    elif cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and (smoke or cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1','desescene-strong-encoder-v2')) and steps<train['successful_updates']:
+    elif cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and (smoke or cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1','desescene-strong-encoder-v2','desescene-u1-triplane-v1')) and steps<train['successful_updates']:
         # Smoke runs have a deliberately shortened exposure budget. Keep the
         # same frame/update accounting invariant as the registered full run.
         frame_target=steps*world*train['batch_per_gpu']
@@ -339,7 +342,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         shared_flow_sha=digest.hexdigest()
         del flow_template
     matched_init_audit=None
-    if cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and not model_variant.startswith(('triplane_','gctv_')):
+    if cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and not model_variant.startswith(('triplane_','gctv_','patch_')):
         # Build one canonical scratch R0 initialization for the pair. E3 copies
         # every same-name/same-shape tensor; only architecture-specific 3x3 vs
         # 1x1 skip kernels retain their own deterministic scratch initialization.
@@ -430,7 +433,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     output.mkdir(parents=True,exist_ok=True)
     code_files=list(Path(__file__).parent.glob('stage1*.py'))
     code_files.extend(Path(__file__).parent/name for name in
-                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py','triplane_encoder.py','gctv_encoder.py','gctv_highres_encoder.py','strong_encoder_v2.py'))
+                      ('dense_encoder_variants.py','observation_context.py','fidelity_dense_blocks.py','triplane_encoder.py','gctv_encoder.py','gctv_highres_encoder.py','strong_encoder_v2.py','patch_unet_condition.py'))
     code_sha={p.name:file_sha(p) for p in code_files if p.is_file()}
     launch_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     if rank==0:
@@ -575,7 +578,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
                                 and frame_target is not None and successful==steps)
         # This cohort evaluates seq08/skip100 through its separate registered
         # evaluator; do not launch the historical 900-frame development pass.
-        evaluate_development=not (model_variant.startswith(('triplane_','gctv_','strong_')) and val.get('automatic_development_evaluation') is False)
+        evaluate_development=not (model_variant.startswith(('triplane_','gctv_','strong_','patch_')) and val.get('automatic_development_evaluation') is False)
         if evaluate_development and bool(finite) and (successful%val['light_every']==0 or pilot_partial_final
                              or pilot_full_final or registered_frame_final or is_frame_milestone):
             state=rng_state(generator,device)

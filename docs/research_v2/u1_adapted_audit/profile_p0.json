@@ -1,0 +1,200 @@
+{
+  "attention": [
+    {
+      "macs": 21743271936,
+      "name": "f3_attention",
+      "tokens": 9216
+    }
+  ],
+  "attention_matmul_macs": 21743271936,
+  "conv": [
+    {
+      "macs": 1019215872,
+      "name": "input",
+      "shape": [
+        1,
+        32,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 16307453952,
+      "name": "down_blocks.0.first.2",
+      "shape": [
+        1,
+        32,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 16307453952,
+      "name": "down_blocks.0.second.3",
+      "shape": [
+        1,
+        32,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 2038431744,
+      "name": "downsample.0",
+      "shape": [
+        1,
+        32,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 150994944,
+      "name": "down_blocks.1.skip",
+      "shape": [
+        1,
+        64,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 4076863488,
+      "name": "down_blocks.1.first.2",
+      "shape": [
+        1,
+        64,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 8153726976,
+      "name": "down_blocks.1.second.3",
+      "shape": [
+        1,
+        64,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 1019215872,
+      "name": "downsample.1",
+      "shape": [
+        1,
+        64,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 75497472,
+      "name": "down_blocks.2.skip",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 2038431744,
+      "name": "down_blocks.2.first.2",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 4076863488,
+      "name": "down_blocks.2.second.3",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 452984832,
+      "name": "f3_attention.qkv",
+      "shape": [
+        1,
+        384,
+        9216
+      ]
+    },
+    {
+      "macs": 150994944,
+      "name": "f3_attention.output",
+      "shape": [
+        1,
+        128,
+        9216
+      ]
+    },
+    {
+      "macs": 2415919104,
+      "name": "outputs.0",
+      "shape": [
+        1,
+        128,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 603979776,
+      "name": "outputs.1",
+      "shape": [
+        1,
+        128,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 150994944,
+      "name": "outputs.2",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    }
+  ],
+  "convolution_macs": 59039023104,
+  "encoder_event_ms": [
+    13.239392280578613,
+    13.221023559570312,
+    13.3536958694458,
+    13.307968139648438,
+    13.298687934875488
+  ],
+  "input": {
+    "frame": 0,
+    "sequence": "00"
+  },
+  "parameters": 1132032,
+  "peak_allocated_bytes": 318263296,
+  "scope": "one frame batch1; excludes normalization, nonlinearities and index operations",
+  "status": "PASS"
+}

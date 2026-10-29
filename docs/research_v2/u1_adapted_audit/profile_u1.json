@@ -1,0 +1,420 @@
+{
+  "attention": [
+    {
+      "macs": 21743271936,
+      "name": "f3_attention",
+      "tokens": 9216
+    }
+  ],
+  "attention_matmul_macs": 21743271936,
+  "conv": [
+    {
+      "macs": 1019215872,
+      "name": "input",
+      "shape": [
+        1,
+        32,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 16307453952,
+      "name": "down_blocks.0.first.2",
+      "shape": [
+        1,
+        32,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 16307453952,
+      "name": "down_blocks.0.second.3",
+      "shape": [
+        1,
+        32,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 2038431744,
+      "name": "downsample.0",
+      "shape": [
+        1,
+        32,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 150994944,
+      "name": "down_blocks.1.skip",
+      "shape": [
+        1,
+        64,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 4076863488,
+      "name": "down_blocks.1.first.2",
+      "shape": [
+        1,
+        64,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 8153726976,
+      "name": "down_blocks.1.second.3",
+      "shape": [
+        1,
+        64,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 1019215872,
+      "name": "downsample.1",
+      "shape": [
+        1,
+        64,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 75497472,
+      "name": "down_blocks.2.skip",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 2038431744,
+      "name": "down_blocks.2.first.2",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 4076863488,
+      "name": "down_blocks.2.second.3",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 452984832,
+      "name": "f3_attention.qkv",
+      "shape": [
+        1,
+        384,
+        9216
+      ]
+    },
+    {
+      "macs": 150994944,
+      "name": "f3_attention.output",
+      "shape": [
+        1,
+        128,
+        9216
+      ]
+    },
+    {
+      "macs": 509607936,
+      "name": "downsample.2",
+      "shape": [
+        1,
+        128,
+        2,
+        24,
+        24
+      ]
+    },
+    {
+      "macs": 37748736,
+      "name": "deep.skip",
+      "shape": [
+        1,
+        256,
+        2,
+        24,
+        24
+      ]
+    },
+    {
+      "macs": 1019215872,
+      "name": "deep.first.2",
+      "shape": [
+        1,
+        256,
+        2,
+        24,
+        24
+      ]
+    },
+    {
+      "macs": 2038431744,
+      "name": "deep.second.3",
+      "shape": [
+        1,
+        256,
+        2,
+        24,
+        24
+      ]
+    },
+    {
+      "macs": 2038431744,
+      "name": "middle.0.first.2",
+      "shape": [
+        1,
+        256,
+        2,
+        24,
+        24
+      ]
+    },
+    {
+      "macs": 2038431744,
+      "name": "middle.0.second.3",
+      "shape": [
+        1,
+        256,
+        2,
+        24,
+        24
+      ]
+    },
+    {
+      "macs": 2038431744,
+      "name": "middle.1.first.2",
+      "shape": [
+        1,
+        256,
+        2,
+        24,
+        24
+      ]
+    },
+    {
+      "macs": 2038431744,
+      "name": "middle.1.second.3",
+      "shape": [
+        1,
+        256,
+        2,
+        24,
+        24
+      ]
+    },
+    {
+      "macs": 16307453952,
+      "name": "upsample.0",
+      "shape": [
+        1,
+        256,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 452984832,
+      "name": "up_blocks.0.skip",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 12230590464,
+      "name": "up_blocks.0.first.2",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 4076863488,
+      "name": "up_blocks.0.second.3",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    },
+    {
+      "macs": 32614907904,
+      "name": "upsample.1",
+      "shape": [
+        1,
+        128,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 905969664,
+      "name": "up_blocks.1.skip",
+      "shape": [
+        1,
+        64,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 24461180928,
+      "name": "up_blocks.1.first.2",
+      "shape": [
+        1,
+        64,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 8153726976,
+      "name": "up_blocks.1.second.3",
+      "shape": [
+        1,
+        64,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 65229815808,
+      "name": "upsample.2",
+      "shape": [
+        1,
+        64,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 1811939328,
+      "name": "up_blocks.2.skip",
+      "shape": [
+        1,
+        32,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 48922361856,
+      "name": "up_blocks.2.first.2",
+      "shape": [
+        1,
+        32,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 16307453952,
+      "name": "up_blocks.2.second.3",
+      "shape": [
+        1,
+        32,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 2415919104,
+      "name": "outputs.0",
+      "shape": [
+        1,
+        128,
+        16,
+        192,
+        192
+      ]
+    },
+    {
+      "macs": 603979776,
+      "name": "outputs.1",
+      "shape": [
+        1,
+        128,
+        8,
+        96,
+        96
+      ]
+    },
+    {
+      "macs": 150994944,
+      "name": "outputs.2",
+      "shape": [
+        1,
+        128,
+        4,
+        48,
+        48
+      ]
+    }
+  ],
+  "convolution_macs": 302273003520,
+  "encoder_event_ms": [
+    33.065982818603516,
+    32.972801208496094,
+    32.16166305541992,
+    30.97088050842285,
+    30.56230354309082
+  ],
+  "input": {
+    "frame": 0,
+    "sequence": "00"
+  },
+  "parameters": 16056288,
+  "peak_allocated_bytes": 926947328,
+  "scope": "one frame batch1; excludes normalization, nonlinearities and index operations",
+  "status": "PASS"
+}

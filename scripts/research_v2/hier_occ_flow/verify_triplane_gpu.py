@@ -23,7 +23,7 @@ def main():
     if admission['status']!='AVAILABLE':raise RuntimeError(json.dumps(admission))
     if a.output.exists():raise FileExistsError('Prior audit preserved')
     a.output.mkdir(parents=True);torch.set_num_threads(4);torch.manual_seed(c['training']['seed']);torch.cuda.manual_seed_all(c['training']['seed'])
-    source_paths=[ROOT/'fpsgen/hier_occ_flow'/p for p in ('triplane_encoder.py','gctv_encoder.py','gctv_highres_encoder.py','stage1_occupancy.py','stage1_training.py')]
+    source_paths=[ROOT/'fpsgen/hier_occ_flow'/p for p in ('triplane_encoder.py','gctv_encoder.py','gctv_highres_encoder.py','patch_unet_condition.py','stage1_occupancy.py','stage1_training.py')]
     report=dict(status='RUNNING',config_sha256=file_sha(a.config),source_sha256={p.name:file_sha(p) for p in source_paths},gpu=admission,variant=c['model']['encoder_variant'],batch=2,gt_used_as_input=False)
     try:
         train=SparseShardDataset(c['train_dataset'],g,verify=False);dev=SparseShardDataset(c['development_dataset'],g,verify=False)

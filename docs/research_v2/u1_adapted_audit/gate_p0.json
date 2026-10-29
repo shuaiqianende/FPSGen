@@ -1,0 +1,99 @@
+{
+  "batch": 2,
+  "checkpoint_roundtrip": true,
+  "config_sha256": "7e41fdac8ad96fe59018f6dfa35633c845b009cf3a2934076096e031d8f920b6",
+  "dcn_offset_probes": [],
+  "encoder_event_ms": 3369.8466796875,
+  "gpu": {
+    "gpus": [
+      {
+        "available": true,
+        "driver": "580.159.03",
+        "existing_compute_pids": [],
+        "free_mib": 24110.0,
+        "physical_gpu": 2,
+        "shared_compute_allowed": false,
+        "total_mib": 24576.0,
+        "utilization_percent": 0.0
+      }
+    ],
+    "minimum_free_gib": 22.0,
+    "policy": "No existing compute process; no stopping/reclaiming memory from existing jobs",
+    "status": "AVAILABLE"
+  },
+  "gradient_norms": {
+    "encoder": 0.2359859198331833,
+    "flow": 8.613567352294922
+  },
+  "gt_used_as_input": false,
+  "loss": 2.016221046447754,
+  "peak_allocated_bytes": 4697946112,
+  "peak_reserved_bytes": 6230638592,
+  "points": [
+    18000,
+    18000
+  ],
+  "pyramid_dtypes": [
+    "torch.float16",
+    "torch.float16",
+    "torch.float16"
+  ],
+  "pyramid_shapes": [
+    [
+      2,
+      128,
+      16,
+      192,
+      192
+    ],
+    [
+      2,
+      128,
+      8,
+      96,
+      96
+    ],
+    [
+      2,
+      128,
+      4,
+      48,
+      48
+    ]
+  ],
+  "records": [
+    {
+      "frame": 925,
+      "gt_parents": 319738,
+      "sequence": "02"
+    },
+    {
+      "frame": 4192,
+      "gt_parents": 319737,
+      "sequence": "02"
+    }
+  ],
+  "selected": [
+    [
+      319738,
+      "train",
+      6147
+    ],
+    [
+      319737,
+      "train",
+      9414
+    ]
+  ],
+  "source_sha256": {
+    "gctv_encoder.py": "006b5aa946a0b7fe5ca27be5d6e3f02f12ee58286e6fb6c908b3e7f5a8a78fbd",
+    "gctv_highres_encoder.py": "b2837c87bc58eecdbad476590489add3bac9f02886926abcf7bb7f1ea6abfa4f",
+    "patch_unet_condition.py": "7b5da28043b544e2cd863b29586e7e7197a0452fa518721fd1fb0425ead29e49",
+    "stage1_occupancy.py": "6e3752edd43c9e5005fc8cb572eeef36f8433b92479d5b8016199acaf2a6721d",
+    "stage1_training.py": "ff84bc95c2dddd4e4af25171c2229190e2998679f26ffd8b17dd608905942839",
+    "triplane_encoder.py": "c7d2fe9ae81c595113221f37517a7711fbc930107c3dcc0fe0d3ace8e4607f46"
+  },
+  "status": "GPU_PASS",
+  "step_wall_seconds": 4.79955177300144,
+  "variant": "patch_p0"
+}
