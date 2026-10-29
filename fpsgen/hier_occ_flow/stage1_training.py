@@ -96,7 +96,7 @@ def validate_config(cfg):
     fidelity_variants=('bottleneck96','asymmetric3d','lightweight_skip')
     triplane_variants=('triplane_v1','triplane_v2','triplane_v3')
     gctv_variants=('gctv_g0','gctv_g1','gctv_g2','gctv_h1','gctv_h2','gctv_h3','gctv_h4','gctv_h5','gctv_h6')
-    if variant not in ('original','bottleneck','omd3d','strong_s1','strong_s5','patch_p0','patch_u1',*fidelity_variants,*triplane_variants,*gctv_variants):raise ValueError('Unknown encoder variant')
+    if variant not in ('original','bottleneck','omd3d','strong_s1','strong_s5','patch_p0','patch_u1','patch_u1a',*fidelity_variants,*triplane_variants,*gctv_variants):raise ValueError('Unknown encoder variant')
     scope=cfg.get('scope')
     if scope=='architecture_pilot':
         train=cfg['training']
@@ -178,8 +178,8 @@ def validate_config(cfg):
             if variant!='original' or train.get('seed')!=20261032:
                 raise ValueError('Matched original FM control requires registered seed and architecture')
         elif experiment=='desescene-u1-triplane-v1':
-            if variant not in ('patch_p0','patch_u1') or train.get('seed')!=20261032:
-                raise ValueError('U1 first phase permits only registered P0/U1 with fixed seed')
+            if variant not in ('patch_p0','patch_u1','patch_u1a') or train.get('seed')!=20261032:
+                raise ValueError('U1 phase permits only registered P0/U1/U1+A with fixed seed')
         elif experiment=='desescene-strong-encoder-v2':
             if variant not in ('strong_s1','strong_s5') or train.get('seed')!=20261032:
                 raise ValueError('Strong encoder first phase permits only registered S1/S5 with fixed seed')

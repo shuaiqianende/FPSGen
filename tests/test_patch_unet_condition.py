@@ -26,3 +26,19 @@ def test_attention_matches_manual_float32():
     w=torch.softmax(torch.einsum('bct,bcs->bts',q,k)/(32**.5),dim=-1)
     expected=(z+m.output(torch.einsum('bts,bcs->bct',w,v))).reshape_as(x)
     torch.testing.assert_close(y,expected,rtol=1e-5,atol=1e-6)
+
+def test_a_four_sites_and_zero_residual_identity():
+    torch.set_num_threads(2);torch.manual_seed(123)
+    base=PatchLidarCondition(TinySpec(),'u1',False).eval()
+    torch.manual_seed(123);model=PatchLidarCondition(TinySpec(),'u1a',False).eval()
+    for name,value in base.state_dict().items():assert torch.equal(value,model.state_dict()[name]),name
+    calls=[];hooks=[]
+    for name,m in list(model.plane_down.named_children())+list(model.plane_up.named_children()):
+        hooks.append(m.register_forward_hook(lambda module,args,out:calls.append(tuple(out[0].shape))))
+    x=torch.rand(16**3);before=base(x);after=model(x)
+    assert len(calls)==4
+    for a,b in zip(before,after):torch.testing.assert_close(a,b,rtol=0,atol=0)
+    sum(y.square().mean() for y in after).backward()
+    for m in list(model.plane_down)+list(model.plane_up):
+        assert m.update.weight.grad is not None and torch.isfinite(m.update.weight.grad).all() and m.update.weight.grad.abs().sum()>0
+    for h in hooks:h.remove()
