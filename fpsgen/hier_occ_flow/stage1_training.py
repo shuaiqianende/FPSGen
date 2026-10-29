@@ -269,7 +269,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
     if world!=len(visible.split(',')): raise ValueError('Use one process per selected physical GPU')
     if cfg['scope'] in PILOT_SCOPES and steps<train['successful_updates']:
         frame_target=steps*world*train['batch_per_gpu']
-    elif cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and (smoke or cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1')) and steps<train['successful_updates']:
+    elif cfg['scope'] in (LONGRUN_SCOPE,SINGLE_GPU_20K_SCOPE) and (smoke or cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1','desescene-strong-encoder-v2')) and steps<train['successful_updates']:
         # Smoke runs have a deliberately shortened exposure budget. Keep the
         # same frame/update accounting invariant as the registered full run.
         frame_target=steps*world*train['batch_per_gpu']
