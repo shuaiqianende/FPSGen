@@ -243,7 +243,7 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
         if steps>32 and (steps!=train['successful_updates'] or frame_target!=100000):
             raise ValueError('Long-run arms require the registered full100K frame budget')
     elif cfg['scope']==SINGLE_GPU_20K_SCOPE:
-        permitted=(1000,2500,10000) if cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1') else (train['successful_updates'],)
+        permitted=(1000,2500,10000) if cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1','desescene-strong-encoder-v2') else (train['successful_updates'],)
         if steps>32 and (steps not in permitted or frame_target!=20000):
             raise ValueError('Single-GPU arms require the registered full20K frame budget')
     elif steps>1000 or cfg['scope']=='formal':
