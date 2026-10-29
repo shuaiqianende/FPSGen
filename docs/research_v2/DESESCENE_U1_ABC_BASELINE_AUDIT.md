@@ -1,0 +1,11 @@
+# U1 + A/B/C baseline identity audit
+
+Status: **BLOCKED — U1 source/config/checkpoint identity not found**. Do not infer U1 from a U-Net class name, the existing OccupancyUNet, or PatchScene. The architecture, its reported metrics, its condition interface, and the identity of its scratch training run remain unknown. U1+A/B/C, their controls, profiling, smoke, and training are NOT TESTED.
+
+Search covered locally visible FPSGen worktrees, tracked research branches, and private remote heads whose names match `*unet*`, `*u1*`, `*encoder*`, or `*patchscene*`. None of those inspected identifies a validated U1 condition encoder. This does not prove no such artifact exists elsewhere or under a different name; a source path, branch/commit, or checkpoint and config is needed.
+
+The independent official PatchScene tree exists at `worktrees/patchscene-official`, commit `49de6d848663956e57cdd2f95d3b364e7a7afbe6`. `network/unet.py` defines `UNetModel`, its denoising encoder/decoder and a separate LiDAR condition path using `lidar_cond_input_emb` and `lidar_cond_downs`; the latter duplicates `img_part` into two channels and runs the condition blocks without time embedding. The official SemanticKITTI config enables LiDAR, uses base channels 32 and enables attention. This is not evidence that PatchScene's condition branch was trained independently in the DeSeScene Stage1 FM protocol. A separate matched FM ablation remains NOT TESTED.
+
+At audit, prior S1/S5 each completed 5K successful exposures and a non-seq08 dev41 screen; their 20K selection remains pending. S1 dev41 NFE2 IoU .25192, recall .34621, ceiling .40276; same-device matched original 5K IoU .21419, recall .29107, ceiling .34085. S5 IoU .22396, recall .30465, ceiling .35630; same baseline. These are short-run diagnostics, not final seq08 metrics and not U1 evidence. Both GPU2 and GPU3 were idle when checked; no prior process was stopped.
+
+Once U1 is identified, freeze its source, model configuration, checkpoint/initialization and output identities; audit down/up channel widths and actual F1/F2 stage positions before implementing A, B, C. Preserve the user's 20K scheduler, scratch initialization, Batch2, AMP and 41-frame final protocol. No 900-frame evaluation or Stage2 training is authorized.
