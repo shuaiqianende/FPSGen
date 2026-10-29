@@ -177,6 +177,9 @@ def validate_config(cfg):
         elif experiment=='desescene-gctv-matched-fm-control':
             if variant!='original' or train.get('seed')!=20261032:
                 raise ValueError('Matched original FM control requires registered seed and architecture')
+        elif experiment=='desescene-u1-scratch100k-v1':
+            if variant not in ('patch_u1abctl','patch_psab','patch_u1a') or train.get('seed')!=20261032:
+                raise ValueError('Registered scratch100K variants and seed required')
         elif experiment=='desescene-u1-triplane-v1':
             if variant not in ('patch_p0','patch_u1','patch_u1a','patch_u1ab','patch_u1abc','patch_u1ac','patch_u1abctl','patch_u1acctl','patch_psa','patch_psab') or train.get('seed')!=20261032:
                 raise ValueError('U1 phase permits only registered P0/U1/U1+A with fixed seed')
@@ -189,8 +192,9 @@ def validate_config(cfg):
             if train.get('seed')!=20261032:raise ValueError('TriPlane seed must be20261032')
         else:
             raise ValueError('Single-GPU 20K experiment requires a registered R0/E3 or E1/E2 identity')
-        if train.get('successful_frame_exposures')!=20000 or train.get('successful_updates')!=10000:
-            raise ValueError('Single-GPU comparison is fixed to20K exposures /10K updates at batch2')
+        expected=(100000,50000) if experiment=='desescene-u1-scratch100k-v1' else (20000,10000)
+        if (train.get('successful_frame_exposures'),train.get('successful_updates'))!=expected:
+            raise ValueError('Registered successful exposure/update budget mismatch')
         if train.get('batch_per_gpu')!=2 or len(train.get('physical_gpus',[]))!=1 or train['physical_gpus'][0] not in (2,3):
             raise ValueError('Single-GPU comparison requires batch2 on physical GPU2 or GPU3')
         if train.get('warmup_updates')!=1000:
@@ -247,7 +251,8 @@ def run_stage1(cfg,output,*,resume=None,max_updates=None,smoke=False):
             raise ValueError('Long-run arms require the registered full100K frame budget')
     elif cfg['scope']==SINGLE_GPU_20K_SCOPE:
         permitted=(1000,2500,10000) if cfg.get('experiment') in ('desescene-gctv-encoder-v1','desescene-gctv-highres-v1','desescene-strong-encoder-v2','desescene-u1-triplane-v1') else (train['successful_updates'],)
-        if steps>32 and (steps not in permitted or frame_target!=20000):
+        target=100000 if cfg.get('experiment')=='desescene-u1-scratch100k-v1' else 20000
+        if steps>32 and (steps not in permitted or frame_target!=target):
             raise ValueError('Single-GPU arms require the registered full20K frame budget')
     elif steps>1000 or cfg['scope']=='formal':
         gate=json.loads(Path(cfg['engineering_gate']).read_text()) if cfg.get('engineering_gate') else {}

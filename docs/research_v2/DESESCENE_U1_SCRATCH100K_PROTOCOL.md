@@ -1,0 +1,7 @@
+# Three scratch100K experiments
+
+Registered fresh scratch models: GPU2 `equal` (U1+A+B equal-direction control), followed by `u1a` (U1+A); GPU3 `patch` (U1+A+B + PatchScene-inspired FM), after the currently running 20K training and seq08 evaluation. Batch2, seed 20261032, FP32 weights plus FP16 autocast, encoder LR 1e-4, flow LR 2e-4, AdamW, clip 1, EMA .999, warmup 1000 successful updates, cosine over the full 50000 successful updates / 100000 successful frame exposures. Original input, surface-hit GT, source distribution and FM loss remain unchanged. Source and data identities are verified; these runs do not load 20K weights.
+
+Each arm requires real max-scene Batch2 gate, separate scratch 32-successful-update smoke, then a new formal scratch model and 41-frame seq08 NFE2 evaluation. No 900 frame evaluation and no Stage2 training. The original VoxDet matching run used the same optimizer, seed, batch, precision, LR and warmup, but had a 20K cosine horizon. Therefore a 100K result versus that 20K run is not a same-budget quality comparison; any prior original 100K comparison requires verification of its own precision and protocol. PatchScene-inspired FM uses a different network and therefore a distinct flow initialization; the two original-FM U1 variants retain the matched common Flow seed and initialization.
+
+P0/U1 scratch100K results, runtime and quality are NOT TESTED at registration. 6 CPU shape, gradient, time-boundary and initialization tests passed. The evaluation uses native parent voxel centers, not fine occupancy or final point jitter.
