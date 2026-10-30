@@ -6,7 +6,7 @@ from fpsgen.hier_occ_flow.storage import atomic_json,file_sha
 from fpsgen.hier_occ_flow.resources import gpu_preflight
 PRIOR=Path('/data-12/M2024-HWZ/FPSGen/worktrees/desescene-u1-scratch100k-v1/experiments/desescene_u1_scratch100k_v1')
 def main():
- p=argparse.ArgumentParser();p.add_argument('--gpu',type=int,choices=(2,3),required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--resume',action='store_true');a=p.parse_args();arm='d1' if a.gpu==2 else 'd2';prior=PRIOR/f'gpu{a.gpu}_recovery/status.json'
+ p=argparse.ArgumentParser();p.add_argument('--gpu',type=int,choices=(2,3),required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--resume',action='store_true');a=p.parse_args();arm='d1' if a.gpu==2 else 'd2';prior=PRIOR/f'gpu{a.gpu}_recovery2/status.json'
  if os.environ.get('CUDA_VISIBLE_DEVICES')!=str(a.gpu):raise ValueError('wrong GPU')
  if a.resume:
   old=json.loads((a.output/'status.json').read_text())

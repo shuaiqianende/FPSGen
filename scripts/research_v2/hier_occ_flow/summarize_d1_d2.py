@@ -4,20 +4,20 @@ import csv,json,sys,time,traceback
 ROOT=Path(__file__).resolve().parents[3];sys.path.insert(0,str(ROOT))
 from fpsgen.hier_occ_flow.storage import atomic_json
 BASE=Path('/data-12/M2024-HWZ/FPSGen/worktrees/desescene-u1-scratch100k-v1/experiments/desescene_u1_scratch100k_v1')
-NEW=ROOT/'experiments/desescene_u1_d1_d2_100k_v1';OUT=NEW/'paired'
+NEW=ROOT/'experiments/desescene_u1_d1_d2_100k_v1';OUT=NEW/'paired_recovery'
 def main():
  if OUT.exists():raise FileExistsError('Prior summary retained')
  OUT.mkdir(parents=True)
  try:
   atomic_json(OUT/'status.json',dict(status='WAITING_D1_D2'))
   while True:
-   files=[NEW/f'gpu{g}_queue/status.json' for g in (2,3)]
+   files=[NEW/f'gpu{g}_requeued/status.json' for g in (2,3)]
    if all(f.exists() for f in files):
     statuses=[json.loads(f.read_text())['status'] for f in files]
     if 'BLOCKED' in statuses:raise RuntimeError('D1 or D2 blocked')
     if all(x=='COMPLETE_100K_AND_41' for x in statuses):break
    time.sleep(60)
-  paths={'A_original':BASE/'gpu2_recovery/u1a_seq08_41','AB_original':NEW/'gpu2_queue/seq08_41','A_patch':NEW/'gpu3_queue/seq08_41','AB_patch':BASE/'gpu3_recovery/patch_seq08_41','equal_original':BASE/'gpu2_recovery/equal_seq08_41'}
+  paths={'A_original':BASE/'gpu2_recovery2/u1a_seq08_41','AB_original':NEW/'gpu2_requeued/seq08_41','A_patch':NEW/'gpu3_requeued/seq08_41','AB_patch':BASE/'gpu3_recovery2/patch_seq08_41','equal_original':BASE/'gpu2_recovery/equal_seq08_41'}
   data={}
   for name,p in paths.items():
    rows=[json.loads(x) for x in (p/'per_frame.jsonl').read_text().splitlines()];selected={r['frame']:r for r in rows if r['nfe']==2}
