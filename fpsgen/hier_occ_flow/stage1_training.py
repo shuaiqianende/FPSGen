@@ -178,7 +178,7 @@ def validate_config(cfg):
             if variant!='original' or train.get('seed')!=20261032:
                 raise ValueError('Matched original FM control requires registered seed and architecture')
         elif experiment=='desescene-u1-scratch100k-v1':
-            if variant not in ('patch_u1abctl','patch_psab','patch_u1a') or train.get('seed')!=20261032:
+            if variant not in ('patch_u1abctl','patch_psab','patch_u1a','patch_u1ab','patch_psa') or train.get('seed')!=20261032:
                 raise ValueError('Registered scratch100K variants and seed required')
         elif experiment=='desescene-u1-triplane-v1':
             if variant not in ('patch_p0','patch_u1','patch_u1a','patch_u1ab','patch_u1abc','patch_u1ac','patch_u1abctl','patch_u1acctl','patch_psa','patch_psab') or train.get('seed')!=20261032:

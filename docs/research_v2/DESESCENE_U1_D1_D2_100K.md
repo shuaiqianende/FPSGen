@@ -1,0 +1,7 @@
+# D1/D2 matched 100K candidates
+
+D1 GPU2: `patch_u1ab`, dynamic per-voxel softmax B, original OccupancyUNet. Wait for GPU2 U1+A 100K plus seq08/41 evaluation. D2 GPU3: `patch_psa`, U1+A without B, PatchFlowUNet; wait for GPU3 U1+A+B PatchFlow 100K plus seq08/41 evaluation. Both start fresh after separate max-scene GPU Batch2 gate and 32-successful-update smoke; batch2, seed20261032, FP32 weights / autocast FP16, AdamW, 1000-update warmup and 50000-update cosine, EMA .999, 100000 successful exposures. No stage2 or 900-frame run.
+
+CPU check found 192 shared Encoder tensors between D1 and D2 at identical initialization, no mismatches. Flow models differ across the two families; within each family, the queue checks the independently seeded shared Flow template. Six model tests passed. GPU gate, smoke, formal training, quality, timing and memory remain NOT TESTED until each queue actually runs. Queue has explicit `--resume` for interrupted formal training, preserving optimizer/scheduler/EMA/scaler/RNG and data cursor. Partial evaluation recovery is not automatic.
+
+Each completed arm automatically evaluates seq08/skip100 41 frames with Parent and physical metrics, records per-frame output, then separately measures batch1 encoder/Stage1 timing with five warmups and 41 frames. Shared-device timings are observations, not matched paired benchmark claims. The paired summary waits for both new arms and reads original A, AB and equal reference 100K outputs; it writes per-frame deltas for the 2x2 and B control. Single training seed limits inference.
