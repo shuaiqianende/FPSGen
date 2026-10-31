@@ -88,7 +88,10 @@ class Stage1DirectOccupancy(nn.Module):
             x_max=geometry.maximum[0], y_max=geometry.maximum[1], z_max=geometry.maximum[2],
             nx=nx, ny=ny, nz=nz, xy_radius=geometry.sphere_radius,
             sphere_radius=geometry.sphere_radius)
-        if encoder_variant in ('patch_p0','patch_u1','patch_u1a','patch_u1ab','patch_u1abc','patch_u1ac','patch_u1abctl','patch_u1acctl','patch_psa','patch_psab'):
+        if encoder_variant=='patch_depth':
+            from .depth_moment_encoder import DepthMomentEncoder
+            self.encoder=DepthMomentEncoder(self.geometry,activation_checkpointing)
+        elif encoder_variant in ('patch_p0','patch_u1','patch_u1a','patch_u1ab','patch_u1abc','patch_u1ac','patch_u1abctl','patch_u1acctl','patch_psa','patch_psab'):
             from .patch_unet_condition import PatchLidarCondition
             enc={'patch_psa':'u1a','patch_psab':'u1ab'}.get(encoder_variant,encoder_variant[6:])
             self.encoder=PatchLidarCondition(self.geometry,variant=enc,activation_checkpointing=activation_checkpointing)

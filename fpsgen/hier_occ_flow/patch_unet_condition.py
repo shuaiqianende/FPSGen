@@ -43,7 +43,8 @@ class TriPlaneInteraction(nn.Module):
         if memory is not None:
             coverage=tuple(mask.float().mean(dim=axis) for axis in (2,3,4))
             planes=fusion(memory,planes,coverage)
-        return x+self.update(lift(planes)/3),planes
+        residual=self.depth_moment(x) if hasattr(self,"depth_moment") else 0
+        return x+self.update(lift(planes)/3)+residual,planes
 
 
 class PlaneMemory(nn.Module):
