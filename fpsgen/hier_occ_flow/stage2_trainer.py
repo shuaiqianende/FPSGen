@@ -44,7 +44,7 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
     torch.cuda.set_device(local);device=torch.device('cuda',local)
     if world>1:torch.distributed.init_process_group('nccl')
     torch.set_num_threads(train.get('cpu_threads',4))
-    ds,dev,manifests=dataset_identity(cfg,g,verify=True)
+    ds,dev,manifests=dataset_identity(cfg,g,verify=(cfg.get('research_protocol')!='t1_fulltrain_morph_fm_v1'))
     # CPU sparse input labels retain the full split. Cohort only changes sampler.
     cohort=cfg.get('cohort_indices')
     if train['scope']=='overfit' and (not cohort or not 8<=len(cohort)<=16 or len(set(cohort))!=len(cohort)):
@@ -53,7 +53,11 @@ def run_stage2(cfg,g,output,*,resume=None,max_updates=None,transition=None):
     identity={'experiment':'hs-occflow-stage2-384-v1','geometry_sha256':g.sha256,'config_sha256':config_sha(cfg),
         **manifests,'world_size':world,'output':str(output),'stage1_checkpoint_sha256':cfg['stage1']['checkpoint_sha256'],
         'source_sha256':source_sha()}
-    seed_all(train['seed']);adapter=FrozenStage1OccupancyAdapter(**cfg['stage1']['adapter']).to(device).eval()
+    seed_all(train['seed'])
+    if cfg['stage1']['type']=='t1_depth_moment':
+        from .t1_stage1_adapter import FrozenT1Stage1Adapter
+        adapter=FrozenT1Stage1Adapter(**cfg['stage1']['adapter']).to(device).eval()
+    else:adapter=FrozenStage1OccupancyAdapter(**cfg['stage1']['adapter']).to(device).eval()
     if train['scope']=='formal' and not adapter.provenance['stage1_final_100k_frames']:
         raise ValueError('Formal Stage2 requires a fixed final Stage1, not the development intermediate checkpoint')
     seed_all(train['seed']);raw=HierarchicalOccupancyModel(g,**cfg['model']).to(device)

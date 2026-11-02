@@ -68,7 +68,7 @@ def load_stage2_config(path):
         c=cfg['candidates']
         if c['mode']!='oracle' or c.get('oracle_score')!='stage1' or c.get('negative_fraction')!=0:
             raise ValueError('This variant requires actual Stage1 scores and GT parents only')
-    if cfg['stage1']['type']!='occupancy384':raise ValueError('Old density adapters are prohibited')
+    if cfg['stage1']['type'] not in ('occupancy384','t1_depth_moment'):raise ValueError('Old density adapters are prohibited')
     if cfg['stage1']['checkpoint_sha256']!=cfg['stage1']['adapter']['checkpoint_sha256']:
         raise ValueError('Stage1 adapter/checkpoint/gate identity must agree')
     if cfg['validation']['nfes']!=[1,2,4,8]:raise ValueError('Keep the registered1/2/4/8 NFE evaluation')
@@ -81,6 +81,12 @@ def load_stage2_config(path):
 
 def dataset_identity(cfg,g,*,verify=False):
     from .morphology import MORPH_DATA_VERSION
+    if cfg.get('research_protocol')=='t1_fulltrain_morph_fm_v1':
+        if cfg['stage1']['type']!='t1_depth_moment' or cfg['validation'].get('enabled') is not False:raise ValueError('T1 full-train requires frozen T1 and no development evaluation')
+        train=SparseShardDataset(cfg['train_dataset'],g,verify=verify,data_version=MORPH_DATA_VERSION)
+        if len(train)!=19130 or set(x['sequence'].decode() for x in train.index)!={f'{i:02}' for i in (0,1,2,3,4,5,6,7,9,10)}:raise ValueError('Expected full training sequences, excluding 08')
+        if any(train.meta.get(k)!=cfg.get(k) for k in ('target_transform_sha256','target_processor_sha256')) or train.meta.get('parent_ids_unchanged') is not True:raise ValueError('Closed target identity mismatch')
+        return train,None,{'train_manifest_sha256':file_sha(Path(cfg['train_dataset'])/'manifest.json'),'development_manifest_sha256':None}
     version=cfg.get('target_data_version',DATA_VERSION)
     if version not in (DATA_VERSION,MORPH_DATA_VERSION):raise ValueError('Unknown fine target version')
     train=SparseShardDataset(cfg['train_dataset'],g,verify=verify,data_version=version)
