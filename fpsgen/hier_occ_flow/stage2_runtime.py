@@ -178,6 +178,11 @@ def direct_full_train_policy(cfg,g):
 
 def require_training_gate(cfg,g):
     scope=cfg['training']['scope'];path=cfg.get('engineering_gate')
+    if cfg.get('research_protocol')=='t1_fulltrain_morph_fm_v1':
+        gate=json.loads(Path(path).read_text()) if path and Path(path).exists() else {}
+        if gate.get('status')!='PASS_REAL_BATCH2' or gate.get('config_sha256')!=config_sha(cfg) or gate.get('source_sha256')!=source_sha() or gate.get('stage1_checkpoint_sha256')!=cfg['stage1']['checkpoint_sha256']:
+            raise ValueError('T1 real batch2 GPU preflight absent or identity changed')
+        return gate
     gate=json.loads(Path(path).read_text()) if path and Path(path).exists() else {}
     required=['full_scene_gpu','maximum_scene_gpu','ptv3_permutation','checkpointing_parity']
     if scope=='research_pilot':

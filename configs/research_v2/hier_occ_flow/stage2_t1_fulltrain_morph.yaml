@@ -81,7 +81,7 @@ validation:
   enabled: false
   disabled_reason: User requested removing automatic large validation; seq08 skip100
     evaluation only on explicit request, no test-set tuning.
-engineering_gate: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_real_score_gt_only_morph/preflight/engineering_gate.json
+engineering_gate: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-t1-stage2-fulltrain-v1/experiments/desescene_t1_stage2_fulltrain_v1/stage2/preflight.json
 research_protocol: t1_fulltrain_morph_fm_v1
 experiment_changes:
   parent_score: actual frozen Stage1 endpoint score for every GT parent; no constant1
