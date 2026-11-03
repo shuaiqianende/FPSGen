@@ -1,0 +1,91 @@
+geometry:
+  parent_resolution:
+  - 384
+  - 384
+  - 32
+  child_split:
+  - 2
+  - 2
+  - 2
+  origin:
+  - -50.0
+  - -50.0
+  - -4.0
+  maximum:
+  - 50.0
+  - 50.0
+  - 4.4
+  sphere_radius: 50.0
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-t1-stage2-fulltrain-v1/experiments/desescene_t1_stage2_fulltrain_v1/data/train
+stage1:
+  type: t1_depth_moment
+  checkpoint_sha256: f0aaf51a5c666fc374ade4ff62dab507bfcc5ec2164290c008c1bdafcde9b859
+  adapter:
+    checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-depth-moment-v1/experiments/desescene_depth_moment_v1/gpu2_t1/formal/checkpoints/step050000.pt
+    config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-depth-moment-v1/experiments/desescene_depth_moment_v1/gpu2_t1/formal/config.json
+    checkpoint_sha256: f0aaf51a5c666fc374ade4ff62dab507bfcc5ec2164290c008c1bdafcde9b859
+    weights: ema
+  encoder_injected: true
+candidates:
+  mode: oracle
+  stage1_nfe: 2
+  seed: 20261018
+  negative_fraction: 0.0
+  oracle_score: neutral
+  selection:
+    strategy: threshold
+    threshold: 0.5
+    expansion: 0
+    budget: 500000
+    overflow: error
+  calibration_status: not_applicable_oracle
+  neutral_score: 1.0
+model:
+  objective: fm
+  backbone: ptv3
+  width: 64
+  lidar_channels: 384
+  condition_mode: pyramid_observed
+  checkpointing: true
+  patch_sizes:
+  - 64
+  - 128
+training:
+  scope: formal
+  successful_updates: 25000
+  batch_per_gpu: 4
+  precision: fp16
+  seed: 20261032
+  lr: 0.0002
+  weight_decay: 0.01
+  grad_clip: 1.0
+  warmup_updates: 1000
+  checkpoint_every: 500
+  milestone_every: 2500
+  max_parent_tokens: 500000
+  ema_decay: 0.999
+  cpu_threads: 4
+  batching: packed_variable_length
+  max_batch_parent_tokens: 2000000
+  successful_frame_exposures: 100000
+  startup_checkpoint_updates:
+  - 20
+  - 100
+flow:
+  source: gaussian
+  sigma: 1.0
+  target_mapping: binary_symmetric
+loss:
+  fm: 1.0
+cache:
+  enabled: false
+  root: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_real_score_gt_only_morph/cache
+  max_bytes: 8589934592
+validation:
+  enabled: false
+  final_test: seq08_skip100_41_frames
+research_protocol: stage2_b4_scratch_with_encoder
+target_data_version: hs-occ-morph-close-v1
+target_transform_sha256: 1c88afa56324775ecc3a56f7720d0f2d69b38b7ee9ac7f925b67b9dcfaae3802
+target_processor_sha256: 83803bbbf2cf7d483d5319a983cb03120116f0e6a42113d0c00f6ffb0f566060
