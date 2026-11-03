@@ -47,11 +47,13 @@ def explicit_stage2_forward(self,parent_ids,*,batch=None,state=None,time=None,li
     key=batch*self.geometry.num_parents+parent_ids;order=torch.argsort(key);inverse=torch.argsort(order)
     if len(key)>1 and bool((key[order][1:]==key[order][:-1]).any()):raise ValueError('Duplicate Parents')
     ids=parent_ids[order];batch=batch[order]
-    if parent_score is None or valid_child_mask is None or state is None or state.shape!=(len(ids),self.geometry.k):raise ValueError('All original conditions/state required')
+    if valid_child_mask is None or state is None or state.shape!=(len(ids),self.geometry.k):raise ValueError('Conditions/state required')
+    if hasattr(self,'score') and parent_score is None:raise ValueError('Score required for score-enabled model')
     if time is None or time.numel()!=scenes or not bool(((time>=0)&(time<=1)).all()):raise ValueError('One time per scene')
     coords=self.geometry.unflatten(ids);centers=self.geometry.centers(coords).float()
     position=2*(centers-centers.new_tensor(self.geometry.origin))/centers.new_tensor([b-a for a,b in zip(self.geometry.origin,self.geometry.maximum)])-1
-    parts=[self.position(position.half()),self.score(parent_score[order].reshape(-1,1).half())]
+    parts=[self.position(position.half())]
+    if hasattr(self,'score'):parts.append(self.score(parent_score[order].reshape(-1,1).half()))
     if hasattr(self,'lidar'):
         if lidar_features is None:raise ValueError('Actual pyramid required')
         parts.append(self.lidar(lidar_features[order].half()))
