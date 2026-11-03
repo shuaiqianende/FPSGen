@@ -38,7 +38,9 @@ def main():
  start=time.time();done=total=reused=0
  try:
   atomic_json(status,dict(status='BUILDING',frames=0,total=len(ds),source_manifest_sha256=manifest))
-  with ProcessPoolExecutor(max_workers=4,initializer=init) as pool:
+  workers=int(os.environ.get('STATIC_MASK_WORKERS','4'))
+  if not 1<=workers<=8:raise ValueError('STATIC_MASK_WORKERS must be 1-8')
+  with ProcessPoolExecutor(max_workers=workers,initializer=init) as pool:
    for seq,frame,size,cached in pool.map(worker,range(len(ds)),chunksize=8):
     done+=1;total+=size;reused+=int(cached)
     if done%25==0:atomic_json(status,dict(status='BUILDING',frames=done,total=len(ds),bytes=total,reused=reused,source_manifest_sha256=manifest,elapsed_s=time.time()-start))
