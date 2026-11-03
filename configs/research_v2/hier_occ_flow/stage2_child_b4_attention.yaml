@@ -1,0 +1,92 @@
+cache:
+  enabled: false
+  max_bytes: 8589934592
+  root: /data-12/M2024-HWZ/FPSGen/worktrees/hs-occflow-384-stage2-score-gtparents/experiments/hier_occ_flow/stage2_real_score_gt_only_morph/cache
+candidates:
+  calibration_status: not_applicable_oracle
+  mode: oracle
+  negative_fraction: 0.0
+  neutral_score: 1.0
+  oracle_score: neutral
+  seed: 20261018
+  selection:
+    budget: 500000
+    expansion: 0
+    overflow: error
+    strategy: threshold
+    threshold: 0.5
+  stage1_nfe: 2
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+flow:
+  sigma: 1.0
+  source: gaussian
+  target_mapping: binary_symmetric
+geometry:
+  child_split:
+  - 2
+  - 2
+  - 2
+  maximum:
+  - 50.0
+  - 50.0
+  - 4.4
+  origin:
+  - -50.0
+  - -50.0
+  - -4.0
+  parent_resolution:
+  - 384
+  - 384
+  - 32
+  sphere_radius: 50.0
+loss:
+  fm: 1.0
+model:
+  backbone: ptv3
+  checkpointing: true
+  condition_mode: pyramid_observed
+  lidar_channels: 384
+  objective: fm
+  patch_sizes:
+  - 64
+  - 128
+  width: 64
+  local_state_encoding: position_attention
+research_protocol: stage2_b4_scratch_child_attention
+stage1:
+  adapter:
+    checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-depth-moment-v1/experiments/desescene_depth_moment_v1/gpu2_t1/formal/checkpoints/step050000.pt
+    checkpoint_sha256: f0aaf51a5c666fc374ade4ff62dab507bfcc5ec2164290c008c1bdafcde9b859
+    config: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-depth-moment-v1/experiments/desescene_depth_moment_v1/gpu2_t1/formal/config.json
+    weights: ema
+  checkpoint_sha256: f0aaf51a5c666fc374ade4ff62dab507bfcc5ec2164290c008c1bdafcde9b859
+  encoder_injected: true
+  type: t1_depth_moment
+target_data_version: hs-occ-morph-close-v1
+target_processor_sha256: 83803bbbf2cf7d483d5319a983cb03120116f0e6a42113d0c00f6ffb0f566060
+target_transform_sha256: 1c88afa56324775ecc3a56f7720d0f2d69b38b7ee9ac7f925b67b9dcfaae3802
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-t1-stage2-fulltrain-v1/experiments/desescene_t1_stage2_fulltrain_v1/data/train
+training:
+  batch_per_gpu: 4
+  batching: packed_variable_length
+  checkpoint_every: 500
+  cpu_threads: 4
+  ema_decay: 0.999
+  grad_clip: 1.0
+  lr: 0.0002
+  max_batch_parent_tokens: 2000000
+  max_parent_tokens: 500000
+  milestone_every: 2500
+  precision: fp16
+  scope: formal
+  seed: 20261032
+  startup_checkpoint_updates:
+  - 20
+  - 100
+  successful_frame_exposures: 100000
+  successful_updates: 25000
+  warmup_updates: 1000
+  weight_decay: 0.01
+validation:
+  enabled: false
+  final_test: seq08_skip100_41_frames

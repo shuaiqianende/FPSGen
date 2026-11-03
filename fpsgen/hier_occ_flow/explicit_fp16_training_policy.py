@@ -39,7 +39,7 @@ def explicit_stage2_forward(self,parent_ids,*,batch=None,state=None,time=None,li
     if inference_context is not None:
         if parent_ids is not inference_context['input_parent_ids_ref']:raise ValueError('Context changed')
         return self.forward_with_inference_context(inference_context,state,time)
-    if self.objective!='fm' or self.context_strategy!='dynamic' or self.child_bridge!='none' or self.state_condition_interaction!='none' or self.local_state_encoding!='none':raise ValueError('Registered original dynamic FM only')
+    if self.objective!='fm' or self.context_strategy!='dynamic' or self.child_bridge!='none' or self.state_condition_interaction!='none':raise ValueError('Registered dynamic FM only')
     if batch is None:batch=torch.zeros_like(parent_ids)
     if batch.shape!=parent_ids.shape or not len(parent_ids):raise ValueError('Nonempty packed scenes required')
     scenes=int(batch.max())+1
