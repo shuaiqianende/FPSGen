@@ -1,0 +1,3 @@
+# Static mask cache prototype
+
+16 real training frames: packed GT-support, observed child and valid-child masks were exactly equal to existing CPU definitions. Mean original static CPU preprocessing 0.2844 s/frame; warm cache load/unpack 0.0236 s/frame. Average compressed size 321994 bytes/frame. This is not an end-to-end speed benchmark and excludes GPU transfers, input read, Encoder and PTv3. Cache requires unchanged GT Parent support, geometry, input and closed targets; it is invalid for predicted supports or different augmentation. Full cache is independent and is not wired into current training. Dataset and input identities are recorded at construction; no per-step rehash is necessary if source data are frozen.
