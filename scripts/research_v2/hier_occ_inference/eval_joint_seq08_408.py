@@ -16,7 +16,7 @@ from fpsgen.hier_occ_flow.dataset import input_xyz
 from fpsgen.hier_occ_flow.explicit_fp16_training_policy import apply_explicit_policy
 from fpsgen.hier_occ_flow.geometry import SparseHierarchyGeometry
 from fpsgen.hier_occ_flow.joint_fm_inference import input_only_conditions, predicted_support
-from fpsgen.hier_occ_flow.raw_gt import RawMapSource
+from fpsgen.hier_occ_flow.raw_gt_exact_cache import ExactRawGTCache
 from fpsgen.hier_occ_flow.stage2_condition import scene_seed
 from fpsgen.hier_occ_flow.stage2_model import Stage2OccupancyModel
 from fpsgen.hier_occ_flow.stage2_no_lidar import remove_lidar_and_score
@@ -82,6 +82,7 @@ def run(args):
     training_source_sha = ck['source_sha256']
     del ck
     frames = list(range(0, 4071, 10))[:args.max_frames]
+    cache = ExactRawGTCache(cfg['data_root'], g, ROOT / 'experiments/desescene_eval408_nextstage2_v1/shared_raw_gt_cache')
     protocol = {
         'arm': args.arm, 'frames': frames, 'stage2_checkpoint_sha256': file_sha(ckpath),
         'config_sha256': file_sha(cfgpath), 'stage1': adapter.provenance,
@@ -91,6 +92,7 @@ def run(args):
         'stage2_seed': '20261031+frame', 'resample_seed': '20261019+frame',
         'points': 'exactly 1080000, 0.15625m PatchScene-style occupied-cell resampling',
         'gt': 'original RawMapSource points in ROI, no Poisson or subsampling',
+        'gt_cache_identity_sha256': cache.sha256,
         'precision': 'explicit FP16 network, FP32 Euler/geometry',
         'score_injection': False, 'encoder_injection': args.arm != 'no_encoder',
         'stage2_source_sha256': training_source_sha,
@@ -111,7 +113,6 @@ def run(args):
     done = {r['frame'] for r in rows}
     if len(done) != len(rows) or not done.issubset(frames):
         raise ValueError('Corrupt or unexpected frame journal')
-    raw = RawMapSource(cfg['data_root'], fast_viewpoint=True)
     metric = GPUKDTreeMetrics(('cd',), geometry=None)
     for frame in frames:
         if frame in done:
@@ -149,9 +150,7 @@ def run(args):
             voxel_size=.15625, target_points=1_080_000, seed=20261019 + frame)
         if points.shape != (1_080_000, 3):
             raise ValueError('Wrong output point count')
-        target = raw.load('08', frame)
-        _, valid_gt = g.voxelize_points(target)
-        target = np.ascontiguousarray(target[valid_gt], dtype=np.float32)
+        target = cache.load(frame)
         row = {'frame': frame, 'candidate_parents': len(ids), 'occupied_fine': len(fine),
             'network_seconds': network_seconds, 'resampling_seconds': resampling['resampling_seconds'],
             'peak_allocated_gib': torch.cuda.max_memory_allocated() / 1024**3,

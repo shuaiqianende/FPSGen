@@ -40,7 +40,7 @@ complete. Its obsolete 41-frame GPU3 evaluation is replaced by the registered
 GPU2 408-frame late-encoder evaluation. Handoff is currently waiting, and must
 not be claimed complete before its status records success.
 
-The Stage1/joint evaluation's Python syntax and seven CPU protocol/precision
+The Stage1/joint evaluation's Python syntax and eight CPU protocol/precision
 tests were checked. GPU execution, numerical parity and final metrics have not
 yet been established. No 900-frame
 evaluation is authorized. Stage1 U1 20K and U1+A/depth-moment 100K results
@@ -63,3 +63,12 @@ For continuity with prior measurements, the Stage1-only ablation uses Stage1
 source seed 20261031; the joint evaluation uses the Stage2 study's registered
 Stage1 seed 20261018. Each comparison within a cohort remains paired, but a
 frame's Stage1-only and joint supports are not asserted to be identical.
+
+Both GPU2 evaluators now share an identity-checked local cache for the exact
+raw-map GT crop. It caches only the original ordered float32 points after the
+same ROI test, without Poisson sampling or approximation. On seq08 frame 0,
+the uncached crop, cache-creation result and cache-hit result were exactly
+array-equal across all 1,728,347 points. Source scan and cache contents are
+hashed; a mismatch stops evaluation. This is a real-frame correctness check,
+not a performance benchmark or a completed 408-frame quality result. The
+resampling implementation is byte-identical to the V7 reference file.

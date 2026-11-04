@@ -9,7 +9,7 @@ from fpsgen.hier_occ_flow.geometry import SparseHierarchyGeometry
 from fpsgen.hier_occ_flow.stage1_occupancy import Stage1DirectOccupancy
 from fpsgen.hier_occ_flow.explicit_fp16_training_policy import apply_explicit_policy
 from fpsgen.hier_occ_flow.dataset import input_xyz
-from fpsgen.hier_occ_flow.raw_gt import RawMapSource
+from fpsgen.hier_occ_flow.raw_gt_exact_cache import ExactRawGTCache
 from fpsgen.hier_occ_flow.stage2_condition import scene_seed
 from fpsgen.hier_occ_flow.storage import atomic_json,file_sha
 from fpsgen.utils.gpu_kdtree_metrics import GPUKDTreeMetrics
@@ -28,16 +28,17 @@ def main():
  torch.set_num_threads(4);torch.cuda.set_device(0)
  model=Stage1DirectOccupancy(g,objective='fm',widths=m['widths'],activation_checkpointing=False,encoder_variant=m['encoder_variant']).cuda()
  model.load_state_dict(weights,strict=True);model.eval().requires_grad_(False);precision=apply_explicit_policy(model);del ck,weights
- protocol={'frames':frames,'sequence':'08','stride':10,'nfe':2,'threshold':.5,'variant':m['encoder_variant'],'checkpoint_sha256':file_sha(a.checkpoint),'config_sha256':file_sha(a.config),'successful_exposures':exposure,'successful_updates':steps,'weights':'EMA','network_precision':precision['mode'],'geometry_and_euler':'original FP32','point_mode':'Parent voxel centers; no resampling','gt':'RawMapSource fast_viewpoint, all original points in frozen ROI','seed':'scene_seed(08,frame,20261031)','metrics':'exact GPU KD-tree CD; physical IoU; audited sparse JSD','code_sha256':file_sha(Path(__file__))}
+ cache=ExactRawGTCache(cfg['data_root'],g,ROOT/'experiments/desescene_eval408_nextstage2_v1/shared_raw_gt_cache')
+ protocol={'frames':frames,'sequence':'08','stride':10,'nfe':2,'threshold':.5,'variant':m['encoder_variant'],'checkpoint_sha256':file_sha(a.checkpoint),'config_sha256':file_sha(a.config),'successful_exposures':exposure,'successful_updates':steps,'weights':'EMA','network_precision':precision['mode'],'geometry_and_euler':'original FP32','point_mode':'Parent voxel centers; no resampling','gt':'RawMapSource fast_viewpoint, all original points in frozen ROI','gt_cache_identity_sha256':cache.sha256,'seed':'scene_seed(08,frame,20261031)','metrics':'exact GPU KD-tree CD; physical IoU; audited sparse JSD','code_sha256':file_sha(Path(__file__))}
  a.output.mkdir(parents=True,exist_ok=True);protocol_path=a.output/'protocol.json';journal=a.output/'per_frame.jsonl'
  if protocol_path.exists() and json.loads(protocol_path.read_text())!=protocol:raise ValueError('Existing protocol differs')
  atomic_json(protocol_path,protocol);rows=[json.loads(x) for x in journal.read_text().splitlines()] if journal.exists() else [];done={r['frame'] for r in rows}
  if len(done)!=len(rows) or not done.issubset(frames):raise ValueError('Inconsistent existing rows')
- raw=RawMapSource(cfg['data_root'],fast_viewpoint=True);metric=GPUKDTreeMetrics(('cd',),geometry=g)
+ metric=GPUKDTreeMetrics(('cd',),geometry=g)
  with torch.no_grad(),journal.open('a',buffering=1) as log:
   for frame in frames:
    if frame in done:continue
-   start=time.perf_counter();path=Path(cfg['data_root'])/'08/input_'/f'{frame:06d}.npy';xyz=torch.from_numpy(input_xyz(path)).cuda();gt=raw.load('08',frame);_,valid=g.voxelize_points(gt);target=np.ascontiguousarray(gt[valid],dtype=np.float32)
+   start=time.perf_counter();path=Path(cfg['data_root'])/'08/input_'/f'{frame:06d}.npy';xyz=torch.from_numpy(input_xyz(path)).cuda();target=cache.load(frame)
    with torch.autocast('cuda',dtype=torch.float16):
     score,_=model.sample(xyz,nfe=2,generator=torch.Generator(device='cuda').manual_seed(scene_seed('08',frame,20261031)))
     ids=torch.nonzero(score[0,0].reshape(-1)>.5).flatten();points=g.centers(g.unflatten(ids)).float().cpu().numpy()

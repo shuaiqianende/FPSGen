@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 import numpy as np
+import pytest
 import torch
 from torch import nn
 import yaml
@@ -92,3 +93,35 @@ def test_voxel_resampling_exact_count_and_geometry():
         bounds=bounds, voxel_size=.15625, target_points=10000, seed=20261019)
     assert out.shape == (10000, 3) and meta['actual_output_points'] == 10000
     assert np.isfinite(out).all() and (np.linalg.norm(out.astype(np.float64), axis=1) < 1.).all()
+
+
+def test_exact_raw_gt_cache_preserves_points_and_rejects_changed_source(tmp_path, monkeypatch):
+    from fpsgen.hier_occ_flow import raw_gt_exact_cache as module
+    sequence = tmp_path / 'data/08'
+    (sequence / 'velodyne').mkdir(parents=True)
+    for name in ('map_clean.npy', 'poses.txt', 'calib.txt', 'velodyne/000000.bin'):
+        (sequence / name).write_bytes(name.encode())
+    raw = np.array([[.2, .1, .4], [3., 0., 0.], [-.3, .5, .1]], dtype=np.float64)
+    calls = []
+    class Source:
+        def __init__(self, root, fast_viewpoint):
+            assert fast_viewpoint
+        def load(self, sequence, frame):
+            calls.append((sequence, frame))
+            return raw
+    class Geometry:
+        sha256 = 'test_geometry'
+        def voxelize_points(self, points):
+            return None, np.abs(points[:, 0]) < 1
+    monkeypatch.setattr(module, 'RawMapSource', Source)
+    cache = module.ExactRawGTCache(tmp_path / 'data', Geometry(), tmp_path / 'cache')
+    expected = np.ascontiguousarray(raw[[0, 2]], dtype=np.float32)
+    assert np.array_equal(cache.load(0), expected)
+    assert np.array_equal(cache.load(0), expected)
+    assert calls == [('08', 0)]
+    (cache.root / '000000.npy').write_bytes(b'corrupted cache')
+    with pytest.raises(ValueError, match='corrupted'):
+        cache.load(0)
+    (sequence / 'velodyne/000000.bin').write_bytes(b'changed scan')
+    with pytest.raises(ValueError, match='source changed'):
+        cache.load(0)
