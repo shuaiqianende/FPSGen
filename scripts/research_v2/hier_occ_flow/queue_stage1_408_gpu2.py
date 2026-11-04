@@ -3,7 +3,7 @@ import json,os,subprocess,sys,time,traceback
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[3]
 BASE=ROOT/'experiments/desescene_eval408_nextstage2_v1'
-PREV=Path('/data-12/M2024-HWZ/FPSGen/worktrees/desescene-stage2-child-b4-followup-v1/experiments/stage2_child_b4_followup_v1/position/queue_status.json')
+PREV=Path('/data-12/M2024-HWZ/FPSGen/worktrees/desescene-stage2-child-b4-followup-v1/experiments/stage2_child_b4_followup_v1/position/formal/status.json')
 W=Path('/data-12/M2024-HWZ/FPSGen/worktrees')
 ITEMS=(
  ('u1_adapted_20k',W/'desescene-u1-triplane-v1/experiments/desescene_u1_triplane_v1/pilot_u1/formal'),
@@ -15,9 +15,9 @@ def main():
  if os.environ.get('CUDA_VISIBLE_DEVICES')!='2':raise ValueError('GPU2 only')
  while True:
   prev=json.loads(PREV.read_text()) if PREV.exists() else {}
-  if prev.get('status')=='COMPLETE':break
-  if prev.get('status')=='FAILED':raise RuntimeError('Existing GPU2 queue failed; inspect before evaluation')
-  status({'status':'WAITING_PREVIOUS_GPU2_QUEUE','previous':prev.get('status')});time.sleep(30)
+  if prev.get('status')=='COMPLETE' and prev.get('step')==25000 and prev.get('frames')==100000:break
+  if prev.get('status') in ('FAILED','BLOCKED','PAUSED'):raise RuntimeError('Existing GPU2 training failed or paused; inspect before evaluation')
+  status({'status':'WAITING_PREVIOUS_GPU2_TRAINING','previous':prev.get('status')});time.sleep(30)
  while True:
   free,util=map(float,subprocess.check_output(['nvidia-smi','--id=2','--query-gpu=memory.free,utilization.gpu','--format=csv,noheader,nounits'],text=True).strip().split(','))
   active=subprocess.check_output(['nvidia-smi','--id=2','--query-compute-apps=pid','--format=csv,noheader,nounits'],text=True).strip()
@@ -38,7 +38,7 @@ def main():
     subprocess.run([sys.executable,'-u',str(script),'--config',str(cfg),'--checkpoint',str(ck),'--output',str(out),'--max-frames',str(count)],cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
    d=json.loads(result.read_text())
    if d.get('status')!='COMPLETE' or len(d.get('rows',[]))!=count:raise ValueError(f'Incomplete {result}')
- status({'status':'STAGE1_COMPLETE','note':'Stage2 408 and U1 100K continuation are not yet registered by this queue.'})
+ status({'status':'STAGE1_COMPLETE','note':'Joint 408 evaluation and U1 100K run in separate dependent queues.'})
 if __name__=='__main__':
  try:main()
  except Exception as e:status({'status':'FAILED','reason':repr(e),'traceback':traceback.format_exc()});raise

@@ -5,8 +5,8 @@ Requested order on physical GPU2:
 1. Evaluate Stage1 U1-Adapted (20K checkpoint), U1+A (100K), and
    U1+A+depth moment (100K) using Parent-centre output and the original
    raw-map points. The checkpoint budgets are deliberately not described as
-   matched. `desescene_stage1_408_gpu2` is waiting for the existing GPU2
-   training/evaluation queue; it performs a one-frame smoke before each run.
+   matched. `desescene_stage1_408_gpu2` requires the existing GPU2 training
+   to complete and performs a one-frame smoke before each run.
 2. Evaluate completed Stage1+Stage2 models on the same seq08/skip10 frames,
    with exactly 1,080,000 output points and CD, physical IoUs and JSD.
    The four existing Stage2 variants are now registered serially in tmux
@@ -33,12 +33,19 @@ encoding with late LiDAR residual injection. Its tmux
 `desescene_stage2_position_late_gpu3` waits for the existing 100K GPU3 training
 and an idle GPU, then runs the real largest-four-scene batch-4 gate, independent
 32-update smoke, and 100K formal run. It does not automatically evaluate on
-GPU3. `desescene_gpu3_eval_handoff` monitors the pre-existing GPU3 training;
-near its successful completion it will hold only the old scheduler, never its
-training child, then retire that scheduler after the 100K checkpoint is safely
-complete. Its obsolete 41-frame GPU3 evaluation is replaced by the registered
-GPU2 408-frame late-encoder evaluation. Handoff is currently waiting, and must
-not be claimed complete before its status records success.
+GPU3. `desescene_gpu3_eval_handoff` held only the old scheduler, never its
+training child, and retired that scheduler after the 100K checkpoint completed.
+Its obsolete 41-frame GPU3 evaluation is replaced by the registered GPU2
+408-frame late-encoder evaluation. The subsequent largest-four-scene Batch 4
+gate and 32-update smoke passed, and the new formal run has started.
+
+Both original Stage2 trainings reached 100K on 2026-11-05. The prior GPU2
+queue automatically started an obsolete seq08/skip100 41-frame evaluation;
+it was stopped after training completed because the current requested test is
+seq08/skip10 408 frames. Its checkpoint, partial output and SIGTERM record are
+preserved. The 408-frame queue was restarted while it was still only waiting,
+and now depends directly on the completed training's own status rather than
+mistaking the intentionally stopped 41-frame queue for a training failure.
 
 The Stage1/joint evaluation's Python syntax and eight CPU protocol/precision
 tests were checked. GPU execution, numerical parity and final metrics have not
