@@ -26,7 +26,7 @@ from fpsgen.hier_occ_flow.t1_stage1_adapter import FrozenT1Stage1Adapter
 from fpsgen.hier_occ_flow.voxelization import occupied_fine_coords, pack_children
 from fpsgen.utils.gpu_kdtree_metrics import GPUKDTreeMetrics
 from unified_pointcloud_metrics import evaluate_prediction
-from voxel_guided_resampling import voxel_guided_uniform_resample
+from voxel_guided_resampling_tight import voxel_guided_uniform_resample
 
 W = Path('/data-12/M2024-HWZ/FPSGen/worktrees')
 RUNS = {
@@ -101,6 +101,7 @@ def run(args):
             ROOT / 'fpsgen/hier_occ_flow/explicit_fp16_training_policy.py',
             ROOT / 'fpsgen/hier_occ_flow/t1_stage1_adapter.py',
             Path(__file__).resolve().parent / 'voxel_guided_resampling.py',
+            Path(__file__).resolve().parent / 'voxel_guided_resampling_tight.py',
             Path(__file__).resolve().parent / 'unified_pointcloud_metrics.py')},
     }
     out = args.output
