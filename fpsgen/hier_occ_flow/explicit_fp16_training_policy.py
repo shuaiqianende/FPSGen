@@ -37,6 +37,7 @@ def batch_norm32(self,x):
 
 def explicit_stage2_forward(self,parent_ids,*,batch=None,state=None,time=None,lidar_features=None,parent_score=None,observed_child=None,valid_child_mask=None,child_geometry=None,inference_context=None):
     if inference_context is not None:
+        if hasattr(self,'late_lidar'):raise ValueError('Late LiDAR injection requires uncached conditions')
         if parent_ids is not inference_context['input_parent_ids_ref']:raise ValueError('Context changed')
         return self.forward_with_inference_context(inference_context,state,time)
     if self.objective!='fm' or self.context_strategy!='dynamic' or self.child_bridge!='none' or self.state_condition_interaction!='none':raise ValueError('Registered dynamic FM only')
@@ -72,7 +73,10 @@ def explicit_stage2_forward(self,parent_ids,*,batch=None,state=None,time=None,li
     with torch.autocast(features.device.type,enabled=False):point.sparsify()
     with torch.autocast(features.device.type,dtype=torch.float16,enabled=features.device.type=='cuda'):
         point=net.embedding(point);point=net.enc(point);point=net.dec(point)
-    return self.decode_children(point.feat.half(),state,embedding,batch,valid,None)[inverse]
+    result=point.feat.half()
+    if hasattr(self,'late_lidar'):
+        result=result+self.late_lidar(lidar_features[order].half())
+    return self.decode_children(result,state,embedding,batch,valid,None)[inverse]
 
 
 def explicit_decode(self,features,state,embedding,batch,valid,child_geometry):

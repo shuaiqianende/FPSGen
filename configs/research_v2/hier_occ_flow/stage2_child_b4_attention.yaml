@@ -51,8 +51,9 @@ model:
   - 64
   - 128
   width: 64
-  local_state_encoding: position_attention
-research_protocol: stage2_b4_scratch_child_attention
+  local_state_encoding: position
+  late_lidar_injection: true
+research_protocol: stage2_b4_scratch_position_late_encoder_injection
 stage1:
   adapter:
     checkpoint: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-depth-moment-v1/experiments/desescene_depth_moment_v1/gpu2_t1/formal/checkpoints/step050000.pt

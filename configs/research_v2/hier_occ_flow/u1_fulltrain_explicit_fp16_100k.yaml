@@ -1,0 +1,31 @@
+experiment: desescene-u1-fulltrain-explicit-fp16-100k-v1
+data_root: /data-12/M2024-HWZ/KITTI_Odometry
+train_dataset: /data-12/M2024-HWZ/FPSGen/worktrees/desescene-t1-stage2-fulltrain-v1/experiments/desescene_t1_stage2_fulltrain_v1/data/train
+geometry:
+  parent_resolution: [384, 384, 32]
+  child_split: [2, 2, 2]
+  origin: [-50.0, -50.0, -4.0]
+  maximum: [50.0, 50.0, 4.4]
+  sphere_radius: 50.0
+model:
+  objective: fm
+  initialization: scratch
+  widths: [8, 16, 32, 64]
+  activation_checkpointing: true
+  encoder_variant: patch_u1
+training:
+  successful_updates: 50000
+  successful_frame_exposures: 100000
+  seed: 20261032
+  batch_per_gpu: 2
+  lr_encoder: 0.0001
+  lr_flow: 0.0002
+  weight_decay: 0.01
+  grad_clip: 1.0
+  warmup_updates: 1000
+  ema_decay: 0.999
+  amp_initial_scale: 16384.0
+  checkpoint_every: 500
+  precision: explicit_fp16_fp32_master
+  compile_target: encoder.down_blocks.0.forward
+  backend: inductor

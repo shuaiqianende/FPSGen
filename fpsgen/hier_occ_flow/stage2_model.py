@@ -50,7 +50,13 @@ def single_scene_norm(base):
 
 class Stage2OccupancyModel(HierarchicalOccupancyModel):
     def __init__(self,*args,**kwargs):
+        late_lidar_injection=kwargs.pop('late_lidar_injection',False)
         super().__init__(*args,**kwargs)
+        if late_lidar_injection:
+            if not hasattr(self,'lidar') or self.backbone_kind!='ptv3':
+                raise ValueError('Late LiDAR injection requires the PTv3 pyramid condition')
+            self.late_lidar=torch.nn.Linear(self.lidar[0].in_features,self.decoder[-1].in_features,bias=False)
+            torch.nn.init.zeros_(self.late_lidar.weight)
         # V3 inference experiments are opt-in. Training and legacy inference
         # retain the original PTv3 construction and precision path.
         self.ptv3_topology_cache='none'
@@ -217,6 +223,7 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
 
     def forward(self,parent_ids,*,batch=None,state=None,time=None,lidar_features=None,parent_score=None,observed_child=None,valid_child_mask=None,child_geometry=None,inference_context=None):
         if inference_context is not None:
+            if hasattr(self,'late_lidar'):raise ValueError('Late LiDAR injection requires uncached conditions')
             if parent_ids is not inference_context['input_parent_ids_ref']:
                 raise ValueError('Cached context must be reused with the identical Parent ID tensor object')
             if batch is not None or any(x is not None for x in (lidar_features,parent_score,observed_child,valid_child_mask,child_geometry)):
@@ -272,6 +279,8 @@ class Stage2OccupancyModel(HierarchicalOccupancyModel):
         else:features=features+self.trunk(features)
         if self.ptv3_precision=='explicit_fp16' and self.child_bridge=='none':
             features=features.to(next(self.decoder.parameters()).dtype)
+        if hasattr(self,'late_lidar'):
+            features=features+self.late_lidar(lidar_features[order].to(self.late_lidar.weight.dtype))
         if self.context_strategy=='static' and self.objective=='fm' and self.child_bridge=='none':
             dynamic=self.dynamic_fuse(torch.cat((self.local(state.float()),embedding[batch]),-1))
             return (self.decoder(torch.cat((features,dynamic),-1))*valid_child_mask[order])[inverse]
