@@ -86,7 +86,8 @@ def main():
                     'source_sha256': source_sha(), 'initialization': 'scratch',
                     'target': 'original surface-hit Parent IDs, morphology masks unused',
                     'physical_gpu': 2, 'batch': 2, 'seed': t['seed'],
-                    'precision': t['precision'], 'compile_target': t['compile_target']}
+                    'precision': t['precision'], 'compile_target': t['compile_target'],
+                    'compiled_block_checkpointing': False}
         proofs = []
         if args.mode == 'formal':
             for name in ('gate', 'smoke'):
@@ -133,6 +134,17 @@ def main():
         generator = torch.Generator(device='cuda').manual_seed(t['seed'] + 1000)
         model.encoder.down_blocks[0].forward = torch.compile(model.encoder.down_blocks[0].forward,
                                                               backend='inductor', dynamic=False)
+        # PyTorch 2.0 AOT tracing cannot restore the real CUDA RNG tensor from
+        # the surrounding non-reentrant checkpoint. Execute only the compiled
+        # block without checkpointing; all other blocks retain their original
+        # checkpoint policy and dropout remains active.
+        original_run = model.encoder._run
+        compiled_block = model.encoder.down_blocks[0]
+        def run_with_compiled_block(module, *values):
+            if module is compiled_block:
+                return module(*values)
+            return original_run(module, *values)
+        model.encoder._run = run_with_compiled_block
         model.train()
         updates = attempts = exposures = cursor = skips = 0
         if args.resume:

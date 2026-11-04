@@ -7,7 +7,7 @@ The first arm has completed all 408 frames. Evaluation uses the depth-moment U1+
 | Encoder conditioning | 408 | 0.197932 | 0.509543 | 0.390424 | 0.174089 | 0.303421 | 0.417762 |
 | No Encoder | 408 | 0.198513 | 0.509303 | 0.390124 | 0.174016 | 0.303739 | 0.418189 |
 | Child position | 408 | 0.197551 | 0.509938 | 0.390358 | 0.173765 | 0.302816 | 0.417608 |
-| Late Encoder injection | NOT COMPLETE | — | — | — | — | — | — |
+| Late Encoder injection | 408 | 0.197916 | 0.509582 | 0.390331 | 0.174010 | 0.303254 | 0.417706 |
 
 These are macro means across frames. Encoder-conditioned Stage2 checkpoint SHA256 is `67762b5c13a56eeb1596b409aeaddda25712733b67ed3a5ee7a89dde3ad5908e`; no-Encoder Stage2 checkpoint SHA256 is `91e10cfb187ac57ac2c8f9bb6e891dd6a6b67b9ea32a53cb7c5c4ceca99e050b`; the Stage1 EMA checkpoint SHA256 is `f0aaf51a5c666fc374ade4ff62dab507bfcc5ec2164290c008c1bdafcde9b859`. The full runtime identity and per-frame metrics are recorded in the experiment output. The first smoke exposed rejection failure for near-tangent sampling cells; the formal result uses a conservative smaller proposal box with the same exact sphere rejection and no boundary clamping.
 
@@ -24,4 +24,4 @@ The same 408 frame IDs and ground-truth counts were checked. The 95% percentile 
 | JSD-BEV | -0.000318 | [-0.000407, -0.000226] |
 | JSD-3D | -0.000427 | [-0.000485, -0.000370] |
 
-These single-checkpoint comparisons show a small advantage on this sequence; they do not establish stability across independent training runs or other datasets. Other arms remain incomplete.
+These single-checkpoint comparisons show a small advantage on this sequence; they do not establish stability across independent training runs or other datasets.
