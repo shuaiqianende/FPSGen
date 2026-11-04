@@ -41,3 +41,21 @@ tests were checked. GPU execution, numerical parity and final metrics have not
 yet been established. No 900-frame
 evaluation is authorized. Stage1 U1 20K and U1+A/depth-moment 100K results
 must not be represented as equal-training-budget architecture comparisons.
+
+On 2026-11-05, the 19,130 full-training entries were checked against the raw
+train, former development and guard-frame indexes: all 19,130 Parent ID slices
+match the same filesystem inode, offset and length as their raw references.
+The three Stage1 EMA checkpoints and the four Stage2 checkpoint structures
+also loaded strictly on CPU; the two running Stage2 checkpoints were still at
+86K exposures at that check. All 408 expected seq08 input files were present.
+These checks do not replace the planned GPU smoke.
+
+The new scratch Flow initialization was regenerated on CPU with seed
+`20261032 + 104729`; its SHA256 is
+`6efa2c64da812878dd70b883153bd6e04d897a864c19637f71b5b79a37875ddd`, matching
+the earlier U1+A 100K initialization audit. The new runner checks this hash.
+
+For continuity with prior measurements, the Stage1-only ablation uses Stage1
+source seed 20261031; the joint evaluation uses the Stage2 study's registered
+Stage1 seed 20261018. Each comparison within a cohort remains paired, but a
+frame's Stage1-only and joint supports are not asserted to be identical.

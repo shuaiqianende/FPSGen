@@ -40,6 +40,17 @@ def source_sha():
     return h.hexdigest()
 
 
+def state_sha(state):
+    h = hashlib.sha256()
+    for name, value in sorted(state.items()):
+        value = value.detach().cpu().contiguous()
+        h.update(name.encode())
+        h.update(str(value.dtype).encode())
+        h.update(str(tuple(value.shape)).encode())
+        h.update(value.numpy().tobytes())
+    return h.hexdigest()
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--mode', choices=('gate', 'smoke', 'formal'), required=True)
@@ -76,6 +87,7 @@ def main():
                     'target': 'original surface-hit Parent IDs, morphology masks unused',
                     'physical_gpu': 2, 'batch': 2, 'seed': t['seed'],
                     'precision': t['precision'], 'compile_target': t['compile_target']}
+        proofs = []
         if args.mode == 'formal':
             for name in ('gate', 'smoke'):
                 proof = json.loads((BASE / name / 'status.json').read_text())
@@ -83,6 +95,7 @@ def main():
                     raise ValueError(f'{name} has not passed for the same identity')
                 if name == 'smoke' and proof.get('updates') != 32:
                     raise ValueError('The independent 32-update smoke is incomplete')
+                proofs.append(proof)
         if checkpoint.exists() and not args.resume:
             raise FileExistsError('Use --resume for an existing run')
         seed_all(t['seed'])
@@ -95,8 +108,16 @@ def main():
         model = Stage1DirectOccupancy(geometry, objective='fm', widths=m['widths'],
             activation_checkpointing=m['activation_checkpointing'], encoder_variant=m['encoder_variant']).cuda()
         model.flow.load_state_dict(flow_init, strict=True)
+        flow_initialization_sha = state_sha(flow_init)
+        if flow_initialization_sha != m['expected_flow_initialization_sha256']:
+            raise ValueError('Shared FM initialization differs from the U1+A scratch cohort')
         del flow_init
         initial = {name: value.detach().clone() for name, value in model.state_dict().items()}
+        initialization = {'model_fp32_sha256': state_sha(initial),
+                          'flow_fp32_sha256': flow_initialization_sha,
+                          'pretrained_loaded': False}
+        if any(proof.get('initialization') != initialization for proof in proofs):
+            raise ValueError('Scratch initialization differs from engineering gate/smoke')
         masters = FP32Masters(model, initial)
         precision = apply_explicit_policy(model)
         ema_model = copy.deepcopy(model).eval().requires_grad_(False)
@@ -118,6 +139,8 @@ def main():
             saved = torch.load(checkpoint, map_location='cpu')
             if saved['identity'] != identity or saved['mode'] != args.mode:
                 raise ValueError('Resume identity mismatch')
+            if saved['initialization'] != initialization:
+                raise ValueError('Resume scratch initialization differs')
             model.load_state_dict(saved['model'], strict=True)
             masters.load_state_dict(saved['masters'])
             optimizer.load_state_dict(saved['optimizer'])
@@ -131,7 +154,8 @@ def main():
                 if not torch.equal(param, masters.params[name].to(param.dtype)):
                     raise ValueError(f'FP16/master mismatch: {name}')
         def save():
-            atomic_checkpoint(checkpoint, {'identity': identity, 'mode': args.mode, 'model': model.state_dict(),
+            atomic_checkpoint(checkpoint, {'identity': identity, 'initialization': initialization,
+                'mode': args.mode, 'model': model.state_dict(),
                 'masters': masters.state_dict(), 'ema': ema, 'optimizer': optimizer.state_dict(),
                 'scheduler': scheduler.state_dict(), 'scaler': scaler.state_dict(),
                 'rng': rng_state(generator, torch.device('cuda')), 'updates': updates, 'attempts': attempts,
@@ -144,7 +168,8 @@ def main():
         gate_indices = np.argsort(dataset.index['length'])[-2:][::-1].tolist()
         initial_time = time.time()
         failures = 0
-        atomic_json(progress, {'status': 'RUNNING', 'identity': identity, 'updates': updates, 'exposures': exposures})
+        atomic_json(progress, {'status': 'RUNNING', 'identity': identity, 'initialization': initialization,
+                               'updates': updates, 'exposures': exposures})
         with (out / 'train.jsonl').open('a', buffering=1) as log:
             while updates < limit and not stopped[0]:
                 tick = time.perf_counter()
@@ -199,12 +224,12 @@ def main():
                 print(json.dumps(row, allow_nan=False), flush=True)
                 if args.mode == 'formal' and (updates % t['checkpoint_every'] == 0 or stopped[0]):
                     save()
-                    atomic_json(progress, {'status': 'RUNNING', 'identity': identity, **row})
+                    atomic_json(progress, {'status': 'RUNNING', 'identity': identity, 'initialization': initialization, **row})
         if args.mode in ('formal', 'smoke'):
             save()
         status = 'PAUSED' if stopped[0] else 'PARTIAL' if limit < budget else 'COMPLETE' if args.mode == 'formal' else 'PASS'
         atomic_json(progress, {'status': status,
-            'identity': identity, 'updates': updates, 'exposures': exposures, 'skips': skips,
+            'identity': identity, 'initialization': initialization, 'updates': updates, 'exposures': exposures, 'skips': skips,
             'peak_allocated': torch.cuda.max_memory_allocated(), 'precision': precision,
             'elapsed_seconds': time.time() - initial_time})
     except Exception as e:

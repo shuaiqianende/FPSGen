@@ -13,6 +13,7 @@ model:
   widths: [8, 16, 32, 64]
   activation_checkpointing: true
   encoder_variant: patch_u1
+  expected_flow_initialization_sha256: 6efa2c64da812878dd70b883153bd6e04d897a864c19637f71b5b79a37875ddd
 training:
   successful_updates: 50000
   successful_frame_exposures: 100000
