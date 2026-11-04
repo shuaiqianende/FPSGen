@@ -54,8 +54,15 @@ def run(args):
     if ck['config_sha256'] != file_sha(cfgpath):
         raise ValueError('Stage2 configuration identity mismatch')
     g = SparseHierarchyGeometry(**cfg['geometry'])
+    # The no-encoder Stage2 training configuration has stage1.type=none. At
+    # deployment all variants still share the same real T1 Stage1 support.
+    teacher_path = (W / 'desescene-stage2-b4-paired-v1/configs/research_v2/hier_occ_flow'
+                    / 'stage2_b4_with_encoder.yaml')
+    teacher = yaml.safe_load(teacher_path.read_text())
+    if SparseHierarchyGeometry(**teacher['geometry']) != g:
+        raise ValueError('Stage1 and Stage2 geometry do not match')
     torch.set_num_threads(4)
-    adapter = FrozenT1Stage1Adapter(**cfg['stage1']['adapter']).cuda().eval()
+    adapter = FrozenT1Stage1Adapter(**teacher['stage1']['adapter']).cuda().eval()
     apply_explicit_policy(adapter.model)
     opts = dict(cfg['model'])
     opts['condition_mode'] = 'pyramid_observed'
@@ -80,7 +87,7 @@ def run(args):
         'config_sha256': file_sha(cfgpath), 'stage1': adapter.provenance,
         'geometry_sha256': g.sha256, 'source_sha256': file_sha(Path(__file__)),
         'stage1_nfe': 2, 'stage2_nfe': 4, 'stage1_threshold': .5,
-        'stage2_threshold': 0., 'stage1_seed': f"scene_seed(08,frame,{cfg['candidates']['seed']})",
+        'stage2_threshold': 0., 'stage1_seed': f"scene_seed(08,frame,{teacher['candidates']['seed']})",
         'stage2_seed': '20261031+frame', 'resample_seed': '20261019+frame',
         'points': 'exactly 1080000, 0.15625m PatchScene-style occupied-cell resampling',
         'gt': 'original RawMapSource points in ROI, no Poisson or subsampling',
@@ -114,7 +121,7 @@ def run(args):
         xyz = torch.from_numpy(input_xyz(path)).cuda()
         with torch.autocast('cuda', dtype=torch.float16):
             pyramid = adapter.encode_features(xyz)
-            seed = scene_seed('08', frame, cfg['candidates']['seed'])
+            seed = scene_seed('08', frame, teacher['candidates']['seed'])
             score, _ = adapter.model.sample(xyz, nfe=2, condition=pyramid,
                 generator=torch.Generator(device='cuda').manual_seed(seed))
             ids, scores = predicted_support(score[0, 0].float(), adapter.model.valid, g)
@@ -146,9 +153,10 @@ def run(args):
         _, valid_gt = g.voxelize_points(target)
         target = np.ascontiguousarray(target[valid_gt], dtype=np.float32)
         row = {'frame': frame, 'candidate_parents': len(ids), 'occupied_fine': len(fine),
-            'network_seconds': network_seconds, 'elapsed_seconds': time.perf_counter() - start,
+            'network_seconds': network_seconds, 'resampling_seconds': resampling['resampling_seconds'],
             'peak_allocated_gib': torch.cuda.max_memory_allocated() / 1024**3,
             **evaluate_prediction(points, target, g, metric, device='cuda')}
+        row['elapsed_seconds'] = time.perf_counter() - start
         if row['predicted_points'] != 1_080_000:
             raise ValueError('Metric output count mismatch')
         with journal.open('a') as f:

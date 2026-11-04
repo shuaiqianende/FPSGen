@@ -31,6 +31,16 @@ def test_gpu3_followup_changes_only_registered_condition_combination():
     assert cfg['training']['successful_updates'] * cfg['training']['batch_per_gpu'] == 100000
 
 
+def test_stage2_no_encoder_still_uses_t1_as_separate_stage1():
+    base = Path('/data-12/M2024-HWZ/FPSGen/worktrees/desescene-stage2-b4-paired-v1/configs/research_v2/hier_occ_flow')
+    no_encoder = yaml.safe_load((base / 'stage2_b4_no_encoder.yaml').read_text())
+    teacher = yaml.safe_load((base / 'stage2_b4_with_encoder.yaml').read_text())
+    assert no_encoder['stage1']['type'] == 'none'
+    assert teacher['stage1']['type'] == 't1_depth_moment'
+    assert teacher['stage1']['adapter']['weights'] == 'ema'
+    assert teacher['geometry'] == no_encoder['geometry']
+
+
 def test_fp16_network_fp32_master_and_ema():
     torch.manual_seed(3)
     model = nn.Sequential(nn.Conv3d(2, 4, 1), nn.GroupNorm(2, 4))

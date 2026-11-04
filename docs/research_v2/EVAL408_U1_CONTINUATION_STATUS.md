@@ -36,7 +36,7 @@ and an idle GPU, then runs the real largest-four-scene batch-4 gate, independent
 GPU3. The pre-existing GPU3 queue still contains its own old 41-frame evaluation;
 that legacy scheduled task has not been moved or stopped.
 
-The Stage1/joint evaluation's Python syntax and four CPU protocol/precision
+The Stage1/joint evaluation's Python syntax and six CPU protocol/precision
 tests were checked. GPU execution, numerical parity and final metrics have not
 yet been established. No 900-frame
 evaluation is authorized. Stage1 U1 20K and U1+A/depth-moment 100K results
