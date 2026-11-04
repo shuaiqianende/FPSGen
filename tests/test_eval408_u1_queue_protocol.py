@@ -1,6 +1,7 @@
 """CPU checks for the evaluation/continuation identity and precision policy."""
 import copy
 import importlib.util
+import os
 from pathlib import Path
 
 import numpy as np
@@ -68,6 +69,17 @@ def test_seq08_skip10_is_408_distinct_frames():
     frames = list(range(0, 4071, 10))
     assert len(frames) == len(set(frames)) == 408
     assert frames[0] == 0 and frames[-1] == 4070
+
+
+def test_handoff_proc_parser_checks_real_process_identity():
+    path = ROOT / 'scripts/research_v2/hier_occ_flow/redirect_legacy_gpu3_eval.py'
+    spec = importlib.util.spec_from_file_location('legacy_handoff', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    info = module.proc(os.getpid())
+    assert info['ppid'] == os.getppid()
+    assert info['state'] in ('R', 'S')
+    assert int(info['starttime']) > 0
 
 
 def test_voxel_resampling_exact_count_and_geometry():

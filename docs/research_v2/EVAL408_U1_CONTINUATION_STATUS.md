@@ -33,10 +33,14 @@ encoding with late LiDAR residual injection. Its tmux
 `desescene_stage2_position_late_gpu3` waits for the existing 100K GPU3 training
 and an idle GPU, then runs the real largest-four-scene batch-4 gate, independent
 32-update smoke, and 100K formal run. It does not automatically evaluate on
-GPU3. The pre-existing GPU3 queue still contains its own old 41-frame evaluation;
-that legacy scheduled task has not been moved or stopped.
+GPU3. `desescene_gpu3_eval_handoff` monitors the pre-existing GPU3 training;
+near its successful completion it will hold only the old scheduler, never its
+training child, then retire that scheduler after the 100K checkpoint is safely
+complete. Its obsolete 41-frame GPU3 evaluation is replaced by the registered
+GPU2 408-frame late-encoder evaluation. Handoff is currently waiting, and must
+not be claimed complete before its status records success.
 
-The Stage1/joint evaluation's Python syntax and six CPU protocol/precision
+The Stage1/joint evaluation's Python syntax and seven CPU protocol/precision
 tests were checked. GPU execution, numerical parity and final metrics have not
 yet been established. No 900-frame
 evaluation is authorized. Stage1 U1 20K and U1+A/depth-moment 100K results
